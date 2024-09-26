@@ -19,6 +19,7 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+/tools
 /tools/vendor/
 node_modules/
 npm-debug.log
