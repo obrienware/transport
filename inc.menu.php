@@ -17,7 +17,6 @@
             Vehicles
           </a>
           <ul class="dropdown-menu">
-            <!-- <li><a class="dropdown-item" href="#">Where is...</a></li> -->
             <li><a class="dropdown-item menu-item" href="#section.list-vehicles.php" data-target-id="list-vehicles" data-target-label="Vehicles">View</a></li>
             <!-- <li><hr class="dropdown-divider"></li> -->
             <li><a class="dropdown-item menu-item" href="#section.view-maintenance.php" data-target-id="view-maintenance">Maintenance</a></li>
@@ -86,8 +85,6 @@
 <script type="text/javascript">
 
   $(async ƒ => {
-    const tabIds = ['home-tab']; // To keep track of existing tabs
-    const tabs = $('#myTab');
 
     $('.menu-item').on('click', function(e) {
       e.preventDefault();
