@@ -47,7 +47,7 @@ function getTripHeader($tripId) {
           <div class="flex-fill">
             <div class="d-flex justify-content-between align-items-center">
               <div class="fw-bold"><?=$trip->guest?></div>
-              <small><?=$trip->phone_number?></small>
+              <small><a href="tel:<?=$trip->phone_number?>"><?=$trip->phone_number?></a></small>
             </div>
             <div class="d-flex justify-content-between align-items-center">
               <div><?=$trip->pickup_from?></div>
