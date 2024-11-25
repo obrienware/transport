@@ -326,8 +326,6 @@
     }
     checkForFlight();
 
-    $('select').selectpicker();
-
     $('#trip-airline-id').append($('<option>'));
     $.each(airlines, function (i, item) {
       $('#trip-airline-id').append($('<option>', {
@@ -335,7 +333,7 @@
         text: item.name
       }));
     });
-    $('#trip-airline-id').selectpicker();
+    $('select').selectpicker();
 
     $('#btn-trip-next').off('click').on('click', async () => {
       const startDate = moment($('#trip-start-date').val(), 'MM/DD/YYYY h:mm A');
