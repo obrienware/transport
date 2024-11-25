@@ -69,7 +69,7 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item menu-item" href="#section.list-my-blockout-dates.php" data-target-id="list-blockout-dates" data-target-label="Blockouts">My Blockout Dates</a></li>
-            <li><a class="dropdown-item" href="mailto:support@entrypro.co.za">Email Support</a></li>
+            <li><a class="dropdown-item" href="mailto:support@obrienware.com">Email Support</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="page.new-password.php">Change Password</a></li>
             <li><a class="dropdown-item" href="logout.php">Log out <?=$user->firstName?></a></li>
