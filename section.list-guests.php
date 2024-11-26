@@ -10,8 +10,7 @@
   <table id="table-guests" class="table table-striped table-hover row-select">
     <thead>
       <tr>
-        <th>Group Name</th>
-        <th>Contact</th>
+        <th>Contact Name</th>
         <th>Phone</th>
         <th>Email</th>
       </tr>
@@ -20,7 +19,6 @@
       <?php if ($rs = Guest::getGuests()): ?>
         <?php foreach ($rs as $item): ?>
           <tr data-id="<?=$item->id?>">
-            <td><?=$item->group_name?></td>
             <td><?=$item->first_name.' '.$item->last_name?></td>
             <td><?=$item->phone_number?></td>
             <td><?=$item->email_address?></td>

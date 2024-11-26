@@ -24,14 +24,6 @@ $item = new Guest($_REQUEST['id']);
         <div class="col-md-6">
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="guest-group-name" placeholder="Group Name" value="<?=$item->groupName?>">
-            <label for="guest-group-name">Group Name</label>
-          </div>
-          <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="guest-group-size" placeholder="Group Size" value="<?=$item->groupSize?>">
-            <label for="guest-group-size">Group Size</label>
-          </div>
-          <div class="form-floating mb-3">
             <input type="text" class="form-control" id="guest-first-name" placeholder="First Name" value="<?=$item->firstName?>">
             <label for="guest-first-name">First Name</label>
           </div>
@@ -71,8 +63,6 @@ $item = new Guest($_REQUEST['id']);
       $('#btn-save-guest').off('click').on('click', async ƒ => {
         const resp = await post('/api/post.save-guest.php', {
           id: guestId,
-          groupName: cleanVal('#guest-group-name'),
-          groupSize: cleanVal('#guest-group-size'),
           firstName: cleanVal('#guest-first-name'),
           lastName:cleanVal('#guest-last-name'),
           emailAddress: cleanVal('#guest-email-address'),

@@ -9,8 +9,6 @@ if (!isset($db)) {
 class Guest
 {
 	public $guestId;
-	public $groupName;
-	public $groupSize;
 	public $firstName;
 	public $lastName;
 	public $emailAddress;
@@ -30,8 +28,6 @@ class Guest
 		$data = ['guest_id' => $guestId];
 		if ($row = $db->get_row($sql, $data)) {
 			$this->guestId = $row->id;
-			$this->groupName = $row->group_name;
-			$this->groupSize = $row->group_size;
 			$this->firstName = $row->first_name;
 			$this->lastName = $row->last_name;
 			$this->emailAddress = $row->email_address;
@@ -43,9 +39,6 @@ class Guest
 
 	public function getName(): string
 	{
-		if ($this->groupName) {
-			return $this->groupName;
-		}
 		return "{$this->firstName} {$this->lastName}";
 	}
 
@@ -60,8 +53,6 @@ class Guest
 	{
 		global $db;
 		$data = [
-			'group_name' => $this->groupName,
-			'group_size' => $this->groupSize,
 			'first_name' => $this->firstName,
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
@@ -72,8 +63,6 @@ class Guest
 			$data['id'] = $this->guestId;
 			$sql = "
 				UPDATE guests SET
-					group_name = :group_name,
-					group_size = :group_size,
 					first_name = :first_name,
 					last_name = :last_name,
 					email_address = :email_address,
@@ -84,8 +73,6 @@ class Guest
 			// Insert
 			$sql = "
 				INSERT INTO guests SET
-					group_name = :group_name,
-					group_size = :group_size,
 					first_name = :first_name,
 					last_name = :last_name,
 					email_address = :email_address,
