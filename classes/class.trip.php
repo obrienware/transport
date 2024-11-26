@@ -15,6 +15,7 @@ class Trip
 	public $requestorId;
 	public $summary;
 	public $startDate;
+	public $pickupDate;
 	public $endDate;
 	public $guestId;
 	public $passengers;
@@ -58,6 +59,7 @@ class Trip
 			$this->requestorId = $item->requestor_id;
 			$this->summary = $item->summary;
 			$this->startDate = $item->start_date;
+			$this->pickupDate = $item->pickup_date;
 			$this->endDate = $item->end_date;
 			$this->guestId = $item->guest_id;
 			$this->passengers = $item->passengers;
@@ -145,7 +147,8 @@ class Trip
 			'requestor_id' => $this->requestorId,
 			'summary' => $this->summary,
 			'start_date' => $this->startDate,
-			'end_date' => $this->endDate ? $this->endDate : Date('Y-m-d H:i:s', strtotime($this->startDate.' +1 hour')),
+			'pickup_date' => $this->pickupDate,
+			'end_date' => $this->endDate,
 			'guest_id' => $this->guestId,
 			'passengers' => $this->passengers,
 			'pu_location' => $this->puLocationId,
@@ -170,6 +173,7 @@ class Trip
 					requestor_id = :requestor_id,
 					summary = :summary,
 					start_date = :start_date,
+					pickup_date = :pickup_date,
 					end_date = :end_date,
 					guest_id = :guest_id,
 					passengers = :passengers,
@@ -195,6 +199,7 @@ class Trip
 					requestor_id = :requestor_id,
 					summary = :summary,
 					start_date = :start_date,
+					pickup_date = :pickup_date,
 					end_date = :end_date,
 					guest_id = :guest_id,
 					passengers = :passengers,

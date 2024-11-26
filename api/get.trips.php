@@ -38,7 +38,7 @@ if ($rs = $db->get_results($sql, $data)) {
   foreach ($rs as $item) {
     $event = (object) [
       'id' => $item->id,
-      'title' => $item->summary,
+      'title' => $item->summary.' @'.Date('g:ia', strtotime($item->pickup_date)),
       'resourceIds' => ["vehicle-{$item->vehicle_id}", "driver-{$item->driver_id}"],
       'allDay' => false,
       'start' => $item->start_date,

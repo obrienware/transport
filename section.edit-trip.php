@@ -40,20 +40,30 @@ $trip = new Trip(tripId: $_REQUEST['id']);
       </div>
 
       <div class="row">
+        <div class="col-2">
+          <div class="mb-3">
+            <label for="trip-lead-time" class="form-label" data-bs-toggle="tooltip" data-bs-title="When the actual trip starts">Lead Time</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="trip-lead-time" value="<?=round(abs((strtotime($trip->startDate) - strtotime($trip->pickupDate))/60/60))?>" placeholder="e.g. 1.5"/>
+              <span class="input-group-text">hour(s)</span>
+            </div>
+          </div>
+        </div>
+
         <div class="col-3">
           <div class="mb-3">
-            <label for="trip-start-date" class="form-label">Date / Time</label>
+            <label for="trip-pickup-date" class="form-label" data-bs-toggle="tooltip" data-bs-title="The point at which you'd meet the guest/group">Date / Time</label>
             <div
               class="input-group log-event"
               id="datetimepicker1"
               data-td-target-input="nearest"
               data-td-target-toggle="nearest">
               <input
-                id="trip-start-date"
+                id="trip-pickup-date"
                 type="text"
                 class="form-control"
                 data-td-target="#datetimepicker1"
-                value="<?=($trip->startDate) ? Date('m/d/Y h:i A', strtotime($trip->startDate)) : '' ?>"/>
+                value="<?=($trip->pickupDate) ? Date('m/d/Y h:i A', strtotime($trip->pickupDate)) : '' ?>"/>
               <span
                 class="input-group-text"
                 data-td-target="#datetimepicker1"
@@ -65,8 +75,12 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         </div>
         <div class="col-2">
           <div class="mb-3">
-            <label for="trip-duration" class="form-label">Trip Duration (mins)</label>
-            <input type="number" class="form-control" id="trip-duration" placeholder="" value="<?=round(abs((strtotime($trip->endDate) - strtotime($trip->startDate))/60))?>">
+            <label for="trip-duration" class="form-label" data-bs-toggle="tooltip" data-bs-title="From start to end">Total Trip Duration</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="trip-duration" value="<?=round(abs((strtotime($trip->endDate) - strtotime($trip->startDate))/60/60),2)?>" placeholder="e.g. 1.5"/>
+              <span class="input-group-text">hour(s)</span>
+            </div>
+
             <input type="hidden" id="trip-end-date" value="<?=$trip->endDate?>" />
           </div>
         </div>
@@ -333,9 +347,10 @@ $trip = new Trip(tripId: $_REQUEST['id']);
       let drivers;
       let vehicles;
       let startDate;
+      let pickupDate;
       let endDate;
 
-      const startDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), tempusConfigDefaults);
+      const pickupDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), tempusConfigDefaults);
       const eta = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
       const etd = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), tempusConfigDefaults);
       const airlines = await get('/api/get.resource-airlines.php');
@@ -388,6 +403,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
       if (tripId) {
         startDate = moment('<?=$trip->startDate?>', 'YYYY-MM-DD H:mm:ss');
+        pickupDate = moment('<?=$trip->pickupDate?>', 'YYYY-MM-DD H:mm:ss');
         endDate = moment('<?=$trip->endDate?>', 'YYYY-MM-DD H:mm:ss');
         await loadResources();
         $('#trip-airline-id').selectpicker('val', '<?=$trip->airlineId?>');
@@ -420,10 +436,18 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
       });
 
-      $('#trip-start-date, #trip-duration').on('change', ƒ => {
-        startDate = moment($('#trip-start-date').val(), 'MM/DD/YYYY h:mm A');
-        endDate = moment(startDate).add(cleanNumberVal('#trip-duration'), 'm');
-        loadResources();
+      $('#trip-pickup-date, #trip-duration, #trip-lead-time').on('change', async ƒ => {
+        const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);
+        pickupDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A');
+        startDate = moment(pickupDate).subtract(leadTime, 'm');
+        endDate = moment(startDate).add(cleanNumberVal('#trip-duration'), 'h');
+
+        // The vehicle and/or driver may not be available in the new period, but if they are they will remain "selected".
+        const saveDriverId = val('#trip-driver-id');
+        const saveVehicleId = val('#trip-vehicle-id');
+        await loadResources();
+        $('#trip-driver-id').selectpicker('val', saveDriverId);
+        $('#trip-vehicle-id').selectpicker('val', saveVehicleId);
       });
 
 
@@ -581,6 +605,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         data.id = tripId;
         data.summary = cleanVal('#trip-summary');
         data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
+        data.pickupDate = pickupDate.format('YYYY-MM-DD HH:mm:ss');
         data.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
 
         control = $('#trip-pu-location');

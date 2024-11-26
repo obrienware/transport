@@ -9,6 +9,7 @@ $trip = new Trip($json->id);
 $trip->requestorId = $json->requestorId ?: NULL;
 $trip->summary = $json->summary ?: NULL;
 $trip->startDate = $json->startDate ?: NULL;
+$trip->pickupDate = $json->pickupDate ?: NULL;
 $trip->endDate = $json->endDate ?: NULL;
 $trip->guestId = $json->guestId ?: NULL;
 $trip->passengers = $json->passengers ?: NULL;
@@ -40,8 +41,6 @@ require_once 'class.vehicle.php';
 require_once 'class.waypoint.php';
 
 $wp = new Waypoints($tripId);
-
-// First we need the vehicle's usual staging location - assuming that where the vehicle will be / will be returned to
 $vehicle = new Vehicle($trip->vehicleId);
 
 if ($trip->vehiclePUOptions == 'pick up from staging') {

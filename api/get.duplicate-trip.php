@@ -7,6 +7,7 @@ $targetTrip = new Trip();
 $targetTrip->summary = $sourceTrip->summary.' (copy)';
 $targetTrip->requestorId = $sourceTrip->requestorId;
 $targetTrip->startDate = $sourceTrip->startDate;
+$targetTrip->pickupDate = $sourceTrip->pickupDate;
 $targetTrip->endDate = $sourceTrip->endDate;
 $targetTrip->guestId = $sourceTrip->guestId;
 $targetTrip->passengers = $sourceTrip->passengers;

@@ -1,26 +1,27 @@
 <div class="container-fluid">
   <h1>New Trip</h1>
+  <input type="hidden" id="trip-start-date" value="" />
   <input type="hidden" id="trip-end-date" value="" />
 
   <section id="trip-head">
     <div class="row">
       <div class="col-4">
         <div class="mb-3">
-          <label for="trip-start-date" class="form-label">When is the trip?</label>
+          <label for="trip-pickup-date" class="form-label">When is the pick up?</label>
           <div
             class="input-group log-event"
-            id="datetimepicker-trip-start-date"
+            id="datetimepicker-trip-pickup-date"
             data-td-target-input="nearest"
             data-td-target-toggle="nearest">
             <input
-              id="trip-start-date"
+              id="trip-pickup-date"
               type="text"
               class="form-control"
-              data-td-target="#datetimepicker-trip-start-date"
+              data-td-target="#datetimepicker-trip-pickup-date"
               value="<?=$_REQUEST['dateHint']?>"/>
             <span
               class="input-group-text"
-              data-td-target="#datetimepicker-trip-start-date"
+              data-td-target="#datetimepicker-trip-pickup-date"
               data-td-toggle="datetimepicker">
                 <i class="fa-duotone fa-calendar"></i>
             </span>
@@ -29,15 +30,22 @@
       </div>
 
       <div class="col-6">
-        <label class="form-label">Approximate round trip duration?</label>
         <div class="row">
           <div class="col-4">
+            <label class="form-label">Lead Time</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="trip-lead-time" value="" placeholder="e.g. 1.5"/>
+              <span class="input-group-text">hour(s)</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <label class="form-label">Trip Duration?</label>
             <div class="input-group mb-3">
               <input type="text" class="form-control" id="trip-duration-hours" value="" placeholder="e.g. 1.5"/>
               <span class="input-group-text">hour(s)</span>
             </div>
           </div>
-          <div class="col-auto">
+          <div class="col-auto pt-4">
             <button id="btn-trip-next" class="btn btn-secondary">Go</button>
             <button id="btn-trip-change" class="btn btn-secondary d-none">Change</button>
           </div>
@@ -297,7 +305,7 @@
     let drivers;
     let vehicles;
     const airlines = await get('/api/get.resource-airlines.php');
-    const startDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker-trip-start-date'), tempusConfigDefaults);
+    const pickupDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker-trip-pickup-date'), tempusConfigDefaults);
     const eta = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
     const etd = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), tempusConfigDefaults);
 
@@ -330,38 +338,50 @@
     $('select').selectpicker();
 
     $('#btn-trip-next').off('click').on('click', async () => {
-      const startDate = moment($('#trip-start-date').val(), 'MM/DD/YYYY h:mm A');
+      const pickupDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A');
       let endDate;
-      if (!startDate.isValid()) {
+      let startDate;
+
+      if (!pickupDate.isValid()) {
         await alertError('You need a specify a valid date before proceeding.', 'Oops!');
-        $('#trip-start-date').addClass('is-invalid');
+        $('#trip-pickup-date').addClass('is-invalid');
         return false;
       }
-      const hours = Math.abs(cleanNumberVal('#trip-duration-hours'));
-      const minutes = 0;
-      const duration = (hours * 60) + minutes;
+
+      const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);
+      console.log('leadTime:', leadTime);
+      startDate = moment(pickupDate).subtract(leadTime, 'm');
+      console.log('startDate:', startDate.format());
+      
+      const duration = Math.abs(cleanNumberVal('#trip-duration-hours'));
+      console.log('duration:', duration);
       if (duration <= 0) {
         await alertError('You need a specify a valid trip duration before proceeding.', 'Oops!');
         $('#trip-duration-hours').select().focus(); // FIXME: There seems to be an issue regaring aria-hidden when I do this?
         return false;
       }
 
-      endDate = moment(startDate).add(duration, 'm'); // We need to create a new moment instance instead of adding duration to start date
+      endDate = moment(startDate).add(duration, 'h');
+      console.log('endDate:', endDate.format());
       if (moment().isAfter(endDate)) {
         await alertError('This trip has already passed.', 'Oops!');
         return false;
       }
 
-      if (moment().isAfter(startDate)) {
+      if (moment().isAfter(pickupDate)) {
         const answer = await ask('This trip is already in progress. Do you wish to continue?');
         if (!answer) return false;
       }
 
+      $('#trip-start-date').val(startDate.format('MM/DD/YYYY h:mm A')); // We'll just keep the format the same as the start-date for simplicity
       $('#trip-end-date').val(endDate.format('MM/DD/YYYY h:mm A')); // We'll just keep the format the same as the start-date for simplicity
       $('#trip-head').find('input').attr('disabled', true).attr('readonly', true);
       $('#btn-trip-next').addClass('d-none');
       $('#btn-trip-change').removeClass('d-none');
       $('#trip-body').removeClass('d-none');
+
+      const saveDriverId = val('#trip-driver-id');
+      const saveVehicleId = val('#trip-vehicle-id');
 
       // Load the resources!
       drivers = await get('/api/get.available-drivers.php', {
@@ -384,7 +404,7 @@
           // style: `background: ${item.color}; color: #fff`
         }));
       });
-      $('#trip-vehicle-id').selectpicker()
+      $('#trip-vehicle-id').selectpicker();
 
       $('#trip-driver-id').selectpicker('destroy');
       $('#trip-driver-id option').remove();
@@ -395,7 +415,12 @@
           text: item.driver
         }));
       });
-      $('#trip-driver-id').selectpicker()
+      $('#trip-driver-id').selectpicker();
+
+      // If these values were previously set AND if the resource is still available, it will be re-set.
+      $('#trip-driver-id').selectpicker('val', saveDriverId);
+      $('#trip-vehicle-id').selectpicker('val', saveVehicleId);
+
     });
 
     $('#btn-trip-change').off('click').on('click', async () => {
@@ -407,7 +432,7 @@
       }
     });
 
-    $('#trip-start-date').on('change', function (e) {
+    $('#trip-pickup-date').on('change', function (e) {
       $(this).removeClass('is-invalid');
     });
 
@@ -519,6 +544,7 @@
 
       data.summary = cleanVal('#trip-summary');
       data.startDate = val('#trip-start-date') ? moment(val('#trip-start-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
+      data.pickupDate = val('#trip-pickup-date') ? moment(val('#trip-pickup-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
       data.endDate = val('#trip-end-date') ? moment(val('#trip-end-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
 
       control = $('#trip-pu-location');
