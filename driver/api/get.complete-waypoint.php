@@ -24,3 +24,7 @@ echo json_encode([
   'result' => $result,
   'complete' => ($count <= 0)
 ]);
+
+
+// TODO: When we reach the guest pickup location, we should send the guest a message. If the location has a message template, we should use that, otherwise a generic message to the effect of:
+// Your driver (Richard) has arrived at your pick up location in a white Chrysler minivan, and is available to help with luggage if needed.

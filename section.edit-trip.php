@@ -189,6 +189,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
                     <option></option>
                     <option value="pick up from staging" <?=$trip->vehiclePUOptions == 'pick up from staging' ? 'selected' : ''?> >Pick up from staging</option>
                     <option value="guest will have vehicle" <?=$trip->vehiclePUOptions == 'guest will have vehicle' ? 'selected' : ''?> >Guest will have vehicle</option>
+                    <option value="commence from current location" <?=$trip->vehiclePUOptions == 'commence from current location' ? 'selected' : ''?> >Commence from current location</option>
                   </select>
                 </div>
               </div>
@@ -201,6 +202,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
                     <option></option>
                     <option value="return to staging" <?=$trip->vehicleDOOptions == 'return to staging' ? 'selected' : ''?> >Return to staging</option>
                     <option value="leave vehicle with guest" <?=$trip->vehicleDOOptions == 'leave vehicle with guest' ? 'selected' : ''?> >Leave vehicle with guest(s)</option>
+                    <option value="remain at destination" <?=$trip->vehicleDOOptions == 'remain at destination' ? 'selected' : ''?> >Remain at destination</option>
                   </select>
                 </div>
               </div>
