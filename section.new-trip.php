@@ -31,16 +31,10 @@
       <div class="col-6">
         <label class="form-label">Approximate round trip duration?</label>
         <div class="row">
-          <div class="col">
+          <div class="col-4">
             <div class="input-group mb-3">
-              <input type="number" class="form-control" placeholder="Hour" id="trip-duration-hours" value="0"/>
+              <input type="text" class="form-control" id="trip-duration-hours" value="" placeholder="e.g. 1.5"/>
               <span class="input-group-text">hour(s)</span>
-            </div>
-          </div>
-          <div class="col">
-            <div class="input-group mb-3">
-              <input type="number" class="form-control" placeholder="Min" id="trip-duration-minutes" value="0"/>
-              <span class="input-group-text">min(s)</span>
             </div>
           </div>
           <div class="col-auto">
@@ -344,7 +338,7 @@
         return false;
       }
       const hours = Math.abs(cleanNumberVal('#trip-duration-hours'));
-      const minutes = Math.abs(cleanNumberVal('#trip-duration-minutes'));
+      const minutes = 0;
       const duration = (hours * 60) + minutes;
       if (duration <= 0) {
         await alertError('You need a specify a valid trip duration before proceeding.', 'Oops!');
