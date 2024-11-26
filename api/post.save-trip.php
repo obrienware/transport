@@ -54,21 +54,11 @@ if ($trip->ETA) {
   $iata = $location->IATA;
   $airport = new Airport();
   $airport->getAirportByIATA($iata);
-  $wp->add('Airport staging area', $airport->stagingLocationId, $trip->ETA);
+  $wp->add('Airport staging area', $airport->stagingLocationId, true);
 }
 
-$wp->add('Guest pick up', $trip->puLocationId);
-
-if ($trip->ETD) {
-  $location = new Location($trip->doLocationId);
-  $iata = $location->IATA;
-  $airport = new Airport();
-  $airport->getAirportByIATA($iata);
-  $targetDateTime = Date('Y-m-d H:i:s', strtotime($trip->ETD) - ($airport->leadTime * 60));
-  $wp->add('Guest/Group drop off', $trip->doLocationId, $targetDateTime);
-} else {
-  $wp->add('Guest/Group drop off', $trip->doLocationId);
-}
+$wp->add('Guest pick up', $trip->puLocationId, !($trip->ETA)); // Only make this the pick up location if we don't first have a staging location
+$wp->add('Guest/Group drop off', $trip->doLocationId);
 
 if ($trip->vehicleDOOptions == 'return to staging') {
   $wp->add('Vehicle drop off', $vehicle->stagingLocationId);
