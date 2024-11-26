@@ -11,6 +11,7 @@ WHERE
   AND start_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) -- using a 7 day window for upcoming trips
   AND started IS NULL -- no sense in showing this if the trip has already started
   AND completed IS NULL -- or finished.
+  AND archived IS NULL -- and not deleted
 ";
 ?>
 <?php if ($rs = $db->get_results($sql)): ?>
