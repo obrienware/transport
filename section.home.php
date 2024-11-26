@@ -28,6 +28,7 @@ $user = new User($_SESSION['user']->id);
         </div>
       </div>
       <div>
+        <button id="btn-refresh-calendar" class="btn btn-outline-primary"><i class="fa-solid fa-rotate"></i></button>
         <button id="btn-new-trip" class="btn btn-outline-primary">New Trip</button>
       </div>
     </div>
@@ -137,6 +138,10 @@ $user = new User($_SESSION['user']->id);
           }
         }
       }
+    });
+
+    $('#btn-refresh-calendar').on('click', e => {
+      ec.refetchEvents();
     });
 
   });
