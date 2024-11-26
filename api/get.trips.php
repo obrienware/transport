@@ -12,7 +12,7 @@ SELECT
   t.*, v.color, v.name as vehicle,
   CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_location,
   CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff_location,
-  CASE WHEN g.group_name IS NULL THEN CONCAT(g.first_name,' ',g.last_name) ELSE g.group_name END as guest,
+  CONCAT(g.first_name,' ',g.last_name) AS guest,
   CONCAT(d.first_name,' ',d.last_name) AS driver
 FROM trips t
 LEFT OUTER JOIN vehicles v ON v.id = t.vehicle_id

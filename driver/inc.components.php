@@ -9,7 +9,7 @@ function getTripHeader($tripId) {
  $sql = "
   SELECT 
     t.*,
-    CASE WHEN g.group_name IS NULL THEN CONCAT(g.first_name,' ',g.last_name) ELSE g.group_name END AS guest, g.phone_number,
+    CONCAT(g.first_name,' ',g.last_name) AS guest, g.phone_number,
     CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_from,
     CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff,
     v.name AS vehicle,

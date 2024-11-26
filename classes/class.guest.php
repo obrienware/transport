@@ -45,7 +45,7 @@ class Guest
 	static function getGuests()
 	{
 		global $db;
-		$sql = "SELECT * FROM guests WHERE archived IS NULL ORDER BY group_name, first_name, last_name";
+		$sql = "SELECT * FROM guests WHERE archived IS NULL ORDER BY first_name, last_name";
 		return $db->get_results($sql);
 	}
 

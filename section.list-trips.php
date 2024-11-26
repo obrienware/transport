@@ -9,7 +9,7 @@ $sql = "
   	a.name AS airline, a.flight_number_prefix,
   	CONCAT(d.first_name, ' ', SUBSTRING(d.last_name,1,1), '.') AS driver, d.phone_number,
   	v.name AS vehicle, v.description,
-  	CASE WHEN (g.group_name IS NULL) THEN CONCAT(g.first_name, ' ', g.last_name) ELSE g.group_name END AS guest,
+  	CONCAT(g.first_name, ' ', g.last_name) AS guest,
   	g.phone_number AS guest_contact_number,
     CASE WHEN (pu.short_name IS NOT NULL) THEN pu.short_name ELSE pu.name END AS pickup_location,
     CASE WHEN (do.short_name IS NOT NULL) THEN do.short_name ELSE do.name END AS dropoff_location
