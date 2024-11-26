@@ -17,6 +17,7 @@ class Trip
 	public $startDate;
 	public $pickupDate;
 	public $endDate;
+	public $guests;
 	public $guestId;
 	public $passengers;
 	public $puLocationId;
@@ -61,6 +62,7 @@ class Trip
 			$this->startDate = $item->start_date;
 			$this->pickupDate = $item->pickup_date;
 			$this->endDate = $item->end_date;
+			$this->guests = $item->guests;
 			$this->guestId = $item->guest_id;
 			$this->passengers = $item->passengers;
 			$this->puLocationId = $item->pu_location;
@@ -149,6 +151,7 @@ class Trip
 			'start_date' => $this->startDate,
 			'pickup_date' => $this->pickupDate,
 			'end_date' => $this->endDate,
+			'guests' => $this->guests,
 			'guest_id' => $this->guestId,
 			'passengers' => $this->passengers,
 			'pu_location' => $this->puLocationId,
@@ -175,6 +178,7 @@ class Trip
 					start_date = :start_date,
 					pickup_date = :pickup_date,
 					end_date = :end_date,
+					guests = :guests,
 					guest_id = :guest_id,
 					passengers = :passengers,
 					pu_location = :pu_location,
@@ -201,6 +205,7 @@ class Trip
 					start_date = :start_date,
 					pickup_date = :pickup_date,
 					end_date = :end_date,
+					guests = :guests,
 					guest_id = :guest_id,
 					passengers = :passengers,
 					pu_location = :pu_location,

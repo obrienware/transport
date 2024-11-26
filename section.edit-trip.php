@@ -103,15 +103,24 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               <div class="invalid-feedback">Please make a valid selection</div>
           </div>
         </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="mb-3">
+            <label for="trip-guests" class="form-label">Guest(s) / Group</label>
+            <input type="text" class="form-control" id="trip-guests" placeholder="" value="<?=$trip->guests?>">
+          </div>
+        </div>
         
         <div class="col-3">
           <div class="mb-3">
-            <label for="trip-guest" class="form-label">Guest / Group</label>
+            <label for="trip-guest" class="form-label">Contact Person</label>
             <input 
               type="text" 
               class="form-control" 
               id="trip-guest" 
-              placeholder="Guest" 
+              placeholder="Contact" 
               value="<?=$trip->guestId ? $trip->guest->getName() : ''?>" 
               data-value="<?=$trip->guestId ? $trip->guest->getName() : ''?>" 
               data-id="<?=$trip->guestId?>">
@@ -627,6 +636,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           return false
         }
         data.guestId = control.data('id');
+        data.guests = cleanVal('#trip-guests');
         data.passengers = cleanNumberVal('#trip-passengers');
 
         control = $('#trip-do-location');

@@ -11,6 +11,7 @@ $trip->summary = $json->summary ?: NULL;
 $trip->startDate = $json->startDate ?: NULL;
 $trip->pickupDate = $json->pickupDate ?: NULL;
 $trip->endDate = $json->endDate ?: NULL;
+$trip->guests = $json->guests ?: NULL;
 $trip->guestId = $json->guestId ?: NULL;
 $trip->passengers = $json->passengers ?: NULL;
 $trip->puLocationId = $json->puLocationId ?: NULL;
