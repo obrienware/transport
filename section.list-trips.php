@@ -40,7 +40,7 @@ $sql = "
         <th class="fit" data-dt-order="disable">Finalized</th>
         <th class="fit">When</th>
         <th data-dt-order="disable">Trip Summary</th>
-        <th>Guest(s)</th>
+        <th>Contact(s)</th>
         <th data-dt-order="disable">Pick Up</th>
         <th data-dt-order="disable">Drop Off</th>
         <th>Driver</th>
