@@ -6,40 +6,10 @@
   </div>
 
   <h2>Great! Trip Complete!</h2>
-  <p class="lead">Please complete this quick post trip questionnaire.</p>
+  
+  <h4>About the vehicle</h4>
 
-
-  <div class="mb-4">
-    How are the road conditions?
-    <div class="rating-container mt-1 text-center">
-      <input type="hidden" id="road-conditions" class="rating"  data-filled="fa-solid fa-star fa-lg" data-empty="fa-regular fa-star fa-lg">
-    </div>
-  </div>
-
-  <div class="mb-4">
-    How are the weather conditions?
-    <div class="rating-container mt-1 text-center">
-      <input type="hidden" id="weather-conditions" class="rating"  data-filled="fa-solid fa-star fa-lg" data-empty="fa-regular fa-star fa-lg">
-    </div>
-  </div>
-
-  <div class="mb-3">
-    Any issues with the guest/group?
-    <div>
-      <div class="btn-group" role="group" aria-label="">
-        <input type="radio" class="btn-check" name="trip-group-issues" id="btn-trip-guest-issue-yes" autocomplete="off">
-        <label class="btn btn-outline-primary" for="btn-trip-guest-issue-yes">yes</label>
-
-        <input type="radio" class="btn-check" name="trip-group-issues" id="btn-trip-guest-issue-no" autocomplete="off">
-        <label class="btn btn-outline-primary" for="btn-trip-guest-issue-no">no</label>
-      </div>
-    </div>
-  </div>
-  <div class="mb-3 d-none" id="guest-issues-section">
-    <label for="guest-issues" class="form-label">Please describe the issue(s)</label>
-    <textarea class="form-control" id="guest-issues" rows="2"></textarea>
-  </div>
-
+  <!-- About the vehicle -->
   <div class="mb-3">
     Any issues with the vehicle?
     <div>
@@ -73,7 +43,6 @@
     </div>
   </section>
 
-
   <div class="mb-3">
     <label for="mileage" class="form-label">Current vehicle mileage</label>
     <input type="number" class="form-control" id="mileage" placeholder="">
@@ -81,7 +50,7 @@
 
   <div class="mb-3">
     <label for="fuel-level" class="form-label">How much fuel in the vehicle?</label>
-    <input type="range" class="form-range" min="0" max="100" step="12.5" id="fuel-level" value="0">
+    <input type="range" class="form-range" min="0" max="100" step="10" id="fuel-level" value="0">
   </div>
 
   <div class="mb-3">
@@ -123,6 +92,55 @@
     </div>
   </div>
 
+  <!-- Current location of the vehicle -->
+  <div class="mb-3">
+    <label for="vehicle-location" class="form-label">Vehicle Location (if deviation from the plan)</label>
+    <input 
+      type="text" 
+      class="form-control" 
+      id="vehicle-location" 
+      placeholder="Current Location">
+  </div>
+
+
+  <h4 class="mt-5">About the trip</h4>
+  <!-- About the trip -->
+
+
+  <div class="mb-4">
+    How are the road conditions?
+    <div class="rating-container mt-1 text-center">
+      <input type="hidden" id="road-conditions" class="rating"  data-filled="fa-solid fa-star fa-lg" data-empty="fa-regular fa-star fa-lg">
+    </div>
+  </div>
+
+  <div class="mb-4">
+    How are the weather conditions?
+    <div class="rating-container mt-1 text-center">
+      <input type="hidden" id="weather-conditions" class="rating"  data-filled="fa-solid fa-star fa-lg" data-empty="fa-regular fa-star fa-lg">
+    </div>
+  </div>
+
+  <div class="mb-3">
+    Any issues with the guest/group?
+    <div>
+      <div class="btn-group" role="group" aria-label="">
+        <input type="radio" class="btn-check" name="trip-group-issues" id="btn-trip-guest-issue-yes" autocomplete="off">
+        <label class="btn btn-outline-primary" for="btn-trip-guest-issue-yes">yes</label>
+
+        <input type="radio" class="btn-check" name="trip-group-issues" id="btn-trip-guest-issue-no" autocomplete="off">
+        <label class="btn btn-outline-primary" for="btn-trip-guest-issue-no">no</label>
+      </div>
+    </div>
+  </div>
+  <div class="mb-3 d-none" id="guest-issues-section">
+    <label for="guest-issues" class="form-label">Please describe the issue(s)</label>
+    <textarea class="form-control" id="guest-issues" rows="2"></textarea>
+  </div>
+
+
+
+
   <div class="mb-4">
     How would you rate the trip overall
     <div class="rating-container mt-1 text-center">
@@ -153,6 +171,21 @@
 
     const tripId = <?=$_REQUEST['tripId'] ?: 'null'?>;
 
+    new Autocomplete(document.getElementById('vehicle-location'), {
+      fullWidth: true,
+      liveServer: true,
+      server: '/api/get.autocomplete-locations.php',
+      searchFields: ['label', 'short_name'],
+      onSelectItem: (data) => {
+        $('#vehicle-location')
+          .data('id', data.value)
+          .data('type', data.type)
+          .data('value', data.label)
+          .removeClass('is-invalid');
+      }
+    });
+
+
     $('input:hidden').rating();
     $('#vehicle-issues-section').addClass('d-none'); // We're doing it like this because the rating system seems to do wierd things with this if it's hidden from the outset
 
@@ -176,7 +209,7 @@
       const resp = await post('api/post.trip-survey.php', data);
       if (app.loadInitialPage) app.loadInitialPage();
       console.log(resp);
-    })
+    });
 
     function getData () {
       const data = {
@@ -203,6 +236,7 @@
 
       if ($('#btn-trip-vehicle-check-engine-yes').is(':checked')) data.checkEngine = true;
       data.comments = $('#vehicle-comments').val();
+      data.locationId = $('#vehicle-location').data('id');
 
       console.log('data:', data);
       return data;
