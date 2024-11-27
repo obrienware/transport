@@ -450,7 +450,7 @@
 
     new Autocomplete(document.getElementById('trip-pu-location'), {
       fullWidth: true,
-      highlightTyped: true,
+      // highlightTyped: true,
       liveServer: true,
       server: '/api/get.autocomplete-locations.php',
       searchFields: ['label', 'short_name'],
@@ -466,7 +466,7 @@
 
     new Autocomplete(document.getElementById('trip-guest'), {
       fullWidth: true,
-      highlightTyped: true,
+      // highlightTyped: true,
       liveServer: true,
       server: '/api/get.autocomplete-guests.php',
       onSelectItem: (data) => {
@@ -479,7 +479,7 @@
 
     new Autocomplete(document.getElementById('trip-do-location'), {
       fullWidth: true,
-      highlightTyped: true,
+      // highlightTyped: true,
       liveServer: true,
       server: '/api/get.autocomplete-locations.php',
       searchFields: ['label', 'short_name'],
@@ -505,7 +505,7 @@
 
     new Autocomplete(document.getElementById('trip-requestor'), {
       fullWidth: true,
-      highlightTyped: true,
+      // highlightTyped: true,
       liveServer: true,
       server: '/api/get.autocomplete-requestors.php',
       onSelectItem: (data) => {

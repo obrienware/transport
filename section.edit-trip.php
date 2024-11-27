@@ -308,7 +308,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               placeholder="Requestor" 
               value="<?=$trip->requestorId ? $trip->requestor->getName() : ''?>" 
               data-value="<?=$trip->requestorId ? $trip->requestor->getName() : ''?>" 
-              data-id="<?=$trip->requestorId?>">
+              data-id="<?=$trip->requestorId?>"/>
             <div class="invalid-feedback">Please make a valid selection</div>
           </div>
         </div>
@@ -467,7 +467,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
       new Autocomplete(document.getElementById('trip-pu-location'), {
         fullWidth: true,
-        highlightTyped: true,
+        // highlightTyped: true,
         liveServer: true,
         server: '/api/get.autocomplete-locations.php',
         searchFields: ['label', 'short_name'],
@@ -483,7 +483,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
       new Autocomplete(document.getElementById('trip-guest'), {
         fullWidth: true,
-        highlightTyped: true,
+        // highlightTyped: true,
         liveServer: true,
         server: '/api/get.autocomplete-guests.php',
         onSelectItem: (data) => {
@@ -496,7 +496,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
       new Autocomplete(document.getElementById('trip-do-location'), {
         fullWidth: true,
-        highlightTyped: true,
+        // highlightTyped: true,
         liveServer: true,
         server: '/api/get.autocomplete-locations.php',
         searchFields: ['label', 'short_name'],
@@ -523,7 +523,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
       new Autocomplete(document.getElementById('trip-requestor'), {
         fullWidth: true,
-        highlightTyped: true,
+        // highlightTyped: true,
         liveServer: true,
         server: '/api/get.autocomplete-requestors.php',
         onSelectItem: (data) => {
