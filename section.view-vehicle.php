@@ -1,6 +1,7 @@
 <?php
-$vehicleId = $_REQUEST['id'];
+require_once 'class.snag.php';
 require_once 'class.vehicle.php';
+$vehicleId = $_REQUEST['id'];
 $vehicle = new Vehicle($vehicleId);
 ?>
 <div class="container">
@@ -103,109 +104,79 @@ $vehicle = new Vehicle($vehicleId);
       <td><?=$vehicle->requireCDL ? 'Yes' : 'No' ?></td>
     </tr>
     <tr>
-      <th class="fit px-2">Mileage</th>
-      <td><?=$vehicle->mileage ? number_format($vehicle->mileage) : 'unknown'?></td>
-    </tr>
-    <tr>
-      <th class="fit px-2">Check Engine Light On</th>
-      <td><?=$vehicle->hasCheckEngine ? '<div class="badge bg-danger fs-6">YES</div>' : 'No' ?></td>
-    </tr>
-    <tr>
       <th class="fit px-2">Staging Location</th>
       <td><?=$vehicle->stagingLocation?></td>
     </tr>
   </table>
 
-  <!-- LOCATION DATA -->
-  <?php
-    $sql = "
-      SELECT 
-        vl.*,
-        CASE WHEN l.short_name IS NULL THEN l.name ELSE l.short_name END AS location
-      FROM vehicle_locations vl
-      LEFT OUTER JOIN locations l ON l.id = vl.location_id
-      WHERE 
-        vl.vehicle_id = :vehicle_id 
-      ORDER BY vl.datetimestamp DESC LIMIT 1
-    ";
-    $data = [
-      'vehicle_id' => $vehicleId
-    ];
-  ?>
-  <?php if ($item = $db->get_row($sql, $data)): ?>
-    <div class="card mb-3" style="width:fit-content">
-      <div class="card-header d-flex justify-content-between">
-        <h5 class="mb-0">As at <?=Date('D n/j', strtotime($item->datetimestamp))?></h5>
-      </div>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between">
-          <strong>Location:</strong>
-          <div class="ms-2"><?=$item->location ?: '<i class="text-muted">Unverified</i>'?></div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <strong>Fuel:</strong>
-          <div class="ms-2">
-            <?=$item->fuel_level?>%
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <strong>Interior Clean:</strong>
-          <div class="ms-2">
-            <?php if ($item->clean_interior === 1): ?>
-              <i class="bi bi-check-square text-success"></i>
-            <?php elseif ($item->clean_interior === 0): ?>
-              <div class="badge bg-danger fs-6">No</div>
-            <?php else: ?>
-            <?php endif; ?>
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <strong>Exterior Clean:</strong>
-          <div class="ms-2">
-            <?php if ($item->clean_exterior === 1): ?>
-              <i class="bi bi-check-square text-success"></i>
-            <?php elseif ($item->clean_exterior === 0): ?>
-              <div class="badge bg-danger fs-6">No</div>
-            <?php else: ?>
-            <?php endif; ?>
-          </div>
-        </li>
-        <li class="list-group-item d-flex justify-content-between">
-          <strong>Needs restocking:</strong>
-          <div class="ms-2">
-            <?php if ($item->needs_restocking === 1): ?>
-              <div class="badge bg-danger fs-6">Yes</div>
-            <?php elseif ($item->needs_restocking === 0): ?>
-              No
-            <?php else: ?>
-            <?php endif; ?>
-          </div>
-        </li>
-      </ul>
-      <?php if ($item->concerns): ?>
-        <div class="card-body">
-          <div><small class="fw-bold">Concerns:</small></div>
-          <p><?=nl2br($item->concerns)?></p>
-        </div>
-      <?php endif;?>
-      <div class="card-footer text-center">
-        <button id="btn-update-vehicle-status" class="btn btn-outline-primary btn-sm">Update</button>
-      </div>
-      
-    </div>
-  <?php endif;?>
+  <table class="table table-bordered table-sm">
+    <caption class="caption-top">As at <?=$vehicle->lastUpdate?></caption>
+    <tr>
+      <th class="fit px-2">Mileage</th>
+      <td><?=$vehicle->mileage ? number_format($vehicle->mileage) : 'unknown'?></td>
+      <th class="fit px-2">Check Engine Light On</th>
+      <td><?=$vehicle->hasCheckEngine ? '<div class="badge bg-danger fs-6">YES</div>' : 'No' ?></td>
+    </tr>
+    <tr>
+      <th class="fit px-2">Location</th>
+      <td><?=$vehicle->currentLocation ?: 'Unverified'?></td>
+      <th class="fit px-2">Needs cleaning</th>
+      <td>
+        <?php if ($vehicle->cleanExterior): ?>
+          <div class="badge bg-danger">Exterior</div>
+        <?php endif; ?>
+        <?php if ($vehicle->cleanInterior): ?>
+          <div class="badge bg-danger">Interior</div>
+        <?php endif; ?>
+      </td>
+    </tr>
+    <tr>
+      <th class="fit px-2">Fuel Level</th>
+      <td>
+        <?php if ($vehicle->fuelLevel <= 25): ?>
+          <span class="badge bg-danger fs-6"><?=$vehicle->fuelLevel?>%</span>
+        <?php else:?>
+          <?=$vehicle->fuelLevel?>%
+        <?php endif; ?>
+      </td>
+      <th class="fit px-2">Needs restocking</th>
+      <td>
+        <?php if ($vehicle->restock === 1): ?>
+          <div class="badge bg-danger fs-6">YES</div>
+        <?php else: ?>
+          -
+        <?php endif; ?>
+      </td>
+    </tr>
+  </table>
+
+  <div class="card-footer text-center mb-5">
+    <button id="btn-update-vehicle-status" class="btn btn-outline-primary btn-sm">Update</button>
+  </div>
 
   
   <!-- SNAGLIST -->
-  <?php
-  $sql = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY datetimestamp";
-  $data = ['vehicle_id' => $vehicleId];
-  ?>
   <div class="card mb-3">
     <div class="card-header text-center">
       <h5 class="mb-0">Snag List</h5>
     </div>
-    <?php if ($rs = $db->get_results($sql, $data)): ?>
+    <?php if ($rs = Snag::getSnags($vehicleId)): ?>
+      <table class="table table-sm mb-0">
+        <thead>
+          <tr>
+            <th class="fit">Date</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($rs as $item): ?>
+            <tr>
+              <td class="datetime short"><?=$item->datetimestamp?></td>
+              <td><?=$item->description?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     <?php else: ?>
       <div class="card-body text-center">
         There are no snags logged yet for this vehicle
@@ -266,6 +237,8 @@ $vehicle = new Vehicle($vehicleId);
         $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
       }
     });
+
+    reFormat();
 
   });
 </script>

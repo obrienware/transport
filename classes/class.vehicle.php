@@ -8,6 +8,7 @@ if (!isset($db)) {
 class Vehicle
 {
 	private $vehicleId;
+
 	public $color;
 	public $name;
 	public $description;
@@ -17,6 +18,15 @@ class Vehicle
 	public $mileage;
 	public $stagingLocationId;
 	public $stagingLocation;
+
+	public $lastUpdate;
+	public $lastUpdatedBy;
+	public $locationId;
+	public $currentLocation;
+	public $fuelLevel;
+	public $cleanInterior;
+	public $cleanExterior;
+	public $restock;
 
 	public function __construct($vehicleId)
 	{
@@ -29,8 +39,10 @@ class Vehicle
 	{
 		global $db;
 		$sql = '
-			SELECT v.*, l.name AS location FROM vehicles v
+			SELECT v.*, l.name AS location, b.name AS current_location
+			FROM vehicles v
 			LEFT OUTER JOIN locations l ON l.id = v.default_staging_location_id
+			LEFT OUTER JOIN locations b ON b.id = v.location_id
 			WHERE v.id = :vehicle_id
 		';
 		$data = ['vehicle_id' => $vehicleId];
@@ -45,6 +57,15 @@ class Vehicle
 			$this->mileage = $item->mileage;
 			$this->stagingLocationId = $item->default_staging_location_id;
 			$this->stagingLocation = $item->location;
+
+			$this->lastUpdate = $item->last_update;
+			$this->lastUpdatedBy = $item->last_updated_by;
+			$this->locationId = $item->location_id;
+			$this->currentLocation = $item->current_location;
+			$this->fuelLevel = $item->fuel_level;
+			$this->cleanInterior = $item->clean_interior;
+			$this->cleanExterior = $item->clean_exterior;
+			$this->restock = $item->restock;
 			return true;
 		}
 		return false;
@@ -75,7 +96,16 @@ class Vehicle
 			'passengers' => $this->passengers,
 			'require_cdl' => $this->requireCDL,
 			'mileage' => $this->mileage,
-			'check_engine' => $this->hasCheckEngine
+			'check_engine' => $this->hasCheckEngine,
+
+			'default_staging_location_id' => $this->stagingLocationId,
+			'last_update' => $this->lastUpdate,
+			'last_updated_by' => $this->lastUpdatedBy,
+			'location_id' => $this->locationId,
+			'fuel_level' => $this->fuelLevel,
+			'clean_interior' => $this->cleanInterior,
+			'clean_exterior' => $this->cleanExterior,
+			'restock' => $this->restock
 		];
 		if ($this->vehicleId) {
 			$sql = "
@@ -86,7 +116,16 @@ class Vehicle
 					passengers = :passengers,
 					require_cdl = :require_cdl,
 					mileage = :mileage,
-					check_engine = :check_engine
+					check_engine = :check_engine,
+
+					default_staging_location_id = :default_staging_location_id,
+					last_update = :last_update,
+					last_updated_by = :last_updated_by,
+					location_id = :location_id,
+					fuel_level = :fuel_level,
+					clean_interior = :clean_interior,
+					clean_exterior = :clean_exterior,
+					restock = :restock
 				WHERE id = :vehicle_id
 			";
 			$data['vehicle_id'] = $this->vehicleId;
@@ -99,7 +138,16 @@ class Vehicle
 					passengers = :passengers,
 					require_cdl = :require_cdl,
 					mileage = :mileage,
-					check_engine = :check_engine
+					check_engine = :check_engine,
+
+					default_staging_location_id = :default_staging_location_id,
+					last_update = :last_update,
+					last_updated_by = :last_updated_by,
+					location_id = :location_id,
+					fuel_level = :fuel_level,
+					clean_interior = :clean_interior,
+					clean_exterior = :clean_exterior,
+					restock = :restock
 			";
 		}
 		$result = $db->query($sql, $data);

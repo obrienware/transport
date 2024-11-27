@@ -1,51 +1,24 @@
 <?php
 require_once 'class.data.php';
 if (!$db) $db = new data();
-
 $sql = "
-  -- This really cool MySQL 8 feature allows us to get the most recent record for each vehicle
-  WITH recent_locations AS (
-    SELECT vl.*, ROW_NUMBER() OVER (PARTITION BY vehicle_id ORDER BY datetimestamp DESC) AS most_recent
-    FROM vehicle_locations AS vl
-  )
-
-  SELECT 
-    v.id, v.color, v.name, 
-    l.driver_id, l.location_id, l.fuel_level, l.mileage, l.clean_exterior, l.clean_interior, l.needs_restocking, l.datetimestamp, l.concerns,
-    CASE WHEN lo.short_name IS NULL THEN lo.name ELSE lo.short_name END AS location
+  SELECT v.*, l.name AS location
   FROM vehicles v
-  LEFT OUTER JOIN (
-    SELECT * FROM recent_locations r WHERE r.most_recent = 1
-  ) l ON l.vehicle_id = v.id
-  LEFT OUTER JOIN locations lo ON lo.id = l.location_id
-  WHERE
-    v.archived IS NULL
+  LEFT OUTER JOIN locations l ON l.id = v.location_id
+  WHERE 
+    v.archived IS NULL 
+    AND (
+      v.check_engine = 1
+      OR (v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL)
+      OR v.fuel_level <= 25
+      OR v.clean_interior = 1
+      OR v.clean_exterior = 1
+      OR v.restock = 1
+    )
+  ORDER BY v.name
 ";
-
-$list = [];
-if ($rs = $db->get_results($sql)) {
-  foreach ($rs as $item) {
-    // We're only interested in conditions that need our attention
-    if ($item->fuel_level && $item->fuel_level <= 20) {
-      $list[] = $item;
-      continue;
-    }
-    if ($item->clean_exterior === 0) {
-      $list[] = $item;
-      continue;
-    }
-    if ($item->clean_interior === 0) {
-      $list[] = $item;
-      continue;
-    }
-    if ($item->needs_restocking === 1) {
-      $list[] = $item;
-      continue;
-    }
-  }
-}
 ?>
-<?php if (count($list) > 0): ?>
+<?php if ($rs = $db->get_results($sql)): ?>
   <div class="card text-bg-warning mb-4">
     <h5 class="card-header overflow-hidden">
       Vehicles needing attention!
@@ -57,7 +30,6 @@ if ($rs = $db->get_results($sql)) {
           <th rowspan="2" class="text-center">Vehicle</th>
           <th rowspan="2" class="text-center">Location</th>
           <th colspan="4" class="text-center">Needs</th>
-          <th rowspan="2" class="text-center">Concerns</th>
         </tr>
         <tr class="table-primary">
           <th class="text-center">Fuel</th>
@@ -67,18 +39,23 @@ if ($rs = $db->get_results($sql)) {
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($list as $item): ?>
+        <?php foreach ($rs as $item): ?>
           <tr>
-            <td class="datetime short"><?=$item->datetimestamp?></td>
+            <td class="datetime short"><?=$item->last_update?></td>
             <td>
-              <button class="btn p-0" onclick="app.openTab('edit-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$item->id?>');"><?=$item->name?></button>
+              <button class="btn p-0" onclick="app.openTab('edit-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$item->id?>');">
+                <?php if ($item->check_engine): ?>
+                  <i class="fa-duotone fa-regular fa-engine-warning text-danger fa-xl"></i>
+                <?php endif;?>
+                <?=$item->name?>
+              </button>
             </td>
-            <td><?=$item->location?></td>
+            <td><?=$item->location ?: 'unverified'?></td>
             <td class="text-center">
               <?php if ($item->fuel_level == null): ?>
                 -
               <?php else: ?>
-                <?php if ($item->fuel_level <= 20): ?>
+                <?php if ($item->fuel_level <= 25): ?>
                   <span class="badge bg-danger fs-6"><?=$item->fuel_level?>%</span>
                 <?php else:?>
                   <?=$item->fuel_level?>%
@@ -86,33 +63,26 @@ if ($rs = $db->get_results($sql)) {
               <?php endif; ?>
             </td>
             <td class="text-center">
-              <?php if ($item->clean_exterior === 0): ?>
+              <?php if ($item->clean_exterior === 1): ?>
                 <div class="badge bg-danger fs-6">YES</div>
-              <?php elseif ($item->clean_exterior === 1): ?>
-                No
               <?php else: ?>
                 -
               <?php endif; ?>
             </td>
             <td class="text-center">
-              <?php if ($item->clean_interior === 0): ?>
+              <?php if ($item->clean_interior === 1): ?>
                 <div class="badge bg-danger fs-6">YES</div>
-              <?php elseif ($item->clean_interior === 1): ?>
-                No
               <?php else: ?>
                 -
               <?php endif; ?>
             </td>
             <td class="text-center">
-              <?php if ($item->needs_restocking === 1): ?>
+              <?php if ($item->restock === 1): ?>
                 <div class="badge bg-danger fs-6">YES</div>
-              <?php elseif ($item->needs_restocking === 0): ?>
-                No
               <?php else: ?>
                 -
               <?php endif; ?>
             </td>
-            <td><?=$item->concerns?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
