@@ -65,7 +65,6 @@ $user = new User($_SESSION['user']->id);
         },
       ],
       eventClick: data => {
-        console.log(data);
         const start = moment(data.event.start).format('ddd Do h:mma');
         const startDate = moment(data.event.start).format('ddd Do');
         
@@ -76,8 +75,15 @@ $user = new User($_SESSION['user']->id);
         if (data?.event?.extendedProps?.type == 'event') {
           app.openTab('edit-event', 'Event (edit)', `section.edit-event.php?id=${data.event.id}`);
         }
-
       },
+      loading: isLoading => {
+        // console.log('isLoading:', isLoading);
+      },
+      eventDidMount: info => {
+        const el = info.el;
+        const title = info.event.title;
+        $(el).attr('data-bs-title', title).tooltip();
+      }
     });
 
     $('#view-vehicles').on('click', () => {

@@ -433,7 +433,6 @@ $(async ƒ => {
 });
 
 function reFormat() {
-	console.log('reFormat called!');
 	$('[data-bs-toggle="tooltip"]').tooltip();
 
 	/**
