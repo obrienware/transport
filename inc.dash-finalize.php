@@ -26,7 +26,7 @@ WHERE
           <div>
             <button class="btn p-0" onclick="app.openTab('edit-trip', 'Trip (edit)', 'section.edit-trip.php?id=<?=$item->id?>');"><?=$item->summary?></button>
           </div>
-          <div class="ms-2 badge bg-primary datetime align-self-center"><?=$item->start_date?></div>
+          <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($item->start_date))?></div>
         </li>
       <?php endforeach; ?>
     </ul>
