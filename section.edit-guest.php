@@ -15,9 +15,9 @@ $item = new Guest($_REQUEST['id']);
 
   <div class="container mt-2">
     <?php if ($item->guestId): ?>
-      <h2>Edit Guest</h2>
+      <h2>Edit Contact</h2>
     <?php else: ?>
-      <h2>Add Guest</h2>
+      <h2>Add Contact</h2>
     <?php endif; ?>
     <div>
       <div class="row">

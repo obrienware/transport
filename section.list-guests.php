@@ -1,10 +1,10 @@
 <?php require_once 'class.guest.php'; ?>
 <div class="container">
   <div class="d-flex justify-content-between mt-3">
-    <h2>Guests</h2>
+    <h2>Contacts</h2>
     <button id="btn-add-guest" class="btn btn-outline-primary btn-sm my-auto px-3">
       <i class="fa-duotone fa-solid fa-user-plus"></i>
-      Add Guest
+      Add Contact
     </button>
   </div>
   <table id="table-guests" class="table table-striped table-hover row-select">
@@ -53,11 +53,11 @@
       const self = ƒ.currentTarget;
       const id = $(self).data('id');
       targetId = id;
-      app.openTab('edit-guest', 'Guest (edit)', `section.edit-guest.php?id=${id}`);
+      app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php?id=${id}`);
     });
 
     $('#btn-add-guest').off('click').on('click', ƒ => {
-      app.openTab('edit-guest', 'Guest (edit)', `section.edit-guest.php`);
+      app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php`);
     });
 
     $(document).off('guestChange.ns').on('guestChange.ns', reloadSection);
