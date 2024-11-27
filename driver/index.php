@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://kit.fontawesome.com/e8c53c75a8.js" crossorigin="anonymous"></script>
 
+  <script type="text/javascript" src="/js/autocomplete.js"></script>
+
   <!-- we're using this for our survey -->
   <script src="js/bootstrap-rating.min.js"></script>
 
