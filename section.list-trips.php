@@ -6,6 +6,7 @@ $sql = "
   SELECT 
   	t.id, t.driver_id, t. vehicle_id, t.airline_id,
   	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.finalized,
+    t.started, t.completed,
   	a.name AS airline, a.flight_number_prefix,
   	CONCAT(d.first_name, ' ', SUBSTRING(d.last_name,1,1), '.') AS driver, d.phone_number,
   	v.name AS vehicle, v.description,
@@ -50,21 +51,30 @@ $sql = "
     <tbody>
       <?php foreach ($rs as $item): ?>
         <?php 
-          $tdClass = (strtotime($item->end_date) <= strtotime('now')) ? 'table-secondary' : '';
-          if (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+          $tdClass = '';
+          if (strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
+            $tdClass = 'table-secondary';
+          } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
             $tdClass = 'table-success';
           }
         ?>
         <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
           <td class="text-center fit">
             <?php if ($item->finalized): ?>
-              <i class="fa-regular fa-square-check fa-lg"></i>
+              <i class="fa-regular fa-square-check fa-lg text-success"></i>
             <?php else: ?>
               <i class="fa-regular fa-square fa-lg"></i>
             <?php endif; ?>
           </td>
           <td class="fit datetime short"><?=$item->start_date?></td>
-          <td><?=$item->summary?></td>
+          <td>
+            <?php if ($item->completed) :?>
+              <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
+            <?php elseif ($item->started): ?>
+              <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
+            <?php endif;?>
+            <?=$item->summary?>
+          </td>
           <td><?=$item->guest?></td>
           <td class="text-nowrap">
             <div>
@@ -89,8 +99,8 @@ $sql = "
               <small><?=Date('g:ia', strtotime($item->etd))?></small>
             <?php endif;?>
           </td>
-          <td><?=$item->driver ?: '<i>Unassinged</i>'?></td>
-          <td><?=$item->vehicle ?: '<i>Unassinged</i>'?></td>
+          <td><?=$item->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+          <td><?=$item->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
         </tr>
       <?php endforeach; ?>
     </tbody>
