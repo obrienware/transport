@@ -85,6 +85,7 @@
 	<!-- And of course our own styling -->
 	<link rel="stylesheet" type="text/css" href="css/style.css?<?=filemtime('css/style.css')?>">
 
+	<link rel="icon" type="image/x-icon" href="/images/logo.svg">
 </head>
 
 <body>

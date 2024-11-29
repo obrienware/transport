@@ -6,78 +6,7 @@ $vehicle = new Vehicle($vehicleId);
 ?>
 <div class="container">
 
-<div class="modal" tabindex="-1" id="locationUpdateModal">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Update Vehicle</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        
-        <div class="container-fluid">
-
-          <div class="row">
-            <div class="col">
-              <div class="mb-3">
-                <label for="current-location" class="form-label">Location</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="current-location" 
-                  placeholder=""/>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <div class="mb-3">
-                <label for="current-mileage" class="form-label">Mileage</label>
-                <input type="number" class="form-control" id="current-mileage" placeholder="Mileage" value="<?=$vehicle->mileage?>">
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <div class="mb-2">
-                <label for="current-fuel-level" class="form-label">How much fuel in the vehicle?</label>
-                <input type="range" class="form-range" min="0" max="100" step="12.5" id="current-fuel-level" value="0">
-              </div>
-            </div>
-          </div>
-          
-
-          <div class="row">
-            <div class="col">
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="current-is-clean-interior">
-                <label class="form-check-label" for="current-is-clean-interior">Vehicle is clean inside</label>
-              </div>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="current-is-clean-exterior">
-                <label class="form-check-label" for="current-is-clean-exterior">Vehicle is clean outside</label>
-              </div>
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="current-needs-restocking">
-                <label class="form-check-label" for="current-needs-restocking">Needs restocking (refreshments)</label>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button id="btn-update-location" type="button" class="btn btn-primary">Update</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+<?php include 'inc.form-vehicle-update.php'; ?>
 
 
 
@@ -195,48 +124,34 @@ $vehicle = new Vehicle($vehicleId);
   $(async ƒ => {
 
     const vehicleId = <?=$vehicleId?>;
-    const options = {
-      backdrop: 'static'
-    }
-    const modal = new bootstrap.Modal('#locationUpdateModal', options);
+    const vehicleUpdateForm = new VehicleUpdateClass('#vehicleUpdateModal');
 
-    new Autocomplete(document.getElementById('current-location'), {
-      fullWidth: true,
-      highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-locations.php',
-      searchFields: ['label', 'short_name'],
-      onSelectItem: (data) => {
-        $('#current-location')
-          .data('id', data.value)
-          .data('type', data.type)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      }
-    });
-
-    
+    vehicleUpdateForm.onUpdate = async function (e, formData) {
+      formData.vehicleId = vehicleId;
+      const resp = await post('/api/post.update-vehicle.php', formData);
+      if (resp?.result) $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    }    
 
     $('#btn-update-vehicle-status').off('click').on('click', e => {
-      modal.show();
+      vehicleUpdateForm.show();
     });
 
-    $('#btn-update-location').off('click').on('click', async e => {
-      const resp = await post('/api/post.update-vehicle-location.php', {
-        vehicleId,
-        locationId: $('#current-location').data('id'),
-        fuelLevel: $('#current-fuel-level').val(),
-        mileage: cleanNumberVal('#current-mileage'),
-        cleanExterior: $('#current-is-clean-exterior').is(':checked'),
-        cleanInterior: $('#current-is-clean-interior').is(':checked'),
-        needsRestocking: $('#current-needs-restocking').is(':checked')
-      });
-      console.log(resp);
-      if (resp?.result) {
-        modal.hide();
-        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-      }
-    });
+    // $('#btn-update-location').off('click').on('click', async e => {
+    //   const resp = await post('/api/post.update-vehicle-location.php', {
+    //     vehicleId,
+    //     locationId: $('#current-location').data('id'),
+    //     fuelLevel: $('#current-fuel-level').val(),
+    //     mileage: cleanNumberVal('#current-mileage'),
+    //     cleanExterior: $('#current-is-clean-exterior').is(':checked'),
+    //     cleanInterior: $('#current-is-clean-interior').is(':checked'),
+    //     needsRestocking: $('#current-needs-restocking').is(':checked')
+    //   });
+    //   console.log(resp);
+    //   if (resp?.result) {
+    //     modal.hide();
+    //     $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    //   }
+    // });
 
     reFormat();
 
