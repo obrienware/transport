@@ -98,8 +98,8 @@ class Blockout
 	static function deleteBlockout($blockoutId)
 	{
 		global $db;
-		$sql = 'DELETE user_blockouts WHERE id = :blockout_id';
-		$data = ['blockout' => $blockoutId];
+		$sql = 'DELETE FROM user_blockouts WHERE id = :blockout_id';
+		$data = ['blockout_id' => $blockoutId];
 		return $db->query($sql, $data);
 	}
 
