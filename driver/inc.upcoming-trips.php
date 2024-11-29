@@ -47,7 +47,10 @@ $trips = $db->get_results($sql, $data);
           </div>
           <div class="d-flex">
             <span class="bg-primary badge align-self-baseline me-2"><i class="fa fa-arrow-up"></i> PU</span>
-            <?=$trip->guest?> - <?=$trip->pickup_from?> @<?=Date('g:ia', strtotime($trip->pickup_date))?>
+            <div>
+              <div><?=$trip->guests?></div>
+              <div><?=$trip->pickup_from?> @<?=Date('g:ia', strtotime($trip->pickup_date))?></div>
+            </div>
           </div>
           <div class="d-flex">
             <span class="bg-primary badge align-self-baseline me-2"><i class="fa fa-arrow-down"></i> DO</span>

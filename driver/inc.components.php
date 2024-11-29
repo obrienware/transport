@@ -36,23 +36,28 @@ function getTripHeader($tripId) {
       </div>
       <ul class="list-group list-group-flush">
 
+        <!--
         <li class="list-group-item d-flex justify-content-between align-items-start">
           <div class="me-auto">
             <div class="fw-bold"><?=$trip->summary?></div>
           </div>
         </li>
+        -->
 
         <li class="list-group-item d-flex justify-content-between align-items-center ps-2">
           <i class="fa-solid fa-arrow-up me-2"></i>
           <div class="flex-fill">
             <div class="d-flex justify-content-between align-items-center">
-              <div class="fw-bold"><?=$trip->guest?></div>
-              <small><a class="btn btn-sm btn-primary py-0" href="tel:<?=$trip->phone_number?>"><?=$trip->phone_number?></a></small>
-            </div>
+              <div class="fw-bolder"><?=$trip->guests?></div>
+            </div>            
             <div class="d-flex justify-content-between align-items-center">
               <div><?=$trip->pickup_from?></div>
               <small><?=Date('g:ia', strtotime($trip->pickup_date))?></small>
             </div>            
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="fw-lighter"><?=$trip->guest?></div>
+              <small><a class="btn btn-sm btn-primary py-0" href="tel:<?=$trip->phone_number?>"><?=$trip->phone_number?></a></small>
+            </div>
           </div>
         </li>
 
@@ -69,10 +74,13 @@ function getTripHeader($tripId) {
 
         <?php if ($trip->flight_number): ?>
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div class="me-2">
+            <div class="me-4">
               <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
             </div>
-            <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
+            <div>
+              <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
+              <div class="badge bg-dark-subtle">Scheduled</div>
+            </div>
           </li>
         <?php endif; ?>
 
