@@ -129,29 +129,15 @@ $vehicle = new Vehicle($vehicleId);
     vehicleUpdateForm.onUpdate = async function (e, formData) {
       formData.vehicleId = vehicleId;
       const resp = await post('/api/post.update-vehicle.php', formData);
-      if (resp?.result) $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+      if (resp?.result) {
+        $(document).trigger('vehicleChange');
+        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+      }
     }    
 
     $('#btn-update-vehicle-status').off('click').on('click', e => {
       vehicleUpdateForm.show();
     });
-
-    // $('#btn-update-location').off('click').on('click', async e => {
-    //   const resp = await post('/api/post.update-vehicle-location.php', {
-    //     vehicleId,
-    //     locationId: $('#current-location').data('id'),
-    //     fuelLevel: $('#current-fuel-level').val(),
-    //     mileage: cleanNumberVal('#current-mileage'),
-    //     cleanExterior: $('#current-is-clean-exterior').is(':checked'),
-    //     cleanInterior: $('#current-is-clean-interior').is(':checked'),
-    //     needsRestocking: $('#current-needs-restocking').is(':checked')
-    //   });
-    //   console.log(resp);
-    //   if (resp?.result) {
-    //     modal.hide();
-    //     $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-    //   }
-    // });
 
     reFormat();
 
