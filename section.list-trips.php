@@ -38,11 +38,11 @@ $sql = "
   <table id="table-trips" class="table align-middle table-hover row-select">
     <thead>
       <tr>
-        <th class="fit" data-dt-order="disable">Finalized</th>
+        <th class="fit">Finalized</th>
         <th class="fit">When</th>
         <th data-dt-order="disable">Trip Summary</th>
-        <th>Contact(s)</th>
-        <th data-dt-order="disable">Pick Up</th>
+        <th data-dt-order="disable">Contact(s)</th>
+        <th>Pick Up</th>
         <th data-dt-order="disable">Drop Off</th>
         <th>Driver</th>
         <th>Vehicle</th>
@@ -59,14 +59,14 @@ $sql = "
           }
         ?>
         <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-          <td class="text-center fit">
+          <td class="text-center fit" data-order="<?=$item->finalized?>">
             <?php if ($item->finalized): ?>
               <i class="fa-regular fa-square-check fa-lg text-success"></i>
             <?php else: ?>
               <i class="fa-regular fa-square fa-lg"></i>
             <?php endif; ?>
           </td>
-          <td class="fit datetime short"><?=$item->start_date?></td>
+          <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
           <td>
             <?php if ($item->completed) :?>
               <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
@@ -76,7 +76,7 @@ $sql = "
             <?=$item->summary?>
           </td>
           <td><?=$item->guest?></td>
-          <td class="text-nowrap">
+          <td class="text-nowrap" data-order="<?=$item->start_date?>">
             <div>
               <span class="time"><?=($item->start_date) ? Date('g:ia', strtotime($item->start_date)) : ''?></span>: 
               <?=$item->pickup_location?>
