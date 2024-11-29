@@ -52,10 +52,22 @@ class Snag
     return $this->snagId;
   }
 
-  public static function getSnags(int $vehicleId) {
+  public static function getSnags($vehicleId = null) {
     global $db;
-    $sql = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY datetimestamp";
-    $data = ['vehicle_id' => $vehicleId];
+    $data = [];
+    if ($vehicleId) {
+      $sql = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY datetimestamp";
+      $data = ['vehicle_id' => $vehicleId];
+    } else {
+      $sql = "
+        SELECT s.*, v.name AS vehicle
+        FROM snags s
+        LEFT OUTER JOIN vehicles v ON v.id = s.vehicle_id
+        WHERE 
+          s.archived IS NULL 
+        ORDER BY v.name, s.datetimestamp
+      ";
+    }
     return $db->get_results($sql, $data);
   }
 

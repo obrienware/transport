@@ -36,7 +36,7 @@ if ($json->vehicleIssue) {
   $snag = new Snag();
   $snag->vehicleId = $trip->vehicleId;
   $snag->dateTimeStamp = Date('Y-m-d H:i:s'); // Basically now...
-  $snag->createdBy = $_SESSION['user']->id;
+  $snag->createdBy = $_SESSION['user']->username;
   $snag->description = $json->vehicleIssue;
   $snag->save();
 }

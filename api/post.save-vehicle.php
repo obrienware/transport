@@ -7,9 +7,9 @@ $vehicle->color = $json->color;
 $vehicle->name = $json->name;
 $vehicle->description = $json->description;
 $vehicle->passengers = $json->passengers;
-$vehicle->mileage = $json->mileage;
+// $vehicle->mileage = $json->mileage;
 $vehicle->requireCDL = $json->requireCDL ? 1 : 0;
-$vehicle->hasCheckEngine = $json->hasCheckEngine ? 1 : 0;
+// $vehicle->hasCheckEngine = $json->hasCheckEngine ? 1 : 0;
 $result = $vehicle->save();
 
 echo json_encode(['result' => $result]);

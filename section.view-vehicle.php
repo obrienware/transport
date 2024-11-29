@@ -4,7 +4,7 @@ require_once 'class.vehicle.php';
 $vehicleId = $_REQUEST['id'];
 $vehicle = new Vehicle($vehicleId);
 ?>
-<div class="container">
+<div class="container-fluid">
 
 <?php include 'inc.form-vehicle-update.php'; ?>
 
@@ -39,7 +39,7 @@ $vehicle = new Vehicle($vehicleId);
   </table>
 
   <table class="table table-bordered table-sm">
-    <caption class="caption-top">As at <?=$vehicle->lastUpdate?></caption>
+    <caption class="caption-top">As at <?=$vehicle->lastUpdate ? Date('m/d h:ia', strtotime($vehicle->lastUpdate)) : ''?></caption>
     <tr>
       <th class="fit px-2">Mileage</th>
       <td><?=$vehicle->mileage ? number_format($vehicle->mileage) : 'unknown'?></td>
@@ -90,18 +90,38 @@ $vehicle = new Vehicle($vehicleId);
       <h5 class="mb-0">Snag List</h5>
     </div>
     <?php if ($rs = Snag::getSnags($vehicleId)): ?>
-      <table class="table table-sm mb-0">
+      <table class="table table-bordered table-sm mb-0">
         <thead>
           <tr>
             <th class="fit">Date</th>
             <th>Description</th>
+            <th>Acknowledged</th>
+            <th>Resolution</th>
+            <th>Comments</th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($rs as $item): ?>
             <tr>
-              <td class="datetime short"><?=$item->datetimestamp?></td>
-              <td><?=$item->description?></td>
+              <td class="datetime short" style="font-size:small"><?=$item->datetimestamp?></td>
+              <td>
+                <div><?=$item->description?></div>
+                <div><div class="badge bg-dark-subtle"><?=$item->created_by?></div></div>
+              </td>
+              <td>
+                <?php if ($item->acknowledged): ?>
+                  <div><div class="badge bg-dark-subtle"><?=$item->acknowledged_by?></div></div>
+                <?php endif; ?>
+              </td>
+              <td>
+                <?php if ($item->resolved): ?>
+                  <div><?=$item->resolution?></div>
+                  <div><div class="badge bg-dark-subtle"><?=$item->resolved_by?></div></div>
+                <?php endif; ?>
+              </td>
+              <td>
+                <div><?=$item->comments?></div>
+              </td>
             </tr>
           <?php endforeach; ?>
         </tbody>
