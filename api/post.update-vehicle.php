@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-date_default_timezone_set('America/Denver');
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 

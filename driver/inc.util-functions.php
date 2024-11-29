@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('America/Denver');
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
 function showDate($date) {
   $baseline = Date('Y-m-d', strtotime($date));
