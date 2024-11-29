@@ -117,7 +117,6 @@
         $(`${this.modalId}.modal input[type="checkbox"]`).prop('indeterminate', true).prop('checked', false);
         $(`${this.modalId}.modal input`).val('');
         $(`${this.modalId}.modal input[type="range"]`).val('0');
-        console.log('Form reset');
       }
       
       getValues () {

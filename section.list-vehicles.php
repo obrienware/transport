@@ -25,7 +25,7 @@
           <tr data-id="<?=$item->id?>" class="<?=$rowClass?>">
             <?php if ($item->color): ?>
               <td class="fit">
-                <i class="bi bi-circle-fill" style="color:<?=$item->color?>"></i>
+                <i class="bi bi-square-fill" style="color:<?=$item->color?>"></i>
               </td>
             <?php else: ?>
               <td class="fit">&nbsp;</td>

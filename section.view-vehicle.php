@@ -13,7 +13,7 @@ $vehicle = new Vehicle($vehicleId);
 
   <div class="d-flex justify-content-between">
     <h3>
-      <i class="bi bi-circle-fill" style="color:<?=$vehicle->color?>"></i>
+      <i class="bi bi-square-fill" style="color:<?=$vehicle->color?>"></i>
       <?=$vehicle->name?>
     </h3>
     <button onclick="app.openTab('edit-vehicle', 'Vehicle (edit)', `section.edit-vehicle.php?id=<?=$vehicleId?>`);" class="btn btn-outline-primary btn-sm align-self-center">Edit</button>

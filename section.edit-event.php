@@ -221,7 +221,7 @@ $eventId = $event->getId();
           $('#event-vehicles').append($('<option>', {
             value: item.id,
             text: item.name,
-            'data-content': `<i class="bi bi-circle-fill" style="color:${item.color}"></i> ${item.name}`
+            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`
           }));
         });
         $('#event-vehicles').selectpicker()
