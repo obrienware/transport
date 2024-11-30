@@ -7,9 +7,9 @@ SELECT
   t.guests,
   t.end_date,
   a.iata AS arrival,
-  t.ETA,
+  t.eta,
   b.iata AS departure,
-  t.ETD,
+  t.etd,
   CONCAT(l.flight_number_prefix,' ',t.flight_number) AS flight_number,
   t.flight_status,
   t.flight_status_as_at AS as_at,
@@ -19,13 +19,13 @@ LEFT OUTER JOIN locations a ON a.id = t.pu_location
 LEFT OUTER JOIN locations b ON b.id = t.do_location
 LEFT OUTER JOIN airlines l ON l.id = airline_id
 WHERE
- 	(t.ETA IS NOT NULL OR t.ETD IS NOT NULL)
+ 	(t.eta IS NOT NULL OR t.etd IS NOT NULL)
 	AND
-	(t.ETA IS NULL OR DATE(ETA) >= CURDATE())
+	(t.eta IS NULL OR DATE(eta) >= CURDATE())
 	AND
-	(t.ETD IS NULL OR DATE(ETD) >= CURDATE())	
+	(t.etd IS NULL OR DATE(etd) >= CURDATE())	
 	AND t.archived IS NULL
-ORDER BY COALESCE(t.ETA, t.ETD) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
+ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
 ";
 ?>
 <div class="container-fluid">
@@ -67,21 +67,21 @@ ORDER BY COALESCE(t.ETA, t.ETD) -- This is brilliant! Orders by either ETA OR ET
             <td><?=($item->arrival) ?: $item->departure?></td>
             <td><?=$item->flight_number?></td>
             <td class="fit">
-              <?php if ($item->ETD): ?>
+              <?php if ($item->etd): ?>
                 <div class="d-flex justify-content-between">
-                  <div><?=Date('m/d g:ia', strtotime($item->ETD))?></div>
+                  <div><?=Date('m/d g:ia', strtotime($item->etd))?></div>
                   <div class="badge bg-primary align-self-center ms-2">departure</div>
                 </div>
               <?php else: ?>
                 <div class="d-flex justify-content-between">
-                  <div><?=Date('m/d g:ia', strtotime($item->ETA))?></div>
+                  <div><?=Date('m/d g:ia', strtotime($item->eta))?></div>
                   <div class="badge bg-primary align-self-center ms-2">arrival</div>
                 </div>
               <?php endif; ?>
             </td>
             <td>
               <?php if ($flight): ?>
-                <?php if ($item->ETA AND $flight->arrival->estimatedTime) :?>
+                <?php if ($item->eta AND $flight->arrival->estimatedTime) :?>
                   <?=Date('g:ia', strtotime($flight->arrival->estimatedTime))?>
                 <?php elseif ($flight->departure->estimatedTime): ?>
                   <?=Date('g:ia', strtotime($flight->departure->estimatedTime))?>
@@ -90,7 +90,7 @@ ORDER BY COALESCE(t.ETA, t.ETD) -- This is brilliant! Orders by either ETA OR ET
             </td>
             <td>
               <?php if ($flight): ?>
-                <?php if ($item->ETA AND $flight->arrival->actualTime) :?>
+                <?php if ($item->eta AND $flight->arrival->actualTime) :?>
                   <?=Date('g:ia', strtotime($flight->arrival->actualTime))?>
                 <?php elseif ($flight->departure->actualTime): ?>
                   <?=Date('g:ia', strtotime($flight->departure->actualTime))?>
