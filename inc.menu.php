@@ -34,6 +34,9 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
           <a class="nav-link menu-item" href="#section.list-events.php" data-target-id="list-events">Events</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link menu-item" href="#section.list-flights.php" data-target-id="list-flights">Flights</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link menu-item" href="#section.list-blockout-dates.php" data-target-id="list-block-outs">Block Outs</a>
         </li>
 <!--         

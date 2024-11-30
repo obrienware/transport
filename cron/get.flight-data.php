@@ -43,8 +43,10 @@ if ($rs = $db->get_results($sql)) {
     foreach ($resultObj as $info) {
       if ($type === 'arrival') {
         if ($info->arrival->iataCode == $item->arrival) $status = $info->status;
+        if ($status == 'scheduled' AND $info->arrival->delay) $status = 'delayed';
       } else {
         if ($info->departure->iataCode == $item->departure) $status = $info->status;
+        if ($status == 'scheduled' AND $info->departure->delay) $status = 'delayed';
       }
     }
     $db->query(
