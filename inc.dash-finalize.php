@@ -1,4 +1,8 @@
 <?php
+require_once 'class.config.php';
+$config = Config::get('system');
+if ($config->alertUnfinalizedTrips === false) die();
+
 require_once 'class.data.php';
 if (!$db) $db = new data();
 
