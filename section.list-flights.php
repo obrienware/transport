@@ -48,7 +48,9 @@ ORDER BY COALESCE(t.ETA, t.ETD) -- This is brilliant! Orders by either ETA OR ET
         <?php foreach ($rs as $item): ?>
           <?php
             $flight = null;
+            $rowClass = '';
             if (Date('Y-m-d') == Date('Y-m-d', strtotime($item->end_date)) AND $item->flight_info) {
+              $rowClass = 'table-info';
               $data = json_decode($item->flight_info);
               $type = ($item->arrival) ? 'arrival' : 'departure';
               foreach ($data as $value) {
@@ -60,19 +62,19 @@ ORDER BY COALESCE(t.ETA, t.ETD) -- This is brilliant! Orders by either ETA OR ET
               }
             }
           ?>
-          <tr>
+          <tr class="<?=$rowClass?>">
             <td><?=$item->guests?></td>
             <td><?=($item->arrival) ?: $item->departure?></td>
             <td><?=$item->flight_number?></td>
             <td class="fit">
               <?php if ($item->ETD): ?>
                 <div class="d-flex justify-content-between">
-                  <div><?=Date('g:ia', strtotime($item->ETD))?></div>
+                  <div><?=Date('m/d g:ia', strtotime($item->ETD))?></div>
                   <div class="badge bg-primary align-self-center ms-2">departure</div>
                 </div>
               <?php else: ?>
                 <div class="d-flex justify-content-between">
-                  <div><?=Date('g:ia', strtotime($item->ETA))?></div>
+                  <div><?=Date('m/d g:ia', strtotime($item->ETA))?></div>
                   <div class="badge bg-primary align-self-center ms-2">arrival</div>
                 </div>
               <?php endif; ?>
