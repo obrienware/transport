@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 if (!isset($db)) $db = new data();
 $sql = "
@@ -79,6 +80,7 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
                 </div>
               <?php endif; ?>
             </td>
+
             <td>
               <?php if ($flight): ?>
                 <?php if ($item->eta AND $flight->arrival->estimatedTime) :?>
