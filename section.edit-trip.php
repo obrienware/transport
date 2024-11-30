@@ -388,7 +388,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         $.each(drivers, function (i, item) {
           $('#trip-driver-id').append($('<option>', {
             value: item.id,
-            text: item.driver
+            text: item.driver,
+            disabled: !item.available,
           }));
         });
         $('#trip-driver-id').selectpicker()
@@ -405,7 +406,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           $('#trip-vehicle-id').append($('<option>', {
             value: item.id,
             text: item.name,
-            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`
+            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
+            disabled: !item.available,
           }));
         });
         $('#trip-vehicle-id').selectpicker();

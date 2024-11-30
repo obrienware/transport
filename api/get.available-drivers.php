@@ -4,13 +4,8 @@ require_once 'class.data.php';
 $db = new data();
 
 // We want to exclude current trips and/or current events
-$current_tripId = $_REQUEST['tripId'] ?: 0;
-$current_eventId = $_REQUEST['eventId'] ?: 0;
-
 $sql = "
-SELECT 
-  id, CONCAT(first_name,' ',last_name) AS driver, cdl 
-FROM users u
+SELECT GROUP_CONCAT(id) FROM users u
 WHERE
 	FIND_IN_SET('driver', roles) -- we only want drivers
 	AND u.archived IS NULL
@@ -43,13 +38,31 @@ WHERE
 			OR to_datetime BETWEEN :from_date AND :to_date)
 			AND archived IS NULL
 	)
-
-ORDER BY first_name, last_name
 ";
+
+$current_tripId = $_REQUEST['tripId'] ?: 0;
+$current_eventId = $_REQUEST['eventId'] ?: 0;
 $data = [
   'from_date' => $_REQUEST['startDate'],
   'to_date' => $_REQUEST['endDate'],
 	'trip_id' => $current_tripId,
 	'event_id' => $current_eventId
 ];
-die(json_encode($db->get_results($sql, $data)));
+$ids = $db->get_var($sql, $data);
+$arrayIds = explode(',',$ids);
+
+$sql = "
+SELECT 
+  id, CONCAT(first_name,' ',last_name) AS driver, cdl 
+FROM users u
+WHERE
+	FIND_IN_SET('driver', roles) -- we only want drivers
+	AND u.archived IS NULL
+ORDER BY first_name, last_name
+";
+$rs = $db->get_results($sql);
+foreach ($rs as $key => $item) {
+	$rs[$key]->available = (array_search($item->id, $arrayIds) !== false);
+}
+
+die(json_encode($rs));
