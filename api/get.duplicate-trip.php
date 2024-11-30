@@ -10,6 +10,7 @@ $targetTrip->startDate = $sourceTrip->startDate;
 $targetTrip->pickupDate = $sourceTrip->pickupDate;
 $targetTrip->endDate = $sourceTrip->endDate;
 $targetTrip->guestId = $sourceTrip->guestId;
+$targetTrip->guests = $sourceTrip->guests;
 $targetTrip->passengers = $sourceTrip->passengers;
 $targetTrip->puLocationId = $sourceTrip->puLocationId;
 $targetTrip->doLocationId = $sourceTrip->doLocationId;
@@ -25,6 +26,5 @@ $targetTrip->IATA = $sourceTrip->IATA;
 $targetTrip->guestNotes = $sourceTrip->guestNotes;
 $targetTrip->driverNotes = $sourceTrip->driverNotes;
 $targetTrip->generalNotes = $sourceTrip->generalNotes;
-$targetTrip->finalized = $sourceTrip->finalized;
 
 die(json_encode($targetTrip->save()));
