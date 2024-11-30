@@ -122,7 +122,8 @@ $sql = "
       } else {
         dataTable = $('#table-trips').DataTable({
           responsive: true,
-          paging: true
+          paging: true,
+          order: [[1, 'desc']]
         });
       }
 
