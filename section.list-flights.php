@@ -83,20 +83,22 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
               <?php if ($flight): ?>
                 <?php if ($item->eta AND $flight->arrival->estimatedTime) :?>
                   <?=Date('g:ia', strtotime($flight->arrival->estimatedTime))?>
-                <?php elseif ($flight->departure->estimatedTime): ?>
+                <?php elseif ($item->etd AND $flight->departure->estimatedTime): ?>
                   <?=Date('g:ia', strtotime($flight->departure->estimatedTime))?>
                 <?php endif; ?>
               <?php endif; ?>
             </td>
+
             <td>
               <?php if ($flight): ?>
                 <?php if ($item->eta AND $flight->arrival->actualTime) :?>
                   <?=Date('g:ia', strtotime($flight->arrival->actualTime))?>
-                <?php elseif ($flight->departure->actualTime): ?>
+                <?php elseif ($item->etd AND $flight->departure->actualTime): ?>
                   <?=Date('g:ia', strtotime($flight->departure->actualTime))?>
                 <?php endif; ?>
               <?php endif; ?>
             </td>
+
             <td><?=$item->flight_status?></td>
           </tr>
         <?php endforeach;?>
