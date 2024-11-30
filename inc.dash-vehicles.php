@@ -43,7 +43,7 @@ $sql = "
           <tr>
             <td class="datetime short"><?=$item->last_update?></td>
             <td>
-              <button class="btn p-0" onclick="app.openTab('edit-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$item->id?>');">
+              <button class="btn p-0" onclick="app.openTab('view-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$item->id?>');">
                 <?php if ($item->check_engine): ?>
                   <i class="fa-duotone fa-regular fa-engine-warning text-danger fa-xl"></i>
                 <?php endif;?>
