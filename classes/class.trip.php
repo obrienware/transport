@@ -42,6 +42,8 @@ class Trip
 	public $vehicle;
 	public $airline;
   public $finalized;
+	public $started;
+	public $completed;
 
 	public function __construct($tripId = null)
 	{
@@ -80,6 +82,8 @@ class Trip
 			$this->driverNotes = $item->driver_notes;
 			$this->generalNotes = $item->general_notes;
       $this->finalized = $item->finalized;
+			$this->started = $item->started;
+			$this->completed = $item->completed;
 
 			if ($this->requestorId) {
 				$this->getRequestor($this->requestorId);
@@ -256,5 +260,12 @@ class Trip
 		return $this->deleteTrip($this->tripId);
 	}
 
-
+	public function isEditable()
+	{
+		return !(
+			$this->started 
+			OR $this->completed 
+			OR (strtotime($this->endDate) <= strtotime('now'))
+		);
+	}
 }

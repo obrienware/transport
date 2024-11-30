@@ -15,14 +15,18 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
   <div class="container mt-2">
     <input type="hidden" id="trip-end-date" value="<?=$trip->endDate?>" />
+
     <div class="d-flex justify-content-between">
-      <?php if ($trip->tripId): ?>
-        <h2>Edit Trip</h2>
-      <?php else: ?>
-        <h2>Add Trip</h2>
-      <?php endif; ?>
-      <button id="btn-duplicate-trip" class="btn btn-secondary"><i class="fa-duotone fa-solid fa-copy"></i> Duplicate</button>
+      <?php if ($trip->isEditable()): ?>
+        <?php if ($trip->tripId): ?>
+          <h2>Edit Trip</h2>
+        <?php else: ?>
+          <h2>Add Trip</h2>
+        <?php endif; ?>
+      <?php endif;?>
+      <button id="btn-duplicate-trip" class="btn btn-secondary ms-auto"><i class="fa-duotone fa-solid fa-copy"></i> Duplicate</button>
     </div>
+
     <div class="mb-5">
       <input type="hidden" id="tripId" name="tripId" value="<?=$trip->tripId?>" />
 
@@ -335,6 +339,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         </div>
       </div>
 
+      <?php if ($trip->isEditable()): ?>
       <div class="row">
         <div class="col d-flex justify-content-between">
           <?php if ($trip->tripId): ?>
@@ -346,6 +351,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
         </div>
       </div>
+      <?php endif;?>
 
     </div>
   </div>
@@ -682,9 +688,13 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
     });
 
+    <?php if (!$trip->isEditable()): ?>
+      $('.tab-pane.active input').prop('disabled', true);
+      $('.tab-pane.active textarea').prop('disabled', true);
+      $('.tab-pane.active select').prop('disabled', true);
+      $('.tab-pane.active select').selectpicker('destroy')
+    <?php endif;?>
+
   </script>
-
-
-  <pre class="d-none"><?php print_r($trip);?></pre>
 
 <?php endif;?>
