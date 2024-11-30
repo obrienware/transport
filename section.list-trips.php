@@ -123,7 +123,7 @@ $sql = "
         dataTable = $('#table-trips').DataTable({
           responsive: true,
           paging: true,
-          order: [[1, 'desc']]
+          order: [[1, 'asc']]
         });
       }
 
