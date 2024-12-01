@@ -44,7 +44,8 @@
       dataTable = $('#table-guests').DataTable();
     } else {
       dataTable = $('#table-guests').DataTable({
-        responsive: true
+        responsive: true,
+        paging: true,
       });
     }
 

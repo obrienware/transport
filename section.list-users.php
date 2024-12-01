@@ -55,7 +55,8 @@
       dataTable = $('#table-users').DataTable();
     } else {
       dataTable = $('#table-users').DataTable({
-        responsive: true
+        responsive: true,
+        paging: true,
       });
     }
 

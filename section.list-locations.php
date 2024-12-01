@@ -41,7 +41,8 @@
       dataTable = $('#table-locations').DataTable();
     } else {
       dataTable = $('#table-locations').DataTable({
-        responsive: true
+        responsive: true,
+        paging: true,
       });
     }
 

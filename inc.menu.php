@@ -16,22 +16,26 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
         <!-- <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="">Home</a>
         </li> -->
+        <!-- 
         <li class="nav-item dropdown" data-bs-theme="light">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
             Vehicles
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item menu-item" href="#section.list-vehicles.php" data-target-id="list-vehicles" data-target-label="Vehicles">View</a></li>
-            <!-- <li><hr class="dropdown-divider"></li> -->
             <li><a class="dropdown-item menu-item" href="#section.view-maintenance.php" data-target-id="view-maintenance">Maintenance</a></li>
             <li><a class="dropdown-item menu-item" href="#section.view-snags.php" data-target-id="view-snags">Snags</a></li>
           </ul>
         </li>
+        -->
         <li class="nav-item">
           <a class="nav-link menu-item" href="#section.list-trips.php" data-target-id="list-trips">Trips</a>
         </li>
         <li class="nav-item">
           <a class="nav-link menu-item" href="#section.list-events.php" data-target-id="list-events">Events</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link menu-item" href="#section.list-vehicles.php" data-target-id="list-vehicles">Vehicles</a>
         </li>
         <li class="nav-item">
           <a class="nav-link menu-item" href="#section.list-flights.php" data-target-id="list-flights">Flights</a>
@@ -57,8 +61,8 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
             <li><a class="dropdown-item menu-item" href="#section.list-departments.php" data-target-id="list-departments">Departments</a></li>
             <li><a class="dropdown-item menu-item" href="#section.list-guests.php" data-target-id="list-guests">Contact List</a></li>
             <li><a class="dropdown-item menu-item" href="#section.list-locations.php" data-target-id="list-locations">Locations</a></li>
-            <li><a class="dropdown-item menu-item" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
-            <li><a class="dropdown-item menu-item" href="#section.list-airports.php" data-target-id="list-airports">Airports</a></li>
+            <li><a class="dropdown-item menu-item disabled" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
+            <li><a class="dropdown-item menu-item disabled" href="#section.list-airports.php" data-target-id="list-airports">Airports</a></li>
             <?php if ($user->hasRole(['admin','developer'])):?>
             <li>
               <div class="nav-item dropdown-submenu">

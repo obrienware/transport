@@ -35,7 +35,7 @@ $sql = "
 </div>
 <?php if ($rs = $db->get_results($sql)): ?>
 
-  <table id="table-trips" class="table align-middle table-hover row-select">
+  <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
     <thead>
       <tr>
         <th class="fit">Finalized</th>
@@ -123,7 +123,7 @@ $sql = "
         dataTable = $('#table-trips').DataTable({
           responsive: true,
           paging: true,
-          order: [[1, 'asc']]
+          order: [[1, 'asc']],
         });
       }
 

@@ -23,7 +23,7 @@ $sql = "
     <h5 class="card-header overflow-hidden">
       Vehicles needing attention!
     </h5>
-    <table class="table table-sm mb-0">
+    <table class="table table-sm mb-0 table-bordered">
       <thead>
         <tr class="align-middle table-primary">
           <th rowspan="2" class="text-center">As of</th>
