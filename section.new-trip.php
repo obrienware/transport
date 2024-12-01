@@ -157,7 +157,7 @@
               <div>
                 <select id="trip-vehicle-pu-options" class="form-control">
                   <option></option>
-                  <option value="pick up from staging">Pick up from staging</option>
+                  <option value="pick up from staging" selected>Pick up from staging</option>
                   <option value="guest will have vehicle">Guest will have vehicle</option>
                   <option value="commence from current location">Commence from current location</option>
                 </select>
@@ -170,7 +170,7 @@
               <div>
                 <select id="trip-vehicle-do-options" class="form-control">
                   <option></option>
-                  <option value="return to staging">Return to staging</option>
+                  <option value="return to staging" selected>Return to staging</option>
                   <option value="leave vehicle with guest">Leave vehicle with guest(s)</option>
                   <option value="remain at destination">Remain at destination</option>
                 </select>
