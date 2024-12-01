@@ -1,9 +1,8 @@
 <?php
 require_once 'inc.functions.php';
-require_once 'inc.components.php';
 $waypointCount = countWaypoints($tripId);
+include 'inc.trip-header.php';
 ?>
-<?=getTripHeader($tripId);?>
 <?php if ($waypointCount > 0): ?>
 
   <?php $seq = getCurrentWaypointSequence($tripId); ?>

@@ -1,10 +1,10 @@
 <?php
-require_once 'inc.functions.php';
 require_once 'inc.components.php';
+require_once 'inc.functions.php';
 $tripId = $_REQUEST['id'];
+include 'inc.trip-header.php';
 $waypointCount = countWaypoints($tripId);
 ?>
-<?=getTripHeader($tripId);?>
 
 <!-- start step indicators -->
 <?php if ($waypointCount > 0): ?>
@@ -19,8 +19,10 @@ $waypointCount = countWaypoints($tripId);
       <button onclick="app.goHome()" class="btn btn-outline-primary btn-lg"><i class="fa-solid fa-house"></i></button>
     </div>
     <div>
-      <div><small>Ready to drive?</small></div>
-      <button id="btn-start" class="btn btn-primary btn-lg">Start Now</button>
+      <?php if ($waypointCount > 0): ?>
+        <div><small>Ready to drive?</small></div>
+        <button id="btn-start" class="btn btn-primary btn-lg">Start Now</button>
+      <?php endif; ?>
     </div>
   </div>
 </div>
