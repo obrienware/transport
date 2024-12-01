@@ -19,3 +19,5 @@
 [Rating javascript plugin](http://dreyescat.github.io/bootstrap-rating/)
 
 [Tiny MCE](https://www.tiny.cloud/solutions/wysiwyg-bootstrap-rich-text-editor/)
+
+[Weather icons](https://erikflowers.github.io/weather-icons/)
