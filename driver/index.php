@@ -23,6 +23,7 @@
   <!-- we're using this for our survey -->
   <script src="js/bootstrap-rating.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="/css/weather-icons.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css?<?=filemtime('css/style.css')?>">
   <script type="text/javascript" src="js/common.js?<?=filemtime('js/common.js')?>"></script>
 </head>

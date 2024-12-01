@@ -48,11 +48,10 @@ class Weather
     $row = $this->_getCodeData($this->data->current->weather_code);
     $icon = NULL;
     if ($row->icon_day) {
-      $icon = 'https://cdn.weatherbit.io/static/img/icons/';
       if ($this->data->current->is_day == 1) {
-        $icon .= $row->icon_day.'.png';
+        $icon = '<i class="fs-1 wi '.$row->icon_day.'"></i>';
       } else {
-        $icon .= $row->icon_night.'.png';
+        $icon = '<i class="fs-1 wi '.$row->icon_night.'"></i>';
       }
     }
     $result = (object)[
@@ -60,7 +59,7 @@ class Weather
       'temp' => $this->getCurrentTemp(),
       'min' => $this->data->daily->temperature_2m_min[0].$this->data->current_units->temperature_2m,
       'max' => $this->data->daily->temperature_2m_max[0].$this->data->current_units->temperature_2m,
-      'icon' => $icon
+      'icon' => $icon,
     ];
     return $result;
   }
@@ -75,10 +74,15 @@ class Weather
     }
     if (isset($index)) {
       $row = $this->_getCodeData($this->data->daily->weather_code[$index]);
+      $icon = NULL;
+      if ($row->icon_day) {
+        $icon = '<i class="fs-1 wi '.$row->icon_day.'"></i>';
+      }
       $result = (object)[
         'description' => $row->description,
         'min' => $this->data->daily->temperature_2m_min[$index].$this->data->current_units->temperature_2m,
         'max' => $this->data->daily->temperature_2m_max[$index].$this->data->current_units->temperature_2m,
+        'icon' => $icon,
       ];
       return $result;
     }

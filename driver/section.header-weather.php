@@ -16,8 +16,8 @@ if ($date) {
 ?>
 <div class="d-flex justify-content-between bg-body-secondary mt-1 px-2 rounded">
   <?php if ($data->icon): ?>
-    <div style="width:40px; min-height:40px">
-      <img src="<?=$data->icon?>" class="img-fluid">
+    <div class="align-self-center me-2">
+      <?=$data->icon?>
     </div>
   <?php endif; ?>
   <div class="flex-fill align-self-center"><?=$data->description?></div>
