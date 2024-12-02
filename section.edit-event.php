@@ -248,7 +248,8 @@ $eventId = $event->getId();
             .data('type', data.type)
             .data('value', data.label)
             .removeClass('is-invalid');
-        }
+        },
+        fixed: true,
       });
 
       new Autocomplete(document.getElementById('event-requestor'), {
@@ -261,7 +262,8 @@ $eventId = $event->getId();
             .data('id', data.value)
             .data('value', data.label)
             .removeClass('is-invalid');
-        }
+        },
+        fixed: true,
       });
 
 

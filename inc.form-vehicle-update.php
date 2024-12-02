@@ -98,7 +98,8 @@
               .data('type', data.type)
               .data('value', data.label)
               .removeClass('is-invalid');
-          }
+          },
+          fixed: true,
         });
 
         $(modalId).on('show.bs.modal', e => {
