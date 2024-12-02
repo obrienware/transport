@@ -339,19 +339,21 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         </div>
       </div>
 
-      <?php if ($trip->isEditable()): ?>
+      
       <div class="row">
         <div class="col d-flex justify-content-between">
           <?php if ($trip->tripId): ?>
             <button id="btn-delete-trip" class="btn btn-outline-danger">Delete</button>
           <?php endif; ?>
-          <?php if (!$trip->finalized): ?>
-            <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button>
+
+          <?php if ($trip->isEditable()): ?>
+            <?php if (!$trip->finalized): ?>
+              <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button>
+            <?php endif;?>
+            <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
           <?php endif;?>
-          <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
         </div>
       </div>
-      <?php endif;?>
 
     </div>
   </div>
