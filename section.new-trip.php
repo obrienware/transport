@@ -326,11 +326,13 @@
         $('#flight-info').removeClass('d-none');
         if ($('#trip-pu-location').data('type') === 'airport') {
           $('#eta-section').removeClass('d-none');
+          if ($('#trip-eta').val() == '') $('#trip-eta').val($('#trip-pickup-date').val());
         } else {
           $('#eta-section').addClass('d-none');
         }
         if ($('#trip-do-location').data('type') === 'airport') {
           $('#etd-section').removeClass('d-none');
+          if ($('#trip-etd').val() == '') $('#trip-etd').val($('#trip-pickup-date').val());
         } else {
           $('#etd-section').addClass('d-none');
         }
