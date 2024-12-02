@@ -13,7 +13,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
 <?php else: ?>
 
-  <div class="container mt-2">
+  <div id="vehicle-edit-container" class="container mt-2">
     <input type="hidden" id="trip-end-date" value="<?=$trip->endDate?>" />
 
     <div class="d-flex justify-content-between">
@@ -172,14 +172,14 @@ $trip = new Trip(tripId: $_REQUEST['id']);
             <div class="col">
               <div class="mb-3">
                 <label for="trip-vehicle-id" class="form-label">Vehicle</label>
-                <div><select id="trip-vehicle-id" class="form-control"></select></div>
+                <div><select id="trip-vehicle-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
               </div>
             </div>
 
             <div class="col">
               <div class="mb-3">
                 <label for="trip-driver-id" class="form-label">Driver</label>
-                <div><select id="trip-driver-id" class="form-control"></select></div>
+                <div><select id="trip-driver-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
               </div>
             </div>
           </div>
@@ -189,7 +189,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               <div class="mb-3">
                 <label for="trip-vehicle-pu-options" class="form-label">Pick up options</label>
                 <div>
-                  <select id="trip-vehicle-pu-options" class="form-control">
+                  <select id="trip-vehicle-pu-options" class="form-control" data-container="#vehicle-edit-container">
                     <option></option>
                     <option value="pick up from staging" <?=$trip->vehiclePUOptions == 'pick up from staging' ? 'selected' : ''?> >Pick up from staging</option>
                     <option value="guest will have vehicle" <?=$trip->vehiclePUOptions == 'guest will have vehicle' ? 'selected' : ''?> >Guest will have vehicle</option>
@@ -202,7 +202,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               <div class="mb-3">
                 <label for="trip-vehicle-do-options" class="form-label">Drop off options</label>
                 <div>
-                  <select id="trip-vehicle-do-options" class="form-control">
+                  <select id="trip-vehicle-do-options" class="form-control" data-container="#vehicle-edit-container">
                     <option></option>
                     <option value="return to staging" <?=$trip->vehicleDOOptions == 'return to staging' ? 'selected' : ''?> >Return to staging</option>
                     <option value="leave vehicle with guest" <?=$trip->vehicleDOOptions == 'leave vehicle with guest' ? 'selected' : ''?> >Leave vehicle with guest(s)</option>
@@ -225,7 +225,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               <div class="mb-3">
                 <label for="trip-airline-id" class="form-label">Airline</label>
                 <div>
-                  <select id="trip-airline-id" data-live-search="true" show-tick class="form-control" data-size="5"></select>
+                  <select id="trip-airline-id" data-live-search="true" show-tick class="form-control" data-size="5" data-container="#vehicle-edit-container"></select>
                 </div>
               </div>
               </div>
@@ -486,7 +486,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
             .data('value', data.label)
             .removeClass('is-invalid');
           checkForFlight();
-        }
+        },
+        fixed: true,
       });
 
       new Autocomplete(document.getElementById('trip-guest'), {
@@ -499,7 +500,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
             .data('id', data.value)
             .data('value', data.label)
             .removeClass('is-invalid');
-        }
+        },
+        fixed: true,
       });
 
       new Autocomplete(document.getElementById('trip-do-location'), {
@@ -515,7 +517,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
             .data('value', data.label)
             .removeClass('is-invalid');
           checkForFlight();
-        }
+        },
+        fixed: true,
       });
 
 
@@ -539,7 +542,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
             .data('id', data.value)
             .data('value', data.label)
             .removeClass('is-invalid');
-        }
+        },
+        fixed: true,
       });
 
 

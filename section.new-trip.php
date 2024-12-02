@@ -493,7 +493,8 @@
           .data('value', data.label)
           .removeClass('is-invalid');
         checkForFlight();
-      }
+      },
+      fixed: true,
     });
 
     new Autocomplete(document.getElementById('trip-guest'), {
@@ -506,7 +507,8 @@
           .data('id', data.value)
           .data('value', data.label)
           .removeClass('is-invalid');
-      }
+      },
+      fixed: true,
     });
 
     new Autocomplete(document.getElementById('trip-do-location'), {
@@ -522,7 +524,8 @@
           .data('value', data.label)
           .removeClass('is-invalid');
         checkForFlight();
-      }
+      },
+      fixed: true,
     });
 
     $('#trip-airline-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -545,7 +548,8 @@
           .data('id', data.value)
           .data('value', data.label)
           .removeClass('is-invalid');
-      }
+      },
+      fixed: true,
     });
 
     $('#btn-save-trip').off('click').on('click', async ƒ => {
