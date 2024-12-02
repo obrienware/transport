@@ -41,8 +41,7 @@ $sql = "
         <th class="fit">Finalized</th>
         <th class="fit">When</th>
         <th data-dt-order="disable">Trip Summary</th>
-        <th data-dt-order="disable">Contact(s)</th>
-        <th>Pick Up</th>
+        <th class="text-start">Pick Up</th>
         <th data-dt-order="disable">Drop Off</th>
         <th>Driver</th>
         <th>Vehicle</th>
@@ -75,8 +74,8 @@ $sql = "
             <?php endif;?>
             <?=$item->summary?>
           </td>
-          <td><?=$item->guest?></td>
-          <td class="text-nowrap" data-order="<?=$item->start_date?>">
+
+          <td class="text-nowrap text-start" data-order="<?=$item->start_date?>">
             <div>
               <span class="time"><?=($item->start_date) ? Date('g:ia', strtotime($item->start_date)) : ''?></span>: 
               <?=$item->pickup_location?>
@@ -89,6 +88,7 @@ $sql = "
               <small><?=Date('g:ia', strtotime($item->eta))?></small>
             <?php endif;?>
           </td>
+
           <td class="text-nowrap">
             <div><?=$item->dropoff_location?></div>
             <?php if ($item->etd): ?>
