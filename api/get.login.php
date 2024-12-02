@@ -14,6 +14,7 @@ if ($id = Authenticate::logIn($username, $password)) {
     'authenticated' => true
   ];
   $user = new User($id);
+  $user->updateLastLogin();
   die(json_encode([
     'authenticated' => true,
     'changePassword' => $user->changePassword
