@@ -60,13 +60,18 @@
       });
     }
 
-    $('#table-users tbody tr').off('click').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-user', 'User (edit)', `section.edit-user.php?id=${id}`);
-    });
+    function bindRowClick () {
+      $('#table-users tbody tr').off('click').on('click', ƒ => {
+        ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
+        const self = ƒ.currentTarget;
+        const id = $(self).data('id');
+        targetId = id;
+        app.openTab('edit-user', 'User (edit)', `section.edit-user.php?id=${id}`);
+      });
+    }
+    bindRowClick()
+    dataTable.on('draw.dt', bindRowClick);
+
     $('#btn-add-user').on('click', ƒ => {
       app.openTab('edit-user', 'User (edit)', `section.edit-user.php`);
     });
