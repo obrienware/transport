@@ -270,7 +270,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
                 </div>
               </div>
 
-              <div class="offset-6 col-6 d-none" id="etd-section">
+              <div class="col-6 d-none" id="etd-section">
                 <div class="mb-3">
                   <label for="trip-etd" class="form-label">ETD</label>
                   <div
