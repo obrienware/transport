@@ -49,13 +49,17 @@
       });
     }
 
-    $('#table-guests tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php?id=${id}`);
-    });
+    function bindRowClick () {
+      $('#table-guests tbody tr').on('click', ƒ => {
+        ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
+        const self = ƒ.currentTarget;
+        const id = $(self).data('id');
+        targetId = id;
+        app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php?id=${id}`);
+      });
+    }
+    bindRowClick()
+    dataTable.on('draw.dt', bindRowClick);
 
     $('#btn-add-guest').off('click').on('click', ƒ => {
       app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php`);

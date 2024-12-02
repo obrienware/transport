@@ -1,4 +1,7 @@
 <div class="container-fluid">
+  
+  <?php include 'inc.form-contact.php'; ?>
+
   <h1>New Trip</h1>
   <input type="hidden" id="trip-start-date" value="" />
   <input type="hidden" id="trip-end-date" value="" />
@@ -102,6 +105,11 @@
           <div class="invalid-feedback">Please make a valid selection</div>
         </div>
       </div>
+
+      <div class="col-auto pt-4">
+        <button id="btn-new-contact" class="btn btn-outline-primary"><i class="fa-solid fa-user-plus"></i></button>
+      </div>
+
       <div class="col-2">
         <div class="mb-3">
           <label for="trip-summary" class="form-label">Total Passengers</label>
@@ -341,6 +349,27 @@
       }
     }
     checkForFlight();
+
+    const contactForm = new ContactClass('#contactModal');
+
+    contactForm.onUpdate = async function (e, formData) {
+      const resp = await post('/api/post.save-guest.php', formData);
+      if (resp?.result) {
+        $(document).trigger('guestChange');
+        if (resp?.result?.result) {
+          $('#trip-guest')
+            .val(formData.firstName + ' ' + formData.lastName)
+            .data('id', resp?.result?.result)
+            .data('value', formData.firstName + ' ' + formData.lastName)
+        }
+        console.log(resp);
+      }
+    }    
+
+    $('#btn-new-contact').off('click').on('click', e => {
+      contactForm.show();
+    });
+
 
     $('#trip-airline-id').append($('<option>'));
     $.each(airlines, function (i, item) {

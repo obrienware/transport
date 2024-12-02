@@ -46,13 +46,17 @@
       });
     }
 
-    $('#table-locations tbody tr').off('click').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-location', 'Location (edit)', `section.edit-location.php?id=${id}`);
-    });
+    function bindRowClick () {
+      $('#table-locations tbody tr').off('click').on('click', ƒ => {
+        ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
+        const self = ƒ.currentTarget;
+        const id = $(self).data('id');
+        targetId = id;
+        app.openTab('edit-location', 'Location (edit)', `section.edit-location.php?id=${id}`);
+      });
+    }
+    bindRowClick()
+    dataTable.on('draw.dt', bindRowClick);
 
     $('#btn-add-location').off('click').on('click', ƒ => {
       app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
