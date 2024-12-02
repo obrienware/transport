@@ -334,13 +334,23 @@
         $('#flight-info').removeClass('d-none');
         if ($('#trip-pu-location').data('type') === 'airport') {
           $('#eta-section').removeClass('d-none');
-          if ($('#trip-eta').val() == '') $('#trip-eta').val($('#trip-pickup-date').val());
+          if ($('#trip-eta').val() == '') {
+            $('#trip-eta').val($('#trip-pickup-date').val());
+            const jsDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A').toDate();
+            const parsedDate = eta.dates.parseInput(jsDate);
+            eta.dates.setValue(parsedDate, eta.dates.lastPickedIndex);
+          }
         } else {
           $('#eta-section').addClass('d-none');
         }
         if ($('#trip-do-location').data('type') === 'airport') {
           $('#etd-section').removeClass('d-none');
-          if ($('#trip-etd').val() == '') $('#trip-etd').val($('#trip-pickup-date').val());
+          if ($('#trip-etd').val() == '') {
+            $('#trip-etd').val($('#trip-pickup-date').val());
+            const jsDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A').toDate();
+            const parsedDate = etd.dates.parseInput(jsDate);
+            etd.dates.setValue(parsedDate, etd.dates.lastPickedIndex);
+          }
         } else {
           $('#etd-section').addClass('d-none');
         }
