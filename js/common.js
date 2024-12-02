@@ -438,38 +438,38 @@ function reFormat() {
 	/**
 	 * Reformat the date in a table cell with a ".date" class
 	 */
-	$('td.date:not(.short)').toArray().forEach(item => {
+	$('td.date:not(.short):not(.formatted)').toArray().forEach(item => {
 		const value = moment($(item).html(), 'YYYY-MM-DD');
 		if (value.isValid()) {
-			$(item).html(value.format('M/D/YYYY'));
+			$(item).addClass('formatted').html(value.format('M/D/YYYY'));
 		}
 	});
 
 	/**
 	 * Reformat the date/time in a table cell with a ".datetime" class
 	 */
-	$('td.datetime:not(.short), a.datetime:not(.short)').toArray().forEach(item => {
+	$('td.datetime:not(.short):not(.formatted), a.datetime:not(.short):not(.formatted)').toArray().forEach(item => {
 		const value = moment($(item).html(), 'YYYY-MM-DD HH:mm:ss');
 		if (value.isValid()) {
-			$(item).html(value.format('D/M/YY h:mm a'));
+			$(item).addClass('formatted').html(value.format('D/M/YY h:mm a'));
 		}
 	});
 
 	/**
 	 * Reformat the time in a table cell with a ".time" class
 	 */
-	$('td.time:not(.short),span.time:not(.short)').toArray().forEach(item => {
+	$('td.time:not(.short):not(.formatted),span.time:not(.short):not(.formatted)').toArray().forEach(item => {
 		const value = moment($(item).html(), 'YYYY-MM-DD HH:mm:ss');
 		if (value.isValid()) {
-			$(item).html(value.format('h:mma'));
+			$(item).addClass('formatted').html(value.format('h:mma'));
 		}
 	});
 
 
-	$('td.datetime.short').toArray().forEach(item => {
+	$('td.datetime.short:not(.formatted)').toArray().forEach(item => {
 		const value = moment($(item).html(), 'YYYY-MM-DD HH:mm:ss');
 		if (value.isValid()) {
-			$(item).html(value.format('M/D h:mma'));
+			$(item).addClass('formatted').html(value.format('M/D h:mma'));
 		}
 	});
 
