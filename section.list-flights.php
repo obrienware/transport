@@ -26,11 +26,12 @@ WHERE
 	AND
 	(t.etd IS NULL OR DATE(etd) >= CURDATE())	
 	AND t.archived IS NULL
+  AND DATE(t.pickup_date) < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
 ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
 ";
 ?>
 <div class="container-fluid">
-  <h1>Flight Statuses</h1>
+  <h1>Flight Statuses (next 7 days)</h1>
   <?php if ($rs = $db->get_results($sql)): ?>
 
     <table class="table table-sm table-bordered table-striped table-striped-columns">
