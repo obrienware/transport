@@ -18,8 +18,8 @@
       <?php if ($rs = Blockout::getBlockoutsForUser($_SESSION['user']->id)): ?>
         <?php foreach ($rs as $item): ?>
           <tr data-id="<?=$item->id?>">
-            <td class="datetime short fit"><?=$item->from_datetime?></td>
-            <td class="datetime short fit"><?=$item->to_datetime?></td>
+            <td class="datetime short fit" data-order="<?=$item->from_datetime?>"><?=$item->from_datetime?></td>
+            <td class="datetime short fit" data-order="<?=$item->to_datetime?>"><?=$item->to_datetime?></td>
             <td><?=$item->note?></td>
           </tr>
         <?php endforeach; ?>
