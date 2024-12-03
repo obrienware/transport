@@ -38,7 +38,7 @@ $eventId = $event->getId();
               type="text"
               class="form-control"
               data-td-target="#datetimepicker1"
-              value="<?=($event->startDate) ? Date('m/d/Y', strtotime($event->startDate)) : '' ?>"/>
+              value="<?=($event->startDate) ? Date('m/d/Y h:i A', strtotime($event->startDate)) : '' ?>"/>
             <span
               class="input-group-text"
               data-td-target="#datetimepicker1"
@@ -62,7 +62,7 @@ $eventId = $event->getId();
               type="text"
               class="form-control"
               data-td-target="#datetimepicker2"
-              value="<?=($event->endDate) ? Date('m/d/Y', strtotime($event->endDate)) : '' ?>"/>
+              value="<?=($event->endDate) ? Date('m/d/Y h:i A', strtotime($event->endDate)) : '' ?>"/>
             <span
               class="input-group-text"
               data-td-target="#datetimepicker2"
@@ -170,8 +170,8 @@ $eventId = $event->getId();
       const eventId = <?=$eventId ?: 'null'?>;
       $('select').selectpicker();
 
-      new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), dateOnlyDefaults);
-      new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), dateOnlyDefaults);
+      new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), tempusConfigDefaults);
+      new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
 
       $('#event-requestor').off('blur').on('blur', function () {
         if (cleanVal('#event-requestor') == '') $('#event-requestor').removeData('id');
@@ -182,8 +182,8 @@ $eventId = $event->getId();
       });
 
       if (eventId) {
-        startDate = <?=($event->startDate) ? '"'.Date('m/d/Y', strtotime($event->startDate)).'"' : 'null' ?>;
-        endDate = <?=($event->endDate) ? '"'.Date('m/d/Y', strtotime($event->endDate)).'"' : 'null' ?>;
+        startDate = moment('<?=$event->startDate?>', 'YYYY-MM-DD H:mm:ss');
+        endDate = moment('<?=$event->endDate?>', 'YYYY-MM-DD H:mm:ss');
         await loadResources();
         $('#event-drivers').selectpicker('val', ['<?=implode("','", $event->drivers)?>']);
         $('#event-vehicles').selectpicker('val', ['<?=implode("','", $event->vehicles)?>']);
@@ -194,13 +194,13 @@ $eventId = $event->getId();
         if (startDate && endDate) {
           // Load the resources!
           drivers = await get('/api/get.available-drivers.php', {
-            startDate: moment(startDate, 'MM/DD/YYYY').format('YYYY-MM-DD 00:00:00'),
-            endDate: moment(endDate, 'MM/DD/YYYY').format('YYYY-MM-DD 23:59:59'),
+            startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
+            endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
             eventId
           });
           vehicles = await get('/api/get.available-vehicles.php', {
-            startDate: moment(startDate, 'MM/DD/YYYY').format('YYYY-MM-DD 00:00:00'),
-            endDate:moment(endDate, 'MM/DD/YYYY').format('YYYY-MM-DD 23:59:59'),
+            startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
+            endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
             eventId
           });
         }
@@ -228,11 +228,11 @@ $eventId = $event->getId();
       }
 
       $('#event-start-date').on('change', function () {
-        startDate = $('#event-start-date').val();
+        startDate = moment($('#event-start-date').val(), 'MM/DD/YYYY h:mm A');
         loadResources();
       });
       $('#event-end-date').on('change', function () {
-        endDate = $('#event-end-date').val();
+        endDate = moment($('#event-end-date').val(), 'MM/DD/YYYY h:mm A');
         loadResources();
       });
 
@@ -271,8 +271,8 @@ $eventId = $event->getId();
         const data = {
           eventId
         }
-        data.startDate = moment(startDate, 'MM/DD/YYYY').format('YYYY-MM-DD 00:00:00');
-        data.endDate = moment(endDate, 'MM/DD/YYYY').format('YYYY-MM-DD 23:59:59');
+        data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
+        data.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
         data.name = cleanVal('#event-name');
         data.drivers = val('#event-drivers');
         data.vehicles = val('#event-vehicles');
