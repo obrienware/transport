@@ -36,6 +36,8 @@ $data = ['start' => $start, 'end' => $end];
 $result = [];
 if ($rs = $db->get_results($sql, $data)) {
   foreach ($rs as $item) {
+    $bgColor = ($item->color) ?: '#AAAAAA';
+    $textColor = '#'.readableColor($bgColor);
     $event = (object) [
       'id' => $item->id,
       'title' => $item->summary.' @'.Date('g:ia', strtotime($item->pickup_date)),
@@ -51,10 +53,31 @@ if ($rs = $db->get_results($sql, $data)) {
         'vehicle' => $item->vehicle,
         'driver' => $item->driver
       ],
-      'backgroundColor' => ($item->color) ?: '#AAAAAA'
+      'backgroundColor' => $bgColor,
+      'textColor' => $textColor
     ];
     $result[] = $event;
   }
 }
 
 die(json_encode($result));
+
+function readableColor($bg)
+{
+  $bg = str_replace('#', '', $bg);
+  $r = hexdec(substr($bg, 0, 2));
+  $g = hexdec(substr($bg, 2, 2));
+  $b = hexdec(substr($bg, 4, 2));
+
+  $squared_contrast = (
+    $r * $r * .299 +
+    $g * $g * .587 +
+    $b * $b * .114
+  );
+
+  if ($squared_contrast > pow(170, 2)) {
+    return '000000';
+  } else {
+    return 'FFFFFF';
+  }
+}
