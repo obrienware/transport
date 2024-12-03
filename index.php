@@ -22,6 +22,14 @@ include 'inc.menu.php';
 
   $(async ƒ => {
     $('#home-tab-pane').load('section.home.php');
+
+    // ping every minute
+    setInterval(async () => {
+      const resp = await get('/api/ping.php');
+      if (!resp.result) {
+        location.reload();
+      }
+    }, 60 * 1000);
   });
 
 </script>
