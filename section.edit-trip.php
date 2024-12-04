@@ -19,12 +19,27 @@ $trip = new Trip(tripId: $_REQUEST['id']);
     <div class="d-flex justify-content-between">
       <?php if ($trip->isEditable()): ?>
         <?php if ($trip->tripId): ?>
+
           <h2>Edit Trip</h2>
+          <div id="trip-action-buttons" class="dropdown ms-auto">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Action
+            </button>
+            <ul class="dropdown-menu">
+              <li><button id="btn-duplicate-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
+              <?php if (!$trip->finalized): ?>
+                <li><button id="btn-finalize-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-stamp"></i> Finalize</button></li>
+              <?php endif; ?>
+              <li><button id="btn-print-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print</button></li>
+            </ul>
+          </div>
+                
         <?php else: ?>
           <h2>Add Trip</h2>
         <?php endif; ?>
       <?php endif;?>
-      <button id="btn-duplicate-trip" class="btn btn-secondary ms-auto"><i class="fa-duotone fa-solid fa-copy"></i> Duplicate</button>
+      
+      
     </div>
 
     <div class="mb-5">
@@ -348,7 +363,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
           <?php if ($trip->isEditable()): ?>
             <?php if (!$trip->finalized): ?>
-              <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button>
+              <!-- <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button> -->
             <?php endif;?>
             <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
           <?php endif;?>
@@ -362,6 +377,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
     $(async ƒ => {
 
+      let formDirty = false;
       const tripId = <?=$trip->tripId ?: 'null'?>;
       let drivers;
       let vehicles;
@@ -421,6 +437,11 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         $('#trip-vehicle-id').selectpicker();
 
       }
+
+      $('input').off('change').on('change', e => {
+        formDirty = true;
+        $('#trip-action-buttons button').addClass('disabled');
+      })
 
       if (tripId) {
         startDate = moment('<?=$trip->startDate?>', 'YYYY-MM-DD H:mm:ss');
@@ -583,11 +604,25 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         }
       });
 
+      $('#btn-finalize-trip').off('click').on('click', async e => {
+        const id = tripId
+        const resp = await post('/api/post.finalize-trip.php', {id});
+        if (resp?.result) {
+          $(document).trigger('tripChange', {tripId});
+          // app.closeOpenTab();
+          return toastr.success('Trip finalized.', 'Success');
+        }
+        return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      });
+
       $('#btn-save-finalize-trip').off('click').on('click', async e => {
         const data = await getData();
         if (data) {
           const resp = await post('/api/post.save-trip.php', data);
           if (resp?.result?.result) {
+            $('#trip-action-buttons button').removeClass('disabled');
+            formDirty = false;
+
             const id = tripId || resp?.result?.result;
             const newResp = await post('/api/post.finalize-trip.php', {id});
             if (newResp?.result) {

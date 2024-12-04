@@ -210,7 +210,8 @@ $eventId = $event->getId();
         $.each(drivers, function (i, item) {
           $('#event-drivers').append($('<option>', {
             value: item.id,
-            text: item.driver
+            text: item.driver,
+            disabled: !item.available,
           }));
         });
         $('#event-drivers').selectpicker()
@@ -221,7 +222,8 @@ $eventId = $event->getId();
           $('#event-vehicles').append($('<option>', {
             value: item.id,
             text: item.name,
-            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`
+            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
+            disabled: !item.available,
           }));
         });
         $('#event-vehicles').selectpicker()
