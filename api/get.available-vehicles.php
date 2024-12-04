@@ -38,7 +38,7 @@ $data = [
 	'event_id' => $current_eventId
 ];
 $ids = $db->get_var($sql, $data);
-$arrayIds = explode(',',$ids);
+$arrayIds = $ids ? explode(',',$ids) : [];
 
 $sql = "
 SELECT
