@@ -70,10 +70,10 @@ $vehicle = new Vehicle($vehicleId);
           <td><?=$vehicle->currentLocation ?: 'Unverified'?></td>
           <th class="fit px-2 bg-body-secondary">Needs cleaning</th>
           <td>
-            <?php if ($vehicle->cleanExterior): ?>
+            <?php if ($vehicle->cleanExterior == 0): ?>
               <div class="badge bg-danger">Exterior</div>
             <?php endif; ?>
-            <?php if ($vehicle->cleanInterior): ?>
+            <?php if ($vehicle->cleanInterior == 0): ?>
               <div class="badge bg-danger">Interior</div>
             <?php endif; ?>
           </td>

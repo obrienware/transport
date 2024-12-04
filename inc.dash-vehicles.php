@@ -11,8 +11,8 @@ $sql = "
       v.check_engine = 1
       OR (v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL)
       OR v.fuel_level <= 25
-      OR v.clean_interior = 1
-      OR v.clean_exterior = 1
+      OR v.clean_interior = 0
+      OR v.clean_exterior = 0
       OR v.restock = 1
     )
   ORDER BY v.name
@@ -63,14 +63,14 @@ $sql = "
               <?php endif; ?>
             </td>
             <td class="text-center">
-              <?php if ($item->clean_exterior === 1): ?>
+              <?php if ($item->clean_exterior === 0): ?>
                 <div class="badge bg-danger fs-6">YES</div>
               <?php else: ?>
                 -
               <?php endif; ?>
             </td>
             <td class="text-center">
-              <?php if ($item->clean_interior === 1): ?>
+              <?php if ($item->clean_interior === 0): ?>
                 <div class="badge bg-danger fs-6">YES</div>
               <?php else: ?>
                 -
