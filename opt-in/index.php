@@ -49,8 +49,10 @@
 					<img src="/images/logo.svg" style="height:2em"/>
 					Transport
 				</h1>
-        <h2 class="fw-light">Opt-In to text updates</h2>
-        <p class="mb-4">By submitting your phone number below, you agree to receive informational text messages regaring your trip(s) with us</p>
+        <h2 class="fw-light">Opt-In to <strong>SMS/TEXT</strong> updates</h2>
+        <p class="mb-4">
+					By submitting your phone number below, you agree to receive informational SMS/text messages regaring your trip(s) with us. <br/>(Data rates may apply.)
+				</p>
         <div class="form-floating mb-3">
           <input type="phone" class="form-control" id="phone">
           <label for="phone">Phone Number</label>
