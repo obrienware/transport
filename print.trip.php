@@ -20,6 +20,7 @@ $pdf->SetAligns(['L', 'L']);
 $pdf->SetWidths([150, $pageWidth - 150]);
 $pdf->Row(['Driver', $trip->driver->getName()]);
 $pdf->Row(['Vehicle', $trip->vehicle->name."\n".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions]);
+$pdf->Row(['Trip start', Date('D M j @ g:ia', strtotime($trip->startDate))]);
 $pdf->ln();
 
 $pdf->SetFont('Helvetica', 'B', 14);
