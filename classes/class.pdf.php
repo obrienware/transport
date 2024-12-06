@@ -99,10 +99,10 @@ class PDF extends FPDF
 
 		// From bottom...
 		$this->SetY(-50);
-		$this->SetX(-10);
+		$this->SetX(-1 * $this->rm);
 		$this->setDrawColor(127, 127, 127);
-		$this->Line(10, $this->GetY()+2, $this->GetX(), $this->GetY()+2);
-		$this->SetX(10);
+		$this->Line($this->lm, $this->GetY()+2, $this->GetX(), $this->GetY()+2);
+		$this->SetX($this->lm);
 
 		$this->SetFont('Helvetica', 'I', 8);
 

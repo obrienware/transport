@@ -1,4 +1,5 @@
 <?php
+require_once 'class.qrcode.php';
 require_once 'class.pdf.php';
 require_once 'class.trip.php';
 $trip = new Trip($_REQUEST['id']);
@@ -65,5 +66,10 @@ $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Driver Notes', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->MultiCell($pageWidth, 30, $trip->driverNotes, 1);
+
+$qrcode = new QRcode('http://transport.obrienware.com');
+$qrcode->disableBorder();
+$pdf->SetY(-150);
+$qrcode->displayFPDF($pdf, $pdf->GetX(), $pdf->GetY(), 100);
 
 $pdf->output('I', 'Trip.pdf');
