@@ -62,10 +62,7 @@ if ($trip->flightNumber) {
 
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Driver Notes', 1, 30, 'L', true);
+$pdf->SetFont('Helvetica', '', 11);
 $pdf->MultiCell($pageWidth, 30, $trip->driverNotes, 1);
-
-
-
-// $pdf->RoundedRect($pdf->GetX(), $pdf->GetY(), 100, 100, 5);
 
 $pdf->output('I', 'Trip.pdf');
