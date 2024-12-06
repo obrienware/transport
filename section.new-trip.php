@@ -570,6 +570,7 @@
           $(document).trigger('tripChange');
           toastr.success('Trip added.', 'Success');
           app.closeOpenTab();
+          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result?.result}`);
           return;
         }
         toastr.error(resp.result.errors[2], 'Error');
@@ -587,6 +588,7 @@
           if (newResp?.result) {
             $(document).trigger('tripChange');
             app.closeOpenTab();
+            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
             return toastr.success('Trip added.', 'Success');
           }
           return toastr.error('Seems to be a problem finalizing this trip!', 'Error');

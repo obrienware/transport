@@ -584,7 +584,11 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           if (resp?.result?.result) {
             $(document).trigger('tripChange', {tripId});
             app.closeOpenTab();
-            if (tripId) return toastr.success('Trip saved.', 'Success');
+            if (tripId) {
+              app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${tripId}`);
+              return toastr.success('Trip saved.', 'Success');
+            }
+            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result?.result}`);
             return toastr.success('Trip added.', 'Success');
           }
           toastr.error(resp.result.errors[2], 'Error');
@@ -592,39 +596,39 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         }
       });
 
-      $('#btn-finalize-trip').off('click').on('click', async e => {
-        const id = tripId
-        const resp = await post('/api/post.finalize-trip.php', {id});
-        if (resp?.result) {
-          $(document).trigger('tripChange', {tripId});
-          // app.closeOpenTab();
-          return toastr.success('Trip finalized.', 'Success');
-        }
-        return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
-      });
+      // $('#btn-finalize-trip').off('click').on('click', async e => {
+      //   const id = tripId
+      //   const resp = await post('/api/post.finalize-trip.php', {id});
+      //   if (resp?.result) {
+      //     $(document).trigger('tripChange', {tripId});
+      //     // app.closeOpenTab();
+      //     return toastr.success('Trip finalized.', 'Success');
+      //   }
+      //   return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      // });
 
-      $('#btn-save-finalize-trip').off('click').on('click', async e => {
-        const data = await getData();
-        if (data) {
-          const resp = await post('/api/post.save-trip.php', data);
-          if (resp?.result?.result) {
-            $('#trip-action-buttons button').removeClass('disabled');
-            formDirty = false;
+      // $('#btn-save-finalize-trip').off('click').on('click', async e => {
+      //   const data = await getData();
+      //   if (data) {
+      //     const resp = await post('/api/post.save-trip.php', data);
+      //     if (resp?.result?.result) {
+      //       $('#trip-action-buttons button').removeClass('disabled');
+      //       formDirty = false;
 
-            const id = tripId || resp?.result?.result;
-            const newResp = await post('/api/post.finalize-trip.php', {id});
-            if (newResp?.result) {
-              $(document).trigger('tripChange', {tripId});
-              app.closeOpenTab();
-              if (tripId) return toastr.success('Trip saved.', 'Success');
-              return toastr.success('Trip added.', 'Success');
-            }
-            return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
-          }
-          toastr.error(resp.result.errors[2], 'Error');
-          console.error(resp);
-        }
-      });
+      //       const id = tripId || resp?.result?.result;
+      //       const newResp = await post('/api/post.finalize-trip.php', {id});
+      //       if (newResp?.result) {
+      //         $(document).trigger('tripChange', {tripId});
+      //         app.closeOpenTab();
+      //         if (tripId) return toastr.success('Trip saved.', 'Success');
+      //         return toastr.success('Trip added.', 'Success');
+      //       }
+      //       return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      //     }
+      //     toastr.error(resp.result.errors[2], 'Error');
+      //     console.error(resp);
+      //   }
+      // });
 
       $('#btn-delete-trip').off('click').on('click', async ƒ => {
         if (await ask('Are you sure you want to delete this trip?')) {
