@@ -67,9 +67,12 @@ $pdf->Cell($pageWidth, 30, 'Driver Notes', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->MultiCell($pageWidth, 30, $trip->driverNotes, 1);
 
-$qrcode = new QRcode('http://transport.obrienware.com');
+$qrcode = new QRcode('https://transport.obrienware.com/opt-in');
 $qrcode->disableBorder();
-$pdf->SetY(-150);
-$qrcode->displayFPDF($pdf, $pdf->GetX(), $pdf->GetY(), 100);
+$pdf->SetY(-160);
+$qrcode->displayFPDF($pdf, $pdf->GetPageWidth() - $pdf->rm - 100, $pdf->GetY(), 100);
+
+$pdf->SetY(-160);
+$pdf->Cell($pageWidth - 110, 30, 'SCAN to opt-in to text updates', 0, 30, 'R', false);
 
 $pdf->output('I', 'Trip.pdf');
