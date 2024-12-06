@@ -59,7 +59,8 @@ class User
 
 	public function getName(): string
 	{
-		return "{$this->firstName} {$this->lastName}";
+		if ($this->userId) return "{$this->firstName} {$this->lastName}";
+		return '';
 	}
 
 	public function save(): array

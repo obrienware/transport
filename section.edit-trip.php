@@ -21,20 +21,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         <?php if ($trip->tripId): ?>
 
           <h2>Edit Trip</h2>
-          <div id="trip-action-buttons" class="dropdown ms-auto">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Action
-            </button>
-            <ul class="dropdown-menu">
-              <li><button id="btn-duplicate-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
-              <?php if (!$trip->finalized): ?>
-                <li><button id="btn-finalize-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-stamp"></i> Finalize</button></li>
-              <?php endif; ?>
-              <li><button id="btn-print-trip" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print</button></li>
-            </ul>
-          </div>
-                
-        <?php else: ?>
+
+          <?php else: ?>
           <h2>Add Trip</h2>
         <?php endif; ?>
       <?php endif;?>
@@ -169,8 +157,8 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               class="form-control" 
               id="trip-do-location" 
               placeholder="Drop Off Location" 
-              value="<?=$trip->doLocation->shortName?>" 
-              data-value="<?=$trip->doLocation->shortName?>" 
+              value="<?=$trip->doLocation->name?>" 
+              data-value="<?=$trip->doLocation->name?>" 
               data-id="<?=$trip->doLocationId?>" 
               data-type="<?=$trip->doLocation? $trip->doLocation->type : ''?>">
               <div class="invalid-feedback">Please make a valid selection</div>
@@ -471,12 +459,12 @@ $trip = new Trip(tripId: $_REQUEST['id']);
 
 
 
-      $('#btn-duplicate-trip').off('click').on('click', async function () {
-        const resp = await get('/api/get.duplicate-trip.php', {id: tripId});
-        const newId = resp.result;
-        app.closeOpenTab()
-        app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
-      });
+      // $('#btn-duplicate-trip').off('click').on('click', async function () {
+      //   const resp = await get('/api/get.duplicate-trip.php', {id: tripId});
+      //   const newId = resp.result;
+      //   app.closeOpenTab()
+      //   app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
+      // });
 
       $('#trip-pickup-date, #trip-duration, #trip-lead-time').on('change', async ƒ => {
         const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);

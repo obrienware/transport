@@ -133,7 +133,7 @@ $sql = "
           const self = ƒ.currentTarget;
           const id = $(self).data('id');
           targetId = id;
-          app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${id}`);
+          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
         });
       }
       bindRowClick()

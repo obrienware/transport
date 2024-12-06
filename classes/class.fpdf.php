@@ -1,4 +1,9 @@
 <?php
+/**
+ * This is a third party class. I'm going to refrain from making direct changes to it
+ * unless it's broken.
+ */
+
 /*******************************************************************************
 * FPDF                                                                         *
 *                                                                              *

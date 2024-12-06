@@ -69,7 +69,7 @@ $user = new User($_SESSION['user']->id);
         const startDate = moment(data.event.start).format('ddd Do');
         
         if (data?.event?.extendedProps?.type == 'trip') {
-          app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${data.event.id}`);
+          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${data.event.id}`);
         }
 
         if (data?.event?.extendedProps?.type == 'event') {
