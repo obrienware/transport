@@ -183,7 +183,7 @@
           .data('value', data.label)
           .removeClass('is-invalid');
       },
-      fixed: true,
+      // fixed: true,
     });
 
 
