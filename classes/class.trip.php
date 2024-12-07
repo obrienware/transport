@@ -11,6 +11,7 @@ require_once 'class.guest.php';
 require_once 'class.location.php';
 require_once 'class.vehicle.php';
 require_once 'class.airline.php';
+require_once 'class.airport.php';
 class Trip
 {
 	public $tripId;
@@ -35,6 +36,9 @@ class Trip
 	public $ETA;
 	public $ETD;
 	public $IATA;
+	// public $arrivalInstructions;
+	// public $arrivalInstructionsGroup;
+	public $airport;
 	public $guestNotes;
 	public $driverNotes;
 	public $generalNotes;
@@ -108,6 +112,21 @@ class Trip
 			if ($this->airlineId) {
 				$this->getAirline($this->airlineId);
 			}
+			if ($this->ETA) {
+				$location = new Location($this->puLocationId);
+				$this->airport = new Airport();
+				$this->airport->getAirportByIATA($location->IATA);
+				// $this->arrivalInstructions = $airport->arrivalInstructions;
+				// $this->arrivalInstructionsGroup = $airport->arrivalInstructionsGroup;
+			}
+			if ($this->ETD) {
+				$location = new Location($this->doLocationId);
+				$this->airport = new Airport();
+				$this->airport->getAirportByIATA($location->IATA);
+				// $this->arrivalInstructions = $airport->arrivalInstructions;
+				// $this->arrivalInstructionsGroup = $airport->arrivalInstructionsGroup;
+			}
+			
 			return true;
 		}
 		return false;

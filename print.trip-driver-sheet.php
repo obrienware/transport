@@ -75,4 +75,4 @@ $qrcode->displayFPDF($pdf, $pdf->GetPageWidth() - $pdf->rm - 100, $pdf->GetY(), 
 $pdf->SetY(-160);
 $pdf->Cell($pageWidth - 110, 30, 'SCAN to opt-in to text updates', 0, 30, 'R', false);
 
-$pdf->output('I', 'Trip.pdf');
+$pdf->output('I', 'DriverTripSheet.pdf');

@@ -9,6 +9,9 @@ class Airport
 	public $IATA;
 	public $stagingLocationId;
   public $leadTime;
+	public $arrivalInstructions;
+	public $arrivalInstructionsGroup;
+
 
 	public function __construct($airportId = null)
 	{
@@ -28,6 +31,8 @@ class Airport
 			$this->IATA = $item->iata;
 			$this->stagingLocationId = $item->staging_location_id;
       $this->leadTime = $item->lead_time;
+			$this->arrivalInstructions = $item->arrival_instructions_small;
+			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
 			return true;
 		}
 		return false;
@@ -44,6 +49,8 @@ class Airport
 			$this->IATA = $item->iata;
       $this->leadTime = $item->lead_time;
 			$this->stagingLocationId = $item->staging_location_id;
+			$this->arrivalInstructions = $item->arrival_instructions_small;
+			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
 			return true;
 		}
 		return false;

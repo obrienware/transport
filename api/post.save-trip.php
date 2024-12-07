@@ -27,6 +27,16 @@ $trip->ETD = $json->ETD ?: NULL;
 $trip->guestNotes = $json->guestNotes ?: NULL;
 $trip->driverNotes = $json->driverNotes ?: NULL;
 $trip->generalNotes = $json->generalNotes ?: NULL;
+
+if ($trip->ETA) {
+  $location = new Location($trip->puLocationId);
+  $trip->IATA = $location->IATA;
+}
+if ($trip->ETD) {
+  $location = new Location($trip->doLocationId);
+  $trip->IATA = $location->IATA;
+}
+
 $result = $trip->save();
 
 echo json_encode([

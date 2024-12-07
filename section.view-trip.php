@@ -18,7 +18,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
           <?php endif; ?>
         <?php endif;?>
         <li><button id="<?=$sectionId?>-btn-duplicate" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
-        <li><a href="print.trip.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print</a></li>
+        <li><a href="print.trip-driver-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print</a></li>
       </ul>
     </div>
   </div>

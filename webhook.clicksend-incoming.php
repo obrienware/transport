@@ -40,3 +40,5 @@ $data = [
   'message_id' => $_POST['message_id']
 ];
 $db->query($sql, $data);
+
+// TODO: Once we have our number approved we can implement the "STOP" feature
