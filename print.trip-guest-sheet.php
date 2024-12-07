@@ -58,15 +58,25 @@ if ($trip->ETA) {
 } else {
   $instructions .= "Your driver will be at your pick up location (".$trip->puLocation->name.") shortly before ".Date('g:ia', strtotime($trip->pickupDate));
 }
-$pdf->MultiCell($pageWidth, 18, $instructions, 1);
+$pdf->MultiCell($pageWidth, 18, $instructions, 1, 'L');
+$pdf->ln();
 
 
+$pdf->SetFont('Helvetica', 'B', 14);
+$pdf->Cell($pageWidth, 30, 'Drop off information', 1, 1, 'L', true);
+$pdf->SetFont('Helvetica', '', 11);
+$info = "Your driver will take you to ".$trip->doLocation->name;
+if (!$trip->ETD && (int)$trip->passengers <=4) {
+  // Not going to the airport and not a group
+  $info .= "\n\nWe are here to serve you. Please feel free to ask your driver to stop if you need a bite to eat, or anything. Please help yourself to snacks and refreshments in the vehicle.";
+}
+$pdf->MultiCell($pageWidth, 18, $info, 1, 'L');
 $pdf->ln();
 
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Guest Notes', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
-$pdf->MultiCell($pageWidth, 30, $trip->guestNotes, 1);
+$pdf->MultiCell($pageWidth, 18, $trip->guestNotes, 1);
 
 $qrcode = new QRcode('https://transport.obrienware.com/opt-in');
 $qrcode->disableBorder();
