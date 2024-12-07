@@ -68,7 +68,10 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
               <div class="nav-item dropdown-submenu">
                 <a href="#" role="button" data-toggle="dropdown" class="dropdown-item dropdown-toggle">Config <i class="fa-duotone fa-solid fa-caret-right"></i></a>
                 <div class="nav-item dropdown-menu">
-                  <a class="dropdown-item menu-item" href="#section.edit-config.php?node=system" data-target-id="edit-config" data-target-label="System (edit)">System</a>
+                  <?php if ($user->hasRole(['developer'])):?>
+                    <a class="dropdown-item menu-item" href="#section.edit-config.php?node=system" data-target-id="edit-config" data-target-label="System (edit)">System</a>
+                  <?php endif; ?>
+                  <a class="dropdown-item menu-item" href="#section.edit-config.php?node=global" data-target-id="edit-config" data-target-label="Global (edit)">Global</a>
                 </div>
               </div>
             </li>

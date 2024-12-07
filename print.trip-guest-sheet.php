@@ -1,8 +1,10 @@
 <?php
+require_once 'class.config.php';
 require_once 'class.qrcode.php';
 require_once 'class.pdf.php';
 require_once 'class.trip.php';
 $trip = new Trip($_REQUEST['id']);
+$config = Config::get('global');
 
 $pdf = new PDF('P', 'pt', 'letter');
 $pdf->AddPage();
@@ -45,14 +47,13 @@ $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Pick up information', 1, 1, 'L', true); $pdf->SetY($pdf->GetY() - 30);
 $pdf->Cell($pageWidth, 30, Date('D F j', strtotime($trip->pickupDate)), 1, 1, 'R', false);
 $pdf->SetFont('Helvetica', '', 11);
-// $instructions = Date('D F j', strtotime($trip->pickupDate))."\n\n";
 if ($trip->ETA) {
   // We will be picking up the guest(s) from the airport
   $instructions .= "Your flight is estimated to arrive at ".Date('g:ia', strtotime($trip->ETA))." (local time) at ".$trip->airport->name.".\n\n";
   if ((int)$trip->passengers > 4) {
     $instructions .= $trip->airport->arrivalInstructionsGroup;
   } else {
-    $instructions .= "While you are more than welcome to keep your driver updated, we will be monitoring your flight so we'll know about any changes to your flight and when you've landed. :-)\n\n";
+    if ($config->guestInstructions->airportRegularPickup) $instructions .= $config->guestInstructions->airportRegularPickup."\n\n";
     $instructions .= $trip->airport->arrivalInstructions;
   }
 } else {
@@ -65,18 +66,55 @@ $pdf->ln();
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Drop off information', 1, 1, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
-$info = "Your driver will take you to ".$trip->doLocation->name;
-if (!$trip->ETD && (int)$trip->passengers <=4) {
-  // Not going to the airport and not a group
-  $info .= "\n\nWe are here to serve you. Please feel free to ask your driver to stop if you need a bite to eat, or anything. Please help yourself to snacks and refreshments in the vehicle.";
+$info = "Your driver will be taking you to ".$trip->doLocation->name;
+if ($trip->vehicleDOOptions === 'leave vehicle with guest') $info .= " and leave the vehicle with you.";
+if ($trip->ETD) {
+  if ((int)$trip->passengers >4) {
+    // Group going to the airport
+    if ($config->guestInstructions->airportGroupDropoff) $info .= "\n\n".$config->guestInstructions->airportGroupDropoff;
+  }
+} else {
+  if ((int)$trip->passengers <=4) {
+    // Not going to the airport and not a group
+    if ($config->guestInstructions->dropOff) $info .= "\n\n".$config->guestInstructions->dropOff;
+  }
 }
 $pdf->MultiCell($pageWidth, 18, $info, 1, 'L');
 $pdf->ln();
+
+if ($trip->flightNumber) {
+  $pdf->SetFont('Helvetica', 'B', 14);
+  $pdf->Cell($pageWidth, 30, 'Your Flight Info', 1, 30, 'L', true); 
+
+  $pdf->Rect($pdf->GetX(), $pdf->GetY(), $pageWidth, 3*17);
+  if ($trip->airline->imageFilename) {
+    $pdf->Image(dirname(__FILE__).'/images/airlines/'.$trip->airline->imageFilename, $pdf->GetX() +5, $pdf->GetY() +10, 140, 0);
+  }
+
+  $pdf->SetFont('Helvetica', '', 11);
+  $pdf->SetAligns(['L', 'L']);
+  $pdf->SetWidths([150, $pageWidth - 150 - 152]);
+  $pdf->SetX($pdf->lm + 150);
+  $pdf->Row(['Airline', $trip->airline->name]);
+  $pdf->SetX($pdf->lm + 150);
+  $pdf->Row(['Flight Number', $trip->airline->flightNumberPrefix.' '.$trip->flightNumber]);
+  $pdf->SetX($pdf->lm + 150);
+  if ($trip->ETA) {
+    $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA))]);
+  } else {
+    $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD))]);
+  }
+  $pdf->ln();
+}
+
 
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Guest Notes', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->MultiCell($pageWidth, 18, $trip->guestNotes, 1);
+
+// We don't want the content to clash with the QR code.
+if ($pdf->GetY() > ($pdf->GetPageHeight() - 160)) $pdf->AddPage();
 
 $qrcode = new QRcode('https://transport.obrienware.com/opt-in');
 $qrcode->disableBorder();
@@ -86,4 +124,4 @@ $qrcode->displayFPDF($pdf, $pdf->GetPageWidth() - $pdf->rm - 100, $pdf->GetY(), 
 $pdf->SetY(-160);
 $pdf->MultiCell($pageWidth - 110, 15, "We aim to provide excellent service.\nWe can text you real-time updates\n regarding your pickup.\n\nPlease SCAN to opt-in to text updates", 0,'R', false);
 
-$pdf->output('I', 'DriverTripSheet.pdf');
+$pdf->output('I', 'GuestTripSheet.pdf');

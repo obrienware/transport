@@ -7,6 +7,11 @@ $trip = new Trip($_REQUEST['id']);
 $pdf = new PDF('P', 'pt', 'letter');
 $pdf->AddPage();
 $pageWidth = $pdf->GetPageWidth() - $pdf->lm - $pdf->rm;
+$pdf->setFillColor(230, 230, 230);
+
+$pdf->Image(dirname(__FILE__).'/images/organization/logo.png', $pdf->GetPageWidth() - $pdf->rm - 250, $pdf->GetY(), 250, 0, 'PNG');
+$pdf->SetY(60);
+
 
 $pdf->SetFont('Helvetica', 'B', 16);
 $pdf->Cell($pageWidth, $pdf->row_height, 'Transport: Driver Trip Sheet'); 
@@ -48,12 +53,20 @@ $pdf->ln();
 if ($trip->flightNumber) {
   $pdf->SetFont('Helvetica', 'B', 14);
   $pdf->Cell($pageWidth, 30, 'Flight Info', 1, 30, 'L', true); 
-  
+
+  $pdf->Rect($pdf->GetX(), $pdf->GetY(), $pageWidth, 3*17);
+  if ($trip->airline->imageFilename) {
+    $pdf->Image(dirname(__FILE__).'/images/airlines/'.$trip->airline->imageFilename, $pdf->GetX() +5, $pdf->GetY() +10, 140, 0);
+  }
+
   $pdf->SetFont('Helvetica', '', 11);
   $pdf->SetAligns(['L', 'L']);
-  $pdf->SetWidths([150, $pageWidth - 150]);
+  $pdf->SetWidths([150, $pageWidth - 150 - 152]);
+  $pdf->SetX($pdf->lm + 150);
   $pdf->Row(['Airline', $trip->airline->name]);
+  $pdf->SetX($pdf->lm + 150);
   $pdf->Row(['Flight Number', $trip->airline->flightNumberPrefix.' '.$trip->flightNumber]);
+  $pdf->SetX($pdf->lm + 150);
   if ($trip->ETA) {
     $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA))]);
   } else {
@@ -66,13 +79,5 @@ $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Driver Notes', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->MultiCell($pageWidth, 30, $trip->driverNotes, 1);
-
-$qrcode = new QRcode('https://transport.obrienware.com/opt-in');
-$qrcode->disableBorder();
-$pdf->SetY(-160);
-$qrcode->displayFPDF($pdf, $pdf->GetPageWidth() - $pdf->rm - 100, $pdf->GetY(), 100);
-
-$pdf->SetY(-160);
-$pdf->Cell($pageWidth - 110, 30, 'SCAN to opt-in to text updates', 0, 30, 'R', false);
 
 $pdf->output('I', 'DriverTripSheet.pdf');
