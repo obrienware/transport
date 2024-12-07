@@ -61,16 +61,16 @@ if ($trip->flightNumber) {
 
   $pdf->SetFont('Helvetica', '', 11);
   $pdf->SetAligns(['L', 'L']);
-  $pdf->SetWidths([150, $pageWidth - 150 - 152]);
+  $pdf->SetWidths([100, $pageWidth - 100 - 152]);
   $pdf->SetX($pdf->lm + 150);
   $pdf->Row(['Airline', $trip->airline->name]);
   $pdf->SetX($pdf->lm + 150);
   $pdf->Row(['Flight Number', $trip->airline->flightNumberPrefix.' '.$trip->flightNumber]);
   $pdf->SetX($pdf->lm + 150);
   if ($trip->ETA) {
-    $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA))]);
+    $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA)).' - '.$trip->airport->name]);
   } else {
-    $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD))]);
+    $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD)).' - '.$trip->airport->name]);
   }
   $pdf->ln();
 }

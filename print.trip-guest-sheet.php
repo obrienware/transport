@@ -67,7 +67,7 @@ $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Drop off information', 1, 1, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $info = "Your driver will be taking you to ".$trip->doLocation->name;
-if ($trip->vehicleDOOptions === 'leave vehicle with guest') $info .= " and leave the vehicle with you.";
+if ($trip->vehicleDOOptions === 'leave vehicle with guest') $info .= " and leaving the vehicle with you.";
 if ($trip->ETD) {
   if ((int)$trip->passengers >4) {
     // Group going to the airport
@@ -100,9 +100,9 @@ if ($trip->flightNumber) {
   $pdf->Row(['Flight Number', $trip->airline->flightNumberPrefix.' '.$trip->flightNumber]);
   $pdf->SetX($pdf->lm + 150);
   if ($trip->ETA) {
-    $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA))]);
+    $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA)).' - '.$trip->airport->name]);
   } else {
-    $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD))]);
+    $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD)).' - '.$trip->airport->name]);
   }
   $pdf->ln();
 }
