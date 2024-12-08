@@ -11,9 +11,10 @@ SELECT
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,
   CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
   CASE WHEN t.ETA IS NOT NULL THEN a.iata ELSE b.iata END AS iata,
-  CONCAT(l.flight_number_prefix, t.flight_number) AS flight_number
+  CONCAT(l.flight_number_prefix, t.flight_number) AS flight_number,
+  l.name AS airline
 FROM trips t
-LEFT OUTER JOIN airlines l ON l.id = airline_id
+LEFT OUTER JOIN airlines l ON l.id = t.airline_id
 LEFT OUTER JOIN locations a ON a.id = t.pu_location
 LEFT OUTER JOIN locations b ON b.id = t.do_location
 WHERE
@@ -75,7 +76,7 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
           </thead>
           <tbody>
             <tr class="<?=$tableClass?>">
-              <td><?=$flight->flight_number?></td>
+              <td data-bs-toggle="tooltip" data-bs-title="<?=$item->airline?>"><?=$flight->flight_number?></td>
               <td><?=$flight->status_live ? '<i class="fa-solid fa-check"></i>' : ''?></td>
               <td><?=$flight->status_text?></td>
               <td data-bs-toggle="tooltip" data-bs-title="<?=$flight->airport_origin?>"><?=$flight->airport_origin_iata?></td>
