@@ -108,11 +108,12 @@ if ($trip->flightNumber) {
   $pdf->ln();
 }
 
-
-$pdf->SetFont('Helvetica', 'B', 14);
-$pdf->Cell($pageWidth, 30, 'Guest Notes', 1, 30, 'L', true);
-$pdf->SetFont('Helvetica', '', 11);
-$pdf->MultiCell($pageWidth, 18, $trip->guestNotes, 1);
+if ($trip->guestNotes) {
+  $pdf->SetFont('Helvetica', 'B', 14);
+  $pdf->Cell($pageWidth, 30, 'Guest Notes', 1, 30, 'L', true);
+  $pdf->SetFont('Helvetica', '', 11);
+  $pdf->MultiCell($pageWidth, 18, $trip->guestNotes, 1);  
+}
 
 // We don't want the content to clash with the QR code.
 if ($pdf->GetY() > ($pdf->GetPageHeight() - 160)) $pdf->AddPage();
