@@ -8,7 +8,7 @@ require 'phpmailer/SMTP.php';
 
 class Email
 {
-  private $mail; // Make this public for now while we're testing!
+  public $mail; // Make this public for now while we're testing!
   private $content;
   private $altContent;
   private $errorMessage;

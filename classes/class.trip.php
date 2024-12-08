@@ -36,8 +36,6 @@ class Trip
 	public $ETA;
 	public $ETD;
 	public $IATA;
-	// public $arrivalInstructions;
-	// public $arrivalInstructionsGroup;
 	public $airport;
 	public $guestNotes;
 	public $driverNotes;
@@ -116,15 +114,11 @@ class Trip
 				$location = new Location($this->puLocationId);
 				$this->airport = new Airport();
 				$this->airport->getAirportByIATA($location->IATA);
-				// $this->arrivalInstructions = $airport->arrivalInstructions;
-				// $this->arrivalInstructionsGroup = $airport->arrivalInstructionsGroup;
 			}
 			if ($this->ETD) {
 				$location = new Location($this->doLocationId);
 				$this->airport = new Airport();
 				$this->airport->getAirportByIATA($location->IATA);
-				// $this->arrivalInstructions = $airport->arrivalInstructions;
-				// $this->arrivalInstructionsGroup = $airport->arrivalInstructionsGroup;
 			}
 			
 			return true;
@@ -264,7 +258,6 @@ class Trip
 		$sql = 'UPDATE trips SET finalized = 1 WHERE id = :trip_id';
 		$data = ['trip_id' => $this->tripId];
 		$result = $db->query($sql, $data);
-		// TODO: Fire off all the initial notifications
 		return $result;
 	}
 
