@@ -9,7 +9,8 @@ $result = true;
 $trip = new Trip($json->id);
 
 if ($trip->finalized == 0) {
-  $result = $trip->finalize();
+  
+  $results[] = $trip->finalize();
   // Create the trip sheets and email them to the respective people
 
   // Generate the driver sheet
@@ -41,7 +42,7 @@ Transportation Team
   ");
   // TODO: When ready to go live - send this to the requestor instead.
   $email->addRecipient('richard@obrienware.com', 'Richard');
-  $result = $email->sendText();
+  $results[] = $email->sendText();
 
 
   // Email the driver
@@ -64,10 +65,11 @@ Regards,
 Transportation Team
   ");
   $email->addRecipient($trip->driver->emailAddress, $driverName);
-  $result = $email->sendText();
+  $results[] = $email->sendText();
 
 }
 
 echo json_encode([
-  'result' => $result
+  'result' => $result,
+  'results' => $results
 ]);
