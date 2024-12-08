@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.flight.php';
 require_once 'class.airport.php';
 require_once 'class.location.php';
 require_once 'class.trip.php';
@@ -43,6 +44,13 @@ echo json_encode([
   'result' => $result
 ]);
 ob_end_flush(); // No more output to the requestor
+
+// Get flight data where applicable
+if ($trip->flightNumber) {
+  $airline = new Airline($trip->airlineId);
+  $flightNumber = $airline->flightNumberPrefix.$trip->flightNumber;
+  Flight::updateFlight($flightNumber);
+}
 
 
 $tripId = $json->id ?: $result['result'];

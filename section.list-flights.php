@@ -6,7 +6,7 @@ if (!isset($db)) $db = new data();
 
 $sql = "
 SELECT 
-  t.guests,
+  t.summary,
   t.pickup_date,
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,
   CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
@@ -56,7 +56,7 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
       ?>
       <div class="mb-3">
         <table class="table table-sm table-bordered <?=$tableClass?>">
-          <caption class="caption-top"><?=Date('m/d/Y', strtotime($item->pickup_date)).': '.$item->guests?></caption>
+          <caption class="caption-top"><?=Date('m/d/Y', strtotime($item->pickup_date)).': '.$item->summary?></caption>
           <thead>
             <tr>
               <th data-bs-toggle="tooltip" data-bs-title="Flight Number">Flight</th>
