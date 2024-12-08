@@ -76,6 +76,12 @@ $trip = $db->get_row($sql, $data);
           </li>
         <?php endif; ?>
 
+        <?php if ($trip->driver_notes): ?>
+          <li class="list-group-item">
+            <?=nl2br($trip->driver_notes)?>
+          </li>
+        <?php endif; ?>
+
       </ul>
     </div>
   </div>

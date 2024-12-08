@@ -2,7 +2,7 @@
 require_once 'inc.components.php';
 require_once 'inc.functions.php';
 $waypointCount = countWaypoints($tripId);
-include 'inc.trip-header.php';
+include 'inc.trip-summary.php';
 ?>
 <?php if ($waypointCount > 0): ?>
 

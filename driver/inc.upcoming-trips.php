@@ -3,7 +3,6 @@ include 'inc.util-functions.php';
 require_once 'class.data.php';
 if (!$db) $db = new data();
 
-// Is there a trip in progress?
 $sql = "
   SELECT 
     t.*,
