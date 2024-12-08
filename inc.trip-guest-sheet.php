@@ -40,6 +40,8 @@ $pdf->SetFont('Helvetica', '', 11);
 $pdf->SetY($saveY);
 $pdf->SetX($xCenter);
 $pdf->MultiCell($xCenter - $pdf->rm, 20, 'Vehicle: '.$trip->vehicle->description, 0, 'L', false);
+$pdf->SetX($xCenter);
+$pdf->MultiCell($xCenter - $pdf->rm, 20, 'License Plate: '.$trip->vehicle->licensePlate, 0, 'L', false);
 
 
 
