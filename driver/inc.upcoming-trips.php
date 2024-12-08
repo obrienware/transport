@@ -34,9 +34,15 @@ $trips = $db->get_results($sql, $data);
   <h3>Your Upcoming Trips</h3>
 
   <?php foreach ($trips as $trip): ?>
+    <?php
+    $badgeClass = 'bg-dark-subtle';
+    $showDate = showDate($trip->start_date);
+    if ($showDate == 'TODAY') $badgeClass = 'bg-success';
+    if ($showDate == 'TOMORROW') $badgeClass = 'bg-danger';
+    ?>
     <div class="card mb-2 shadow">
       <div class="card-body">
-        <div class="badge bg-dark-subtle"><?=showDate($trip->start_date)?></div>
+        <div class="badge <?=$badgeClass?>"><?=$showDate?></div>
         <h5 class="card-title"><?=$trip->summary?></h5>
         
         <small>
