@@ -23,18 +23,20 @@ $vehicle = new Vehicle($vehicleId);
     <tr>
       <th class="fit px-2 bg-body-secondary">Description</th>
       <td><?=$vehicle->description?></td>
+      <th class="fit px-2 bg-body-secondary">License Plate</th>
+      <td class="fit px-2"><?=$vehicle->licensePlate?></td>
     </tr>
     <tr>
       <th class="fit px-2 bg-body-secondary">Passengers</th>
-      <td><?=$vehicle->passengers?></td>
+      <td colspan="3"><?=$vehicle->passengers?></td>
     </tr>
     <tr>
       <th class="fit px-2 bg-body-secondary">Requires a CDL driver</th>
-      <td><?=$vehicle->requireCDL ? 'Yes' : 'No' ?></td>
+      <td colspan="3"><?=$vehicle->requireCDL ? 'Yes' : 'No' ?></td>
     </tr>
     <tr>
       <th class="fit px-2 bg-body-secondary">Staging Location</th>
-      <td><?=$vehicle->stagingLocation?></td>
+      <td colspan="3"><?=$vehicle->stagingLocation?></td>
     </tr>
   </table>
 

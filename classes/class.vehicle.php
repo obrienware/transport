@@ -12,6 +12,7 @@ class Vehicle
 	public $color;
 	public $name;
 	public $description;
+	public $licensePlate;
 	public $passengers;
 	public $requireCDL;
 	public $hasCheckEngine;
@@ -51,6 +52,7 @@ class Vehicle
 			$this->color = $item->color;
 			$this->name = $item->name;
 			$this->description = $item->description;
+			$this->licensePlate = $item->license_plate;
 			$this->passengers = $item->passengers;
 			$this->requireCDL = $item->require_cdl;
 			$this->hasCheckEngine = $item->check_engine;
@@ -93,6 +95,7 @@ class Vehicle
 			'color' => $this->color,
 			'name' => $this->name,
 			'description' => $this->description,
+			'license_plate' => $this->licensePlate,
 			'passengers' => $this->passengers,
 			'require_cdl' => $this->requireCDL,
 			'mileage' => $this->mileage,
@@ -113,6 +116,7 @@ class Vehicle
 					color = :color,
 					name = :name,
 					description = :description,
+					license_plate = :license_plate,
 					passengers = :passengers,
 					require_cdl = :require_cdl,
 					mileage = :mileage,
@@ -135,6 +139,7 @@ class Vehicle
 					color = :color,
 					name = :name,
 					description = :description,
+					license_plate = :license_plate,
 					passengers = :passengers,
 					require_cdl = :require_cdl,
 					mileage = :mileage,

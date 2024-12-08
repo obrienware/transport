@@ -14,6 +14,7 @@
         <th data-dt-order="disable">&nbsp;</th>
         <th>Name</th>
         <th>Vehicle Description</th>
+        <th>License Plate</th>
         <th data-bs-toggle="tooltip" data-bs-title="Max Passengers" class="fit">PAX</th>
         <th data-dt-order="disable" data-bs-toggle="tooltip" data-bs-title="Requires a CDL driver" class="fit">CDL</th>
       </tr>
@@ -37,6 +38,7 @@
             </td>
             <td><?=$item->name?></td>
             <td><?=$item->description?></td>
+            <td><?=$item->license_plate?></td>
             <td class="text-center fit"><?=$item->passengers?></td>
             <td class="text-center fit"><?=($item->require_cdl) ? '<i class="bi bi-check-square text-success"></i>' : ''?></td>
           </tr>

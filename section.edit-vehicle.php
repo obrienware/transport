@@ -34,12 +34,12 @@ $item = new Vehicle($_REQUEST['id']);
         <label for="vehicle-passengers" class="form-label">Max Passengers</label>
         <input type="number" class="form-control" id="vehicle-passengers" placeholder="Number of passengers" value="<?=$item->passengers?>">
       </div>
-      <!--
+
       <div class="col-2 mb-3">
-        <label for="vehicle-mileage" class="form-label">Current Mileage</label>
-        <input type="text" class="form-control" id="vehicle-mileage" placeholder="Mileage" value="<?=$item->mileage ? number_format($item->mileage) : ''?>">
+        <label for="vehicle-license-plate" class="form-label">License Plate</label>
+        <input type="text" class="form-control" id="vehicle-license-plate" placeholder="License Plate" value="<?=$item->licensePlate?>">
       </div>
-      -->
+
       <div class="col mb-3 pt-4">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" value="1" id="vehicle-requireCDL" <?=$item->requireCDL ? 'checked' : ''?>>
@@ -78,9 +78,9 @@ $item = new Vehicle($_REQUEST['id']);
           name: cleanVal('#vehicle-name'),
           description: cleanVal('#vehicle-description'),
           passengers: int(val('#vehicle-passengers'), null),
+          licensePlate: cleanUpperVal('#vehicle-license-plate'),
           // mileage: int(val('#vehicle-mileage'), null),
           requireCDL: $('#vehicle-requireCDL').is(':checked'),
-          // hasCheckEngine: $('#vehicle-hasCheckEngine').is(':checked'),
         });
         if (resp?.result?.result) {
           $(document).trigger('vehicleChange', {vehicleId});
