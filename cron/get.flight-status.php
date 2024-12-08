@@ -32,14 +32,14 @@ if ($rs = $db->get_results($sql)) {
       continue;
     }
 
-    $flight = Flight::getFlightStatus($item->filter_list, $item->type, $item->iata);
+    $flight = Flight::getFlightStatus($item->flight_number, $item->type, $item->iata);
 
     $now = strtotime('now');
     
     if ($item->type == 'arrival') {
       if ($flight->real_arrival) continue; // Flight has already arrived
-      $arrival_time = ($flight->estimated_arrival) ?: $flight->scheduled_arrival;
-      $arrive_in = round($arrival_time - $now / 60, 2);
+      $arrival_time = ($flight->estimated_arrival) ? strtotime($flight->estimated_arrival) : strtotime($flight->scheduled_arrival);
+      $arrive_in = round(($arrival_time - $now) / 60, 2);
 
       // If our ETA is less than 15mins then we're re-checking every minute
       if ($arrive_in <= 15) {
@@ -59,8 +59,8 @@ if ($rs = $db->get_results($sql)) {
      */
     if ($item->type == 'departure') {
       if ($flight->real_departure) continue; // Flight has already departed
-      $departure_time = ($flight->estimated_departure) ?: $flight->scheduled_departure;
-      $departs_in = round($departure_time - $now / 60, 2);
+      $departure_time = ($flight->estimated_departure) ? strtotime($flight->estimated_departure) : strtotime($flight->scheduled_departure);
+      $departs_in = round(($departure_time - $now) / 60, 2);
 
       if ($departs_in > 0) {
         // We havn't passed our ETD yet
