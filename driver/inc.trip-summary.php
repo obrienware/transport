@@ -1,11 +1,13 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-
+require_once 'class.flight.php';
 require_once 'class.data.php';
 if (!isset($db)) $db = new data();
 $sql = "
 SELECT 
   t.*,
+  CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
+  CASE WHEN t.ETA IS NOT NULL THEN pu.iata ELSE do.iata END AS _iata,
   CONCAT(g.first_name,' ',g.last_name) AS guest, g.phone_number,
   CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_from,
   CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff,
@@ -71,7 +73,10 @@ $trip = $db->get_row($sql, $data);
             </div>
             <div>
               <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
-              <div class="badge bg-dark-subtle">Scheduled</div>
+              <div class="badge bg-dark-subtle">
+                <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata); ?>
+                <?=$flight->status_text?>
+              </div>
             </div>
           </li>
         <?php endif; ?>

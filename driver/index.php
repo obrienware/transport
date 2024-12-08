@@ -18,6 +18,9 @@
   <script src="https://kit.fontawesome.com/e8c53c75a8.js" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment-with-locales.min.js" integrity="sha512-4F1cxYdMiAW98oomSLaygEwmCnIP38pb4Kx70yQYqRwLVCs3DbRumfBq82T08g/4LJ/smbFGFpmeFlQgoDccgg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+  <!-- Pull to refresh -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pulltorefreshjs/0.1.22/index.umd.min.js" integrity="sha512-djmgTiVR15A/7fON+ojDzFYrRsfVkzQZu07ZVb0zLC1OhA2iISP39Lzs05GqSKF0vPjkLzL5hBC+am6po7dKpA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script type="text/javascript" src="/js/autocomplete.js"></script>
 
   <!-- we're using this for our survey -->
@@ -67,7 +70,21 @@
         $('#app').load('section.login.php');
       }
 
+      const standalone =
+        navigator.standalone ||
+        window.matchMedia("(display-mode: standalone)").matches;
+      if (!standalone) {
+        return; // not standalone; no pull to refresh needed
+      }
+
+      PullToRefresh.init({
+        onRefresh() {
+          location.reload();
+        },
+      });
     });
+
+
   </script>  
 </body>
 </html>
