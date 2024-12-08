@@ -111,7 +111,7 @@ class Flight
   {
     global $db;
     $lastChecked = $db->get_var(
-      "SELECT last_checked WHERE flight_number = :flight_number",
+      "SELECT last_checked FROM _flight_check WHERE flight_number = :flight_number",
       ['flight_number' => $flightNumber]
     );
     if (!$lastChecked) return false;
