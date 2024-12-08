@@ -54,6 +54,10 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
             $tableClass = "table-secondary";
             break;
         }
+        $classArrival = '';
+        $classDeparture = '';
+        if ($item->type == 'arrival') $classArrival = 'bg-info-subtle';
+        if ($item->type == 'departure') $classDeparture = 'bg-info-subtle';
       ?>
       <div class="mb-3">
         <table class="table table-sm table-bordered <?=$tableClass?>">
@@ -63,15 +67,15 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
               <th data-bs-toggle="tooltip" data-bs-title="Flight Number">Flight</th>
               <th data-bs-toggle="tooltip" data-bs-title="Active">Act</th>
               <th data-bs-toggle="tooltip" data-bs-title="Status">Status</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Origin"><i class="fa-duotone fa-solid fa-plane-departure"></i> DEP</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Scheduled Departure">Sch</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Estimated Departure">Est</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Actual Departure">Act</th>
+              <th class="<?=$classDeparture?>" data-bs-toggle="tooltip" data-bs-title="Origin"><i class="fa-duotone fa-solid fa-plane-departure"></i> DEP</th>
+              <th class="<?=$classDeparture?>" data-bs-toggle="tooltip" data-bs-title="Scheduled Departure">Sch</th>
+              <th class="<?=$classDeparture?>" data-bs-toggle="tooltip" data-bs-title="Estimated Departure">Est</th>
+              <th class="<?=$classDeparture?>" data-bs-toggle="tooltip" data-bs-title="Actual Departure">Act</th>
               <th class="fit">&nbsp;</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Destination"><i class="fa-duotone fa-solid fa-plane-arrival"></i> ARR</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Scheduled Arrival">Sch</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Estimated Arrival">Est</th>
-              <th data-bs-toggle="tooltip" data-bs-title="Actual Arrival">Act</th>
+              <th class="<?=$classArrival?>" data-bs-toggle="tooltip" data-bs-title="Destination"><i class="fa-duotone fa-solid fa-plane-arrival"></i> ARR</th>
+              <th class="<?=$classArrival?>" data-bs-toggle="tooltip" data-bs-title="Scheduled Arrival">Sch</th>
+              <th class="<?=$classArrival?>" data-bs-toggle="tooltip" data-bs-title="Estimated Arrival">Est</th>
+              <th class="<?=$classArrival?>" data-bs-toggle="tooltip" data-bs-title="Actual Arrival">Act</th>
             </tr>
           </thead>
           <tbody>
