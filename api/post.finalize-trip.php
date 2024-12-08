@@ -55,7 +55,7 @@ Hello {$driverName},
 
 The following trip has been assigned to you:
 
-
+{$tripDate}
 {$trip->summary}
 
 Please find your information sheet attached. This trip will automatically be tracked in your app.
