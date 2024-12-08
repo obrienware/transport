@@ -22,7 +22,7 @@ function getWaypoint($tripId, $seq) {
     SELECT 
       w.*,
       CASE WHEN l.short_name IS NULL THEN l.name ELSE l.short_name END AS location,
-      l.lat, l.lon
+      l.lat, l.lon, l.map_address
     FROM trip_waypoints w
     LEFT OUTER JOIN locations l ON l.id = w.location_id
     WHERE 

@@ -2,30 +2,30 @@
 require_once 'inc.components.php';
 require_once 'inc.functions.php';
 $waypointCount = countWaypoints($tripId);
-include 'inc.trip-summary.php';
 ?>
 <?php if ($waypointCount > 0): ?>
 
   <?php $seq = getCurrentWaypointSequence($tripId); ?>
-  <div class="mt-4 mb-2"><small class="text-muted">Trip Progress</small></div>
+  <div class="mb-2"><small class="text-muted">Trip Progress</small></div>
   <?=stepIndicator($seq, $waypointCount)?>
   <?php $wp = getWaypoint($tripId, $seq); ?>
 
-  <div class="card mt-3">
+  <div class="card mt-3 bg-primary-subtle border-primary">
     <div class="card-body">
       <div class="mb-3">
         <i class="fa-solid fa-arrow-right"></i>
         <?=$wp->description?>
       </div>
-      <h5 class="mb-4 text-center"><?=$wp->location?></h5>
+      <h5 class="text-center"><?=$wp->location?></h5>
+      <p class="text-center"><?=$wp->map_address?></p>
       <div class="mt-3 d-flex justify-content-around">        
         <a href="https://maps.apple.com/?q=<?=$wp->lat?>,<?=$wp->lon?>" target="map" class="btn btn-outline-primary"><i class="fa fa-location-arrow"></i></a>
         <button id="btn-add-waypoint" class="btn btn-outline-primary"><i class="fa fa-plus"></i></button>
-        <button id="btn-complete-waypoint" class="btn btn-primary">Destination Reached</button>
+        <button id="btn-complete-waypoint" class="btn btn-primary">Waypoint Reached</button>
       </div>
     </div>
   </div>
-  <div class="mt-3">
+  <div class="my-3">
     <button id="btn-cancel-trip" class="btn btn-outline-danger btn-sm">Cancel</button>
   </div>
 
@@ -61,3 +61,5 @@ include 'inc.trip-summary.php';
   </div>
 
 <?php endif;?>
+
+<?php include 'inc.trip-summary.php';
