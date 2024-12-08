@@ -25,7 +25,7 @@ WHERE
 	AND t.archived IS NULL
   AND (
     DATE(t.pickup_date) < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-    OR DATE(t.pickup_date) > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+    AND DATE(t.pickup_date) > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
   )
 ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
 ";
