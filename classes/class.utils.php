@@ -17,7 +17,7 @@ class Utils
     return implode($pass); //turn the array into a string
   }
 
-  static public function callApi ($method, $url, $data = false, $auth = null) {
+  static public function callApi ($method, $url, $data = [], $auth = null, $headers = []) {
     $curl = curl_init();
     switch ($method) {
       case "POST":
@@ -30,7 +30,7 @@ class Utils
         curl_setopt($curl, CURLOPT_PUT, 1);
         break;
       default:
-        if ($data) {
+        if (count($data) > 0) {
           $url = sprintf("%s?%s", $url, http_build_query($data));
         }
     }
@@ -43,7 +43,7 @@ class Utils
   
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/json'));
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array_merge(['Accept: application/json'], $headers));
   
     // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     // curl_setopt($ch, CURLOPT_TIMEOUT, 20); //timeout in seconds
