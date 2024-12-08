@@ -23,7 +23,11 @@ $trip = new Trip($json->tripId);
 $vehicle = new Vehicle($trip->vehicleId);
 $vehicle->lastUpdate = Date('Y-m-d H:i:s'); // Basically now...
 $vehicle->lastUpdatedBy = $_SESSION['user']->id;
-if ($json->locationId) $vehicle->locationId = $json->locationId;
+if ($json->locationId) {
+  $vehicle->locationId = $json->locationId;
+} else {
+  $vehicle->locationId = $vehicle->stagingLocationId;
+}
 if ($json->fuel) $vehicle->fuelLevel = $json->fuel;
 if ($json->mileage) $vehicle->mileage = $json->mileage;
 if ($json->checkEngine) $vehicle->hasCheckEngine = 1;
