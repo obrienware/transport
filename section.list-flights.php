@@ -37,6 +37,7 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
     <?php foreach ($rs as $item): ?>
       <?php 
         $flight = Flight::getFlightStatus($item->flight_number, $item->type, $item->iata, Date('Y-m-d', strtotime($item->target_datetime)));
+        if (!$flight->flight_number) continue; // exclude flights we didn't track.
         switch ($flight->status_icon) {
           case 'green':
             $tableClass = "table-success";
