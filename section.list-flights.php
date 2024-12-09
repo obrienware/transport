@@ -20,14 +20,11 @@ LEFT OUTER JOIN locations b ON b.id = t.do_location
 WHERE
  	(t.eta IS NOT NULL OR t.etd IS NOT NULL)
 	AND
-	(t.eta IS NULL OR DATE(eta) >= CURDATE())
+	(t.eta IS NULL OR DATE(eta) >= DATE_SUB(CURDATE(), INTERVAL 3 DAY))
 	AND
-	(t.etd IS NULL OR DATE(etd) >= CURDATE())	
+	(t.etd IS NULL OR DATE(etd) >= DATE_SUB(CURDATE(), INTERVAL 3 DAY))	
 	AND t.archived IS NULL
-  AND (
-    DATE(t.pickup_date) < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-    AND DATE(t.pickup_date) > DATE_SUB(CURDATE(), INTERVAL 1 DAY)
-  )
+  AND DATE(t.pickup_date) < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
 ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
 ";
 
