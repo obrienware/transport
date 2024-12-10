@@ -100,7 +100,7 @@ $trip = $db->get_row($sql, $data);
                   <?php else: ?>
                     STA: <?=Date('g:ia', strtotime($flight->scheduled_arrival))?>
                   <?php endif; ?>
-                <?php elseif ($trip->type === 'arrival'): ?>
+                <?php elseif ($trip->type === 'departure'): ?>
                   <?php if ($flight->real_departure): ?>
                     ATD: <?=Date('g:ia', strtotime($flight->real_departure))?> 
                   <?php elseif ($flight->estimated_departure): ?>
