@@ -73,9 +73,42 @@ $trip = $db->get_row($sql, $data);
             </div>
             <div>
               <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
-              <div class="badge bg-dark-subtle">
-                <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata, Date('Y-m-d', strtotime($trip->pickup_date))); ?>
+              <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata, Date('Y-m-d', strtotime($trip->pickup_date))); ?>
+              <?php
+              $backgroundColor = 'gray';
+              switch ($flight->icon) {
+                case 'green':
+                  $backgroundColor = 'green';
+                  break;
+                case 'yellow':
+                  $backgroundColor = 'orange';
+                  break;
+                case 'red':
+                  $backgroundColor = 'red';
+                  break;
+              }
+              ?>
+              <div class="badge" style="background-color: <?=$backgroundColor?>">
                 <?=$flight->status_text?>
+              </div>
+              <div style="font-size: small">
+                <?php if ($trip->type === 'arrival'): ?>
+                  <?php if ($flight->real_arrival): ?>
+                    ATA: <?=Date('g:ia', strtotime($flight->real_arrival))?> 
+                  <?php elseif ($flight->estimated_arrival): ?>
+                    ETA: <?=Date('g:ia', strtotime($flight->estimated_arrival))?>
+                  <?php else: ?>
+                    STA: <?=Date('g:ia', strtotime($flight->scheduled_arrival))?>
+                  <?php endif; ?>
+                <?php elseif ($trip->type === 'arrival'): ?>
+                  <?php if ($flight->real_departure): ?>
+                    ATD: <?=Date('g:ia', strtotime($flight->real_departure))?> 
+                  <?php elseif ($flight->estimated_departure): ?>
+                    ETD: <?=Date('g:ia', strtotime($flight->estimated_departure))?>
+                  <?php else: ?>
+                    STD: <?=Date('g:ia', strtotime($flight->scheduled_departure))?>
+                  <?php endif; ?>
+                <?php endif;?>
               </div>
             </div>
           </li>
