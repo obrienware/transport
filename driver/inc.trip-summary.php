@@ -74,7 +74,7 @@ $trip = $db->get_row($sql, $data);
             <div>
               <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
               <div class="badge bg-dark-subtle">
-                <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata); ?>
+                <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata, Date('Y-m-d', strtotime($trip->pickup_date))); ?>
                 <?=$flight->status_text?>
               </div>
             </div>
