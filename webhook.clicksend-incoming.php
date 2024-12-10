@@ -39,6 +39,21 @@ $data = [
   'timestamp' => $_POST['timestamp'],
   'message_id' => $_POST['message_id']
 ];
-$db->query($sql, $data);
+$id = $db->query($sql, $data);
 
 // TODO: Once we have our number approved we can implement the "STOP" feature
+$pos = stripos($_POST['body'], 'stop');
+if ($pos !== false && $pos <= 5) {
+  $sql = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
+  $data = ['tel' => formattedPhoneNumber(str_replace('+1', '', $_POST['sms']))];
+  $db->query($sql, $data);
+}
+
+function formattedPhoneNumber($number) 
+{
+  if (str_contains($number, '+')) {
+    return $number;
+  } else {
+    return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+  }
+}
