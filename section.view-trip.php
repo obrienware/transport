@@ -40,6 +40,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
             <?php endif; ?>
           </div>
           <div><?=$trip->puLocation->name?></div>
+          <div>Contact: <?=$trip->guest->getName()?> <?=$trip->guest->phoneNumber?></div>
         </div>
       </div>
     </div>
