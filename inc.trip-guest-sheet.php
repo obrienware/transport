@@ -20,6 +20,15 @@ $pdf->SetFont('Helvetica', 'B', 16);
 $pdf->Cell($pageWidth, $pdf->row_height, 'Transportation: Guest Sheet'); 
 $pdf->ln(30);
 
+
+// Include guest information also...
+$pdf->SetFont('Helvetica', 'B', 14);
+$pdf->Cell($pageWidth, 30, 'Group / Guest', 1, 1, 'L', true);
+$pdf->SetFont('Helvetica', '', 11);
+$pdf->MultiCell($pageWidth, 18, $trip->guests.' / '.$trip->guest->getName(), 1, 'L');
+$pdf->ln();
+
+
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Your Driver', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
