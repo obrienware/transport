@@ -28,7 +28,10 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     <div class="col mb-3">
       <div class="card h-100">
         <div class="card-header">
-          <h5 class="my-0">Pick Up</h5>
+          <h5 class="my-0 d-flex justify-content-between">
+            <span>Pick Up</span>
+            <span><?=Date('D M j @ g:ia', strtotime($trip->startDate))?></span>
+          </h5>
         </div>
         <div class="card-body">
           <div><?=Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
