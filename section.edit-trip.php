@@ -398,11 +398,16 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         $('#trip-driver-id option').remove();
         $('#trip-driver-id').append($('<option>'));
         $.each(drivers, function (i, item) {
-          $('#trip-driver-id').append($('<option>', {
+          const optionProps = {
             value: item.id,
             text: item.driver,
-            disabled: !item.available,
-          }));
+            // disabled: !item.available,
+          }
+          if (!item.available) {
+            optionProps.style = `background-color:crimson; color: white`;
+            optionProps['data-icon'] = 'fa-solid fa-triangle-exclamation';
+          }
+          $('#trip-driver-id').append($('<option>', optionProps));
         });
         $('#trip-driver-id').selectpicker()
 
@@ -415,12 +420,16 @@ $trip = new Trip(tripId: $_REQUEST['id']);
         $('#trip-vehicle-id option').remove();
         $('#trip-vehicle-id').append($('<option>'));
         $.each(vehicles, function (i, item) {
-          $('#trip-vehicle-id').append($('<option>', {
+          const optionProps = {
             value: item.id,
             text: item.name,
             'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
-            disabled: !item.available,
-          }));
+          }
+          if (!item.available) {
+            optionProps.style = `background-color:crimson; color: white`;
+            optionProps['data-icon'] = 'fa-solid fa-triangle-exclamation';
+          }
+          $('#trip-vehicle-id').append($('<option>', optionProps));
         });
         $('#trip-vehicle-id').selectpicker();
 
