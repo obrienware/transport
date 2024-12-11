@@ -1,11 +1,10 @@
 <?php
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db))  $db = new data();
 
 class Department
 {
+	private $row;
   private $departmentId;
   public $name;
   public $mayRequest;
@@ -23,6 +22,8 @@ class Department
     $sql = "SELECT * FROM departments WHERE id = :department_id";
     $data = ['department_id' => $departmentId];
     if ($item = $db->get_row($sql, $data)) {
+			$this->row = $item;
+
       $this->departmentId = $item->id;
       $this->name = $item->name;
       $this->mayRequest = $item->can_submit_requests;
@@ -88,6 +89,11 @@ class Department
 	public function delete()
 	{
 		return $this->deleteDepartment($this->departmentId);
+	}
+
+	public function getState()
+	{
+		return json_encode($this->row);
 	}
 
 }

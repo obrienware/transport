@@ -1,13 +1,11 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db)) $db = new data();
 
 
 class Blockout
 {
+	private $row;
 	public $blockoutId;
 	public $userId;
 	public $fromDateTime;
@@ -27,6 +25,8 @@ class Blockout
 		$sql = 'SELECT * FROM user_blockouts WHERE id = :blockout_id';
 		$data = ['blockout_id' => $blockoutId];
 		if ($row = $db->get_row($sql, $data)) {
+			$this->row = $row;
+			
 			$this->blockoutId = $row->id;
 			$this->userId = $row->user_id;
 			$this->fromDateTime = $row->from_datetime;
@@ -106,6 +106,11 @@ class Blockout
 	public function delete()
 	{
 		return $this->deleteBlockout($this->blockoutId);
+	}
+
+	public function getState()
+	{
+		return json_encode($this->row);
 	}
 
 }
