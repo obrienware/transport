@@ -222,14 +222,6 @@ class User
 		return $db->get_results($sql);
 	}
 
-	public function updateLastLogin()
-	{
-		global $db;
-		$sql = "UPDATE users SET last_logged_in = NOW() WHERE id = :user_id";
-		$data = ['user_id' => $this->userId];
-		return $db->query($sql, $data);
-	}
-
 	public function getUserByEmail($emailAddress)
 	{
 		global $db;
