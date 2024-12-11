@@ -1,8 +1,6 @@
 <?php
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db)) $db = new data();
 
 class User
 {
@@ -17,6 +15,8 @@ class User
 	public $departmentId;
 	public $CDL;
 	public $changePassword;
+
+	public $otp;
 
 	public function __construct(int $userId = null)
 	{
@@ -109,9 +109,10 @@ class User
 					created = NOW(),
 					created_by = :user
 			";
-			$data['user'] = $_SESSION['user']->username;
+			$data['user'] = $_SESSION['user']->username ?: 'system';
 		}
 		$result = $db->query($sql, $data);
+		if (!$this->userId) $this->getUser($result); // If we are adding a user, then lets get a clean instance of the user
 		return [
 			'result' => $result,
 			'errors' => $db->errorInfo
@@ -131,7 +132,7 @@ class User
 
 			$email = new Email();
 			$email->setSubject('Your password has been reset.');
-			$email->setContent("Your new temporary password has been set to\n\n{$newPassword}\n\nVisit http://{$_SERVER['HTTP_HOST']}");
+			$email->setContent("Your new temporary password has been set to\n\n{$newPassword}\n\nVisit https://{$_SERVER['HTTP_HOST']}");
 			$email->addRecipient($this->emailAddress, $this->firstName);
 			$email->sendText();
 			return true;
@@ -153,14 +154,14 @@ class User
 
 			$email = new Email();
 			$email->setSubject('Password reset.');
-			$email->setContent("To reset your password, please navigate to the following link : http://{$_SERVER['HTTP_HOST']}/reset/{$token}");
+			$email->setContent("To reset your password, please navigate to the following link : https://{$_SERVER['HTTP_HOST']}/reset/{$token}");
 			$email->addRecipient($tmpUser->emailAddress, $tmpUser->firstName);
 			return $email->sendText();
 		}
 		return false;
 	}
 
-	private function setPasswordToken(): string
+	public function setPasswordToken(): string
 	{
 		global $db;
 		$sql = "
@@ -179,7 +180,7 @@ class User
 	public function setNewPassword($newPassword)
 	{
 		global $db;
-		$sql = 'UPDATE users SET password = :new_password, change_password = 0 WHERE id = :id';
+		$sql = 'UPDATE users SET password = :new_password, change_password = 0, reset_token = NULL, token_expiration = NULL WHERE id = :id';
 		$data = ['new_password' => md5($newPassword), 'id' => $this->userId];
 		return $db->query($sql, $data);
 	}
@@ -227,5 +228,36 @@ class User
 		$sql = "UPDATE users SET last_logged_in = NOW() WHERE id = :user_id";
 		$data = ['user_id' => $this->userId];
 		return $db->query($sql, $data);
+	}
+
+	public function getUserByEmail($emailAddress)
+	{
+		global $db;
+		$sql = "SELECT * FROM users WHERE email_address = :email_address AND archived IS NULL";
+		$data = ['email_address' => $emailAddress];
+		if ($row = $db->get_row($sql, $data)) {
+			$this->getUser($row->id);
+			return true;
+		}
+		$this->emailAddress = $emailAddress;
+		return false;
+	}
+
+	static public function validateOTP($email, $otp)
+	{
+		global $db;
+		$sql = "
+			SELECT * FROM users 
+			WHERE 
+				email_address = :email_address 
+				AND reset_token = :otp
+				AND NOW() < token_expiration
+		";
+		$data = [
+			'email_address' => $email,
+			'otp' => $otp
+		];
+		if ($item = $db->get_row($sql, $data)) return true;
+		return false;
 	}
 }

@@ -60,6 +60,7 @@ $return = ($_REQUEST['return']) ? base64_decode($_REQUEST['return']) : './';
 					Transport
 				</h1>
         <h2 class="mb-5 fw-light">Login Required</h2>
+				<input type="hidden" autocomplete="false">
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="username" placeholder="Username">
           <label for="username">Username</label>
@@ -68,7 +69,8 @@ $return = ($_REQUEST['return']) ? base64_decode($_REQUEST['return']) : './';
           <input type="password" class="form-control" id="password" placeholder="Password">
           <label for="password">Password</label>
         </div>
-				<div class="text-end">
+				<div class="d-flex justify-content-between">
+					<a href="/request" data-bs-toggle="tooltip" data-bs-title="Looking to request a trip or vehicle?"><small>Request</small></a>
 					<a href="page.forgot-password.php"><small>Forgot Password</small></a>
 				</div>
         <div class="mt-4">

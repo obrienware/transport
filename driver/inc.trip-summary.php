@@ -115,7 +115,7 @@ $trip = $db->get_row($sql, $data);
         <?php endif; ?>
 
         <?php if ($trip->driver_notes): ?>
-          <li class="list-group-item">
+          <li class="list-group-item bg-warning">
             <?=nl2br($trip->driver_notes)?>
           </li>
         <?php endif; ?>

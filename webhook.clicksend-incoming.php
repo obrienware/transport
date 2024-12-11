@@ -41,7 +41,7 @@ $data = [
 ];
 $id = $db->query($sql, $data);
 
-// TODO: Once we have our number approved we can implement the "STOP" feature
+// If someone responds with "STOP" to stop sending them messages.
 $pos = stripos($_POST['body'], 'stop');
 if ($pos !== false && $pos <= 5) {
   $sql = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";

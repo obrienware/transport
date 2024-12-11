@@ -129,7 +129,7 @@ const ask = async question => {
 
 const input = async question => {
 	const {value: answer} = await Swal.fire({
-		title: question,
+		html: question,
 		input: 'text',
 		icon: 'question',
 		showCancelButton: true,
