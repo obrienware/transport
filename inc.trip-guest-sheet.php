@@ -5,7 +5,7 @@ require_once 'class.pdf.php';
 require_once 'class.trip.php';
 if (!isset($trip)) $trip = new Trip($_REQUEST['id']);
 
-$config = Config::get('global');
+$config = Config::get('organization');
 
 $pdf = new PDF('P', 'pt', 'letter');
 $pdf->AddPage();
