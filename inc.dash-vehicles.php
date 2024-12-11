@@ -2,7 +2,8 @@
 require_once 'class.data.php';
 if (!$db) $db = new data();
 $sql = "
-  SELECT v.*, l.name AS location
+  SELECT v.*, 
+    CASE WHEN v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL THEN l.name ELSE NULL END AS location
   FROM vehicles v
   LEFT OUTER JOIN locations l ON l.id = v.location_id
   WHERE 
@@ -59,6 +60,12 @@ $sql = "
             <?php if ($item->restock === 1): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs restocking
+              </li>
+            <?php endif; ?>
+
+            <?php if ($item->location): ?>
+              <li class="list-group-item">
+                <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: orangered"></i> <?=$item->location?>
               </li>
             <?php endif; ?>
 
