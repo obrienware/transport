@@ -453,7 +453,7 @@
         const optionProps = {
           value: item.id,
           text: item.name,
-          'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
+          // 'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
         }
         if (!item.available) {
           optionProps.style = `background-color:crimson; color: white`;
