@@ -1,30 +1,20 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.audit.php';
 require_once 'class.trip.php';
+
 $sourceTrip = new Trip($_REQUEST['id']);
-$targetTrip = new Trip();
+$before = $sourceTrip->getState();
 
-$targetTrip->summary = $sourceTrip->summary.' (copy)';
-$targetTrip->requestorId = $sourceTrip->requestorId;
-$targetTrip->startDate = $sourceTrip->startDate;
-$targetTrip->pickupDate = $sourceTrip->pickupDate;
-$targetTrip->endDate = $sourceTrip->endDate;
-$targetTrip->guestId = $sourceTrip->guestId;
-$targetTrip->guests = $sourceTrip->guests;
-$targetTrip->passengers = $sourceTrip->passengers;
-$targetTrip->puLocationId = $sourceTrip->puLocationId;
-$targetTrip->doLocationId = $sourceTrip->doLocationId;
-$targetTrip->driverId = $sourceTrip->driverId;
-$targetTrip->vehicleId = $sourceTrip->vehicleId;
-$targetTrip->airlineId = $sourceTrip->airlineId;
-$targetTrip->flightNumber = $sourceTrip->flightNumber;
-$targetTrip->vehiclePUOptions = $sourceTrip->vehiclePUOptions;
-$targetTrip->vehicleDOOptions = $sourceTrip->vehicleDOOptions;
-$targetTrip->ETA = $sourceTrip->ETA;
-$targetTrip->ETD = $sourceTrip->ETD;
-$targetTrip->IATA = $sourceTrip->IATA;
-$targetTrip->guestNotes = $sourceTrip->guestNotes;
-$targetTrip->driverNotes = $sourceTrip->driverNotes;
-$targetTrip->generalNotes = $sourceTrip->generalNotes;
+$targetTrip = clone $sourceTrip;
+unset($targetTrip->tripId); // To force it to save as a new database record
+$targetTrip->summary = $targetTrip->summary.' (copy)';
+$resp = $targetTrip->save();
+$newId = $resp['result'];
+$targetTrip->getTrip($newId);
+$after = $targetTrip->getState();
 
-die(json_encode($targetTrip->save()));
+$description = 'Duplicated trip: '.$sourceTrip->summary;
+
+Audit::log('added', 'trips', $description, $before, $after);
+die(json_encode(['result' => $newId]));

@@ -1,13 +1,14 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+require_once 'class.location.php';
+require_once 'class.user.php';
+if (!isset($db)) $db = new data();
 
 class Event
 {
+  private $row;
   private $eventId;
+
   public $name;
   public $requestorId;
   public $requestor;
@@ -29,25 +30,23 @@ class Event
   public function getEvent(int $eventId)
   {
 		global $db;
-		$sql = "
-      SELECT e.*, l.name AS location, CONCAT(first_name,' ',last_name) AS requestor FROM events e
-      LEFT OUTER JOIN locations l ON l.id = e.location_id
-      LEFT OUTER JOIN users r ON r.id = e.requestor_id
-      WHERE e.id = :event_id
-    ";
+    $sql = "SELECT * FROM events WHERE id = :event_id";
 		$data = ['event_id' => $eventId];
 		if ($item = $db->get_row($sql, $data)) {
+      $this->row = $item;
+
 			$this->eventId = $item->id;
       $this->name = $item->name;
       $this->requestorId = $item->requestor_id;
-      $this->requestor = $item->requestor;
       $this->locationId = $item->location_id;
-      $this->location = $item->location;
       $this->startDate = $item->start_date;
       $this->endDate = $item->end_date;
       $this->drivers = explode(',', $item->driver_ids);
       $this->vehicles = explode(',', $item->vehicle_ids);
       $this->notes = $item->notes;
+
+      if ($this->requestorId) $this->requestor = new User($this->requestorId);
+      if ($this->locationId) $this->location = new Location($this->locationId);
 			return true;
 		}
 		return false;
@@ -123,5 +122,9 @@ class Event
 		return $this->deleteEvent($this->eventId);
 	}
 
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
 
 }

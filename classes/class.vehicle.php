@@ -1,12 +1,12 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db)) $db = new data();
+
+require_once 'class.location.php';
 
 class Vehicle
 {
+	private $row;
 	private $vehicleId;
 
 	public $color;
@@ -39,15 +39,11 @@ class Vehicle
 	public function getVehicle($vehicleId)
 	{
 		global $db;
-		$sql = '
-			SELECT v.*, l.name AS location, b.name AS current_location
-			FROM vehicles v
-			LEFT OUTER JOIN locations l ON l.id = v.default_staging_location_id
-			LEFT OUTER JOIN locations b ON b.id = v.location_id
-			WHERE v.id = :vehicle_id
-		';
+		$sql = "SELECT * FROM vehicles WHERE id = :vehicle_id";
 		$data = ['vehicle_id' => $vehicleId];
 		if ($item = $db->get_row($sql, $data)) {
+			$this->row = $item;
+
 			$this->vehicleId = $item->id;
 			$this->color = $item->color;
 			$this->name = $item->name;
@@ -58,16 +54,16 @@ class Vehicle
 			$this->hasCheckEngine = $item->check_engine;
 			$this->mileage = $item->mileage;
 			$this->stagingLocationId = $item->default_staging_location_id;
-			$this->stagingLocation = $item->location;
-
 			$this->lastUpdate = $item->last_update;
 			$this->lastUpdatedBy = $item->last_updated_by;
 			$this->locationId = $item->location_id;
-			$this->currentLocation = $item->current_location;
 			$this->fuelLevel = $item->fuel_level;
 			$this->cleanInterior = $item->clean_interior;
 			$this->cleanExterior = $item->clean_exterior;
 			$this->restock = $item->restock;
+
+			if ($this->stagingLocationId) $this->stagingLocation = new Location($this->stagingLocationId);
+			if ($this->locationId) $this->currentLocation = new Location($this->locationId);
 			return true;
 		}
 		return false;
@@ -162,11 +158,22 @@ class Vehicle
 		];
 	}
 
-	static public function delete($vehicleId)
+	static function deleteVehicle($vehicleId)
 	{
 		global $db;
 		$sql = 'UPDATE vehicles SET archived = NOW(), archived_by = :user WHERE id = :vehicle_id';
 		$data = ['user' => $_SESSION['user']->username, 'vehicle_id' => $vehicleId];
 		return $db->query($sql, $data);
 	}
+
+	public function delete()
+	{
+		return $this->deleteVehicle($this->vehicleId);
+	}
+
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
+
 }

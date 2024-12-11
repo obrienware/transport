@@ -7,7 +7,9 @@ if (!isset($db)) {
 
 class Location
 {
+	private $row;
 	private $locationId;
+
 	public $name;
 	public $shortName;
 	public $mapAddress;
@@ -32,6 +34,8 @@ class Location
 		$sql = 'SELECT * FROM locations WHERE id = :location_id';
 		$data = ['location_id' => $locationId];
 		if ($item = $db->get_row($sql, $data)) {
+			$this->row = $item;
+
 			$this->locationId = $item->id;
 			$this->name = $item->name;
 			$this->description = $item->description;
@@ -125,4 +129,8 @@ class Location
 		return $this->deleteLocation($this->locationId);
 	}
 
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
 }

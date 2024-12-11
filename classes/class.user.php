@@ -4,6 +4,8 @@ if (!isset($db)) $db = new data();
 
 class User
 {
+	private $row;
+
 	public $userId;
 	public $username;
 	public $firstName;
@@ -31,6 +33,8 @@ class User
 		$sql = 'SELECT * FROM users WHERE id = :user_id';
 		$data = ['user_id' => $userId];
 		if ($row = $db->get_row($sql, $data)) {
+			$this->row = $row;
+
 			$this->userId = $row->id;
 			$this->username = $row->username;
 			$this->firstName = $row->first_name;
@@ -252,4 +256,10 @@ class User
 		if ($item = $db->get_row($sql, $data)) return true;
 		return false;
 	}
+
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
+
 }

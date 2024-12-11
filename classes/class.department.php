@@ -1,21 +1,28 @@
 <?php
 require_once 'class.data.php';
-if (!isset($db))  $db = new data();
+if (!isset($db)) $db = new data();
 
 class Department
 {
-	private $row;
+	private $row; // This will contain the initial row object as provided by the database
   private $departmentId;
+	
   public $name;
   public $mayRequest;
 
-  public function __construct(int $departmentId = null)
+	public function __construct(int $departmentId = null)
   {
     if ($departmentId) {
       $this->getDepartment($departmentId);
     }
   }
-
+  
+  /**
+   * getDepartment: Gets the associated department data for the given ID
+   *
+   * @param  int $departmentId
+   * @return bool	- whether it was successful or not
+   */
   public function getDepartment(int $departmentId): bool
   {
     global $db;
@@ -31,20 +38,35 @@ class Department
     }
     return false;
   }
-
-  public function getDepartmentId()
+  
+  /**
+   * getDepartmentId: Provides the ID of the active object
+   *
+   * @return int
+   */
+  public function getDepartmentId(): int
   {
     return $this->departmentId;
   }
-
-  static public function getDepartments()
+  
+  /**
+   * getDepartments: Get a list of all the departments
+   *
+   * @return array|false	either a recordset, or false if there is no data
+   */
+  static public function getDepartments(): mixed
   {
     global $db;
     $sql = "SELECT * FROM departments WHERE archived IS NULL ORDER BY name";
     return $db->get_results($sql);
   }
-
-  public function save()
+  
+  /**
+   * save: Saves the active object
+   *
+   * @return array
+   */
+  public function save(): array
   {
 		global $db;
 		$data = [
@@ -77,21 +99,39 @@ class Department
 			'errors' => $db->errorInfo
 		];
   }
-
-	static function deleteDepartment($departmentId)
+	
+	/**
+	 * static deleteDepartment: Deletes the department identified by the given ID
+	 *
+	 * @param  int $departmentId
+	 * @return mixed
+	 */
+	static function deleteDepartment(int $departmentId): mixed
 	{
 		global $db;
 		$sql = 'UPDATE departments SET archived = NOW(), archived_by = :user WHERE id = :department_id';
 		$data = ['user' => $_SESSION['user']->username, 'department_id' => $departmentId];
 		return $db->query($sql, $data);
 	}
-
-	public function delete()
+	
+	/**
+	 * delete: Deleted the current department object (this)
+	 *
+	 * @return mixed
+	 */
+	public function delete(): mixed
 	{
 		return $this->deleteDepartment($this->departmentId);
 	}
-
-	public function getState()
+	
+	/**
+	 * getState: 
+	 * 	Returns a JSON string representing the current database record. 
+	 * 	Used by the audit trail to show what might have changed.
+	 *
+	 * @return string
+	 */
+	public function getState(): string
 	{
 		return json_encode($this->row);
 	}

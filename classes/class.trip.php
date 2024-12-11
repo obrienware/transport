@@ -1,19 +1,19 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db)) $db = new data();
+
 require_once 'class.user.php';
 require_once 'class.guest.php';
 require_once 'class.location.php';
 require_once 'class.vehicle.php';
 require_once 'class.airline.php';
 require_once 'class.airport.php';
+
 class Trip
 {
+	private $row;
+
 	public $tripId;
 	public $requestorId;
 	public $summary;
@@ -62,6 +62,8 @@ class Trip
 		$sql = 'SELECT * FROM trips WHERE id = :id';
 		$data = ['id' => $tripId];
 		if ($item = $db->get_row($sql, $data)) {
+			$this->row = $item;
+
 			$this->tripId = $item->id;
 			$this->requestorId = $item->requestor_id;
 			$this->summary = $item->summary;
@@ -282,4 +284,10 @@ class Trip
 			OR (strtotime($this->endDate) <= strtotime('now'))
 		);
 	}
+
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
+
 }

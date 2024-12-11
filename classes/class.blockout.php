@@ -5,21 +5,28 @@ if (!isset($db)) $db = new data();
 
 class Blockout
 {
-	private $row;
+	private $row; // This will contain the initial row object as provided by the database
+	
 	public $blockoutId;
 	public $userId;
 	public $fromDateTime;
 	public $toDateTime;
 	public $note;
-
-	public function __construct($blockoutId = null)
+	
+	public function __construct(int $blockoutId = null)
 	{
 		if (isset($blockoutId)) {
 			$this->getBlockout($blockoutId);
 		}
 	}
-
-	public function getBlockout($blockoutId)
+	
+	/**
+	 * getBlockout: Gets the associated block out data for the given ID
+	 *
+	 * @param  int $blockoutId
+	 * @return bool	- Whether it was successful or not
+	 */
+	public function getBlockout(int $blockoutId): bool
 	{
 		global $db;
 		$sql = 'SELECT * FROM user_blockouts WHERE id = :blockout_id';
@@ -36,8 +43,13 @@ class Blockout
 		}
 		return false;
 	}
-
-	static function getBlockouts()
+	
+	/**
+	 * getBlockouts: Get a list of the current block out dates
+	 *
+	 * @return array|bool either a recordset, or false if there is no data
+	 */
+	static function getBlockouts(): mixed
 	{
 		global $db;
 		$sql = "
@@ -49,16 +61,27 @@ class Blockout
 		";
 		return $db->get_results($sql);
 	}
-
-	static function getBlockoutsForUser(int $userId)
+	
+	/**
+	 * getBlockoutsForUser: Get a list of current block out dates for a specific user
+	 *
+	 * @param  int $userId
+	 * @return array|bool either a recordset, or false if there is no data
+	 */
+	static function getBlockoutsForUser(int $userId): mixed
 	{
 		global $db;
 		$sql = "SELECT * FROM user_blockouts WHERE to_datetime > NOW() AND user_id = :user_id ORDER BY from_datetime";
     $data = ['user_id' => $userId];
 		return $db->get_results($sql, $data);
 	}
-
-	public function save()
+	
+	/**
+	 * save: Saves the current block out date period
+	 *
+	 * @return array
+	 */
+	public function save(): array
 	{
 		global $db;
 		$data = [
@@ -94,21 +117,39 @@ class Blockout
 			'errors' => $db->errorInfo
 		];
 	}
-
-	static function deleteBlockout($blockoutId)
+	
+	/**
+	 * static deleteBlockout: Deletes the block out period identified by a specific ID
+	 *
+	 * @param  int $blockoutId
+	 * @return mixed
+	 */
+	static function deleteBlockout(int $blockoutId): mixed
 	{
 		global $db;
 		$sql = 'DELETE FROM user_blockouts WHERE id = :blockout_id';
 		$data = ['blockout_id' => $blockoutId];
 		return $db->query($sql, $data);
 	}
-
+	
+	/**
+	 * delete: Deleted the active block out period
+	 *
+	 * @return mixed
+	 */
 	public function delete()
 	{
 		return $this->deleteBlockout($this->blockoutId);
 	}
-
-	public function getState()
+	
+	/**
+	 * getState: 
+	 * 	Returns a JSON string representing the current database record. 
+	 * 	Used by the audit trail to show what might have changed.
+	 *
+	 * @return string
+	 */
+	public function getState(): string
 	{
 		return json_encode($this->row);
 	}

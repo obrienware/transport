@@ -1,13 +1,12 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+if (!isset($db)) $db = new data();
 
 
 class Guest
 {
+	private $row;
+
 	public $guestId;
 	public $firstName;
 	public $lastName;
@@ -27,6 +26,8 @@ class Guest
 		$sql = 'SELECT * FROM guests WHERE id = :guest_id';
 		$data = ['guest_id' => $guestId];
 		if ($row = $db->get_row($sql, $data)) {
+			$this->row = $row;
+
 			$this->guestId = $row->id;
 			$this->firstName = $row->first_name;
 			$this->lastName = $row->last_name;
@@ -102,4 +103,8 @@ class Guest
 		return $this->deleteGuest($this->guestId);
 	}
 
+	public function getState(): string
+	{
+		return json_encode($this->row);
+	}
 }

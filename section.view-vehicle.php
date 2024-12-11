@@ -36,7 +36,7 @@ $vehicle = new Vehicle($vehicleId);
     </tr>
     <tr>
       <th class="fit px-2 bg-body-secondary">Staging Location</th>
-      <td colspan="3"><?=$vehicle->stagingLocation?></td>
+      <td colspan="3"><?=$vehicle->stagingLocation->name?></td>
     </tr>
   </table>
 
@@ -69,7 +69,7 @@ $vehicle = new Vehicle($vehicleId);
         </tr>
         <tr>
           <th class="fit px-2 bg-body-secondary">Location</th>
-          <td><?=$vehicle->currentLocation ?: 'Unverified'?></td>
+          <td><?=$vehicle->currentLocation->name ?: 'Unverified'?></td>
           <th class="fit px-2 bg-body-secondary">Needs cleaning</th>
           <td>
             <?php if ($vehicle->cleanExterior === 0): ?>

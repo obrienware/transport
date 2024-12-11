@@ -90,8 +90,8 @@ $eventId = $event->getId();
             class="form-control" 
             id="event-location" 
             placeholder="Where is this event"
-            value="<?=$event->location?>" 
-            data-value="<?=$event->location?>" 
+            value="<?=$event->location->name?>" 
+            data-value="<?=$event->location->name?>" 
             data-id="<?=$event->locationId?>">
           <div class="invalid-feedback">Please make a valid selection</div>
         </div>
@@ -105,8 +105,8 @@ $eventId = $event->getId();
             class="form-control" 
             id="event-requestor" 
             placeholder="Requestor" 
-            value="<?=$event->requestor?>" 
-            data-value="<?=$event->requestor?>" 
+            value="<?=$event->requestor->getName()?>" 
+            data-value="<?=$event->requestor->getName()?>" 
             data-id="<?=$event->requestorId?>">
           <div class="invalid-feedback">Please make a valid selection</div>
         </div>
