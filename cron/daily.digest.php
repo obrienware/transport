@@ -1,9 +1,12 @@
 <?php
+require_once 'class.config.php';
 require_once 'class.trip.php';
 require_once 'class.event.php';
 require_once 'class.email.php';
 require_once 'class.data.php';
 $db = new data();
+
+$config = Config::get('organization');
 
 /**
  * We want to send an email digest (a summary of the items that need attention) for the manager, as well as
@@ -14,9 +17,14 @@ $db = new data();
 require_once 'class.user.php';
 $drivers = User::getDrivers();
 foreach ($drivers as $driver) {
+  if (!$driver->personal_preferences) continue;
+  $prefs = json_decode($driver->personal_preferences);
+  if (!$prefs->dailyDigestEmails) continue;
+
   $email = new Email();
   $email->setSubject('Your Driver Digest for today');
-  $email->addRecipient('richard@obrienware.com', 'Richard'); // We'll change this out to the actual driver's email address once we've worked out the kinks
+  $email->addRecipient($driver->email_address, $driver->first_name.' '.$driver->last_name);
+  $email->addReplyTo($config->defaultReplyTo);
 
   // Does this driver have any trips today?
   $trips = getTripsFor($driver->id);
@@ -55,7 +63,7 @@ foreach ($drivers as $driver) {
       $content .= "\n";
     }
 
-    $content .= "\nThe relevant driver sheets are also attached hereto.";
+    $content .= "\nThe relevant driver sheets are attached hereto.";
 
   }
 
