@@ -1,12 +1,18 @@
 <?php
+
+use Config as GlobalConfig;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PSpell\Config;
 
 require 'phpmailer/Exception.php';
 require 'phpmailer/PHPMailer.php';
 require 'phpmailer/SMTP.php';
 
-class Email
+require_once 'class.config.php';
+$config = \Config::get('organization');
+
+class Email extends PHPMailer
 {
   public $mail; // Make this public for now while we're testing!
   private $content;
@@ -15,30 +21,32 @@ class Email
 
   public function __construct()
   {
-    $this->mail = new PHPMailer(true);
-    $this->mail->isSMTP();
-    $this->mail->Host = 'smtp.sparkpostmail.com';
-    $this->mail->SMTPAuth = true;
-    $this->mail->Username = 'SMTP_Injection';
-    $this->mail->Password = $_ENV['SPARKPOST_KEY'];
-    $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $this->mail->Port = 587;
-    $this->mail->setFrom('transport@obrienware.com', 'Transport');
+    parent::__construct(true);
+
+    global $config;
+    $this->isSMTP();
+    $this->Host = 'smtp.sparkpostmail.com';
+    $this->SMTPAuth = true;
+    $this->Username = 'SMTP_Injection';
+    $this->Password = $_ENV['SPARKPOST_KEY'];
+    $this->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $this->Port = 587;
+    $this->setFrom($config->fromEmailAddress, $config->fromEmailName);
   }
 
   public function setSubject($subject)
   {
-    $this->mail->Subject = $subject;
+    $this->Subject = $subject;
   }
 
   public function setContent($content)
   {
-    $this->content = $content;
+    $this->Body = $content;
   }
 
-  public function addRecipient($email, $name)
+  public function addRecipient($email, $name = '')
   {
-    $this->mail->addAddress($email, $name);
+    $this->addAddress($email, $name);
   }
 
   public function setAltContent($content)
@@ -49,11 +57,10 @@ class Email
   public function sendText()
   {
     try {
-      $this->mail->Body = $this->content;
-      $this->mail->send();
+      $this->send();
       return true;
     } catch (Exception $e) {
-      $this->errorMessage = "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";
+      $this->errorMessage = "Message could not be sent. Mailer Error: {$this->ErrorInfo}";
       return false;
     }
   }
@@ -61,13 +68,12 @@ class Email
   public function sendHTML()
   {
     try {
-      $this->mail->isHTML(true);
-      $this->mail->Body = $this->content;
-      $this->mail->AltBody = $this->altContent;
-      $this->mail->send();
+      $this->isHTML(true);
+      $this->AltBody = $this->altContent;
+      $this->send();
       return true;
     } catch (Exception $e) {
-      $this->errorMessage = "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";
+      $this->errorMessage = "Message could not be sent. Mailer Error: {$this->ErrorInfo}";
       return false;
     }
   }

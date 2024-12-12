@@ -20,12 +20,6 @@ class Blockout
 		}
 	}
 	
-	/**
-	 * getBlockout: Gets the associated block out data for the given ID
-	 *
-	 * @param  int $blockoutId
-	 * @return bool	- Whether it was successful or not
-	 */
 	public function getBlockout(int $blockoutId): bool
 	{
 		global $db;
@@ -44,12 +38,7 @@ class Blockout
 		return false;
 	}
 	
-	/**
-	 * getBlockouts: Get a list of the current block out dates
-	 *
-	 * @return array|bool either a recordset, or false if there is no data
-	 */
-	static function getBlockouts(): mixed
+	public static function getBlockouts(): mixed
 	{
 		global $db;
 		$sql = "
@@ -62,13 +51,7 @@ class Blockout
 		return $db->get_results($sql);
 	}
 	
-	/**
-	 * getBlockoutsForUser: Get a list of current block out dates for a specific user
-	 *
-	 * @param  int $userId
-	 * @return array|bool either a recordset, or false if there is no data
-	 */
-	static function getBlockoutsForUser(int $userId): mixed
+	public static function getBlockoutsForUser(int $userId): mixed
 	{
 		global $db;
 		$sql = "SELECT * FROM user_blockouts WHERE to_datetime > NOW() AND user_id = :user_id ORDER BY from_datetime";
@@ -76,11 +59,6 @@ class Blockout
 		return $db->get_results($sql, $data);
 	}
 	
-	/**
-	 * save: Saves the current block out date period
-	 *
-	 * @return array
-	 */
 	public function save(): array
 	{
 		global $db;
@@ -118,13 +96,7 @@ class Blockout
 		];
 	}
 	
-	/**
-	 * static deleteBlockout: Deletes the block out period identified by a specific ID
-	 *
-	 * @param  int $blockoutId
-	 * @return mixed
-	 */
-	static function deleteBlockout(int $blockoutId): mixed
+	public static function deleteBlockout(int $blockoutId): mixed
 	{
 		global $db;
 		$sql = 'DELETE FROM user_blockouts WHERE id = :blockout_id';
@@ -132,11 +104,6 @@ class Blockout
 		return $db->query($sql, $data);
 	}
 	
-	/**
-	 * delete: Deleted the active block out period
-	 *
-	 * @return mixed
-	 */
 	public function delete()
 	{
 		return $this->deleteBlockout($this->blockoutId);

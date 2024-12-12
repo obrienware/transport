@@ -16,18 +16,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
         <!-- <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="">Home</a>
         </li> -->
-        <!-- 
-        <li class="nav-item dropdown" data-bs-theme="light">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-            Vehicles
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item menu-item" href="#section.list-vehicles.php" data-target-id="list-vehicles" data-target-label="Vehicles">View</a></li>
-            <li><a class="dropdown-item menu-item" href="#section.view-maintenance.php" data-target-id="view-maintenance">Maintenance</a></li>
-            <li><a class="dropdown-item menu-item" href="#section.view-snags.php" data-target-id="view-snags">Snags</a></li>
-          </ul>
-        </li>
-        -->
+
         <li class="nav-item">
           <a class="nav-link menu-item" href="#section.list-trips.php" data-target-id="list-trips">Trips</a>
         </li>
@@ -51,6 +40,15 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
  -->
+
+        <li class="nav-item dropdown" data-bs-theme="light">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Reports
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item menu-item" href="#report.audit-trail.php" data-target-id="report" data-target-label="Report">Audit Trail</a></li>
+          </ul>
+        </li>
 
         <li class="nav-item dropdown" data-bs-theme="light">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">

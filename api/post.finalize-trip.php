@@ -1,8 +1,13 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.config.php';
 require_once 'class.email.php';
 require_once 'class.utils.php';
 require_once 'class.trip.php';
+require_once 'class.user.php';
+
+$me = new User($_SESSION['user']->id);
+$config = Config::get('organization');
 $json = json_decode(file_get_contents("php://input"));
 
 $result = true;
@@ -26,7 +31,7 @@ if ($trip->finalized == 0) {
   // Email to the requestor (include the guest sheet to pass along)
   $requestorName = $trip->requestor->firstName;
   $email = new Email();
-  $email->mail->addAttachment($filename2);
+  $email->addAttachment($filename2);
   $email->setSubject('Information regarding trip: '.$trip->summary);
   $email->setContent("
 Hello {$requestorName},
@@ -35,13 +40,18 @@ The following trip has been scheduled:
 
 {$trip->summary}
 
-Please find attached your guest information sheet.
+Please find your guest information sheet attached. Please have your guest scan the QR code on the sheet in order to recieve timely notifications relevant to their trip.
 
 Regards,
 Transportation Team
   ");
-  // TODO: When ready to go live - send this to the requestor instead.
-  $email->addRecipient('richard@obrienware.com', 'Richard');
+  if ($config->sendRequestorMessagesTo == 'requestor') {
+    if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress);
+  } else {
+    $email->addRecipient($config->sendRequestorMessagesTo);
+  }
+  if ($config->copyAllEmail) $email->addBCC($config->copyAllEmail);
+  $email->addReplyTo($me->emailAddress, $me->getName());
   $results[] = $email->sendText();
 
 
@@ -49,7 +59,7 @@ Transportation Team
   $driverName = $trip->driver->firstName;
   $tripDate = Date('m/d/Y', strtotime($trip->pickupDate));
   $email = new Email();
-  $email->mail->addAttachment($filename1);
+  $email->addAttachment($filename1);
   $email->setSubject('A trip has been assigned to you: '.$trip->summary);
   $email->setContent("
 Hello {$driverName},
@@ -65,6 +75,8 @@ Regards,
 Transportation Team
   ");
   $email->addRecipient($trip->driver->emailAddress, $driverName);
+  if ($config->copyAllEmail) $email->addBCC($config->copyAllEmail);
+  $email->addReplyTo($me->emailAddress, $me->getName());
   $results[] = $email->sendText();
 
 }

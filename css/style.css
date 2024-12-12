@@ -104,3 +104,20 @@ h4.ec-event-title {
   height: calc(100vh - 125px);
   overflow: auto;
 }
+
+.back-to-top {
+  position: fixed;
+  bottom: 2em;
+  right: 1em;
+  text-decoration: none;
+  color: var(--primary);
+  /* background-color: rgba(var(--color-primary), 0.80); */
+  font-size: 12px;
+  padding: 1em;
+  display: none;
+  z-index: 1;
+}
+
+.back-to-top:hover {
+  /* text-decoration: none; */
+}

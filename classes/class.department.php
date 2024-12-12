@@ -17,12 +17,6 @@ class Department
     }
   }
   
-  /**
-   * getDepartment: Gets the associated department data for the given ID
-   *
-   * @param  int $departmentId
-   * @return bool	- whether it was successful or not
-   */
   public function getDepartment(int $departmentId): bool
   {
     global $db;
@@ -39,33 +33,18 @@ class Department
     return false;
   }
   
-  /**
-   * getDepartmentId: Provides the ID of the active object
-   *
-   * @return int
-   */
-  public function getDepartmentId(): int
+  public function getDepartmentId(): int|null
   {
     return $this->departmentId;
   }
   
-  /**
-   * getDepartments: Get a list of all the departments
-   *
-   * @return array|false	either a recordset, or false if there is no data
-   */
-  static public function getDepartments(): mixed
+  public static function getDepartments(): array|bool
   {
     global $db;
     $sql = "SELECT * FROM departments WHERE archived IS NULL ORDER BY name";
     return $db->get_results($sql);
   }
   
-  /**
-   * save: Saves the active object
-   *
-   * @return array
-   */
   public function save(): array
   {
 		global $db;
@@ -100,13 +79,7 @@ class Department
 		];
   }
 	
-	/**
-	 * static deleteDepartment: Deletes the department identified by the given ID
-	 *
-	 * @param  int $departmentId
-	 * @return mixed
-	 */
-	static function deleteDepartment(int $departmentId): mixed
+	public static function deleteDepartment(int $departmentId): mixed
 	{
 		global $db;
 		$sql = 'UPDATE departments SET archived = NOW(), archived_by = :user WHERE id = :department_id';
@@ -114,11 +87,6 @@ class Department
 		return $db->query($sql, $data);
 	}
 	
-	/**
-	 * delete: Deleted the current department object (this)
-	 *
-	 * @return mixed
-	 */
 	public function delete(): mixed
 	{
 		return $this->deleteDepartment($this->departmentId);
