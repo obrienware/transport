@@ -30,7 +30,8 @@ $ics = new ICS([
   'dtend' => $trip->endDate,
   'description' => $description,
   'summary' => $trip->summary,
-  'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress)
+  'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
+  'X-WR-TIMEZONE' => $_ENV['TZ'] ?: 'America/Denver'
 ]);
 
 echo $ics->to_string();
