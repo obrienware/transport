@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: text/calendar; charset=utf-8');
 header('Content-Disposition: attachment; filename=invite.ics');
 
