@@ -58,7 +58,7 @@ foreach ($drivers as $driver) {
       $content .= "You are assigned to the following events scheduled in the next 24hrs:\n\n";
       foreach ($events as $item) {
         $event = new Event($item->id);
-        $content .= Date('g:ia', strtotime($event->startDate)).': '.$event->name."\n";
+        $content .= Date('m/d g:ia', strtotime($event->startDate)).' - '.Date('m/d g:ia', strtotime($event->endDate)).': '.$event->name."\n";
       }  
       $content .= "\n";
     }
@@ -92,7 +92,12 @@ function getTripsFor($driverId)
 function getEventsFor($driverId)
 {
   global $db;
-  $sql = "SELECT * FROM events WHERE start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR) AND FIND_IN_SET(driver_ids, :driver_id)";
+  $sql = "
+    SELECT * FROM events
+    WHERE
+      DATE_ADD(NOW(), INTERVAL 24 HOUR) BETWEEN start_date AND end_date
+      AND FIND_IN_SET(driver_ids, :driver_id)
+  ";
   $data = ['driver_id' => $driverId];
   return $db->get_results($sql, $data);
 }
