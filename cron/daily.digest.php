@@ -1,0 +1,90 @@
+<?php
+require_once 'class.trip.php';
+require_once 'class.event.php';
+require_once 'class.email.php';
+require_once 'class.data.php';
+$db = new data();
+
+/**
+ * We want to send an email digest (a summary of the items that need attention) for the manager, as well as
+ * we need to send an email digest to all drivers.
+ */
+
+// Let's do the drivers first...
+require_once 'class.user.php';
+$drivers = User::getDrivers();
+foreach ($drivers as $driver) {
+  $email = new Email();
+  $email->setSubject('Your Driver Digest for today');
+  $email->addRecipient('richard@obrienware.com', 'Richard'); // We'll change this out to the actual driver's email address once we've worked out the kinks
+
+  // Does this driver have any trips today?
+  $trips = getTripsFor($driver->id);
+
+  // Is this driver assigned to any events today?
+  $events = getEventsFor($driver->id);
+
+  if (count($trips) === 0 && count($events) === 0) {
+    // Driver has no trips or events today
+    $content = 'You are not assigned to any trips or events scheduled in the next 24hrs!';
+
+  } else {
+
+    $content = '';
+
+    if ($trips) {
+      $content .= "You are assigned to the following trips scheduled in the next 24hrs:\n\n";
+      foreach ($trips as $item) {
+        $trip = new Trip(($item->id));
+        $content .= Date('g:ia', strtotime($trip->startDate)).': '.$trip->summary."\n";
+        // Generate the driver sheet for this trip and attach it
+        include '../inc.trip-driver-sheet.php';
+        $filename = $_SERVER['DOCUMENT_ROOT'].'/tripsheets/'.$trip->tripId.'-trip-driver-sheet.pdf';
+        $pdf->output('F', $filename);
+        $email->addAttachment($filename);
+      }
+      $content .= "\n";
+    }
+
+    if ($events) {
+      $content .= "You are assigned to the following events scheduled in the next 24hrs:\n\n";
+      foreach ($events as $item) {
+        $event = new Event($item->id);
+        $content .= Date('g:ia', strtotime($event->startDate)).': '.$event->name."\n";
+      }  
+      $content .= "\n";
+    }
+
+    $content .= "\nThe relevant driver sheets are also attached hereto.";
+
+  }
+
+  $driverName = $driver->first_name;
+  $content = "
+Good morning {$driverName}!
+
+".$content."
+
+Have a blessed day!
+Transportation Team
+";
+  $email->setContent($content);
+  $email->sendText();
+}
+
+
+function getTripsFor($driverId)
+{
+  global $db;
+  $sql = "SELECT * FROM trips WHERE start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR) AND driver_id = :driver_id";
+  $data = ['driver_id' => $driverId];
+  return $db->get_results($sql, $data);
+}
+
+function getEventsFor($driverId)
+{
+  global $db;
+  $sql = "SELECT * FROM events WHERE start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR) AND FIND_IN_SET(driver_ids, :driver_id)";
+  $data = ['driver_id' => $driverId];
+  return $db->get_results($sql, $data);
+}
