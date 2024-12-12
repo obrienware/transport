@@ -21,7 +21,7 @@ if ($trip->flightNumber) {
 $description .= "Contact: ".$trip->guest->getName()." ".$trip->guest->phoneNumber."\\n";
 if ($trip->driverNotes) {
   $description .= "Additional Driver Notes:\\n";
-  $description .= $trip->driverNotes."\\n";
+  $description .= str_replace("\n", "\\n", $trip->driverNotes)."\\n";
 }
 
 $ics = new ICS([
