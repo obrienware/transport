@@ -9,18 +9,18 @@ require_once 'class.ics.php';
 $trip = new Trip($_REQUEST['id']);
 
 $description = "";
-$description .= "Using ".$trip->vehicle->name.": ".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions."\\n";
-$description .= "PU ".$trip->guests." at ".$trip->puLocation->name."\\n";
-$description .= "DO ".$trip->doLocation->name."\\n";
+$description .= "Using ".$trip->vehicle->name.": ".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions."\\n\\n";
+$description .= "PU ".$trip->guests." at ".$trip->puLocation->name."\\n\\n";
+$description .= "DO ".$trip->doLocation->name."\\n\\n";
 if ($trip->flightNumber) {
   $description .= "Flight ".$trip->airline->name." ".$trip->airline->flightNumberPrefix.$trip->flightNumber." ";
   if ($trip->ETA) {
-    $description .= "ETA ".Date('i:ga', strtotime($trip->ETA))."\\n";
+    $description .= "ETA ".Date('g:ia', strtotime($trip->ETA))."\\n\\n";
   } else {
-    $description .= "ETD ".Date('i:ga', strtotime($trip->ETD))."\\n";
+    $description .= "ETD ".Date('g:ia', strtotime($trip->ETD))."\\n\\n";
   }
 }
-$description .= "Contact: ".$trip->guest->getName()." ".$trip->guest->phoneNumber."\\n";
+$description .= "Contact: ".$trip->guest->getName()." ".$trip->guest->phoneNumber."\\n\\n";
 if ($trip->driverNotes) {
   $description .= "Additional Driver Notes:\\n";
   $description .= str_replace("\n", "\\n", $trip->driverNotes)."\\n";
@@ -32,8 +32,7 @@ $ics = new ICS([
   'description' => $description,
   'summary' => $trip->summary,
   'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-  // 'x-wr-timezone' => $_ENV['TZ'] ?: 'America/Denver'
+  'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->tripId
 ]);
-// $ics->set('x-wr-timezone', $_ENV['TZ'] ?: 'America/Denver');
 
 echo $ics->to_string();
