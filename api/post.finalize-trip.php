@@ -21,12 +21,12 @@ if ($trip->finalized == 0) {
 
   // Generate the driver sheet
   include '../inc.trip-driver-sheet.php';
-  $filename1 = $_SERVER['DOCUMENT_ROOT'].'/tripsheets/'.$trip->tripId.'-trip-driver-sheet.pdf';
+  $filename1 = sys_get_temp_dir().'/'.$trip->tripId.'-trip-driver-sheet.pdf';
   $pdf->output('F', $filename1);
 
   // Generate the guest sheet
   include '../inc.trip-guest-sheet.php';
-  $filename2 = $_SERVER['DOCUMENT_ROOT'].'/tripsheets/'.$trip->tripId.'-trip-guest-sheet.pdf';
+  $filename2 = sys_get_temp_dir().'/'.$trip->tripId.'-trip-guest-sheet.pdf';
   $pdf->output('F', $filename2);
 
   // Generate ics file
@@ -118,3 +118,6 @@ echo json_encode([
   'result' => $result,
   'results' => $results
 ]);
+
+unlink($filename1);
+unlink($filename2);
