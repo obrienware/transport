@@ -70,17 +70,19 @@ class ICS {
   const DT_FORMAT = 'Ymd\THis\Z';
 
   protected $properties = [];
+  public $timezone;
   private $available_properties = [
     'description',
     'dtend',
     'dtstart',
     'location',
     'summary',
-    'url'
+    'url',
   ];
 
   public function __construct($props) 
   {
+    $this->timezone = $_ENV['TZ'] ?: 'America/Denver';
     $this->set($props);
   }
 
@@ -126,6 +128,10 @@ class ICS {
 
     // Append properties
     foreach ($props as $k => $v) {
+      if ($k == 'DTSTART' || $k == 'DTEND') {
+        $ics_props[] = "$k;TZID=".$this->timezone.":$v";
+        continue;
+      }
       $ics_props[] = "$k:$v";
     }
 

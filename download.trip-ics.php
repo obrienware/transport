@@ -2,6 +2,7 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: text/calendar; charset=utf-8');
 header('Content-Disposition: attachment; filename=invite.ics');
+// echo '<pre>';
 
 require_once 'class.trip.php';
 require_once 'class.ics.php';
@@ -31,7 +32,8 @@ $ics = new ICS([
   'description' => $description,
   'summary' => $trip->summary,
   'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-  'X-WR-TIMEZONE' => $_ENV['TZ'] ?: 'America/Denver'
+  // 'x-wr-timezone' => $_ENV['TZ'] ?: 'America/Denver'
 ]);
+// $ics->set('x-wr-timezone', $_ENV['TZ'] ?: 'America/Denver');
 
 echo $ics->to_string();
