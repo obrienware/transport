@@ -17,9 +17,9 @@ $event->vehicles = $json->vehicles ?: [];
 $event->notes = $json->notes ?: NULL;
 
 $result = $event->save();
-if ($json->id) {
+if ($json->eventId) {
   $before = $event->getState();
-  $id = $json->id;
+  $id = $json->eventId;
   $action = 'modified';
   $description = 'Changed event: '.$previousName;
 } else {

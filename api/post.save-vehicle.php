@@ -15,9 +15,9 @@ $vehicle->passengers = $json->passengers;
 $vehicle->requireCDL = $json->requireCDL ? 1 : 0;
 
 $result = $vehicle->save();
-if ($json->id) {
+if ($json->vehicleId) {
   $before = $vehicle->getState();
-  $id = $json->id;
+  $id = $json->vehicleId;
   $action = 'modified';
   $description = 'Changed vehicle: '.$previousName;
 } else {
