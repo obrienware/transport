@@ -10,7 +10,7 @@ if (!$db) $db = new data();
 $sql = "
 SELECT * FROM trips 
 WHERE 
-  confirmed = 0
+  confirmed IS NULL
   AND end_date > NOW()
   AND start_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) -- using a 7 day window for upcoming trips
   AND started IS NULL -- no sense in showing this if the trip has already started

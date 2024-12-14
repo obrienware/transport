@@ -257,7 +257,7 @@ class Trip
 	public function confirm()
 	{
 		global $db;
-		$sql = 'UPDATE trips SET confirmed = 1 WHERE id = :trip_id';
+		$sql = 'UPDATE trips SET confirmed = NOW() WHERE id = :trip_id';
 		$data = ['trip_id' => $this->tripId];
 		$result = $db->query($sql, $data);
 		return $result;

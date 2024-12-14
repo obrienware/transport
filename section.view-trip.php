@@ -105,7 +105,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
   <div class="d-flex justify-content-between mt-4">
     <div>Requestor: <?=$trip->requestor ? $trip->requestor->getName() : ''?></div>
-    <div>Confirmed: <?=$trip->confirmed ? 'Yes' : 'No'?></div>
+    <div>Confirmed: <?=$trip->confirmed ? Date('F j g:i a', strtotime($trip->confirmed)) : ''?></div>
     <div>Started: <?=$trip->started ? Date('F j g:i a', strtotime($trip->started)) : ''?></div>
     <div>Completed: <?=$trip->completed ? Date('F j g:i a', strtotime($trip->completed)) : ''?></div>
   </div>
