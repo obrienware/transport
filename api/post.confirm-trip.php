@@ -14,9 +14,9 @@ $json = json_decode(file_get_contents("php://input"));
 $result = true;
 $trip = new Trip($json->id);
 
-if ($trip->finalized == 0) {
+if ($trip->confirmed == 0) {
   
-  $results[] = $trip->finalize();
+  $results[] = $trip->confirm();
   // Create the trip sheets and email them to the respective people
 
   // Generate the driver sheet

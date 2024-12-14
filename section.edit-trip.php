@@ -350,9 +350,6 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           <?php endif; ?>
 
           <?php if ($trip->isEditable()): ?>
-            <?php if (!$trip->finalized): ?>
-              <!-- <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button> -->
-            <?php endif;?>
             <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
           <?php endif;?>
         </div>

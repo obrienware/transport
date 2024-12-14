@@ -6,7 +6,7 @@ $user = new User($_SESSION['user']->id);
 
   <h6>Hello, <?=$user->firstName?>!</h6>
 
-  <div id="trips-to-finalize"></div>
+  <div id="trips-to-confirm"></div>
   <div id="vehicle-alerts"></div>
 
   <div class="row">
@@ -44,7 +44,7 @@ $user = new User($_SESSION['user']->id);
     let driverResources = await get('/api/get.resource-drivers.php');
 
     async function loadJITContent() {
-      $('#trips-to-finalize').load('inc.dash-finalize.php');
+      $('#trips-to-confirm').load('inc.dash-confirm.php');
       $('#vehicle-alerts').load('inc.dash-vehicles.php');
     }
     loadJITContent();

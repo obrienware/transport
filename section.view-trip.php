@@ -13,8 +13,8 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       <ul class="dropdown-menu">
         <?php if ($trip->isEditable()): ?>
           <li><button id="<?=$sectionId?>-btn-edit" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-pencil"></i> Edit</button></li>
-          <?php if (!$trip->finalized): ?>
-            <li><button id="<?=$sectionId?>-btn-finalize" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-stamp"></i> Finalize</button></li>
+          <?php if (!$trip->confirmed): ?>
+            <li><button id="<?=$sectionId?>-btn-confirm" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-stamp"></i> Confirm</button></li>
           <?php endif; ?>
         <?php endif;?>
         <li><button id="<?=$sectionId?>-btn-duplicate" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
@@ -105,7 +105,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
   <div class="d-flex justify-content-between mt-4">
     <div>Requestor: <?=$trip->requestor ? $trip->requestor->getName() : ''?></div>
-    <div>Finalized: <?=$trip->finalized ? 'Yes' : 'No'?></div>
+    <div>Confirmed: <?=$trip->confirmed ? 'Yes' : 'No'?></div>
     <div>Started: <?=$trip->started ? Date('F j g:i a', strtotime($trip->started)) : ''?></div>
     <div>Completed: <?=$trip->completed ? Date('F j g:i a', strtotime($trip->completed)) : ''?></div>
   </div>
@@ -132,11 +132,11 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
     });
 
-    $(`#${sectionId}-btn-finalize`).off('click').on('click', async e => {
-      const resp = await post('/api/post.finalize-trip.php', {id: tripId});
+    $(`#${sectionId}-btn-confirm`).off('click').on('click', async e => {
+      const resp = await post('/api/post.confirm-trip.php', {id: tripId});
       if (resp?.result) {
         $(document).trigger('tripChange', {tripId});
-        return toastr.success('Trip finalized.', 'Success');
+        return toastr.success('Trip confirmed.', 'Success');
       }
       return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
     });

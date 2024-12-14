@@ -1,16 +1,16 @@
 <?php
 require_once 'class.config.php';
 $config = Config::get('system');
-if ($config->alertUnfinalizedTrips === false) die();
+if ($config->alertUnconfirmedTrips === false) die();
 
 require_once 'class.data.php';
 if (!$db) $db = new data();
 
-// Check for upcoming trips that need to be finalized
+// Check for upcoming trips that need to be confirmed
 $sql = "
 SELECT * FROM trips 
 WHERE 
-  finalized = 0
+  confirmed = 0
   AND end_date > NOW()
   AND start_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) -- using a 7 day window for upcoming trips
   AND started IS NULL -- no sense in showing this if the trip has already started
@@ -22,9 +22,9 @@ WHERE
   <div class="row">
     <div class="col-6">
       <div class="card mb-3">
-        <h5 class="card-header">Upcoming Trips Not Yet Finalized</h5>
+        <h5 class="card-header">Upcoming Trips Not Yet Confirmed</h5>
         <div class="card-body bg-danger-subtle text-center">
-          <sup>*</sup>Only once trips are finalized do all relavent parties start receiving notifications
+          <sup>*</sup>Only once trips are confirmed do all relavent parties start receiving notifications
         </div>
         <ul class="list-group list-group-flush">
           <?php foreach ($rs as $item): ?>

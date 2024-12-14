@@ -309,7 +309,7 @@
 
     <div class="row">
       <div class="col text-end">
-        <button id="btn-save-finalize-trip" class="btn btn-primary">Save & Finalize</button>
+        <button id="btn-save-confirm-trip" class="btn btn-primary">Save & Confirm</button>
         <!-- <button id="btn-save-link-trip" class="btn btn-outline-primary">Save & Link to second trip</button> -->
         <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
       </div>
@@ -587,13 +587,13 @@
       }
     });
 
-    $('#btn-save-finalize-trip').off('click').on('click', async e => {
+    $('#btn-save-confirm-trip').off('click').on('click', async e => {
       const data = await getData();
       if (data) {
         const resp = await post('/api/post.save-trip.php', data);
         if (resp?.result?.result) {
           const id = resp?.result?.result;
-          const newResp = await post('/api/post.finalize-trip.php', {id});
+          const newResp = await post('/api/post.confirm-trip.php', {id});
           if (newResp?.result) {
             $(document).trigger('tripChange');
             app.closeOpenTab();

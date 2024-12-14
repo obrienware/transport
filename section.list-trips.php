@@ -5,7 +5,7 @@ $db = new data();
 $sql = "
   SELECT 
   	t.id, t.driver_id, t. vehicle_id, t.airline_id,
-  	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.finalized,
+  	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.confirmed,
     t.started, t.completed,
   	a.name AS airline, a.flight_number_prefix,
   	CONCAT(d.first_name, ' ', SUBSTRING(d.last_name,1,1), '.') AS driver, d.phone_number,
@@ -38,7 +38,7 @@ $sql = "
   <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
     <thead>
       <tr>
-        <th class="fit">Finalized</th>
+        <th class="fit">Confirmed</th>
         <th class="fit">When</th>
         <th data-dt-order="disable">Trip Summary</th>
         <th class="text-start">Pick Up</th>
@@ -58,8 +58,8 @@ $sql = "
           }
         ?>
         <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-          <td class="text-center fit" data-order="<?=$item->finalized?>">
-            <?php if ($item->finalized): ?>
+          <td class="text-center fit" data-order="<?=$item->confirmed?>">
+            <?php if ($item->confirmed): ?>
               <i class="fa-regular fa-square-check fa-lg text-success"></i>
             <?php else: ?>
               <i class="fa-regular fa-square fa-lg"></i>

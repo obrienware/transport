@@ -45,7 +45,7 @@ class Trip
 	public $guest;
 	public $vehicle;
 	public $airline;
-  public $finalized;
+  public $confirmed;
 	public $started;
 	public $completed;
 
@@ -87,7 +87,7 @@ class Trip
 			$this->guestNotes = $item->guest_notes;
 			$this->driverNotes = $item->driver_notes;
 			$this->generalNotes = $item->general_notes;
-      $this->finalized = $item->finalized;
+      $this->confirmed = $item->confirmed;
 			$this->started = $item->started;
 			$this->completed = $item->completed;
 
@@ -254,10 +254,10 @@ class Trip
 		];
 	}
 
-	public function finalize()
+	public function confirm()
 	{
 		global $db;
-		$sql = 'UPDATE trips SET finalized = 1 WHERE id = :trip_id';
+		$sql = 'UPDATE trips SET confirmed = 1 WHERE id = :trip_id';
 		$data = ['trip_id' => $this->tripId];
 		$result = $db->query($sql, $data);
 		return $result;
