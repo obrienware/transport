@@ -47,7 +47,7 @@ foreach ($drivers as $driver) {
         $content .= Date('g:ia', strtotime($trip->startDate)).': '.$trip->summary."\n";
         // Generate the driver sheet for this trip and attach it
         include '../inc.trip-driver-sheet.php';
-        $filename = $_SERVER['DOCUMENT_ROOT'].'/tripsheets/'.$trip->tripId.'-trip-driver-sheet.pdf';
+        $filename = sys_get_temp_dir().'/'.$trip->tripId.'-trip-driver-sheet.pdf';
         $pdf->output('F', $filename);
         $email->addAttachment($filename);
       }
@@ -78,6 +78,7 @@ Transportation Team
 ";
   $email->setContent($content);
   $email->sendText();
+  unlink($filename);
 }
 
 
