@@ -50,7 +50,9 @@ class Utils
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
     
-    return curl_exec($curl);
+    $result = curl_exec($curl);
+    if(curl_errno($curl)) return 'Curl error: '.curl_error($curl);
+    return $result;
   }
   
 }
