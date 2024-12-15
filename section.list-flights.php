@@ -13,11 +13,13 @@ SELECT
   CASE WHEN t.ETA IS NOT NULL THEN a.iata ELSE b.iata END AS iata,
   CONCAT(l.flight_number_prefix, t.flight_number) AS flight_number,
   l.name AS airline,
-  l.image_filename
+  l.image_filename,
+  d.first_name AS driver
 FROM trips t
 LEFT OUTER JOIN airlines l ON l.id = t.airline_id
 LEFT OUTER JOIN locations a ON a.id = t.pu_location
 LEFT OUTER JOIN locations b ON b.id = t.do_location
+LEFT OUTER JOIN users d ON d.id = t.driver_id
 WHERE
  	(t.eta IS NOT NULL OR t.etd IS NOT NULL)
 	AND
@@ -82,7 +84,10 @@ function showFlightsFor($iata, $type)
 
       echo '<tr>';
       echo '<td colspan="3">';
-      echo $item->guests;
+      echo '<div class="d-flex justify-content-between">';
+      echo '<div>'.$item->guests.'</div>';
+      echo '<div class="text-muted">| '.$item->driver.'</div>';
+      echo '</div>';
       echo '</td>';
       echo '</tr>';
     }
