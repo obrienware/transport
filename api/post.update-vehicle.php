@@ -21,6 +21,6 @@ $before = $vehicle->getState();
 $vehicle->getVehicle($vehicle->getId());
 $after = $vehicle->getState();
 $description = 'Updated vehicle condition/status: '.$vehicle->name;
-Audit::log($action, 'vehicles', $description, $before, $after);
+Audit::log('update', 'vehicles', $description, $before, $after);
 
 echo json_encode(['result' => true]);
