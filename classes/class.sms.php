@@ -19,7 +19,7 @@ class SMS
           ]
         ]
       ];
-      $data = json_encode($message);
+      $data = json_encode($messageObj);
       $result = Utils::callApi('POST', 'https://rest.clicksend.com/v3/sms/send' , $data, [
         'username' => $_ENV['CLICKSEND_USERNAME'],
         'password' => $_ENV['CLICKSEND_PASSWORD']
@@ -47,7 +47,7 @@ class SMS
     // echo json_encode(['result' => $result]);
     // Send a text confirmation
     $message = "Thank you! You have opted in to receiving timely reminders from AWM/Charis Transport. To opt out at any point, simply reply STOP.";
-    SMS::send($phone, $message);
+    return SMS::send($phone, $message);
   }
 
   static public function optOut (string $recipient)
