@@ -35,7 +35,7 @@ $sql = "
 
             <?php if ($item->check_engine): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-engine-warning fa-fw" style="color: orangered"></i> Check Engine
+                <i class="fa-xl fa-solid fa-engine-warning fa-fw fa-fade" style="color: orangered"></i> Check Engine
               </li>
             <?php endif; ?>
 

@@ -5,7 +5,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
 <nav data-bs-theme="dark" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <img src="/images/logo.svg" style="height:1.75em"/>
+      <img src="/images/logo.svg" style="height:1.75em" class="bg-light bg-opacity-75 p-1 rounded"/>
       Transport
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
