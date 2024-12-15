@@ -165,6 +165,6 @@ class ICS {
 
   private function escape_string($str) 
   {
-    return preg_replace('/([\,;])/','\\\$1', $str);
+    return $str ? preg_replace('/([\,;])/','\\\$1', $str) : '';
   }
 }

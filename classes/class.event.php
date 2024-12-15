@@ -19,6 +19,7 @@ class Event
   public $drivers;
   public $vehicles;
   public $notes;
+  public $confirmed;
 
   public function __construct($eventId = null)
   {
@@ -44,6 +45,7 @@ class Event
       $this->drivers = explode(',', $item->driver_ids);
       $this->vehicles = explode(',', $item->vehicle_ids);
       $this->notes = $item->notes;
+      $this->confirmed = $item->confirmed;
 
       if ($this->requestorId) $this->requestor = new User($this->requestorId);
       if ($this->locationId) $this->location = new Location($this->locationId);
@@ -108,6 +110,15 @@ class Event
       'errors' => $db->errorInfo
     ];
   }
+
+	public function confirm()
+	{
+		global $db;
+		$sql = 'UPDATE events SET confirmed = NOW() WHERE id = :event_id';
+		$data = ['event_id' => $this->eventId];
+		$result = $db->query($sql, $data);
+		return $result;
+	}
 
 	static function deleteEvent($eventId)
 	{

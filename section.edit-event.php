@@ -105,8 +105,8 @@ $eventId = $event->getId();
             class="form-control" 
             id="event-requestor" 
             placeholder="Requestor" 
-            value="<?=$event->requestor->getName()?>" 
-            data-value="<?=$event->requestor->getName()?>" 
+            value="<?=($event->requestor) ? $event->requestor->getName() : ''?>" 
+            data-value="<?=($event->requestor) ? $event->requestor->getName() : ''?>" 
             data-id="<?=$event->requestorId?>">
           <div class="invalid-feedback">Please make a valid selection</div>
         </div>
@@ -150,7 +150,12 @@ $eventId = $event->getId();
         <?php if ($eventId): ?>
           <button class="btn btn-outline-danger px-4" id="btn-delete-event">Delete</button>
         <?php endif; ?>
-        <button class="btn btn-primary px-4" id="btn-save-event">Save</button>
+        <div class="ms-auto">
+          <?php if (!$event->confirmed): ?>
+            <button class="btn btn-outline-primary px-4 me-2" id="btn-save-confirm-event">Save & Confirm</button>
+          <?php endif; ?>
+          <button class="btn btn-primary px-4" id="btn-save-event">Save</button>
+        </div>
       </div>
     </div>
 
@@ -208,23 +213,31 @@ $eventId = $event->getId();
         $('#event-drivers').selectpicker('destroy');
         $('#event-drivers option').remove();
         $.each(drivers, function (i, item) {
-          $('#event-drivers').append($('<option>', {
+          const optionProps = {
             value: item.id,
             text: item.driver,
-            disabled: !item.available,
-          }));
+            // disabled: !item.available,
+          }
+          if (!item.available) {
+            optionProps.style = `background-color:crimson; color: white`;
+            optionProps['data-icon'] = 'fa-solid fa-triangle-exclamation';
+          }
+          $('#event-drivers').append($('<option>', optionProps));
         });
         $('#event-drivers').selectpicker()
 
         $('#event-vehicles').selectpicker('destroy');
         $('#event-vehicles option').remove();
         $.each(vehicles, function (i, item) {
-          $('#event-vehicles').append($('<option>', {
+          const optionProps = {
             value: item.id,
             text: item.name,
-            'data-content': `<i class="bi bi-square-fill" style="color:${item.color}"></i> ${item.name}`,
-            disabled: !item.available,
-          }));
+          }
+          if (!item.available) {
+            optionProps.style = `background-color:crimson; color: white`;
+            optionProps['data-icon'] = 'fa-solid fa-triangle-exclamation';
+          }
+          $('#event-vehicles').append($('<option>', optionProps));
         });
         $('#event-vehicles').selectpicker()
       }
@@ -285,7 +298,7 @@ $eventId = $event->getId();
       }
 
       $('#btn-save-event').off('click').on('click', async function () {
-        const data = getData()
+        const data = getData();
         const resp = await post('/api/post.save-event.php', data);
         if (resp?.result?.result) {
           $(document).trigger('eventChange', {eventId});
@@ -295,6 +308,25 @@ $eventId = $event->getId();
         }
         toastr.error(resp . result . errors[2], 'Error');
         console.log(resp);
+      });
+
+      $('#btn-save-confirm-event').off('click').on('click', async function () {
+        const data = await getData();
+        if (data) {
+          const resp = await post('/api/post.save-event.php', data);
+          if (resp?.result?.result) {
+            const id = eventId || resp?.result?.result;
+            const newResp = await post('/api/post.confirm-event.php', {id});
+            if (newResp?.result) {
+              $(document).trigger('eventChange');
+              app.closeOpenTab();
+              return toastr.success('Event added.', 'Success');
+            }
+            return toastr.error('Seems to be a problem confirming this event!', 'Error');
+          }
+          toastr.error(resp.result.errors[2], 'Error');
+          console.error(resp);
+        }
       });
 
       $('#btn-delete-event').on('click', async ƒ => {

@@ -48,8 +48,8 @@ $sql = "
           }
         ?>
         <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-          <td class="fit datetime short"><?=$item->start_date?></td>
-          <td class="fit datetime short"><?=$item->end_date?></td>
+          <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
+          <td class="fit datetime short" data-order="<?=$item->end_date?>"><?=$item->end_date?></td>
           <td><?=$item->name?></td>
           <td><?=$item->location?></td>
         </tr>
