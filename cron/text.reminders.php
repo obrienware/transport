@@ -18,3 +18,19 @@ if ($rs = $db->get_results($sql, $data)) {
     }
   }
 }
+
+
+$sql = "SELECT * FROM events WHERE start_date = :start_date AND archived IS NULL";
+$data = ['start_date' => $nextHour];
+if ($rs = $db->get_results($sql, $data)) {
+  foreach ($rs as $item) {
+    $event = new Event($item->id);
+    if (count($event->drivers) > 0) {
+      foreach ($event->drivers as $driverId) {
+        $driver = new User($driverId);
+        $message = "Reminder: ".$event->name." @".Date('g:ia', strtotime($event->startDate));
+        SMS::send($driver->phoneNumber, $message);
+      }
+    }
+  }
+}
