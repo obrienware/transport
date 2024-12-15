@@ -29,6 +29,7 @@ $user = new User($_SESSION['user']->id);
       </div>
       <div>
         <button id="btn-refresh-calendar" class="btn btn-outline-primary"><i class="fa-solid fa-rotate"></i></button>
+        <button id="btn-new-event" class="btn btn-outline-primary">New Event</button>
         <button id="btn-new-trip" class="btn btn-outline-primary">New Trip</button>
       </div>
     </div>
@@ -129,6 +130,10 @@ $user = new User($_SESSION['user']->id);
 
     $('#btn-new-trip').on('click', () => {
       app.openTab('new-trip', 'New Trip', `section.new-trip.php`);
+    });
+    
+    $('#btn-new-event').on('click', () => {
+      app.openTab('new-event', 'New Event', `section.edit-event.php`);
     });
     
     $('#ec').on('click', async e => {
