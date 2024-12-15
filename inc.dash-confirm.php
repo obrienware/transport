@@ -18,8 +18,8 @@ WHERE
   AND archived IS NULL -- and not deleted
 ";
 ?>
-<?php if ($rs = $db->get_results($sql)): ?>
-  <div class="row">
+<div class="row">
+  <?php if ($rs = $db->get_results($sql)): ?>
     <div class="col-6">
       <div class="card mb-3">
         <h5 class="card-header">Upcoming Trips Not Yet Confirmed</h5>
@@ -38,5 +38,36 @@ WHERE
         </ul>
       </div>
     </div>
-  </div>
-<?php endif;?>
+  <?php endif;?>
+
+  <?php
+  $sql = "
+    SELECT * FROM events 
+    WHERE 
+      confirmed IS NULL
+      AND start_date > NOW()
+      AND start_date <= DATE_ADD(CURDATE(), INTERVAL 7 DAY) -- using a 7 day window for upcoming trips
+      AND archived IS NULL -- and not deleted
+  ";
+  ?>
+  <?php if ($rs = $db->get_results($sql)): ?>
+    <div class="col-6">
+      <div class="card mb-3">
+        <h5 class="card-header">Upcoming Events Not Yet Confirmed</h5>
+        <div class="card-body bg-danger-subtle text-center">
+          <sup>*</sup>Only once events are confirmed do all relavent parties start receiving notifications
+        </div>
+        <ul class="list-group list-group-flush">
+          <?php foreach ($rs as $item): ?>
+            <li class="list-group-item d-flex justify-content-between">
+              <div>
+                <button class="btn p-0" onclick="app.openTab('edit-event', 'Event (edit)', 'section.edit-event.php?id=<?=$item->id?>');"><?=$item->name?></button>
+              </div>
+              <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($item->start_date))?></div>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+  <?php endif;?>
+</div>
