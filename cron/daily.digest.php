@@ -96,9 +96,11 @@ function getEventsFor($driverId)
   $sql = "
     SELECT * FROM events
     WHERE
+    (
       start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR)
       OR end_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR)
       OR CURDATE() BETWEEN start_date AND end_date
+    )
       AND FIND_IN_SET(driver_ids, :driver_id)
   ";
   $data = ['driver_id' => $driverId];
