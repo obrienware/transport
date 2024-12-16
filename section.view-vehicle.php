@@ -49,11 +49,16 @@ $vehicle = new Vehicle($vehicleId);
       <button class="nav-link" id="pills-snags-tab" data-bs-toggle="pill" data-bs-target="#pills-snags" type="button" role="tab" aria-controls="pills-snags" aria-selected="false">Snags</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Maintenance</button>
+      <button class="nav-link" id="pills-maintenance-tab" data-bs-toggle="pill" data-bs-target="#pills-maintenance" type="button" role="tab" aria-controls="pills-maintenance" aria-selected="false">Maintenance</button>
     </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-document-tab" data-bs-toggle="pill" data-bs-target="#pills-document" type="button" role="tab" aria-controls="pills-document" aria-selected="false">Documents</button>
+    </li>
+    <!--
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled" type="button" role="tab" aria-controls="pills-disabled" aria-selected="false" disabled>Disabled</button>
     </li>
+    -->
   </ul>
 
   <div class="tab-content" id="pills-tabContent">
@@ -158,8 +163,11 @@ $vehicle = new Vehicle($vehicleId);
 
     </div>
 
-    <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab" tabindex="0">...</div>
-    <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">...</div>
+    <div class="tab-pane fade" id="pills-maintenance" role="tabpanel" aria-labelledby="pills-maintenance-tab" tabindex="0">...</div>
+
+    <div class="tab-pane fade" id="pills-document" role="tabpanel" aria-labelledby="pills-document-tab" tabindex="0">...</div>
+
+    <!-- <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">...</div> -->
   </div>  
 
 </div>
@@ -184,6 +192,8 @@ $vehicle = new Vehicle($vehicleId);
     $('#btn-update-vehicle-status').off('click').on('click', e => {
       vehicleUpdateForm.show();
     });
+
+    $('#pills-document').load('section.vehicle-documents.php?vehicleId='+vehicleId);
 
     reFormat();
 
