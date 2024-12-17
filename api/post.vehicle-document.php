@@ -1,4 +1,5 @@
 <?php
+require_once 'class.audit.php';
 require_once 'class.data.php';
 $db = new data();
 
@@ -27,6 +28,8 @@ if (!empty($_FILES)) {
       'file_type' => $_FILES['file']['type'],
       'uploaded_by' => $_SESSION['user']->username
     ];
-    $db->query($sql, $data);
+    $id = $db->query($sql, $data);
+    $after = json_encode($db->get_row("SELECT * FROM vehicle_documents WHERE id = :id", ['id' => $id]));
+    Audit::log('added', 'vehicle_documents', 'Uploaded new document: '.$_POST['documentName'], null, $after);
   }
 }
