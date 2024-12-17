@@ -1,7 +1,7 @@
 <?php date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');?>
 <a href="#" class="back-to-top"><i class="fa-solid fa-circle-arrow-up fa-2x"></i></a>
 <div class="container-fluid" id="master">
-	<h1>Audit Trail</h1>
+	<h1>Authentication Log</h1>
 	<div class="row">
 		<div class="col-auto">
 			<div class="form-group">
