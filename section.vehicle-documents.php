@@ -73,6 +73,7 @@ $(async ƒ => {
     createImageThumbnails: false,
     acceptedFiles: 'image/*,application/pdf',
     disablePreviews: true,
+    maxFilesize: (10 * 1024 * 1024), // in bytes, so 10MB
   });
 
   function reloadSection () {
