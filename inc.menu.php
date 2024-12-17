@@ -47,6 +47,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item menu-item" href="#report.audit-trail.php" data-target-id="report" data-target-label="Report">Audit Trail</a></li>
+            <li><a class="dropdown-item menu-item" href="#report.auth-log.php" data-target-id="report" data-target-label="Report">Authentication Log</a></li>
           </ul>
         </li>
 
