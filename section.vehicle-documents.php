@@ -97,6 +97,11 @@ $(async ƒ => {
     await alertSuccess(documentName + ' has been uploaded.', 'Success');
     reloadSection();
   });
+
+  myDropzone.on('error', async function (file, message) {
+    myDropzone.removeAllFiles(true);
+    await alertError(message, 'Error');
+  });
 });
 
 </script>
