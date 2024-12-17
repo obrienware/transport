@@ -1,1 +1,0 @@
-ALTER TABLE users ADD COLUMN last_logged_in DATETIME NULL AFTER cdl;

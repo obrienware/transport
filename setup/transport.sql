@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Dec 02, 2024 at 02:27 PM
--- Server version: 11.5.2-MariaDB-ubu2404
+-- Generation Time: Dec 17, 2024 at 04:43 PM
+-- Server version: 11.6.2-MariaDB-ubu2404
 -- PHP Version: 8.2.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -34,38 +34,6 @@ CREATE TABLE `airlines` (
   `image_filename` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
---
--- Dumping data for table `airlines`
---
-
-INSERT INTO `airlines` (`id`, `name`, `flight_number_prefix`, `image_filename`) VALUES
-(1, 'Lufthansa', 'LH', 'Airlines-Lufthansa.png'),
-(2, 'Delta Air Lines', 'DL', 'Airlines-Delta-Airlines.png'),
-(3, 'Southwest Airlines', 'WN', 'Airlines-Southwest.png'),
-(4, 'Frontier Airlines', 'F9', 'Airlines-Frontier-Airlines.png'),
-(5, 'United Airlines', 'UA', 'Airlines-United-Airlines.png'),
-(6, 'British Airways', 'BA', 'Airlines-British-Airways.png'),
-(7, 'Aer Lingus', 'EIN', 'Aer_Lingus-Logo-1.png'),
-(8, 'Aeromexico', 'AM', 'Airlines-Aeromexico.png'),
-(9, 'Air Canada', 'AC', 'Airlines-Air-Canada.png'),
-(10, 'Air France', 'AF', 'Airlines-Air-France.png'),
-(11, 'Alaska Airlines', 'AS', 'Airlines-Alaska-Airlines.png'),
-(12, 'Allegiant', 'G4', 'Airlines-Allegiant.png'),
-(13, 'American Airlines', 'AA', 'Airlines-American-Airlines.png'),
-(14, 'Breeze Airways', 'MX', 'Breeze.jpg'),
-(15, 'Cayman Airways', 'KX', 'Airlines-Cayman-Airways.png'),
-(16, 'Copa Airlines', 'CM', 'Airlines-Copa-Airlines.png'),
-(17, 'Denver Air Connection', 'KG', 'Airlines-Denver-Air-Connection.png'),
-(18, 'Edelweiss', 'WK', 'Airlines-Edelweiss.png'),
-(19, 'Icelandair', 'FI', 'Airlines-Icelandair.png'),
-(20, 'JetBlue Airways', 'B6', 'Airlines-JetBlue.png'),
-(21, 'Southern Airways Express', 'SOO', 'Airlines-Southern-Airways-Express.png'),
-(22, 'Sun Country Airlines', 'SY', 'Airlines-Suncountry.png'),
-(23, 'Turkish Airlines', 'TK', 'TurkishAirlines.jpg'),
-(24, 'Viva Aerobus', 'VB', 'FIDS-BIDS_156x28.jpg'),
-(25, 'Volaris', 'Y4', 'Airlines-Volaris.png'),
-(26, 'WestJet', 'WS', 'Airlines-Westjet.png');
-
 -- --------------------------------------------------------
 
 --
@@ -77,8 +45,43 @@ CREATE TABLE `airports` (
   `iata` varchar(5) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `staging_location_id` int(11) DEFAULT NULL,
-  `lead_time` int(11) DEFAULT NULL COMMENT 'time to arrive before your flight (in mins)'
+  `lead_time` int(11) DEFAULT NULL COMMENT 'time to arrive before your flight (in mins)',
+  `arrival_instructions_small` text DEFAULT NULL,
+  `arrival_instructions_group` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `audit_trail`
+--
+
+CREATE TABLE `audit_trail` (
+  `id` int(11) NOT NULL,
+  `datetimestamp` datetime DEFAULT NULL,
+  `user` varchar(100) DEFAULT NULL,
+  `action` varchar(50) DEFAULT NULL,
+  `affected_tables` varchar(255) DEFAULT NULL,
+  `before` text DEFAULT NULL,
+  `after` text DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `meta` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `authentication_log`
+--
+
+CREATE TABLE `authentication_log` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `datetimestamp` datetime DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `successful` tinyint(1) DEFAULT NULL,
+  `comment` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -153,10 +156,37 @@ CREATE TABLE `events` (
   `driver_ids` varchar(100) DEFAULT NULL COMMENT 'List of drivers (ids) assigned to this event',
   `vehicle_ids` varchar(100) DEFAULT NULL COMMENT 'List of vehicles assigned to this event',
   `notes` text DEFAULT NULL,
+  `confirmed` datetime DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `created_by` varchar(100) DEFAULT NULL,
   `archived` datetime DEFAULT NULL,
   `archived_by` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `flight_data`
+--
+
+CREATE TABLE `flight_data` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `row` bigint(20) DEFAULT NULL,
+  `flight_number` varchar(50) DEFAULT NULL,
+  `status_live` tinyint(1) NOT NULL DEFAULT 0,
+  `status_text` varchar(255) DEFAULT NULL,
+  `status_icon` varchar(10) DEFAULT NULL,
+  `airport_origin` varchar(255) DEFAULT NULL,
+  `airport_origin_iata` varchar(10) DEFAULT NULL,
+  `scheduled_departure` datetime DEFAULT NULL,
+  `estimated_departure` datetime DEFAULT NULL,
+  `real_departure` datetime DEFAULT NULL,
+  `airport_destination` varchar(255) DEFAULT NULL,
+  `airport_destination_iata` varchar(10) DEFAULT NULL,
+  `scheduled_arrival` datetime DEFAULT NULL,
+  `estimated_arrival` datetime DEFAULT NULL,
+  `real_arrival` datetime DEFAULT NULL,
+  `updated` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -167,8 +197,6 @@ CREATE TABLE `events` (
 
 CREATE TABLE `guests` (
   `id` int(11) UNSIGNED NOT NULL,
-  `group_name` varchar(255) DEFAULT NULL,
-  `group_size` int(11) DEFAULT NULL,
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `phone_number` varchar(50) DEFAULT NULL,
@@ -205,6 +233,19 @@ CREATE TABLE `locations` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `opt_in_text`
+--
+
+CREATE TABLE `opt_in_text` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `tel` varchar(50) DEFAULT NULL,
+  `opt_in` datetime DEFAULT NULL,
+  `opt_out` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `snags`
 --
 
@@ -227,6 +268,20 @@ CREATE TABLE `snags` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `text_out`
+--
+
+CREATE TABLE `text_out` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `datetimestamp` datetime DEFAULT NULL,
+  `recipient` varchar(50) DEFAULT NULL,
+  `message` varchar(1024) DEFAULT NULL,
+  `result` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `trips`
 --
 
@@ -234,9 +289,9 @@ CREATE TABLE `trips` (
   `id` int(11) UNSIGNED NOT NULL,
   `requestor_id` int(11) DEFAULT NULL,
   `summary` varchar(1000) DEFAULT NULL,
-  `start_date` datetime DEFAULT NULL COMMENT 'When the trip should start',
-  `pickup_date` datetime DEFAULT NULL COMMENT 'When you need to pick the guest/group up',
-  `end_date` datetime DEFAULT NULL COMMENT 'When the trip would complete',
+  `start_date` datetime DEFAULT NULL,
+  `pickup_date` datetime DEFAULT NULL,
+  `end_date` datetime DEFAULT NULL,
   `guests` varchar(1024) DEFAULT NULL,
   `guest_id` int(11) DEFAULT NULL,
   `passengers` int(11) DEFAULT NULL,
@@ -257,7 +312,7 @@ CREATE TABLE `trips` (
   `guest_notes` text DEFAULT NULL,
   `driver_notes` text DEFAULT NULL,
   `general_notes` text DEFAULT NULL,
-  `finalized` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'When this changes to true - all the respective notifications should be sent',
+  `confirmed` datetime DEFAULT NULL,
   `linked_trip_id` int(11) DEFAULT NULL,
   `started` datetime DEFAULT NULL,
   `completed` datetime DEFAULT NULL,
@@ -321,6 +376,8 @@ CREATE TABLE `users` (
   `position` varchar(100) DEFAULT NULL,
   `department_id` int(11) DEFAULT NULL,
   `cdl` tinyint(1) NOT NULL DEFAULT 0,
+  `personal_preferences` text DEFAULT NULL,
+  `last_logged_in` datetime DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `created_by` varchar(100) DEFAULT NULL,
   `archived` datetime DEFAULT NULL,
@@ -352,6 +409,7 @@ CREATE TABLE `vehicles` (
   `color` varchar(10) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
+  `license_plate` varchar(20) DEFAULT NULL,
   `passengers` int(11) DEFAULT NULL,
   `require_cdl` tinyint(1) NOT NULL DEFAULT 0,
   `mileage` int(11) DEFAULT NULL,
@@ -361,11 +419,29 @@ CREATE TABLE `vehicles` (
   `last_updated_by` varchar(100) DEFAULT NULL,
   `location_id` int(11) DEFAULT NULL,
   `fuel_level` int(11) DEFAULT NULL,
-  `clean_interior` tinyint(1) DEFAULT NULL COMMENT 'The interior needs to be cleaned',
-  `clean_exterior` tinyint(1) DEFAULT NULL COMMENT 'The exterior needs to be cleaned',
-  `restock` tinyint(1) DEFAULT NULL COMMENT 'The vehicle needs to be restocked with refreshments, etc.',
+  `clean_interior` tinyint(1) DEFAULT NULL,
+  `clean_exterior` tinyint(1) DEFAULT NULL,
+  `restock` tinyint(1) DEFAULT NULL,
   `archived` datetime DEFAULT NULL,
   `archived_by` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vehicle_documents`
+--
+
+CREATE TABLE `vehicle_documents` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `vehicle_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `filename` varchar(255) DEFAULT NULL,
+  `file_type` varchar(100) DEFAULT NULL,
+  `uploaded` datetime DEFAULT NULL,
+  `uploaded_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 -- --------------------------------------------------------
@@ -402,39 +478,43 @@ CREATE TABLE `weather_codes` (
   `icon_night` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `weather_codes`
+-- Table structure for table `webhook_clicksend`
 --
 
-INSERT INTO `weather_codes` (`id`, `code`, `description`, `icon_day`, `icon_night`) VALUES
-(1, '0', 'Clear sky', 'wi-day-sunny', 'wi-night-clear'),
-(2, '1', 'Mainly clear', 'wi-day-sunny-overcast', 'wi-night-alt-cloudy'),
-(3, '2', 'Partly cloudy', 'wi-day-cloudy', 'wi-night-cloudy'),
-(4, '3', 'Overcast', 'wi-cloud', 'wi-cloud'),
-(5, '45', 'Fog', 'wi-day-fog', 'wi-night-fog'),
-(6, '48', 'Depositing rime fog', 'wi-day-fog', 'wi-night-fog'),
-(7, '51', 'Light drizzle', 'wi-day-sprinkle', 'wi-night-sprinkle'),
-(8, '53', 'Moderate drizzle', 'wi-day-showers', 'wi-night-showers'),
-(9, '55', 'Dense drizzle', 'wi-day-showers', 'wi-night-showers'),
-(10, '56', 'Light freezing drizzle', 'wi-day-rain-mix', 'wi-night-alt-rain-mix'),
-(11, '57', 'Dense freezing drizzle', 'wi-day-rain-mix', 'wi-night-alt-rain-mix'),
-(12, '61', 'Slight rain', 'wi-day-showers', 'wi-night-alt-rain'),
-(13, '63', 'Moderate rain', 'wi-day-showers', 'wi-night-alt-rain'),
-(14, '65', 'Heavy rain', 'wi-day-showers', 'wi-night-alt-rain'),
-(15, '66', 'Light freezing rain', 'wi-day-sleet', 'wi-night-sleet'),
-(16, '67', 'Heavy freezing rain', 'wi-day-sleet', 'wi-night-sleet'),
-(17, '71', 'Slight snowfall', 'wi-day-snow', 'wi-night-alt-snow'),
-(18, '73', 'Moderate snowfall', 'wi-day-snow', 'wi-night-alt-snow'),
-(19, '75', 'Heavy snowfall', 'wi-day-snow', 'wi-night-alt-snow'),
-(20, '77', 'Snow grains', 'wi-day-snow', 'wi-night-alt-snow'),
-(21, '80', 'Slight rain showers', 'wi-day-rain', 'wi-night-alt-rain'),
-(22, '81', 'Moderate rain showers', 'wi-day-rain', 'wi-night-alt-rain'),
-(23, '82', 'Violent rain showers', 'wi-day-rain', 'wi-night-alt-rain'),
-(24, '85', 'Slight snow showers', 'wi-day-snow', 'wi-night-alt-snow'),
-(25, '86', 'Heavy snow showers', 'wi-day-snow', 'wi-night-alt-snow'),
-(26, '95', 'Thunderstorms', 'wi-day-lightning', 'wi-night-alt-lightning'),
-(27, '96', 'Thunderstorms with slight hail', 'wi-day-sleet-storm', 'wi-night-alt-snow-thunderstorm'),
-(28, '99', 'Thunderstorms with heavy hail', 'wi-day-sleet-storm', 'wi-night-alt-snow-thunderstorm');
+CREATE TABLE `webhook_clicksend` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `originalsenderid` varchar(50) DEFAULT NULL,
+  `body` varchar(1000) DEFAULT NULL,
+  `message` varchar(1000) DEFAULT NULL,
+  `sms` varchar(50) DEFAULT NULL,
+  `custom_string` varchar(255) DEFAULT NULL,
+  `to` varchar(50) DEFAULT NULL,
+  `original_message_id` varchar(100) DEFAULT NULL,
+  `originalmessageid` varchar(100) DEFAULT NULL,
+  `customstring` varchar(255) DEFAULT NULL,
+  `from` varchar(50) DEFAULT NULL,
+  `originalmessage` varchar(1000) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `subaccount_id` int(11) DEFAULT NULL,
+  `original_body` varchar(1000) DEFAULT NULL,
+  `timestamp` bigint(20) DEFAULT NULL,
+  `message_id` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `_flight_check`
+--
+
+CREATE TABLE `_flight_check` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `flight_number` varchar(20) DEFAULT NULL,
+  `last_checked` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
 
 --
 -- Indexes for dumped tables
@@ -451,6 +531,22 @@ ALTER TABLE `airlines`
 --
 ALTER TABLE `airports`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `audit_trail`
+--
+ALTER TABLE `audit_trail`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `datetimestamp` (`datetimestamp`),
+  ADD KEY `user` (`user`);
+
+--
+-- Indexes for table `authentication_log`
+--
+ALTER TABLE `authentication_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `datetimestamp` (`datetimestamp`),
+  ADD KEY `username` (`username`);
 
 --
 -- Indexes for table `config`
@@ -487,6 +583,13 @@ ALTER TABLE `events`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `flight_data`
+--
+ALTER TABLE `flight_data`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `row` (`row`);
+
+--
 -- Indexes for table `guests`
 --
 ALTER TABLE `guests`
@@ -499,9 +602,22 @@ ALTER TABLE `locations`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `opt_in_text`
+--
+ALTER TABLE `opt_in_text`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tel` (`tel`);
+
+--
 -- Indexes for table `snags`
 --
 ALTER TABLE `snags`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `text_out`
+--
+ALTER TABLE `text_out`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -543,6 +659,12 @@ ALTER TABLE `vehicles`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `vehicle_documents`
+--
+ALTER TABLE `vehicle_documents`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `vehicle_maintenance_repair_jobs`
 --
 ALTER TABLE `vehicle_maintenance_repair_jobs`
@@ -561,6 +683,19 @@ ALTER TABLE `weather_codes`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `webhook_clicksend`
+--
+ALTER TABLE `webhook_clicksend`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `_flight_check`
+--
+ALTER TABLE `_flight_check`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `flight_number` (`flight_number`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -568,12 +703,24 @@ ALTER TABLE `weather_codes`
 -- AUTO_INCREMENT for table `airlines`
 --
 ALTER TABLE `airlines`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `airports`
 --
 ALTER TABLE `airports`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `audit_trail`
+--
+ALTER TABLE `audit_trail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `authentication_log`
+--
+ALTER TABLE `authentication_log`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -607,6 +754,12 @@ ALTER TABLE `events`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `flight_data`
+--
+ALTER TABLE `flight_data`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `guests`
 --
 ALTER TABLE `guests`
@@ -619,9 +772,21 @@ ALTER TABLE `locations`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `opt_in_text`
+--
+ALTER TABLE `opt_in_text`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `snags`
 --
 ALTER TABLE `snags`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `text_out`
+--
+ALTER TABLE `text_out`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -661,6 +826,12 @@ ALTER TABLE `vehicles`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `vehicle_documents`
+--
+ALTER TABLE `vehicle_documents`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `vehicle_maintenance_repair_jobs`
 --
 ALTER TABLE `vehicle_maintenance_repair_jobs`
@@ -676,7 +847,19 @@ ALTER TABLE `vehicle_maintenance_schedules`
 -- AUTO_INCREMENT for table `weather_codes`
 --
 ALTER TABLE `weather_codes`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `webhook_clicksend`
+--
+ALTER TABLE `webhook_clicksend`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `_flight_check`
+--
+ALTER TABLE `_flight_check`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
