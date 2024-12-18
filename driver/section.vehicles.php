@@ -62,6 +62,7 @@ $sql = "SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name";
         </div>
       </li>
     </ul>
+    <section id="vehicle-documents"></section>
     <div class="hstack gap-2">
       <button class="btn-close-vehicle-view btn btn-outline-primary">Done</button>
       <button id="btn-update-vehicle" class="btn btn-primary ms-auto">Update</button>
@@ -199,6 +200,7 @@ $sql = "SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name";
       $('input[name="opt-clean-exterior"][value=""]').prop('checked', true);
       $('#fuel-level').val('0');
       $('#mileage').val('');
+      $('#vehicle-documents').html('');
     }
 
     function getData() {
@@ -278,6 +280,8 @@ $sql = "SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name";
 
       $('#vehicle-list').addClass('d-none');
       $('#vehicle-detail').removeClass('d-none');
+
+      $('#vehicle-documents').load('section.vehicle-documents.php?id='+id);
 
       const nextTrip = await get('api/get.next-trip.php', {id});
       // console.log(nextTrip);
