@@ -50,6 +50,9 @@
       bottom: 80px;
       overflow-y: auto;
     }
+    html, body {
+      overscroll-behavior: none;
+    }
   </style>
 </head>
 <body>
