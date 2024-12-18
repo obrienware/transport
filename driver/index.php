@@ -183,6 +183,10 @@
       const standalone = navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
       if (!standalone) return; // not standalone; no pull to refresh needed
 
+      /**
+       * Presently we don't actually need this so we're going to leave the code (for reference) but bail here
+       */
+      return;
       PullToRefresh.init({
         onRefresh() {
           // We'll need to re-look at how we want to handle this
