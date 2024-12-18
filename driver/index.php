@@ -41,13 +41,13 @@
     #footer {
       position: absolute;
       left: 0; right: 0; bottom: 0;
-      height: 60px;
+      height: 80px;
       background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%);
     }
     .pane {
       position: absolute;
       top: 0; left: 0; right: 0;
-      bottom: 60px;
+      bottom: 80px;
       overflow-y: auto;
     }
   </style>
