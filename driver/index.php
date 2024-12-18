@@ -51,7 +51,7 @@
       overflow-y: auto;
     }
     html, body {
-      overscroll-behavior: none;
+      overscroll-behavior: contain;
     }
   </style>
 </head>
