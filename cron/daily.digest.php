@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.config.php';
 require_once 'class.trip.php';
 require_once 'class.event.php';
@@ -101,7 +102,7 @@ function getEventsFor($driverId)
       OR end_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR)
       OR CURDATE() BETWEEN start_date AND end_date
     )
-      AND FIND_IN_SET(driver_ids, :driver_id)
+    AND FIND_IN_SET(:driver_id, driver_ids)
   ";
   $data = ['driver_id' => $driverId];
   return $db->get_results($sql, $data);
