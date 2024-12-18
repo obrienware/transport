@@ -6,8 +6,8 @@ if (!isset($db)) $db = new data();
 $sql = "
 SELECT 
   t.*,
-  CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
-  CASE WHEN t.ETA IS NOT NULL THEN pu.iata ELSE do.iata END AS _iata,
+  CASE WHEN t.eta IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
+  CASE WHEN t.eta IS NOT NULL THEN pu.iata ELSE do.iata END AS _iata,
   CONCAT(g.first_name,' ',g.last_name) AS guest, g.phone_number,
   CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_from,
   CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff,
@@ -22,7 +22,7 @@ LEFT OUTER JOIN airlines a ON a.id = t.airline_id
 WHERE 
   t.id = :id
 ";
-$data = ['id' => $tripId];
+$data = ['id' => $_REQUEST['id']];
 $trip = $db->get_row($sql, $data);
 ?>
 <div class="row mb-2">
@@ -88,8 +88,8 @@ $trip = $db->get_row($sql, $data);
                   break;
               }
               ?>
-              <div class="badge" style="background-color: <?=$backgroundColor?>">
-                <?=$flight->status_text?>
+              <div class="badge w-100" style="background-color: <?=$backgroundColor?>">
+                <?=$flight->status_text ?: 'scheduled'?>
               </div>
               <div style="font-size: small">
                 <?php if ($trip->type === 'arrival'): ?>
@@ -98,7 +98,7 @@ $trip = $db->get_row($sql, $data);
                   <?php elseif ($flight->estimated_arrival): ?>
                     ETA: <?=Date('g:ia', strtotime($flight->estimated_arrival))?>
                   <?php else: ?>
-                    STA: <?=Date('g:ia', strtotime($flight->scheduled_arrival))?>
+                    STA: <?=Date('g:ia', strtotime($flight->scheduled_arrival ?: $trip->eta))?>
                   <?php endif; ?>
                 <?php elseif ($trip->type === 'departure'): ?>
                   <?php if ($flight->real_departure): ?>
@@ -106,7 +106,7 @@ $trip = $db->get_row($sql, $data);
                   <?php elseif ($flight->estimated_departure): ?>
                     ETD: <?=Date('g:ia', strtotime($flight->estimated_departure))?>
                   <?php else: ?>
-                    STD: <?=Date('g:ia', strtotime($flight->scheduled_departure))?>
+                    STD: <?=Date('g:ia', strtotime($flight->scheduled_departure ?: $trip->etd))?>
                   <?php endif; ?>
                 <?php endif;?>
               </div>
@@ -122,6 +122,11 @@ $trip = $db->get_row($sql, $data);
 
       </ul>
     </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col text-end">
+    <button class="btn btn-primary" onclick="showTripList()">Back</button>
   </div>
 </div>
 

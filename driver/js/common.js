@@ -1,6 +1,3 @@
-window.app = {};
-app.debug = true;
-
 /**
  * Use our favorite fetch method to post json data
  * @param {string} url - The url to post the data to
