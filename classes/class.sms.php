@@ -1,4 +1,7 @@
 <?php
+require_once 'class.config.php';
+$config = Config::get('system');
+
 require_once 'class.utils.php';
 require_once 'class.data.php';
 if (!isset($db)) $db = new data();
@@ -8,13 +11,14 @@ class SMS
   static public function send (string $recipient, string $message)
   {
     global $db;
+    global $config;
     $tel = SMS::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       // The following is for using Twilio
       $data = [
         'To' => $tel,
-        'From' => '+17198515112',
+        'From' => $config->textFromNumber,
         'Body' => $message
       ];
       $result = Utils::callApi(
