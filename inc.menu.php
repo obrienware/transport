@@ -86,6 +86,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
           </a>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item menu-item" href="#section.list-my-blockout-dates.php" data-target-id="list-blockout-dates" data-target-label="Blockouts">My Blockout Dates</a></li>
+            <li><a class="dropdown-item menu-item" href="#section.edit-preferences.php" data-target-id="edit-preferences" data-target-label="Preferences">Preferences</a></li>
             <li><a class="dropdown-item" href="mailto:support@obrienware.com">Email Support</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="page.new-password.php">Change Password</a></li>

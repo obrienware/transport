@@ -17,6 +17,7 @@ class User
 	public $departmentId;
 	public $CDL;
 	public $changePassword;
+	public $preferences;
 
 	public $otp;
 
@@ -46,6 +47,7 @@ class User
 			$this->departmentId = $row->department_id;
 			$this->CDL = $row->cdl;
 			$this->changePassword = $row->change_password;
+			$this->preferences = ($row->personal_preferences) ? json_decode($row->personal_preferences) : null;
 			return true;
 		}
 		return false;
@@ -79,7 +81,8 @@ class User
 			'roles' => implode(',', $this->roles),
 			'position' => $this->position,
 			'department_id' => $this->departmentId,
-			'cdl' => $this->CDL ? 1 : 0
+			'cdl' => $this->CDL ? 1 : 0,
+			'personal_preferences' => ($this->preferences) ? json_encode($this->preferences) : NULL
 		];
 		if ($this->userId) {
 			// Update
@@ -94,7 +97,8 @@ class User
 					roles = :roles,
 					position = :position,
 					department_id = :department_id,
-					cdl = :cdl
+					cdl = :cdl,
+					personal_preferences = :personal_preferences
 				WHERE id = :id
 			";
 		} else {
@@ -110,6 +114,7 @@ class User
 					position = :position,
 					department_id = :department_id,
 					cdl = :cdl,
+					personal_preferences = :personal_preferences,
 					created = NOW(),
 					created_by = :user
 			";
