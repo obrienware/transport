@@ -11,14 +11,32 @@ class SMS
     $tel = SMS::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
-      $messageObj = (object) [
-        'messages' => [
-          [
-            'body' => $message,
-            'to' => $tel
-          ]
-        ]
+      // The following is for using Twilio
+      $data = [
+        'To' => $tel,
+        'From' => '+17198515112',
+        'Body' => $message
       ];
+      $result = Utils::callApi(
+        'POST', 
+        "https://api.twilio.com/2010-04-01/Accounts/{$_ENV['TWILIO_ACCOUNT_SID']}/Messages.json",
+        $data, [
+          'username' => $_ENV['TWILIO_ACCOUNT_SID'],
+          'password' => $_ENV['TWILIO_AUTH_TOKEN']
+        ]
+      );
+      $db->query(
+        "INSERT INTO text_out SET datetimestamp = NOW(), recipient = :recipient, message = :message, result = :result",
+        [
+          'recipient' => $tel,
+          'message' => $message,
+          'result' => $result
+        ]
+      );      
+      return $result;
+
+      // The following is for using ClickSend
+      $messageObj = (object) ['messages' => [['body' => $message, 'to' => $tel]]];
       $data = json_encode($messageObj);
       $result = Utils::callApi('POST', 'https://rest.clicksend.com/v3/sms/send' , $data, [
         'username' => $_ENV['CLICKSEND_USERNAME'],
