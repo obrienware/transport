@@ -76,7 +76,7 @@
 
     <div id="footer" class="d-flex justify-content-around py-2">
       <div id="tab-trips" class="tab text-center text-light active" data-target="trips">
-        <div><i class="fa-solid fa-van-shuttle fa-xl"></i></div>
+        <div><i class="fa-solid fa-road fa-xl"></i></div>
         <div style="font-size:x-small">Trips</div>
       </div>
       <div id="tab-vehicles" class="tab text-center text-light text-opacity-50" data-target="vehicles">
