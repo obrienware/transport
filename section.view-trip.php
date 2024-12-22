@@ -123,7 +123,6 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     <?php if ($trip->generalNotes): ?>
       <div style="transform: rotate(-3deg)" class="w-auto">
         <div class="postit d-flex flex-column">
-          <div>General:</div>
           <div class="mt-auto mb-auto"><?=nl2br($trip->generalNotes)?></div>
         </div>
       </div>
