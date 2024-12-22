@@ -30,7 +30,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between">
           <h5 class="my-0">Pick Up</h5>
-          <span class="badge bg-primary"><?=Date('g:ia', strtotime($trip->startDate))?></span>
+          <span class="badge bg-primary align-self-center"><?=Date('g:ia', strtotime($trip->startDate))?></span>
         </div>
         <div class="card-body">
           <div><?=Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
@@ -101,6 +101,33 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     </div>
     <?php endif; ?>
     
+  </div>
+
+  <div class="row justify-content-around">
+    <?php if ($trip->guestNotes): ?>
+      <div style="transform: rotate(-3deg)" class="w-auto">
+        <div class="postit d-flex flex-column">
+          <div>Guest:</div>
+          <div class="mt-auto mb-auto"><?=nl2br($trip->guestNotes)?></div>
+        </div>
+      </div>
+    <?php endif;?>
+    <?php if ($trip->driverNotes): ?>
+      <div style="transform: rotate(-3deg)" class="w-auto">
+        <div class="postit d-flex flex-column">
+          <div>Driver:</div>
+          <div class="mt-auto mb-auto"><?=nl2br($trip->driverNotes)?></div>
+        </div>
+      </div>
+    <?php endif;?>
+    <?php if ($trip->generalNotes): ?>
+      <div style="transform: rotate(-3deg)" class="w-auto">
+        <div class="postit d-flex flex-column">
+          <div>General:</div>
+          <div class="mt-auto mb-auto"><?=nl2br($trip->generalNotes)?></div>
+        </div>
+      </div>
+    <?php endif;?>
   </div>
 
   <div class="d-flex justify-content-between mt-4">
