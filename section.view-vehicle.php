@@ -1,4 +1,5 @@
 <?php
+require_once 'class.utils.php';
 require_once 'class.snag.php';
 require_once 'class.vehicle.php';
 $vehicleId = $_REQUEST['id'];
@@ -64,52 +65,109 @@ $vehicle = new Vehicle($vehicleId);
   <div class="tab-content" id="pills-tabContent">
 
     <div class="tab-pane fade show active" id="pills-status" role="tabpanel" aria-labelledby="pills-status-tab" tabindex="0">
-      <table class="table table-bordered table-sm">
-        <caption class="caption-top">As at <?=$vehicle->lastUpdate ? Date('m/d h:ia', strtotime($vehicle->lastUpdate)) : ''?></caption>
-        <tr>
-          <th class="fit px-2 bg-body-secondary">Mileage</th>
-          <td><?=$vehicle->mileage ? number_format($vehicle->mileage) : '<div class="badge bg-dark-subtle">Unknown</div>'?></td>
-          <th class="fit px-2 bg-body-secondary">Check Engine Light On</th>
-          <td><?=$vehicle->hasCheckEngine ? '<div class="badge bg-danger fs-6">YES</div>' : 'No' ?></td>
-        </tr>
-        <tr>
-          <th class="fit px-2 bg-body-secondary">Location</th>
-          <td><?=$vehicle->currentLocation->name ?: 'Unverified'?></td>
-          <th class="fit px-2 bg-body-secondary">Needs cleaning</th>
-          <td>
-            <?php if ($vehicle->cleanExterior === 0): ?>
-              <div class="badge bg-danger">Exterior</div>
-            <?php endif; ?>
-            <?php if ($vehicle->cleanInterior === 0): ?>
-              <div class="badge bg-danger">Interior</div>
-            <?php endif; ?>
-          </td>
-        </tr>
-        <tr>
-          <th class="fit px-2 bg-body-secondary">Fuel Level</th>
-          <td>
-            <?php if ($vehicle->fuelLevel): ?>
-              <?php if ($vehicle->fuelLevel <= 25): ?>
-                <span class="badge bg-danger fs-6"><?=$vehicle->fuelLevel?>%</span>
-              <?php else:?>
-                <?=$vehicle->fuelLevel?>%
-              <?php endif; ?>
+
+      <div class="text-muted mb-3">
+        Last updated:
+        <?php if ($vehicle->lastUpdate):?>
+          <?=Date('m/d h:ia', strtotime($vehicle->lastUpdate))?>
+          (<?=Utils::ago($vehicle->lastUpdate)?> ago)
+        <?php else:?>
+          Never
+        <?php endif; ?>
+      </div>
+      <div class="hstack gap-4 mb-3 justify-content-center">
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-bottle-water fa-3x"></i>
+          <div>
+            <?php if ($vehicle->restock === 0): ?>
+              <span class="fw-light badge bg-success w-100">Good</span>
+            <?php elseif ($vehicle->restock === 1) :?>
+              <span class="fw-light badge bg-danger w-100">Needs</span>
             <?php else:?>
-              <div class="badge bg-dark-subtle">Unknown</div>
-            <?php endif; ?>
-          </td>
-          <th class="fit px-2 bg-body-secondary">Needs restocking</th>
-          <td>
-            <?php if ($vehicle->restock === 1): ?>
-              <div class="badge bg-danger fs-6">YES</div>
-            <?php elseif ($vehicle->restock === 0): ?>
-              No
-            <?php else: ?>
-              <div class="badge bg-dark-subtle">Unknown</div>
-            <?php endif; ?>
-          </td>
-        </tr>
-      </table>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-vacuum fa-3x"></i>
+          <div>
+            <?php if ($vehicle->cleanInterior === 1): ?>
+              <span class="fw-light badge bg-success w-100">Good</span>
+            <?php elseif ($vehicle->cleanInterior === 0) :?>
+              <span class="fw-light badge bg-danger w-100">Needs</span>
+            <?php else:?>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-car-wash fa-3x"></i>
+          <div>
+            <?php if ($vehicle->cleanExterior === 1): ?>
+              <span class="fw-light badge bg-success w-100">Good</span>
+            <?php elseif ($vehicle->cleanExterior === 0) :?>
+              <span class="fw-light badge bg-danger w-100">Needs</span>
+            <?php else:?>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-gas-pump fa-3x"></i>
+          <div>
+            <?php if ($vehicle->fuelLevel === null): ?>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php elseif ($vehicle->fuelLevel <= 25) :?>
+              <div class="progress mt-1 bg-secondary" role="progressbar" style="height: 20px">
+                <div class="progress-bar bg-danger overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=$vehicle->fuelLevel?>%&nbsp;</div>
+              </div>
+            <?php else:?>
+              <div class="progress mt-1 bg-secondary" role="progressbar" style="height: 20px">
+                <div class="progress-bar bg-success overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=$vehicle->fuelLevel?>%&nbsp;</div>
+              </div>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-engine-warning fa-3x"></i>
+          <div>
+            <?php if ($vehicle->hasCheckEngine === 0): ?>
+              <span class="fw-light badge bg-success w-100">Good</span>
+            <?php elseif ($vehicle->hasCheckEngine === 1) :?>
+              <span class="fw-light badge bg-danger w-100">Attention</span>
+            <?php else:?>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-location-dot fa-3x"></i>
+          <div>
+            <?php if ($vehicle->locationId === null): ?>
+              <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
+            <?php elseif ($vehicle->locationId !== $vehicle->stagingLocationId) :?>
+              <span class="fw-light badge bg-danger w-100" data-bs-toggle="tooltip" data-bs-title="<?=$vehicle->currentLocation->name?>">Relocate</span>
+            <?php else:?>
+              <span class="fw-light badge bg-success w-100">Good</span>
+            <?php endif;?>
+          </div>
+        </div>
+
+        <div class="p-2 d-inline-block text-center" style="width:100px">
+          <i class="fa-duotone fa-solid fa-gauge-simple fa-3x"></i>
+          <div>
+            <span class="fw-light badge bg-primary w-100"><?=$vehicle->mileage ? number_format($vehicle->mileage) : 'unknown'?></span>
+          </div>
+        </div>
+
+      </div>
+
 
       <div class="text-end">
         <button id="btn-update-vehicle-status" class="btn btn-outline-primary btn-sm">Update</button>
