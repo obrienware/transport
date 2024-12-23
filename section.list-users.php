@@ -10,6 +10,7 @@
   <table id="table-users" class="table table-striped table-hover row-select">
     <thead>
       <tr>
+        <th class="fit">ID</th>
         <th>Username</th>
         <th>Real Name</th>
         <th>Position</th>
@@ -21,6 +22,7 @@
       <?php if ($rs = User::getUsers()): ?>
         <?php foreach ($rs as $item): ?>
           <tr data-id="<?=$item->id?>">
+            <td class="fit"><?=$item->id?></td>
             <td><?=$item->username?></td>
             <td><?=$item->first_name.' '.$item->last_name?></td>
             <td><?=$item->position?></td>

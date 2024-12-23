@@ -10,6 +10,7 @@
   <table id="table-vehicles" class="table table-striped table-hover row-select">
     <thead>
       <tr>
+        <th class="fit">ID</th>
         <th class="fit" data-dt-order="disable">&nbsp;</th>
         <th data-dt-order="disable">&nbsp;</th>
         <th>Name</th>
@@ -24,6 +25,7 @@
         <?php foreach ($rs as $item): ?>
           <?php $rowClass = ($item->check_engine) ? 'table-warning' : '';?>
           <tr data-id="<?=$item->id?>" class="<?=$rowClass?>">
+            <td class="fit"><?=$item->id?></td>
             <?php if ($item->color): ?>
               <td class="fit">
                 <i class="bi bi-square-fill" style="color:<?=$item->color?>"></i>
