@@ -66,7 +66,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
         </div>
         <div class="card-body d-flex justify-content-between">
           <div>
-            <div><?=$trip->vehicleId ? $trip->vehicle->name : '' ?></div>
+            <div><?=$trip->vehicleId ? '<i class="bi bi-square-fill" style="color:'.$trip->vehicle->color.'"></i> '.$trip->vehicle->name : '' ?></div>
             <div><?=$trip->vehiclePUOptions?> - <?=$trip->vehicleDOOptions?></div>
           </div>
           <div><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
