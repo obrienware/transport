@@ -66,6 +66,10 @@ $(async ƒ => {
 
   const vehicleId = '<?=$_REQUEST['vehicleId']?>';
   let documentName = '';
+  <?php $count = count($rs); ?>
+  <?php if ($count > 0): ?>
+    $('#document-count').html('<?=$count?>').removeClass('d-none');
+  <?php endif; ?>
 
   const myDropzone = new Dropzone('#vehicle-document-dropzone', {
     url: '/api/post.vehicle-document.php',

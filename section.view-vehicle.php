@@ -5,7 +5,7 @@ require_once 'class.vehicle.php';
 $vehicleId = $_REQUEST['id'];
 $vehicle = new Vehicle($vehicleId);
 ?>
-<div class="container-fluid">
+<div class="container">
 
 <?php include 'inc.form-vehicle-update.php'; ?>
 
@@ -53,7 +53,10 @@ $vehicle = new Vehicle($vehicleId);
       <button class="nav-link" id="pills-maintenance-tab" data-bs-toggle="pill" data-bs-target="#pills-maintenance" type="button" role="tab" aria-controls="pills-maintenance" aria-selected="false">Maintenance</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="pills-document-tab" data-bs-toggle="pill" data-bs-target="#pills-document" type="button" role="tab" aria-controls="pills-document" aria-selected="false">Documents</button>
+      <button class="nav-link position-relative" id="pills-document-tab" data-bs-toggle="pill" data-bs-target="#pills-document" type="button" role="tab" aria-controls="pills-document" aria-selected="false">
+        Documents
+        <span id="document-count" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+      </button>
     </li>
     <!--
     <li class="nav-item" role="presentation">
