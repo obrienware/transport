@@ -31,6 +31,7 @@ class User
 		if (isset($_SESSION['user'])) $this->user = $_SESSION['user'];
 	}
 
+
 	public function getUser(int $userId): bool
 	{
 		$sql = 'SELECT * FROM users WHERE id = :user_id';
@@ -55,6 +56,7 @@ class User
 		return false;
 	}
 
+
 	public function hasRole(array $roles): bool
 	{
 		foreach ($roles as $role) {
@@ -65,11 +67,23 @@ class User
 		return false;
 	}
 
+
+	public function addRole(string $role)
+	{
+		if ($this->roles) {
+			$this->roles[] = $role;
+		} else {
+			$this->roles = [$role];
+		}
+	}
+
+
 	public function getName(): string
 	{
 		if ($this->userId) return "{$this->firstName} {$this->lastName}";
 		return '';
 	}
+
 
 	public function save(): array
 	{
@@ -129,6 +143,7 @@ class User
 		];
 	}
 
+
 	public function resetPassword(): bool
 	{
 		if ($this->emailAddress) {
@@ -148,6 +163,7 @@ class User
 		}
 		return false;
 	}
+
 
 	static public function sendResetLink(string $username) 
 	{
@@ -170,6 +186,7 @@ class User
 		return false;
 	}
 
+
 	public function setPasswordToken(): string
 	{
 		$sql = "
@@ -185,12 +202,14 @@ class User
 		return $data['token'];
 	}
 
+
 	public function setNewPassword($newPassword)
 	{
 		$sql = 'UPDATE users SET password = :new_password, change_password = 0, reset_token = NULL, token_expiration = NULL WHERE id = :id';
 		$data = ['new_password' => md5($newPassword), 'id' => $this->userId];
 		return $this->db->query($sql, $data);
 	}
+
 
 	static public function deleteUser($userId)
 	{
@@ -200,10 +219,12 @@ class User
 		return $db->query($sql, $data);
 	}
 
+
 	public function delete()
 	{
 		return $this->deleteUser($this->userId);
 	}
+
 
 	/**
 	 * Caution: This is used internally by unit testing to cleanly remove data. 
@@ -223,6 +244,7 @@ class User
 		return $result;
 	}
 
+
 	static public function getDrivers()
 	{
 		$db = new data();
@@ -236,6 +258,7 @@ class User
 		return $db->get_results($sql);
 	}
 
+
 	static public function getUsers()
 	{
 		$db = new data();
@@ -246,6 +269,7 @@ class User
 		";
 		return $db->get_results($sql);
 	}
+
 
 	public function getUserByEmail($emailAddress)
 	{
@@ -258,6 +282,7 @@ class User
 		$this->emailAddress = $emailAddress;
 		return false;
 	}
+
 
 	static public function validateOTP($email, $otp)
 	{
@@ -277,10 +302,12 @@ class User
 		return false;
 	}
 
+
 	public function getState(): string
 	{
 		return json_encode($this->row);
 	}
+
 
 	static public function login(string $username, string $password): mixed
 	{
@@ -293,6 +320,7 @@ class User
 		return $db->get_row($sql, $data);		
 	}
 
+
 	static public function getUserSession(string $username): mixed
 	{
 		$db = new data();
@@ -302,6 +330,7 @@ class User
 		$_SESSION['user'] = $result;
 		return $result;
 	}
+
 
 	static public function formattedPhoneNumber(string $number): string
 	{
