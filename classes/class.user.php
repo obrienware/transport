@@ -1,10 +1,9 @@
 <?php
 require_once 'class.data.php';
-global $db;
-if (!isset($db)) $db = new data();
 
 class User
 {
+	private $db;
 	private $row;
 
 	public $userId;
@@ -24,6 +23,7 @@ class User
 
 	public function __construct(int $userId = null)
 	{
+		$this->db = new data();
 		if (isset($userId)) {
 			$this->getUser($userId);
 		}
@@ -31,10 +31,9 @@ class User
 
 	public function getUser(int $userId): bool
 	{
-		global $db;
 		$sql = 'SELECT * FROM users WHERE id = :user_id';
 		$data = ['user_id' => $userId];
-		if ($row = $db->get_row($sql, $data)) {
+		if ($row = $this->db->get_row($sql, $data)) {
 			$this->row = $row;
 
 			$this->userId = $row->id;
@@ -72,7 +71,6 @@ class User
 
 	public function save(): array
 	{
-		global $db;
 		$data = [
 			'username' => $this->username,
 			'first_name' => $this->firstName,
@@ -121,24 +119,23 @@ class User
 			";
 			$data['user'] = $_SESSION['user']->username ?: 'system';
 		}
-		$result = $db->query($sql, $data);
+		$result = $this->db->query($sql, $data);
 		if (!$this->userId) $this->getUser($result); // If we are adding a user, then lets get a clean instance of the user
 		return [
 			'result' => $result,
-			'errors' => $db->errorInfo
+			'errors' => $this->db->errorInfo
 		];
 	}
 
 	public function resetPassword(): bool
 	{
 		if ($this->emailAddress) {
-			global $db;
 			require_once 'class.utils.php';
 			require_once 'class.email.php';
 			$newPassword = Utils::randomPassword(10);
 			$sql = 'UPDATE users SET password = :password, change_password = 1 WHERE id = :user_id';
 			$data = ['password' => md5($newPassword), 'user_id' => $this->userId];
-			$db->query($sql, $data);
+			$this->db->query($sql, $data);
 
 			$email = new Email();
 			$email->setSubject('Your password has been reset.');
@@ -153,7 +150,7 @@ class User
 	static public function sendResetLink(string $username) 
 	{
 		// First determine if we have a user that matches the given username
-		global $db;
+		$db = new data();
 		require_once 'class.email.php';
 		$sql = "SELECT id FROM users WHERE username = :username AND archived IS NULL";
 		$data = ['username' => $username];
@@ -173,7 +170,6 @@ class User
 
 	public function setPasswordToken(): string
 	{
-		global $db;
 		$sql = "
 			UPDATE users SET 
 				reset_token = :token, token_expiration = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
@@ -183,21 +179,20 @@ class User
 			'token' => bin2hex(random_bytes(10 / 2)),
 			'user_id' => $this->userId
 		];
-		$db->query($sql, $data);
+		$this->db->query($sql, $data);
 		return $data['token'];
 	}
 
 	public function setNewPassword($newPassword)
 	{
-		global $db;
 		$sql = 'UPDATE users SET password = :new_password, change_password = 0, reset_token = NULL, token_expiration = NULL WHERE id = :id';
 		$data = ['new_password' => md5($newPassword), 'id' => $this->userId];
-		return $db->query($sql, $data);
+		return $this->db->query($sql, $data);
 	}
 
 	static public function deleteUser($userId)
 	{
-		global $db;
+		$db = new data();
 		$sql = 'UPDATE users SET archived = NOW(), archived_by = :user WHERE id = :user_id';
 		$data = ['user' => $_SESSION['user']->username, 'user_id' => $userId];
 		return $db->query($sql, $data);
@@ -210,7 +205,7 @@ class User
 
 	static public function getDrivers()
 	{
-		global $db;
+		$db = new data();
 		$sql = "
 			SELECT * FROM users 
 			WHERE 
@@ -223,7 +218,7 @@ class User
 
 	static public function getUsers()
 	{
-		global $db;
+		$db = new data();
 		$sql = "
 			SELECT u.*, d.name AS department FROM users u 
 			LEFT OUTER JOIN departments d ON d.id = u.department_id
@@ -234,10 +229,9 @@ class User
 
 	public function getUserByEmail($emailAddress)
 	{
-		global $db;
 		$sql = "SELECT * FROM users WHERE email_address = :email_address AND archived IS NULL";
 		$data = ['email_address' => $emailAddress];
-		if ($row = $db->get_row($sql, $data)) {
+		if ($row = $this->db->get_row($sql, $data)) {
 			$this->getUser($row->id);
 			return true;
 		}
@@ -247,7 +241,7 @@ class User
 
 	static public function validateOTP($email, $otp)
 	{
-		global $db;
+		$db = new data();
 		$sql = "
 			SELECT * FROM users 
 			WHERE 
@@ -270,7 +264,7 @@ class User
 
 	static public function login(string $username, string $password): mixed
 	{
-		global $db;
+		$db = new data();
 		$sql = "SELECT * FROM users WHERE username = :username AND password = :password";
 		$data = [
   		'username' => $username,
@@ -281,7 +275,7 @@ class User
 
 	static public function getUserSession(string $username): mixed
 	{
-		global $db;
+		$db = new data();
 		$sql = "SELECT * FROM users WHERE username = :username";
 		$data = ['username' => $username];
 		$result = $db->get_row($sql, $data);
