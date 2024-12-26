@@ -47,12 +47,12 @@ The following event has been scheduled:
 Regards,
 Transportation Team
   ");
-  if ($config->sendRequestorMessagesTo == 'requestor') {
+  if ($config->email->sendRequestorMessagesTo == 'requestor') {
     if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
   } else {
-    $email->addRecipient($config->sendRequestorMessagesTo);
+    $email->addRecipient($config->email->sendRequestorMessagesTo);
   }
-  if ($config->copyAllEmail) $email->addBCC($config->copyAllEmail);
+  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
   $results[] = $email->sendText();
 
@@ -79,7 +79,7 @@ Regards,
 Transportation Team
     ");
     $email->addRecipient($driver->emailAddress, $driverName);
-    if ($config->copyAllEmail) $email->addBCC($config->copyAllEmail);
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
     $results[] = $email->sendText();
     }

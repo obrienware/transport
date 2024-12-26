@@ -30,7 +30,7 @@ class Email extends PHPMailer
     $this->Password = $_ENV['SPARKPOST_KEY'];
     $this->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $this->Port = 587;
-    $this->setFrom($config->fromEmailAddress, $config->fromEmailName);
+    $this->setFrom($config->email->fromEmailAddress, $config->email->fromEmailName);
   }
 
   public function setSubject($subject)

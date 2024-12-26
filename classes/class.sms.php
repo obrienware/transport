@@ -1,7 +1,7 @@
 <?php
 require_once 'class.config.php';
 global $config;
-$config = Config::get('system');
+$config = Config::get('organization');
 
 require_once 'class.utils.php';
 require_once 'class.data.php';

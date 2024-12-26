@@ -25,7 +25,7 @@ foreach ($drivers as $driver) {
   $email = new Email();
   $email->setSubject('Your Driver Digest for today');
   $email->addRecipient($driver->email_address, $driver->first_name.' '.$driver->last_name);
-  $email->addReplyTo($config->defaultReplyTo);
+  $email->addReplyTo($config->email->defaultReplyTo);
 
   // Does this driver have any trips today?
   $trips = getTripsFor($driver->id);
