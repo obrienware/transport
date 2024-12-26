@@ -1,7 +1,7 @@
 <?php
 require_once 'class.user.php';
 
-class Acl {
+class ACL {
   public function hasPermission($subject, $action, $resource)
   {
 
