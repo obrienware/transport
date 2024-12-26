@@ -1,6 +1,8 @@
 <?php
 require_once 'class.data.php';
+global $db;
 if (!isset($db)) $db = new data();
+
 require_once 'class.location.php';
 
 class Airport
@@ -64,7 +66,7 @@ class Airport
 		return false;
   }
 
-	public function getAirportId()
+	public function getAirportId(): int
 	{
 		return $this->airportId;
 	}
@@ -115,7 +117,7 @@ class Airport
 		];
 	}
 
-	public function getState()
+	public function getState(): string
 	{
 		return json_encode($this->row);
 	}	
@@ -127,7 +129,7 @@ class Airport
 		return $db->get_results($sql);
 	}
 	
-	static public function deleteAirport($airportId)
+	static public function deleteAirport(int $airportId): mixed
 	{
 		global $db;
 		$sql = 'UPDATE airports SET archived = NOW(), archived_by = :user WHERE id = :airport_id';
@@ -135,7 +137,7 @@ class Airport
 		return $db->query($sql, $data);
 	}
 
-	public function delete()
+	public function delete(): mixed
 	{
 		return $this->deleteAirport($this->airportId);
 	}

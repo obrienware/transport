@@ -1,5 +1,6 @@
 <?php
 require_once 'class.data.php';
+global $db;
 if (!isset($db)) $db = new data();
 
 class Audit

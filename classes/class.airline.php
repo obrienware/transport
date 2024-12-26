@@ -1,13 +1,12 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
+global $db;
+if (!isset($db)) $db = new data();
 
 class Airline
 {
 	private $airlineId;
+
 	public $name;
 	public $flightNumberPrefix;
 	public $imageFilename;
@@ -19,7 +18,7 @@ class Airline
 		}
 	}
 
-	public function getAirline($airlineId)
+	public function getAirline(int $airlineId): bool
 	{
 		global $db;
 		$sql = 'SELECT * FROM airlines WHERE id = :airline_id';
@@ -34,7 +33,7 @@ class Airline
 		return false;
 	}
 
-	static public function getAirlines()
+	static public function getAirlines(): mixed
 	{
 		global $db;
 		$sql = 'SELECT * FROM airlines ORDER BY name';
