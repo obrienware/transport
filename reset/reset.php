@@ -1,5 +1,5 @@
 <?php
-require_once '../classes/class.data.php';
+require_once 'class.data.php';
 $db = new data();
 $sql = "SELECT * FROM users WHERE reset_token = :token AND token_expiration >= NOW()";
 $data = ['token' => $_REQUEST['path']];

@@ -120,7 +120,7 @@ class Event
 		return $result;
 	}
 
-	static function deleteEvent($eventId)
+	static public function deleteEvent($eventId)
 	{
 		global $db;
 		$sql = 'UPDATE events SET archived = NOW(), archived_by = :user WHERE id = :event_id';
@@ -137,5 +137,18 @@ class Event
 	{
 		return json_encode($this->row);
 	}
+
+  static public function nextEventByVehicle(int $vehicleId)
+  {
+    global $db;
+    $sql = "
+      SELECT id FROM events 
+      WHERE  NOW() < start_date AND FIND_IN_SET(:vehicle_id, vehicle_ids)
+      ORDER BY start_date
+      LIMIT 1
+    ";
+    $data = ['vehicle_id' => $vehicleId];
+    return $db->get_var($sql, $data);
+  }
 
 }

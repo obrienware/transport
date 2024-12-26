@@ -1,5 +1,6 @@
 <?php
 require_once 'class.data.php';
+global $db;
 if (!isset($db)) $db = new data();
 
 class User
@@ -265,6 +266,27 @@ class User
 	public function getState(): string
 	{
 		return json_encode($this->row);
+	}
+
+	static public function login(string $username, string $password): mixed
+	{
+		global $db;
+		$sql = "SELECT * FROM users WHERE username = :username AND password = :password";
+		$data = [
+  		'username' => $username,
+  		'password' => md5($password)
+		];
+		return $db->get_row($sql, $data);		
+	}
+
+	static public function getUserSession(string $username): mixed
+	{
+		global $db;
+		$sql = "SELECT * FROM users WHERE username = :username";
+		$data = ['username' => $username];
+		$result = $db->get_row($sql, $data);
+		$_SESSION['user'] = $result;
+		return $result;
 	}
 
 }

@@ -290,4 +290,47 @@ class Trip
 		return json_encode($this->row);
 	}
 
+	static public function nextTripByVehicle(int $vehicleId)
+	{
+		global $db;
+		$sql = "
+			SELECT id FROM trips 
+				WHERE  NOW() < start_date AND vehicle_id = :vehicle_id
+				ORDER BY start_date
+			LIMIT 1
+		";
+		$data = ['vehicle_id' => $vehicleId];
+		return $db->get_var($sql, $data);	
+	}
+
+	static public function upcomingTrips($limit = 5)
+	{
+		global $db;
+		$sql = "
+			SELECT 
+				t.*,
+				CONCAT(g.first_name,' ',g.last_name) AS guest,
+				CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_from,
+				CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff
+				-- v.name AS vehicle,
+				-- a.flight_number_prefix
+			FROM trips t
+			LEFT OUTER JOIN guests g ON g.id = t.guest_id
+			LEFT OUTER JOIN locations pu on pu.id = t.pu_location
+			LEFT OUTER JOIN locations do on do.id = t.do_location
+			-- LEFT OUTER JOIN vehicles v ON v.id = t.vehicle_id
+			-- LEFT OUTER JOIN airlines a ON a.id = t.airline_id
+			WHERE 
+				t.driver_id = :id
+				AND t.end_date >= CURDATE()
+				AND t.archived IS NULL
+				-- AND t.start_date < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+				AND completed IS NULL
+			ORDER BY t.start_date
+			LIMIT {$limit}
+		";
+		$data = ['id' => $_SESSION['user']->id];
+		return $db->get_results($sql, $data);	
+	}
+
 }

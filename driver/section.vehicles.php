@@ -1,9 +1,5 @@
-<?php
-require_once 'class.data.php';
-$db = new data();
-$sql = "SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name";
-?>
-<?php if ($rs = $db->get_results($sql, $data)): ?>
+<?php require_once 'class.vehicle.php';?>
+<?php if ($rs = Vehicle::getVehicles()): ?>
 
   <ul class="list-group list-group-flush" id="vehicle-list">
     <?php foreach ($rs as $item): ?>
