@@ -14,7 +14,6 @@ $config = \Config::get('organization');
 
 class Email extends PHPMailer
 {
-  public $mail; // Make this public for now while we're testing!
   private $content;
   private $altContent;
   private $errorMessage;
