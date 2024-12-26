@@ -1,24 +1,43 @@
 <?php
 require_once 'class.config.php';
+global $config;
 $config = Config::get('system');
 
 require_once 'class.utils.php';
 require_once 'class.data.php';
+global $db;
 if (!isset($db)) $db = new data();
 
 class SMS
 {
+
   static public function send (string $recipient, string $message)
   {
-    global $db;
     global $config;
+    switch ($config->textMessaging->provider) {
+
+      case 'Twilio':
+        return SMS::sendTwilio($recipient, $message);
+        break;
+
+      case 'ClickSend':
+        return SMS::sendClickSend($recipient, $message);
+        break;
+    }
+    return false;
+  }
+
+
+  static public function sendTwilio(string $recipient, string $message)
+  {
+    global $config;
+    global $db;
     $tel = SMS::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
-      // The following is for using Twilio
       $data = [
         'To' => $tel,
-        'From' => $config->textFromNumber,
+        'From' => $config->textMessaging->textFromNumber,
         'Body' => $message
       ];
       $result = Utils::callApi(
@@ -38,8 +57,17 @@ class SMS
         ]
       );      
       return $result;
+    }
+    return false;
+  }
 
-      // The following is for using ClickSend
+
+  static public function sendClickSend(string $recipient, string $message)
+  {
+    global $db;
+    $tel = SMS::formattedPhoneNumber($recipient);
+    // Only if the recipient has opted in to recieve messages
+    if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       $messageObj = (object) ['messages' => [['body' => $message, 'to' => $tel]]];
       $data = json_encode($messageObj);
       $result = Utils::callApi('POST', 'https://rest.clicksend.com/v3/sms/send' , $data, [
@@ -61,16 +89,17 @@ class SMS
 
   static public function optIn (string $recipient)
   {
+    global $config;
     global $db;
     $phone = SMS::formattedPhoneNumber($recipient);
     $sql = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
     $data = ['tel' => $phone];
     $result = $db->query($sql, $data);
-    // echo json_encode(['result' => $result]);
     // Send a text confirmation
-    $message = "Thank you! You have opted in to receiving timely reminders from AWM/Charis Transport. To opt out at any point, simply reply STOP.";
+    $message = $config->textMessaging->optInConfirmationMessage;
     return SMS::send($phone, $message);
   }
+
 
   static public function optOut (string $recipient)
   {
@@ -78,8 +107,13 @@ class SMS
     $tel = SMS::formattedPhoneNumber($recipient);
     $sql = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
     $data = ['tel' => $tel];
+    if (isset($config->textMessaging->optOutMessage)) {
+      // Only if we have defined an opt out message
+      SMS::send($tel, $config->textMessaging->optOutMessage);
+    }
     return $db->query($sql, $data);  
   }
+
 
   static public function formattedPhoneNumber(string $phoneNumber)
   {
