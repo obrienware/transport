@@ -1,6 +1,6 @@
 <?php
 require_once 'class.config.php';
-$config = Config::get('system');
+$config = Config::get('organization');
 if ($config->alertUnconfirmedTrips === false) die();
 
 require_once 'class.data.php';
