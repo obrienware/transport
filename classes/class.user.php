@@ -77,7 +77,7 @@ class User
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
 			'phone_number' => $this->phoneNumber,
-			'roles' => implode(',', $this->roles),
+			'roles' => $this->roles ? implode(',', $this->roles) : null,
 			'position' => $this->position,
 			'department_id' => $this->departmentId,
 			'cdl' => $this->CDL ? 1 : 0,
@@ -203,6 +203,24 @@ class User
 		return $this->deleteUser($this->userId);
 	}
 
+	/**
+	 * Caution: This is used internally by unit testing to cleanly remove data. 
+	 * Use the delete method instead in production to archive the user instead of completely removing the data
+	 */
+	public function remove()
+	{
+		$result = $this->db->query(
+			"DELETE FROM users WHERE id = :user_id",
+			['user_id' => $this->userId]
+		);
+		// Reset the object (as best we can)
+		foreach (get_class_vars(get_class($this)) as $name => $default) 
+  		$this->$name = $default;
+		unset($this->db);
+		unset($this->row);
+		return $result;
+	}
+
 	static public function getDrivers()
 	{
 		$db = new data();
@@ -281,6 +299,15 @@ class User
 		$result = $db->get_row($sql, $data);
 		$_SESSION['user'] = $result;
 		return $result;
+	}
+
+	static public function formattedPhoneNumber(string $number): string
+	{
+		if (str_contains($number, '+')) {
+			return $number;
+		} else {
+			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+		}	
 	}
 
 }
