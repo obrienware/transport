@@ -5,6 +5,7 @@ class User
 {
 	private $db;
 	private $row;
+	private $user;
 
 	public $userId;
 	public $username;
@@ -27,6 +28,7 @@ class User
 		if (isset($userId)) {
 			$this->getUser($userId);
 		}
+		if (isset($_SESSION['user'])) $this->user = $_SESSION['user'];
 	}
 
 	public function getUser(int $userId): bool
@@ -42,7 +44,7 @@ class User
 			$this->lastName = $row->last_name;
 			$this->emailAddress = $row->email_address;
 			$this->phoneNumber = $row->phone_number;
-			$this->roles = explode(',', $row->roles);
+			$this->roles = $row->roles ? explode(',', $row->roles) : null;
 			$this->position = $row->position;
 			$this->departmentId = $row->department_id;
 			$this->CDL = $row->cdl;
@@ -117,7 +119,7 @@ class User
 					created = NOW(),
 					created_by = :user
 			";
-			$data['user'] = $_SESSION['user']->username ?: 'system';
+			$data['user'] = isset($this->user->username) ? $this->user->username : 'system';
 		}
 		$result = $this->db->query($sql, $data);
 		if (!$this->userId) $this->getUser($result); // If we are adding a user, then lets get a clean instance of the user
@@ -194,7 +196,7 @@ class User
 	{
 		$db = new data();
 		$sql = 'UPDATE users SET archived = NOW(), archived_by = :user WHERE id = :user_id';
-		$data = ['user' => $_SESSION['user']->username, 'user_id' => $userId];
+		$data = ['user' => isset($_SESSION['user']->username) ? $_SESSION['user']->username : null, 'user_id' => $userId];
 		return $db->query($sql, $data);
 	}
 
