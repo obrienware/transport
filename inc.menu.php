@@ -60,7 +60,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
             <li><a class="dropdown-item menu-item" href="#section.list-departments.php" data-target-id="list-departments">Departments</a></li>
             <li><a class="dropdown-item menu-item" href="#section.list-guests.php" data-target-id="list-guests">Contact List</a></li>
             <li><a class="dropdown-item menu-item" href="#section.list-locations.php" data-target-id="list-locations">Locations</a></li>
-            <li><a class="dropdown-item menu-item disabled" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
+            <li><a class="dropdown-item menu-item" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
             <li><a class="dropdown-item menu-item" href="#section.list-airports.php" data-target-id="list-airports">Airports</a></li>
             <?php if ($user->hasRole(['admin','developer'])):?>
             <li>
