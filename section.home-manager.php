@@ -12,8 +12,7 @@ $user = new User($_SESSION['user']->id);
   <div class="row">
     <div class="d-flex justify-content-between mb-2">
       <div>
-        Views:
-        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+        <div class="btn-group me-2" role="group" aria-label="Basic radio toggle button group">
           <input type="radio" class="btn-check" name="btnradio" id="view-calendar" autocomplete="off" checked>
           <label class="btn btn-outline-primary" for="view-calendar">Calendar</label>
 
@@ -26,6 +25,7 @@ $user = new User($_SESSION['user']->id);
           <input type="radio" class="btn-check" name="btnradio" id="view-drivers" autocomplete="off">
           <label class="btn btn-outline-primary" for="view-drivers">Drivers</label>
         </div>
+        View
       </div>
       <div>
         <button id="btn-refresh-calendar" class="btn btn-outline-primary"><i class="fa-solid fa-rotate"></i></button>
@@ -33,7 +33,7 @@ $user = new User($_SESSION['user']->id);
         <button id="btn-new-trip" class="btn btn-outline-primary">New Trip</button>
       </div>
     </div>
-    <div id="ec" class="col"></div>
+    <div id="ec" class="col bg-body py-2"></div>
     <div id="trip-text"></div>
   </div>
 </div>

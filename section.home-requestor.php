@@ -24,7 +24,7 @@ $user = new User($_SESSION['user']->id);
         <button id="btn-request-trip" class="btn btn-outline-primary">Request New Trip</button>
       </div>
     </div>
-    <div id="ec" class="col"></div>
+    <div id="ec" class="col bg-body py-2"></div>
     <div id="trip-text"></div>
   </div>
 </div>
