@@ -7,7 +7,7 @@ class Authenticate
   public static function logIn ($username, $password)
   {
     global $db;
-    $sql = 'SELECT * FROM users WHERE username = :username AND password = :password';
+    $sql = 'SELECT * FROM users WHERE (username = :username OR email_address = :username) AND password = :password';
     $data = ['username' => $username, 'password' => md5($password)];
     if ($id = $db->get_var($sql, $data)) {
       // Update last login

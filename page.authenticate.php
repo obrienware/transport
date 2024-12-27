@@ -62,8 +62,8 @@ $return = ($_REQUEST['return']) ? base64_decode($_REQUEST['return']) : './';
         <h2 class="mb-5 fw-light">Login Required</h2>
 				<input type="hidden" autocomplete="false">
         <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="username" placeholder="Username">
-          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" placeholder="Username / Email Address">
+          <label for="username">Username / Email Address</label>
         </div>
         <div class="form-floating">
           <input type="password" class="form-control" id="password" placeholder="Password">

@@ -1,3 +1,10 @@
+<?php
+if (!isset($_SESSION['view'])) {
+	require_once 'class.user.php';
+	if (!isset($user)) $user = new User($_SESSION['user']->id);
+	$_SESSION['view'] = $user->roles[0];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -91,4 +98,4 @@
 	<link rel="icon" type="image/x-icon" href="/images/logo.svg">
 </head>
 
-<body>
+<body class="bg-body-secondary">

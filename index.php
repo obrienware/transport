@@ -21,7 +21,13 @@ include 'inc.menu.php';
 <script type="text/javascript">
 
   $(async ƒ => {
-    $('#home-tab-pane').load('section.home.php');
+    <?php if (array_search($_SESSION['view'], ['developer','manager']) !== false):?>
+      $('#home-tab-pane').load('section.home-manager.php');
+    <?php elseif (array_search($_SESSION['view'], ['driver']) !== false):?>
+      $('#home-tab-pane').load('section.home-driver.php');
+    <?php elseif (array_search($_SESSION['view'], ['requestor']) !== false):?>
+      $('#home-tab-pane').load('section.home-requestor.php');
+    <?php endif; ?>
 
     // ping every minute
     setInterval(async () => {

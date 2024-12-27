@@ -4,6 +4,10 @@ require_once 'class.user.php';
 $start = $_REQUEST['start'];
 $end = $_REQUEST['end'];
 
+if (isset($_REQUEST['requestorId'])) {
+  $criteria = "AND t.requestor_id = {$_REQUEST['requestorId']} AND confirmed IS NOT NULL";
+}
+
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
 require_once 'class.data.php';
 $db = new data();
@@ -26,6 +30,7 @@ WHERE
     (end_date BETWEEN :start AND :end)
   )
   AND t.archived IS NULL
+  {$criteria}
 ";
 $data = ['start' => $start, 'end' => $end];
 
