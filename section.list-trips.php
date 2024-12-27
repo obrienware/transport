@@ -27,137 +27,138 @@ $sql = "
   ORDER BY start_date ASC
 ";
 ?>
-<div class="d-flex justify-content-between mt-3">
-  <h2>Trips</h2>
-  <button id="btn-add-trip"" class="btn btn-outline-primary btn-sm my-auto px-3">
-    New Trip
-  </button>
-</div>
-<?php if ($rs = $db->get_results($sql)): ?>
-
-  <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
-    <thead>
-      <tr>
-        <th class="fit">Confirmed</th>
-        <th class="fit">When</th>
-        <th data-dt-order="disable">Trip Summary</th>
-        <th class="text-start">Pick Up</th>
-        <th data-dt-order="disable">Drop Off</th>
-        <th>Driver</th>
-        <th>Vehicle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($rs as $item): ?>
-        <?php 
-          $tdClass = '';
-          if (strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
-            $tdClass = 'table-secondary';
-          } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
-            $tdClass = 'table-success';
-          }
-        ?>
-        <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-          <td class="text-center fit" data-order="<?=$item->confirmed?>">
-            <?php if ($item->confirmed): ?>
-              <i class="fa-regular fa-square-check fa-lg text-success"></i>
-            <?php else: ?>
-              <i class="fa-regular fa-square fa-lg"></i>
-            <?php endif; ?>
-          </td>
-          <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
-          <td>
-            <?php if ($item->completed) :?>
-              <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
-            <?php elseif ($item->started): ?>
-              <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
-            <?php endif;?>
-            <?=$item->summary?>
-          </td>
-
-          <td class="text-nowrap text-start" data-order="<?=$item->start_date?>">
-            <div>
-              <span class="time"><?=($item->start_date) ? Date('g:ia', strtotime($item->start_date)) : ''?></span>: 
-              <?=$item->pickup_location?>
-            </div>
-            <?php if ($item->eta): ?>
-              <span class="badge text-bg-secondary">
-                <i class="fa-duotone fa-solid fa-plane-arrival"></i>
-                <?=$item->flight_number_prefix.' '.$item->flight_number?>
-              </span>
-              <small><?=Date('g:ia', strtotime($item->eta))?></small>
-            <?php endif;?>
-          </td>
-
-          <td class="text-nowrap">
-            <div><?=$item->dropoff_location?></div>
-            <?php if ($item->etd): ?>
-              <span class="badge text-bg-secondary">
-                <i class="fa-duotone fa-solid fa-plane-departure"></i>
-                <?=$item->flight_number_prefix.' '.$item->flight_number?>
-              </span>
-              <small><?=Date('g:ia', strtotime($item->etd))?></small>
-            <?php endif;?>
-          </td>
-          <td><?=$item->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
-          <td><?=$item->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-
-  <script type="text/javascript">
-
-    $(async ƒ => {
-
-      let dataTable;
-      let targetId;
-
-      function reloadSection () {
-        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-      }
-
-      if ($.fn.dataTable.isDataTable('#table-trips') ) {
-        dataTable = $('#table-trips').DataTable();
-      } else {
-        dataTable = $('#table-trips').DataTable({
-          responsive: true,
-          paging: true,
-          order: [[1, 'asc']],
-        });
-      }
-
-      function bindRowClick () {
-        $('#table-trips tbody tr').off('click').on('click', ƒ => {
-          ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-          const self = ƒ.currentTarget;
-          const id = $(self).data('id');
-          targetId = id;
-          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
-        });
-      }
-      bindRowClick()
-
-      dataTable.on('draw.dt', bindRowClick);
-
-      $(document).off('tripChange.ns').on('tripChange.ns', reloadSection);
-
-    });
-
-  </script>
-
-
-<?php else: ?>
-
-  <div class="container-fluid text-center">
-    <div class="alert alert-info mt-5 w-50 mx-auto">
-      <h1 class="fw-bold">All clear!</h1>
-      <p class="lead">There are no upcoming trips at this time.</p>
-    </div>
+<div class="container-fluid">
+  <div class="d-flex justify-content-between mt-2">
+    <h2>Trips</h2>
+    <button id="btn-add-trip"" class="btn btn-outline-primary btn-sm my-auto px-3">
+      New Trip
+    </button>
   </div>
+  <?php if ($rs = $db->get_results($sql)): ?>
 
-<?php endif; ?>
+    <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
+      <thead>
+        <tr>
+          <th class="fit">Confirmed</th>
+          <th class="fit">When</th>
+          <th data-dt-order="disable">Trip Summary</th>
+          <th class="text-start">Pick Up</th>
+          <th data-dt-order="disable">Drop Off</th>
+          <th>Driver</th>
+          <th>Vehicle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($rs as $item): ?>
+          <?php 
+            $tdClass = '';
+            if (strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
+              $tdClass = 'table-secondary';
+            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+              $tdClass = 'table-success';
+            }
+          ?>
+          <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
+            <td class="text-center fit" data-order="<?=$item->confirmed?>">
+              <?php if ($item->confirmed): ?>
+                <i class="fa-regular fa-square-check fa-lg text-success"></i>
+              <?php else: ?>
+                <i class="fa-regular fa-square fa-lg"></i>
+              <?php endif; ?>
+            </td>
+            <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
+            <td>
+              <?php if ($item->completed) :?>
+                <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
+              <?php elseif ($item->started): ?>
+                <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
+              <?php endif;?>
+              <?=$item->summary?>
+            </td>
 
+            <td class="text-nowrap text-start" data-order="<?=$item->start_date?>">
+              <div>
+                <span class="time"><?=($item->start_date) ? Date('g:ia', strtotime($item->start_date)) : ''?></span>: 
+                <?=$item->pickup_location?>
+              </div>
+              <?php if ($item->eta): ?>
+                <span class="badge text-bg-secondary">
+                  <i class="fa-duotone fa-solid fa-plane-arrival"></i>
+                  <?=$item->flight_number_prefix.' '.$item->flight_number?>
+                </span>
+                <small><?=Date('g:ia', strtotime($item->eta))?></small>
+              <?php endif;?>
+            </td>
+
+            <td class="text-nowrap">
+              <div><?=$item->dropoff_location?></div>
+              <?php if ($item->etd): ?>
+                <span class="badge text-bg-secondary">
+                  <i class="fa-duotone fa-solid fa-plane-departure"></i>
+                  <?=$item->flight_number_prefix.' '.$item->flight_number?>
+                </span>
+                <small><?=Date('g:ia', strtotime($item->etd))?></small>
+              <?php endif;?>
+            </td>
+            <td><?=$item->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <td><?=$item->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <script type="text/javascript">
+
+      $(async ƒ => {
+
+        let dataTable;
+        let targetId;
+
+        function reloadSection () {
+          $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        }
+
+        if ($.fn.dataTable.isDataTable('#table-trips') ) {
+          dataTable = $('#table-trips').DataTable();
+        } else {
+          dataTable = $('#table-trips').DataTable({
+            responsive: true,
+            paging: true,
+            order: [[1, 'asc']],
+          });
+        }
+
+        function bindRowClick () {
+          $('#table-trips tbody tr').off('click').on('click', ƒ => {
+            ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
+            const self = ƒ.currentTarget;
+            const id = $(self).data('id');
+            targetId = id;
+            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
+          });
+        }
+        bindRowClick()
+
+        dataTable.on('draw.dt', bindRowClick);
+
+        $(document).off('tripChange.ns').on('tripChange.ns', reloadSection);
+
+      });
+
+    </script>
+
+
+  <?php else: ?>
+
+    <div class="container-fluid text-center">
+      <div class="alert alert-info mt-5 w-50 mx-auto">
+        <h1 class="fw-bold">All clear!</h1>
+        <p class="lead">There are no upcoming trips at this time.</p>
+      </div>
+    </div>
+
+  <?php endif; ?>
+</div>
 <script type="text/javascript">
 
   $(async ƒ => {

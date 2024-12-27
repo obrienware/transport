@@ -44,11 +44,13 @@ $user = new User($_SESSION['user']->id);
     let vehicleResources = await get('/api/get.resource-vehicles.php');
     let driverResources = await get('/api/get.resource-drivers.php');
 
-    async function loadJITContent() {
-      $('#trips-to-confirm').load('inc.dash-confirm.php');
-      $('#vehicle-alerts').load('inc.dash-vehicles.php');
-    }
-    loadJITContent();
+    <?php if (array_search($_SESSION['view'], ['manager']) !== false):?>
+      async function loadJITContent() {
+        $('#trips-to-confirm').load('inc.dash-confirm.php');
+        $('#vehicle-alerts').load('inc.dash-vehicles.php');
+      }
+      loadJITContent();
+    <?php endif; ?>
 
     const ec = new EventCalendar(document.getElementById('ec'), {
       view: 'dayGridMonth',

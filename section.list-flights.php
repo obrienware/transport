@@ -102,7 +102,7 @@ function showFlightsFor($iata, $type)
 }
 
 ?>
-<div class="container-fluid">
+<div class="container-fluid mt-2">
   <h1>Flight Statuses</h1>
 
   <?php if ($airports = $db->get_results("SELECT * FROM airports")): ?>

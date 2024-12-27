@@ -20,92 +20,93 @@ $sql = "
   ORDER BY start_date ASC
 ";
 ?>
-
-<div class="d-flex justify-content-between mt-3">
-  <h2>Events</h2>
-  <button id="btn-add-event" class="btn btn-outline-primary btn-sm my-auto px-3">
-    New Event
-  </button>
-</div>
-
-<?php if ($rs = $db->get_results($sql)): ?>
-
-  <table id="table-events" class="table align-middle table-hover row-select">
-    <thead>
-      <tr>
-        <th class="fit">From</th>
-        <th class="fit">To</th>
-        <th>Description</th>
-        <th>Where</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($rs as $item): ?>
-        <?php 
-          $tdClass = (strtotime($item->end_date) <= strtotime('now')) ? 'table-secondary' : '';
-          if (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
-            $tdClass = 'table-success';
-          }
-        ?>
-        <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-          <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
-          <td class="fit datetime short" data-order="<?=$item->end_date?>"><?=$item->end_date?></td>
-          <td><?=$item->name?></td>
-          <td><?=$item->location?></td>
-        </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
-
-  <script type="text/javascript">
-
-    $(async ƒ => {
-
-      let dataTable;
-      let targetId;
-
-      function reloadSection () {
-        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-      }
-
-      if ($.fn.dataTable.isDataTable('#table-events') ) {
-        dataTable = $('#table-events').DataTable();
-      } else {
-        dataTable = $('#table-events').DataTable({
-          responsive: true,
-          paging: true
-        });
-      }
-
-      function bindRowClick () {
-        $('#table-events tbody tr').off('click').on('click', ƒ => {
-          ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-          const self = ƒ.currentTarget;
-          const id = $(self).data('id');
-          targetId = id;
-          app.openTab('edit-event', 'Event (edit)', `section.edit-event.php?id=${id}`);
-        });
-      }
-      bindRowClick()
-
-      dataTable.on('draw.dt', bindRowClick);
-
-      $(document).off('eventChange.ns').on('eventChange.ns', reloadSection);
-    });
-
-  </script>
-
-<?php else: ?>
-
-  <div class="container-fluid text-center">
-    <div class="alert alert-info mt-5 w-50 mx-auto">
-      <h1 class="fw-bold">All clear!</h1>
-      <p class="lead">There are no upcoming events at this time.</p>
-    </div>
+<div class="container-fluid">
+  <div class="d-flex justify-content-between mt-2">
+    <h2>Events</h2>
+    <button id="btn-add-event" class="btn btn-outline-primary btn-sm my-auto px-3">
+      New Event
+    </button>
   </div>
 
-<?php endif; ?>
+  <?php if ($rs = $db->get_results($sql)): ?>
 
+    <table id="table-events" class="table align-middle table-hover row-select">
+      <thead>
+        <tr>
+          <th class="fit">From</th>
+          <th class="fit">To</th>
+          <th>Description</th>
+          <th>Where</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach ($rs as $item): ?>
+          <?php 
+            $tdClass = (strtotime($item->end_date) <= strtotime('now')) ? 'table-secondary' : '';
+            if (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+              $tdClass = 'table-success';
+            }
+          ?>
+          <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
+            <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
+            <td class="fit datetime short" data-order="<?=$item->end_date?>"><?=$item->end_date?></td>
+            <td><?=$item->name?></td>
+            <td><?=$item->location?></td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <script type="text/javascript">
+
+      $(async ƒ => {
+
+        let dataTable;
+        let targetId;
+
+        function reloadSection () {
+          $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        }
+
+        if ($.fn.dataTable.isDataTable('#table-events') ) {
+          dataTable = $('#table-events').DataTable();
+        } else {
+          dataTable = $('#table-events').DataTable({
+            responsive: true,
+            paging: true
+          });
+        }
+
+        function bindRowClick () {
+          $('#table-events tbody tr').off('click').on('click', ƒ => {
+            ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
+            const self = ƒ.currentTarget;
+            const id = $(self).data('id');
+            targetId = id;
+            app.openTab('edit-event', 'Event (edit)', `section.edit-event.php?id=${id}`);
+          });
+        }
+        bindRowClick()
+
+        dataTable.on('draw.dt', bindRowClick);
+
+        $(document).off('eventChange.ns').on('eventChange.ns', reloadSection);
+      });
+
+    </script>
+
+  <?php else: ?>
+
+    <div class="container-fluid text-center">
+      <div class="alert alert-info mt-5 w-50 mx-auto">
+        <h1 class="fw-bold">All clear!</h1>
+        <p class="lead">There are no upcoming events at this time.</p>
+      </div>
+    </div>
+
+  <?php endif; ?>
+
+</div>
 <script type="text/javascript">
 
   $(async ƒ => {

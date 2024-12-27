@@ -1,6 +1,6 @@
 <?php require_once 'class.vehicle.php';?>
 <div class="container">
-  <div class="d-flex justify-content-between mt-3">
+  <div class="d-flex justify-content-between mt-2">
     <h2>Vehicles</h2>
     <button id="btn-add-vehicle" class="btn btn-outline-primary btn-sm my-auto px-3">
       <i class="fa-duotone fa-solid fa-car"></i>

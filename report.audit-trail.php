@@ -4,7 +4,7 @@ require_once 'class.data.php';
 if (!isset($db)) $db = new data();
 ?>
 <a href="#" class="back-to-top"><i class="fa-solid fa-circle-arrow-up fa-2x"></i></a>
-<div class="container-fluid" id="master">
+<div class="container-fluid mt-2" id="master">
 	<h1>Audit Trail</h1>
 	<div class="row">
 		<div class="col-auto">
