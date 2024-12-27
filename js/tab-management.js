@@ -82,7 +82,7 @@ $.fn.addBSTab = function(id, title, content) {
   
   div = $('<div />', {
     id: id + '-pane',
-    class: 'tab-pane fade px-4 py-2',
+    class: 'tab-pane fade py-2',
   });
   
   if (typeof content == 'string'){
