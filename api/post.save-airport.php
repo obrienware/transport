@@ -11,6 +11,7 @@ $airport->IATA = $json->iata ?: NULL;
 $airport->name = $json->name ?: NULL;
 $airport->stagingLocationId = $json->stagingLocationId ?: NULL;
 $airport->leadTime = $json->leadTime ?: NULL;
+$airport->travelTime = $json->travelTime ?: NULL;
 $airport->arrivalInstructions = $json->arrivalInstructions ?: NULL;
 $airport->arrivalInstructionsGroup = $json->arrivalInstructionsGroup ?: NULL;
 

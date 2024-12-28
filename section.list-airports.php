@@ -12,6 +12,7 @@
         <th>IATA</th>
         <th>Airport</th>
         <th data-bs-toggle="tooltip" data-bs-title="Time to arrive at airport before scheduled flight.">Lead Time</th>
+        <th data-bs-toggle="tooltip" data-bs-title="Time to travel from airport to staging location.">Travel Time</th>
       </tr>
     </thead>
     <tbody>
@@ -21,6 +22,7 @@
             <td><?=$item->iata?></td>
             <td><?=$item->name?></td>
             <td data-order="<?=$item->lead_time?>"><?=intdiv($item->lead_time, 60).':'.sprintf('%02s', ($item->lead_time % 60))?></td>
+            <td data-order="<?=$item->travel_time?>"><?=intdiv($item->travel_time, 60).':'.sprintf('%02s', ($item->travel_time % 60))?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

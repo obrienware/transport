@@ -15,6 +15,7 @@ class Airport
 	public $stagingLocationId;
 	public $stagingLocation;
   public $leadTime;
+	public $travelTime;
 	public $arrivalInstructions;
 	public $arrivalInstructionsGroup;
 
@@ -38,6 +39,7 @@ class Airport
 			$this->IATA = $item->iata;
 			$this->stagingLocationId = $item->staging_location_id;
       $this->leadTime = $item->lead_time;
+			$this->travelTime = $item->travel_time;
 			$this->arrivalInstructions = $item->arrival_instructions_small;
 			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
 			if ($this->stagingLocationId) $this->stagingLocation = new Location($this->stagingLocationId);
@@ -57,6 +59,7 @@ class Airport
 			$this->name = $item->name;
 			$this->IATA = $item->iata;
       $this->leadTime = $item->lead_time;
+			$this->travelTime = $item->travel_time;
 			$this->stagingLocationId = $item->staging_location_id;
 			$this->arrivalInstructions = $item->arrival_instructions_small;
 			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
@@ -78,6 +81,7 @@ class Airport
 			'iata' => $this->IATA,
 			'name' => $this->name,
 			'lead_time' => $this->leadTime,
+			'travel_time' => $this->travelTime,
 			'staging_location_id' => $this->stagingLocationId,
 			'arrival_instructions_small' => $this->arrivalInstructions,
 			'arrival_instructions_group' => $this->arrivalInstructionsGroup
@@ -89,6 +93,7 @@ class Airport
 					iata = :iata,
 					name = :name,
 					lead_time = :lead_time,
+					travel_time = :travel_time,
 					staging_location_id = :staging_location_id,
 					arrival_instructions_small = :arrival_instructions_small,
 					arrival_instructions_group = :arrival_instructions_group
@@ -100,6 +105,7 @@ class Airport
 					iata = :iata,
 					name = :name,
 					lead_time = :lead_time,
+					travel_time = :travel_time,
 					staging_location_id = :staging_location_id,
 					arrival_instructions_small = :arrival_instructions_small,
 					arrival_instructions_group = :arrival_instructions_group

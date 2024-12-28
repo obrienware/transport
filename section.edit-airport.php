@@ -42,6 +42,11 @@ $airport = new Airport($_REQUEST['id']);
           <input type="number" class="form-control" id="_airport-leadtime" placeholder="" value="<?=$airport->leadTime?>">
         </div>
 
+        <div class="col-3 mb-3">
+          <label for="_airport-traveltime" class="form-label">Travel Time (in minutes)</label>
+          <input type="number" class="form-control" id="_airport-traveltime" placeholder="" value="<?=$airport->travelTime?>">
+        </div>
+
         <div class="col">
           <div class="mb-3">
             <label for="_airport-staging-location" class="form-label">Staging Location</label>
@@ -101,6 +106,7 @@ $airport = new Airport($_REQUEST['id']);
           name: cleanProperVal('#_airport-name'),
           stagingLocationId: $('#_airport-staging-location').data('id'),
           leadTime: cleanDigitsVal('#_airport-leadtime'),
+          travelTime: cleanDigitsVal('#_airport-traveltime'),
           arrivalInstructions: cleanVal('#_airport-arrival-instructions-small'),
           arrivalInstructionsGroup: cleanVal('#_airport-arrival-instructions-group'),
         };
