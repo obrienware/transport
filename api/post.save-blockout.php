@@ -7,7 +7,7 @@ $json = json_decode(file_get_contents("php://input"));
 $blockout = new Blockout($json->id);
 $previousNote = $blockout->note;
 
-$blockout->userId = $json->userId ?: NULL;
+if ($json->userId) $blockout->userId = $json->userId;
 $blockout->fromDateTime = $json->fromDateTime ?: NULL;
 $blockout->toDateTime = $json->toDateTime ?: NULL;
 $blockout->note = $json->note ?: NULL;
