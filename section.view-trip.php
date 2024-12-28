@@ -124,45 +124,49 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
   </div>
 
   <div class="row">
-    <div class="col-auto d-flex flex-column gap-3">
-      <?php if ($trip->guestNotes): ?>
-        <div class="align-self-center">
+    <?php if ($trip->guestNotes || $trip->driverNotes || $trip->generalNotes): ?>
+      <div class="col-auto d-flex flex-column gap-3 px-4">
+        <?php if ($trip->guestNotes): ?>
+          <div class="align-self-center">
+            <div style="transform: rotate(-3deg)" class="w-auto">
+              <div class="postit d-flex flex-column">
+                <div>Guest:</div>
+                <div class="mt-auto mb-auto"><?=nl2br($trip->guestNotes)?></div>
+              </div>
+            </div>
+          </div>
+        <?php endif;?>
+        <?php if ($trip->driverNotes): ?>
+          <div class="align-self-center">
           <div style="transform: rotate(-3deg)" class="w-auto">
-            <div class="postit d-flex flex-column">
-              <div>Guest:</div>
-              <div class="mt-auto mb-auto"><?=nl2br($trip->guestNotes)?></div>
+              <div class="postit d-flex flex-column">
+                <div>Driver:</div>
+                <div class="mt-auto mb-auto"><?=nl2br($trip->driverNotes)?></div>
+              </div>
             </div>
           </div>
-        </div>
-      <?php endif;?>
-      <?php if ($trip->driverNotes): ?>
-        <div class="align-self-center">
-        <div style="transform: rotate(-3deg)" class="w-auto">
-            <div class="postit d-flex flex-column">
-              <div>Driver:</div>
-              <div class="mt-auto mb-auto"><?=nl2br($trip->driverNotes)?></div>
+        <?php endif;?>
+        <?php if ($trip->generalNotes): ?>
+          <div class="align-self-center">
+            <div style="transform: rotate(-3deg)" class="w-auto">
+              <div class="postit d-flex flex-column">
+                <div class="mt-auto mb-auto"><?=nl2br($trip->generalNotes)?></div>
+              </div>
             </div>
           </div>
-        </div>
-      <?php endif;?>
-      <?php if ($trip->generalNotes): ?>
-        <div class="align-self-center">
-          <div style="transform: rotate(-3deg)" class="w-auto">
-            <div class="postit d-flex flex-column">
-              <div class="mt-auto mb-auto"><?=nl2br($trip->generalNotes)?></div>
-            </div>
-          </div>
-        </div>
-      <?php endif;?>
-    </div>
+        <?php endif;?>
+      </div>
+    <?php endif;?>
 
-    <div class="col bg-body px-5 py-2 position-relative" style="padding-bottom: 55px !important;">
-      <h3>Message</h3>
-      <section id="trip-chat" class="chat"></section>
+    <div class="col ms-auto" style="max-width:800px">
+      <div class="bg-body position-relative border rounded" style="padding-bottom: 55px !important;">
+        <h3 class="py-2 px-3">Message</h3>
+        <section id="trip-chat" class="chat px-5"></section>
 
-      <div class="input-group mb-3 position-absolute bottom-0 start-50 translate-middle-x px-3">
-        <input id="trip-message" type="text" class="form-control" placeholder="Type a message" aria-label="Type a message" aria-describedby="button-send">
-        <button class="btn btn-outline-primary" type="button" id="button-send">Send</button>
+        <div class="input-group mb-3 position-absolute bottom-0 start-50 translate-middle-x px-3">
+          <input id="trip-message" type="text" class="form-control" placeholder="Type a message" aria-label="Type a message" aria-describedby="button-send">
+          <button class="btn btn-outline-primary" type="button" id="button-send">Send</button>
+        </div>
       </div>
     </div>
   </div>
