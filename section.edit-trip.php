@@ -84,7 +84,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           <div class="mb-3">
             <label for="trip-duration" class="form-label" data-bs-toggle="tooltip" data-bs-title="From start to end">Total Trip Duration</label>
             <div class="input-group mb-3">
-              <input type="text" class="form-control" id="trip-duration" value="<?=round(abs((strtotime($trip->endDate) - strtotime($trip->startDate))/60/60),2)?>" placeholder="e.g. 1.5"/>
+              <input type="text" class="form-control" id="trip-duration" value="<?=$trip->endDate ? round(abs((strtotime($trip->endDate) - strtotime($trip->startDate))/60/60),2) : ''?>" placeholder="e.g. 1.5"/>
               <span class="input-group-text">hour(s)</span>
             </div>
 
