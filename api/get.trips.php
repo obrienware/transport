@@ -5,7 +5,7 @@ $start = $_REQUEST['start'];
 $end = $_REQUEST['end'];
 
 if (isset($_REQUEST['requestorId'])) {
-  $criteria = "AND t.requestor_id = {$_REQUEST['requestorId']} AND confirmed IS NOT NULL";
+  $criteria = "AND t.requestor_id = {$_REQUEST['requestorId']}";
 }
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
@@ -30,6 +30,7 @@ WHERE
     (end_date BETWEEN :start AND :end)
   )
   AND t.archived IS NULL
+  AND t.cancellation_requested IS NULL
   {$criteria}
 ";
 $data = ['start' => $start, 'end' => $end];
@@ -56,11 +57,22 @@ if ($rs = $db->get_results($sql, $data)) {
         'pickup' => $item->pickup_location,
         'dropoff' => $item->dropoff_location,
         'vehicle' => $item->vehicle,
-        'driver' => $item->driver
+        'driver' => $item->driver,
+        'confirmed' => $item->confirmed
       ],
       'backgroundColor' => $bgColor,
       'textColor' => $textColor
     ];
+    // Format for the requestor's view
+    if (isset($_REQUEST['requestorId'])) {
+      if ($item->confirmed) {
+        $event->backgroundColor = '#03fc30';
+        $event->textColor = '#000000';
+      } else {
+        $event->backgroundColor = '#cccccc';
+        $event->textColor = '#000000';
+      }
+    }
     $result[] = $event;
   }
 }
