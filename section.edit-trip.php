@@ -1,6 +1,7 @@
 <?php
 require_once 'class.trip.php';
 $trip = new Trip(tripId: $_REQUEST['id']);
+if ($trip->tripId && !$trip->confirmed) $orginalRequest = json_decode($trip->originalRequest);
 ?>
 <?php if (isset($_REQUEST['id']) && !$trip->tripId): ?>
 
@@ -51,7 +52,7 @@ $trip = new Trip(tripId: $_REQUEST['id']);
           <div class="mb-3">
             <label for="trip-lead-time" class="form-label" data-bs-toggle="tooltip" data-bs-title="When the actual trip starts">Lead Time</label>
             <div class="input-group mb-3">
-              <input type="text" class="form-control" id="trip-lead-time" value="<?=round(abs((strtotime($trip->startDate) - strtotime($trip->pickupDate))/60/60))?>" placeholder="e.g. 1.5"/>
+              <input type="text" class="form-control" id="trip-lead-time" value="<?=round(abs((strtotime($trip->startDate) - strtotime($trip->pickupDate))/60/60),2)?>" placeholder="e.g. 1.5"/>
               <span class="input-group-text">hour(s)</span>
             </div>
           </div>
@@ -108,6 +109,28 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               data-value="<?=$trip->puLocation->name?>"
               data-type="<?=$trip->puLocation? $trip->puLocation->type : ''?>">
               <div class="invalid-feedback">Please make a valid selection</div>
+              <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->airport?></pre></td>
+                  </tr>
+                </table>
+              <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
+                  </tr>
+                </table>
+              <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
+                  </tr>
+                </table>
+              <?php endif;?>
           </div>
         </div>
       </div>
@@ -162,6 +185,28 @@ $trip = new Trip(tripId: $_REQUEST['id']);
               data-id="<?=$trip->doLocationId?>" 
               data-type="<?=$trip->doLocation? $trip->doLocation->type : ''?>">
               <div class="invalid-feedback">Please make a valid selection</div>
+              <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->airport?></pre></td>
+                  </tr>
+                </table>
+              <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
+                  </tr>
+                </table>
+              <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
+                <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+                  <tr>
+                    <th class="bg-dark-subtle px-3">Requestor:</th>
+                    <td class="px-3"><pre class="mb-0"><?=$orginalRequest->destination?></pre></td>
+                  </tr>
+                </table>
+              <?php endif;?>
           </div>
         </div>
       </div>

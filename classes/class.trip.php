@@ -96,6 +96,7 @@ class Trip
 			$this->started = $item->started;
 			$this->completed = $item->completed;
 			$this->cancelled = $item->cancellation_requested;
+			$this->originalRequest = $item->original_request;
 
 			if ($this->requestorId) {
 				$this->getRequestor($this->requestorId);
