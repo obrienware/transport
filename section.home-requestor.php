@@ -32,188 +32,241 @@ require_once 'class.airline.php';
       <div id="trip-text"></div>
     </div>
   </section>
+</div>
 
-  <div class="container">
-    <section id="request-type-section" class="section d-none">
-      <p class="lead mb-3">
-        Great! Let's get started with your request. Please select the request below that most closely matches your needs.
-      </p>
+<div class="container">
 
-      <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off" value="airport-dropoff">
-      <label class="btn text-start w-100 mb-3" for="option1">
-        <div class="fw-bold fs-5">Airport Drop Off</div>
-        <div class="text-black-50">Pick up a person, persons or group and take them to the airport.</div>
-      </label>
+  <section id="request-type-section" class="section d-none">
+    <p class="lead mb-3">
+      Great! Let's get started with your request. Please select the request below that most closely matches your needs.
+    </p>
 
-      <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off" value="airport-pickup">
-      <label class="btn text-start w-100 mb-3" for="option2">
-        <div class="fw-bold fs-5">Airport Pick Up</div>
-        <div class="text-black-50">Pick up a person, persons or group from the airport.</div>
-      </label>
+    <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off" value="airport-dropoff">
+    <label class="btn text-start w-100 mb-3" for="option1">
+      <div class="fw-bold fs-5">Airport Drop Off</div>
+      <div class="text-black-50">Pick up a person, persons or group and take them to the airport.</div>
+    </label>
 
-      <input type="radio" class="btn-check" name="options-base" id="option3" autocomplete="off" value="point-to-point">
-      <label class="btn text-start w-100 mb-3" for="option3">
-        <div class="fw-bold fs-5">Transport Point to Point</div>
-        <div class="text-black-50">Transport a person, persons or group from one location to another.</div>
-      </label>
+    <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off" value="airport-pickup">
+    <label class="btn text-start w-100 mb-3" for="option2">
+      <div class="fw-bold fs-5">Airport Pick Up</div>
+      <div class="text-black-50">Pick up a person, persons or group from the airport.</div>
+    </label>
 
-      <input type="radio" class="btn-check" name="options-base" id="option4" autocomplete="off" value="vehicle">
-      <label class="btn text-start w-100 mb-3" for="option4">
-        <div class="fw-bold fs-5">Vehicle Request</div>
-        <div class="text-black-50">Request the use of a ministry vehicle (without a driver).</div>
-      </label>
+    <input type="radio" class="btn-check" name="options-base" id="option3" autocomplete="off" value="point-to-point">
+    <label class="btn text-start w-100 mb-3" for="option3">
+      <div class="fw-bold fs-5">Transport Point to Point</div>
+      <div class="text-black-50">Transport a person, persons or group from one location to another.</div>
+    </label>
 
-      <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" value="event">
-      <label class="btn text-start w-100 mb-3" for="option5">
-        <div class="fw-bold fs-5">Event Request</div>
-        <div class="text-black-50">Request the use of ministry vehicle(s) and driver(s) for a period of time.</div>
-      </label>
+    <input type="radio" class="btn-check" name="options-base" id="option4" autocomplete="off" value="vehicle">
+    <label class="btn text-start w-100 mb-3" for="option4">
+      <div class="fw-bold fs-5">Vehicle Request</div>
+      <div class="text-black-50">Request the use of a ministry vehicle (without a driver).</div>
+    </label>
 
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('type')" disabled>Next</button>
+    <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" value="event">
+    <label class="btn text-start w-100 mb-3" for="option5">
+      <div class="fw-bold fs-5">Event Request</div>
+      <div class="text-black-50">Request the use of ministry vehicle(s) and driver(s) for a period of time.</div>
+    </label>
+
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('type')" disabled>Next</button>
+    </div>
+
+  </section>
+
+  <section id="request-whom-section" class="section d-none">
+    <p class="lead mb-3">
+      Who are you requesting this service for?
+    </p>
+    <div class="mb-3">
+      <label for="whom-name" class="form-label">Name of person, persons or group</label>
+      <input type="text" class="form-control" id="whom-name" placeholder="e.g. Hawaii Missions Group">
+    </div>
+    <div class="mb-3">
+      <label for="whom-pax" class="form-label">Number of people</label>
+      <input type="number" class="form-control" id="whom-pax" placeholder="10" value="1">
+    </div>
+    <div class="mb-3">
+      <label for="whom-contact-person" class="form-label" id="whom-contact-person-label">Contact Person</label>
+      <input type="text" class="form-control" id="whom-contact-person" placeholder="e.g. Joe Smith">
+    </div>
+    <div class="mb-3">
+      <label for="whom-contact-phone" class="form-label" id="whom-contact-phone-label">Contact Phone Number</label>
+      <input type="text" class="form-control" id="whom-contact-phone" placeholder="(719) 123-4567">
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('whom')" disabled>Next</button>
+    </div>
+  </section>
+
+  <section id="request-airport-section" class="section d-none">
+    <p class="lead mb-3">
+      Please select the airport and flight details.
+    </p>
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <label for="airport" class="form-label">Airport</label>
+          <select class="form-select" id="airport">
+            <option value="">Please Select</option>
+            <?php foreach (Airport::getAirports() as $airport): ?>
+              <option value="<?=$airport->iata?>" data-lead-time="<?=$airport->lead_time?>" data-travel-time="<?=$airport->travel_time?>"><?=$airport->name?> (<?=$airport->iata?>)</option>
+            <?php endforeach; ?>
+          </select>
+        </div>
       </div>
+    </div>
 
-    </section>
-
-    <section id="request-whom-section" class="section d-none">
-      <p class="lead mb-3">
-        Who are you requesting this service for?
-      </p>
-      <div class="mb-3">
-        <label for="whom-name" class="form-label">Name of person, persons or group</label>
-        <input type="text" class="form-control" id="whom-name" placeholder="e.g. Hawaii Missions Group">
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <label for="flight-airline" class="form-label">Airline</label>
+          <select class="form-select" id="flight-airline">
+            <option value="">Please Select</option>
+            <?php foreach (Airline::getAirlines() as $airline): ?>
+              <option value="<?=$airline->id?>" data-prefix="<?=$airline->flight_number_prefix?>"><?=$airline->name?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="whom-pax" class="form-label">Number of people</label>
-        <input type="number" class="form-control" id="whom-pax" placeholder="10" value="1">
-      </div>
-      <div class="mb-3">
-        <label for="whom-contact-person" class="form-label">Contact Person</label>
-        <input type="text" class="form-control" id="whom-contact-person" placeholder="e.g. Joe Smith">
-      </div>
-      <div class="mb-3">
-        <label for="whom-contact-phone" class="form-label">Contact Phone Number</label>
-        <input type="text" class="form-control" id="whom-contact-phone" placeholder="(719) 123-4567">
-      </div>
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('whom')" disabled>Next</button>
-      </div>
-    </section>
-
-    <section id="request-airport-section" class="section d-none">
-      <p class="lead mb-3">
-        Please select the airport and flight details.
-      </p>
-      <div class="row">
-        <div class="col">
-          <div class="mb-3">
-            <label for="airport" class="form-label">Airport</label>
-            <select class="form-select" id="airport">
-              <option value="">Please Select</option>
-              <?php foreach (Airport::getAirports() as $airport): ?>
-                <option value="<?=$airport->iata?>" data-lead-time="<?=$airport->lead_time?>" data-travel-time="<?=$airport->travel_time?>"><?=$airport->name?> (<?=$airport->iata?>)</option>
-              <?php endforeach; ?>
-            </select>
+      <div class="col-3">
+        <div class="mb-3">
+          <label for="flight-number" class="form-label">Flight Number</label>
+          <div class="input-group">
+            <span class="input-group-text" id="flight-number-prefix"></span>
+            <input type="text" class="form-control" id="flight-number" placeholder="1234">
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="mb-3">
-            <label for="flight-airline" class="form-label">Airline</label>
-            <select class="form-select" id="flight-airline">
-              <option value="">Please Select</option>
-              <?php foreach (Airline::getAirlines() as $airline): ?>
-                <option value="<?=$airline->id?>" data-prefix="<?=$airline->flight_number_prefix?>"><?=$airline->name?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-        </div>
-        <div class="col-3">
-          <div class="mb-3">
-            <label for="flight-number" class="form-label">Flight Number</label>
-            <div class="input-group">
-              <span class="input-group-text" id="flight-number-prefix"></span>
-              <input type="text" class="form-control" id="flight-number" placeholder="1234">
-            </div>
-          </div>
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <label for="flight-time" class="form-label" id="flight-time-label">Estimated Time of Departure</label>
+          <input type="datetime-local" class="form-control" id="flight-time">
         </div>
       </div>
+    </div>
 
-      <div class="row">
-        <div class="col">
-          <div class="mb-3">
-            <label for="flight-etd" class="form-label" id="flight-time-label">Estimated Time of Departure</label>
-            <input type="datetime-local" class="form-control" id="flight-time">
-          </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('flight')" disabled>Next</button>
+    </div>
+  </section>
+
+  <section id="request-location-section" class="section d-none">
+    <p class="lead mb-3" id="location-description">
+      
+    </p>
+    <div class="mb-3">
+      <label for="location" class="form-label">Location (name and address)</label>
+      <textarea class="form-control" id="location" rows="4"></textarea>
+    </div>
+
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('location')" disabled>Next</button>
+    </div>
+  </section>
+
+  <section id="request-pickup-time-section" class="section d-none">
+    <p class="lead mb-3">
+      Please confirm the date and time to be picked up.
+    </p>
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <label for="pickup-date" class="form-label">Pick Up Date</label>
+          <input type="date" class="form-control" id="pickup-date">
         </div>
       </div>
-
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('flight')" disabled>Next</button>
-      </div>
-    </section>
-
-    <section id="request-location-section" class="section d-none">
-      <p class="lead mb-3" id="location-description">
-        
-      </p>
-      <div class="mb-3">
-        <label for="location" class="form-label">Location (name and address)</label>
-        <textarea class="form-control" id="location" rows="4"></textarea>
-      </div>
-
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('location')" disabled>Next</button>
-      </div>
-    </section>
-
-    <section id="request-pickup-time-section" class="section d-none">
-      <p class="lead mb-3">
-        Please confirm the date and time to be picked up.
-      </p>
-      <div class="row">
-        <div class="col">
-          <div class="mb-3">
-            <label for="pickup-date" class="form-label">Pick Up Date</label>
-            <input type="date" class="form-control" id="pickup-date">
-          </div>
-        </div>
-        <div class="col">
-          <div class="mb-3">
-            <label for="pickup-time" class="form-label">Pick Up Time</label>
-            <input type="time" class="form-control" id="pickup-time">
-          </div>
+      <div class="col">
+        <div class="mb-3">
+          <label for="pickup-time" class="form-label">Pick Up Time</label>
+          <input type="time" class="form-control" id="pickup-time">
         </div>
       </div>
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('pickup')" disabled>Next</button>
-      </div>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('pickup')" disabled>Next</button>
+    </div>
+  </section>
 
-    </section>
+  <section id="request-destination-section" class="section d-none">
+    <p class="lead mb-3">
+      Please provide the destination location.
+    </p>
+    <div class="mb-3">
+      <label for="destination" class="form-label">Destination (name and address)</label>
+      <textarea class="form-control" id="destination" rows="4"></textarea>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('destination')" disabled>Next</button>
+    </div>
+  </section>
 
-    <section id="request-notes-section" class="section d-none">
-      <p class="lead mb-3">
-        Please provide any additional notes or instructions.
-      </p>
-      <div class="mb-3">
-        <label for="notes" class="form-label">Notes</label>
-        <textarea class="form-control" id="notes" rows="4"></textarea>
+  <section id="request-from-till-section" class="section d-none">
+    <p class="lead mb-3">
+      When will you need the vehicle?
+    </p>
+    <div class="row">
+      <div class="col">
+        <div class="mb-3">
+          <label for="from-datetime" class="form-label">From (when)</label>
+          <input type="datetime-local" class="form-control" id="from-datetime">
+        </div>
       </div>
-      <div class="text-end">
-        <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
-        <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('notes')" disabled>Next</button>
+      <div class="col">
+        <div class="mb-3">
+          <label for="till-datetime" class="form-label">Till (when)</label>
+          <input type="datetime-local" class="form-control" id="till-datetime">
+        </div>
       </div>
-    </section>
-  </div>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('from-till')" disabled>Next</button>
+    </div>
+  </section>
+
+  <section id="request-notes-section" class="section d-none">
+    <p class="lead mb-3">
+      Please provide any additional notes or instructions.
+    </p>
+    <div class="mb-3">
+      <label for="notes" class="form-label">Notes</label>
+      <textarea class="form-control" id="notes" rows="4"></textarea>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('notes')" disabled>Next</button>
+    </div>
+  </section>
+
+  <section id="request-event-detail-section" class="section d-none">
+    <p class="lead mb-3">
+      Please provide the details of the event.
+    </p>
+    <div class="mb-3">
+      <label for="event-detail" class="form-label">Event/Activity Detail</label>
+      <textarea class="form-control" id="event-detail" rows="4"></textarea>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-outline-secondary btn-lg px-4 me-4" onclick="cancelWizard()">Cancel</button>
+      <button class="btn btn-primary btn-lg px-4 btn-next" onclick="processNext('event-detail')" disabled>Next</button>
+    </div>
+  </section>
 
 </div>
+
 
 <script type="text/javascript">
 
@@ -231,11 +284,21 @@ require_once 'class.airline.php';
     $('#whom-pax').val(1);
     $('#whom-contact-person').val('');
     $('#whom-contact-phone').val('');
+    $('#whom-contact-person-label').html('Contact Person');
+    $('#whom-contact-phone-label').html('Contact Phone Number');
     $('#airport').val('');
     $('#flight-airline').val('');
     $('#flight-number').val('');
     $('#flight-etd').val('');
     $('#flight-number-prefix').html('');
+    $('#location').val('');
+    $('#pickup-date').val('');
+    $('#pickup-time').val('');
+    $('#destination').val('');
+    $('#from-datetime').val('');
+    $('#till-datetime').val('');
+    $('#notes').val('');
+    $('#event-detail').val('');
 
     request = {
       requestorId: <?=$user->userId?>,
@@ -249,6 +312,7 @@ require_once 'class.airline.php';
       $('#calendar-section').addClass('d-none');
       $('#request-type-section').removeClass('d-none');
     }
+
     switch (request.type) {
       case 'airport-dropoff':
         if (!request.whom) {
@@ -275,12 +339,13 @@ require_once 'class.airline.php';
           $('#request-pickup-time-section').removeClass('d-none');
           return;
         }
-        if (!request.notes) {
+        if (request.notes == undefined) {
           $('#request-notes-section').removeClass('d-none');
           return;
         }
         // Show a summary of the request and ask for confirmation
         // Process the request
+        return submitRequest();
         break;
 
       case 'airport-pickup':
@@ -298,22 +363,78 @@ require_once 'class.airline.php';
           $('#request-location-section').removeClass('d-none');
           return;
         }
-        if (!request.notes) {
+        if (request.notes == undefined) {
           $('#request-notes-section').removeClass('d-none');
           return;
         }
         // Show a summary of the request and ask for confirmation
         // Process the request
+        return submitRequest();
         break;
       
       case 'point-to-point':
-        $('#point-to-point-section').removeClass('d-none');
+        if (!request.whom) {
+          $('#request-whom-section').removeClass('d-none');
+          return;
+        }
+        if (!request.location) {
+          $('#location-description').html('Please provide the location where the person, persons or group will be picked up.');
+          $('#request-location-section').removeClass('d-none');
+          return;
+        }
+        if (!request.datetime) {
+          $('#request-pickup-time-section').removeClass('d-none');
+          return;
+        }
+        if (!request.destination) {
+          $('#request-destination-section').removeClass('d-none');
+          return;
+        }
+        if (request.notes == undefined) {
+          $('#request-notes-section').removeClass('d-none');
+          return;
+        }
+        // Show a summary of the request and ask for confirmation
+        // Process the request
+        return submitRequest();
         break;
+
       case 'vehicle':
-        $('#vehicle-section').removeClass('d-none');
+        if (!request.whom) {
+          $('#whom-contact-person-label').html('Driver Name');
+          $('#whom-contact-phone-label').html('Driver Phone Number');
+          $('#request-whom-section').removeClass('d-none');
+          return;
+        }
+        if (!request.startDate || !request.endDate) {
+          $('#request-from-till-section').removeClass('d-none');
+          return;
+        }
+        if (request.notes == undefined) {
+          $('#request-notes-section').removeClass('d-none');
+          return;
+        }
+        // Show a summary of the request and ask for confirmation
+        // Process the request
+        return submitRequest();
         break;
+
       case 'event':
-        $('#event-section').removeClass('d-none');
+        if (!request.detail) {
+          $('#request-event-detail-section').removeClass('d-none');
+          return;
+        }
+        if (!request.startDate || !request.endDate) {
+          $('#request-from-till-section').removeClass('d-none');
+          return;
+        }
+        if (request.notes == undefined) {
+          $('#request-notes-section').removeClass('d-none');
+          return;
+        }
+        // Show a summary of the request and ask for confirmation
+        // Process the request
+        return submitRequest();
         break;
     }
   }
@@ -392,13 +513,56 @@ require_once 'class.airline.php';
     }
 
     if (stage == 'notes') {
-      const notes = $('#notes').val() || 'No additional notes';
+      const notes = $('#notes').val();
       request.notes = notes;
+      console.log('request:', request);
+      return showNext();
+    }
+
+    if (stage == 'destination') {
+      const destination = $('#destination').val();
+      if (!destination) {
+        return alert('Please fill in all the fields');
+      }
+      request.destination = destination;
+      console.log('request:', request);
+      return showNext();
+    }
+
+    if (stage == 'from-till') {
+      const fromDatetime = $('#from-datetime').val();
+      const tillDatetime = $('#till-datetime').val();
+      if (!fromDatetime || !tillDatetime) {
+        return alert('Please fill in all the fields');
+      }
+      request.startDate = fromDatetime;
+      request.endDate = tillDatetime;
+      console.log('request:', request);
+      return showNext();
+    }
+
+    if (stage == 'event-detail') {
+      const eventDetail = $('#event-detail').val();
+      if (!eventDetail) {
+        return alert('Please fill in all the fields');
+      }
+      request.detail = eventDetail;
       console.log('request:', request);
       return showNext();
     }
   }
 
+  async function submitRequest()
+  {
+    console.log('submitting request:', request);
+    const result = await post('/api/post.save-request.php', request);
+    if (result?.result) {
+      toastr.success('Request submitted successfully', 'Success');
+      cancelWizard();
+    } else {
+      toastr.error('There was an error submitting the request', 'Error');
+    }
+  }
 
   $(async ƒ => {
     let requestorId = <?=$user->userId?>;
@@ -484,14 +648,9 @@ require_once 'class.airline.php';
 
     const event_request = {
       type: 'event',
-      whom: {
-        name: 'Hawaii Missions Group', //this can be the name of a group or people
-        pax: 10, // The number of people
-        contactPerson: 'Richard', // The name of the contact person
-        contactPhoneNumber: '(719) 425-5764', // The phone number of the contact person
-      },
-      location: 'Charis',  // Pick up location
-      destination: 'City Hall',  // Drop off location
+      detail: 'Details of the event', // The details of the event
+      startDate: '2024-12-25 05:00:00', // When the event is starting
+      endDate: '2024-12-25 07:00:00', // When the event is ending
       notes: 'Additional notes here', // Additional notes
     }
 

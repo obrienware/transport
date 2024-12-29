@@ -1,8 +1,8 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
+require_once 'class.audit.php';
+require_once 'class.data.php';
 require_once 'class.user.php';
 require_once 'class.guest.php';
 require_once 'class.location.php';
@@ -12,7 +12,9 @@ require_once 'class.airport.php';
 
 class Trip
 {
+	private $db;
 	private $row;
+	private $action = 'create';
 
 	public $tripId;
 	public $requestorId;
@@ -48,9 +50,12 @@ class Trip
   public $confirmed;
 	public $started;
 	public $completed;
+	public $originalRequest;
+	public $cancelled;
 
 	public function __construct($tripId = null)
 	{
+		$this->db = new data();
 		if (isset($tripId)) {
 			$this->getTrip($tripId);
 		}
@@ -58,10 +63,10 @@ class Trip
 
 	public function getTrip($tripId)
 	{
-		global $db;
 		$sql = 'SELECT * FROM trips WHERE id = :id';
 		$data = ['id' => $tripId];
-		if ($item = $db->get_row($sql, $data)) {
+		if ($item = $this->db->get_row($sql, $data)) {
+			$this->action = 'update';
 			$this->row = $item;
 
 			$this->tripId = $item->id;
@@ -90,6 +95,7 @@ class Trip
       $this->confirmed = $item->confirmed;
 			$this->started = $item->started;
 			$this->completed = $item->completed;
+			$this->cancelled = $item->cancellation_requested;
 
 			if ($this->requestorId) {
 				$this->getRequestor($this->requestorId);
@@ -112,12 +118,12 @@ class Trip
 			if ($this->airlineId) {
 				$this->getAirline($this->airlineId);
 			}
-			if ($this->ETA) {
+			if ($this->ETA && $this->puLocationId) {
 				$location = new Location($this->puLocationId);
 				$this->airport = new Airport();
 				$this->airport->getAirportByIATA($location->IATA);
 			}
-			if ($this->ETD) {
+			if ($this->ETD && $this->doLocationId) {
 				$location = new Location($this->doLocationId);
 				$this->airport = new Airport();
 				$this->airport->getAirportByIATA($location->IATA);
@@ -165,7 +171,11 @@ class Trip
 
 	public function save(): array
 	{
-		global $db;
+		$audit = new Audit();
+		$audit->action = $this->action;
+		$audit->table = 'trips';
+		$audit->before = json_encode($this->row);
+
 		$data = [
 			'requestor_id' => $this->requestorId,
 			'summary' => $this->summary,
@@ -189,8 +199,8 @@ class Trip
 			'driver_notes' => $this->driverNotes,
 			'general_notes' => $this->generalNotes
 		];
-		if ($this->tripId) {
-			// Update
+		if ($this->action === 'update') {
+			$audit->description = 'Trip updated: '.$this->summary;
 			$data['id'] = $this->tripId;
 			$sql = "
 				UPDATE trips SET
@@ -218,7 +228,7 @@ class Trip
 				WHERE id = :id
 			";
 		} else {
-			// Insert
+			$audit->description = 'Trip created: '.$this->summary;
 			$sql = "
 				INSERT INTO trips SET
 					requestor_id = :requestor_id,
@@ -247,42 +257,78 @@ class Trip
 			";
 			$data['user'] = $_SESSION['user']->username;
 		}
-		$result = $db->query($sql, $data);
-		return [
-			'result' => $result,
-			'errors' => $db->errorInfo
-		];
+		try {
+			$result = $this->db->query($sql, $data);
+			$id = ($this->action === 'create') ? $result : $this->tripId;
+			// We also want to add the original request if it exists here, but without creating a new audit entry
+			if ($this->originalRequest) $this->db->query('UPDATE trips SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
+			$this->getTrip($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+
+			return ['result' => $result];
+		} catch (Exception $e) {
+			return [
+				'result' => false,
+				'error' => $e->getMessage()
+			];
+		}
 	}
 
 	public function confirm()
 	{
-		global $db;
 		$sql = 'UPDATE trips SET confirmed = NOW() WHERE id = :trip_id';
 		$data = ['trip_id' => $this->tripId];
-		$result = $db->query($sql, $data);
+		$result = $this->db->query($sql, $data);
 		return $result;
-	}
-
-	static public function deleteTrip($tripId)
-	{
-		global $db;
-		$sql = 'UPDATE trips SET archived = NOW(), archived_by = :user WHERE id = :trip_id';
-		$data = ['user' => $_SESSION['user']->username, 'trip_id' => $tripId];
-		return $db->query($sql, $data);
 	}
 
 	public function delete()
 	{
-		return $this->deleteTrip($this->tripId);
+		$audit = new Audit();
+		$audit->action = 'delete';
+		$audit->table = 'trips';
+		$audit->before = json_encode($this->row);
+
+		$sql = 'UPDATE trips SET archived = NOW(), archived_by = :user WHERE id = :trip_id';
+		$data = ['user' => $_SESSION['user']->username, 'trip_id' => $this->tripId];
+		$result = $this->db->query($sql, $data);
+		$audit->description = 'Trip deleted: '.$this->summary;
+		$audit->commit();
+		return $result;
+	}
+
+	public function cancel()
+	{
+		$audit = new Audit();
+		$audit->action = 'update';
+		$audit->table = 'trips';
+		$audit->before = json_encode($this->row);
+
+		$sql = 'UPDATE trips SET cancellation_requested = NOW() WHERE id = :trip_id';
+		$data = ['trip_id' => $this->tripId];
+		$result = $this->db->query($sql, $data);
+
+		$audit->description = 'Trip cancellation requested: '.$this->summary;
+		$this->getTrip($this->tripId);
+		$audit->after = json_encode($this->row);
+		$audit->commit();
+		return $result;
 	}
 
 	public function isEditable()
 	{
+		if (!$this->endDate) return true;
 		return !(
 			$this->started 
 			OR $this->completed 
 			OR (strtotime($this->endDate) <= strtotime('now'))
 		);
+	}
+
+	public function isConfirmed()
+	{
+		return $this->confirmed ? true : false;
 	}
 
 	public function getState(): string
@@ -292,7 +338,7 @@ class Trip
 
 	static public function nextTripByVehicle(int $vehicleId)
 	{
-		global $db;
+		$db = new data();
 		$sql = "
 			SELECT id FROM trips 
 				WHERE  NOW() < start_date AND vehicle_id = :vehicle_id
@@ -305,7 +351,7 @@ class Trip
 
 	static public function upcomingTrips($limit = 5)
 	{
-		global $db;
+		$db = new data();
 		$sql = "
 			SELECT 
 				t.*,

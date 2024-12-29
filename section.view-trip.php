@@ -19,10 +19,17 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
             <?php endif; ?>
           <?php endif;?>
           <li><button id="<?=$sectionId?>-btn-duplicate" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
-          <li><a href="print.trip-driver-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Driver Sheet)</a></li>
+          <?php if ($trip->isConfirmed()): ?>
+            <li><a href="print.trip-driver-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Driver Sheet)</a></li>
+          <?php endif;?>
         <?php endif;?>
-        <li><a href="print.trip-guest-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Guest Sheet)</a></li>
-        <li><a href="download.trip-ics.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Add Calendar item</a></li>
+        <?php if ($trip->isConfirmed()): ?>
+          <li><a href="print.trip-guest-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Guest Sheet)</a></li>
+          <li><a href="download.trip-ics.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Add Calendar item</a></li>
+        <?php endif;?>
+        <?php if (array_search($_SESSION['view'], ['requestor']) !== false):?>
+          <li><button class="dropdown-item btn btn-secondary text-danger" onclick="cancelTrip(<?=$trip->tripId?>)"><i class="fa-solid fa-ban"></i> Cancel Request</button></li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>
@@ -110,10 +117,17 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       <tr><th class="bg-dark-subtle px-3">Requestor:</th><td class="px-3"><?=$trip->requestor ? $trip->requestor->getName() : ''?></td></tr>
     </table>
 
+    <?php if ($trip->cancelled):?>
+      <table class="table table-sm table-bordered w-auto border-danger">
+        <tr><th class="bg-danger text-bg-danger px-3">Cancelled:</th><td class="px-3"><?=Date('F j g:i a', strtotime($trip->cancelled))?></td></tr>
+      </table>
+    <?php endif;?>
+
     <table class="table table-sm table-bordered w-auto border-dark-subtle">
       <tr><th class="bg-dark-subtle px-3">Confirmed:</th><td class="px-3"><?=$trip->confirmed ? Date('F j g:i a', strtotime($trip->confirmed)) : 'No'?></td></tr>
     </table>
 
+    <!--
     <table class="table table-sm table-bordered w-auto border-dark-subtle">
       <tr><th class="bg-dark-subtle px-3">Started:</th><td class="px-3"><?=$trip->started ? Date('F j g:i a', strtotime($trip->started)) : '-'?></td></tr>
     </table>
@@ -121,6 +135,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     <table class="table table-sm table-bordered w-auto border-dark-subtle">
       <tr><th class="bg-dark-subtle px-3">Completed:</th><td class="px-3"><?=$trip->completed ? Date('F j g:i a', strtotime($trip->completed)) : '-'?></td></tr>
     </table>
+    -->
   </div>
 
   <div class="row">
@@ -177,6 +192,18 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
 <script type="text/javascript">
 
+  window.cancelTrip = async function (tripId) {
+    if (confirm('Are you sure you want to cancel this trip?')) {
+      const resp = await post('/api/post.cancel-trip.php', {tripId});
+      if (resp?.result) {
+        $(document).trigger('tripChange', {tripId});
+        app.closeOpenTab();
+        return toastr.success('Trip cancellation request submitted.', 'Success');
+      }
+      return toastr.error('Seems to be a problem cancelling this trip!', 'Error');
+    }
+  }
+
   $(async ƒ => {
     const sectionId = '<?=$sectionId?>';
     const tripId = <?=$trip->tripId?>;
@@ -213,7 +240,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     $(`#${sectionId}-btn-duplicate`).off('click').on('click', async e => {
       const resp = await get('/api/get.duplicate-trip.php', {id: tripId});
       const newId = resp.result;
-      app.closeOpenTab()
+      app.closeOpenTab();
       app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
     });
 

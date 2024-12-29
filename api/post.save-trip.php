@@ -1,11 +1,11 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.audit.php';
 
 require_once 'class.flight.php';
 require_once 'class.airport.php';
 require_once 'class.location.php';
 require_once 'class.trip.php';
+
 $json = json_decode(file_get_contents("php://input"));
 
 $trip = new Trip($json->id);
@@ -43,21 +43,10 @@ if ($trip->ETD) {
 }
 
 $result = $trip->save();
-if ($json->id) {
-  $before = $trip->getState();
-  $id = $json->id;
-  $action = 'modified';
-  $description = 'Changed trip: '.$previousSummary;
-} else {
-  $id = $result['result'];
-  $action = 'added';
-  $description = 'Added trip: '.$json->summary;
-}
-$trip->getTrip($id);
-$after = $trip->getState();
-Audit::log($action, 'trips', $description, $before, $after);
+die(json_encode(['result' => $result]));
 
-echo json_encode(['result' => $result]);
+// We may come back to using way points in the future
+
 ob_end_flush(); // No more output to the requestor
 
 
@@ -70,7 +59,7 @@ if ($trip->flightNumber) {
   Flight::updateFlight($flightNumber);
 }
 
-$tripId = $json->id ?: $result['result'];
+$tripId = $trip->tripId;
 
 // Let's generate some waypoints!
 require_once 'class.vehicle.php';

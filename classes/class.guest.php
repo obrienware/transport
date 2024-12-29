@@ -38,6 +38,25 @@ class Guest
 		return false;
 	}
 
+	static public function getGuestByPhoneNumber($phoneNumber)
+	{
+		global $db;
+		$sql = 'SELECT * FROM guests WHERE phone_number = :phone_number';
+		$data = ['phone_number' => $phoneNumber];
+		if ($row = $db->get_row($sql, $data)) {
+			$guest = new Guest(null);
+			$guest->row = $row;
+
+			$guest->guestId = $row->id;
+			$guest->firstName = $row->first_name;
+			$guest->lastName = $row->last_name;
+			$guest->emailAddress = $row->email_address;
+			$guest->phoneNumber = $row->phone_number;
+			return $guest;
+		}
+		return false;
+	}
+
 	public function getName(): string
 	{
 		return "{$this->firstName} {$this->lastName}";
@@ -84,6 +103,13 @@ class Guest
 			$data['user'] = $_SESSION['user']->username;
 		}
 		$result = $db->query($sql, $data);
+		
+		if ($this->guestId) {
+			$this->getGuest($this->guestId);
+		} else {
+			$this->getGuest($result);
+		}
+
 		return [
 			'result' => $result,
 			'errors' => $db->errorInfo
@@ -107,4 +133,14 @@ class Guest
 	{
 		return json_encode($this->row);
 	}
+
+	static public function formattedPhoneNumber(string $number): string
+	{
+		if (str_contains($number, '+')) {
+			return $number;
+		} else {
+			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+		}	
+	}
+
 }
