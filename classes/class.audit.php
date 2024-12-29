@@ -1,13 +1,22 @@
 <?php
 require_once 'class.data.php';
-global $db;
-if (!isset($db)) $db = new data();
 
 class Audit
 {
+  public $action;
+  public $table;
+  public $description;
+  public $before;
+  public $after;
+
+  public function commit()
+  {
+    Audit::log($this->action, $this->table, $this->description, $this->before, $this->after);
+  }
+
   static public function log(string $action, string $table, string $description, $before = null, $after = null)
   {
-    global $db;
+    $db = new data();
     $sql = "
     INSERT INTO audit_trail SET
       datetimestamp = NOW(),
