@@ -112,9 +112,15 @@ $event = new Event($_REQUEST['id']);
       </table>
     <?php endif;?>
 
-    <table class="table table-sm table-bordered w-auto border-dark-subtle">
-      <tr><th class="bg-dark-subtle px-3">Confirmed:</th><td class="px-3"><?=$event->isConfirmed() ? Date('F j g:i a', strtotime($event->confirmed)) : 'No'?></td></tr>
-    </table>
+    <?php if ($event->isConfirmed()):?>
+      <table class="table table-sm table-bordered w-auto border-success">
+        <tr><th class="bg-success text-bg-success px-3">Confirmed:</th><td class="px-3"><?=Date('F j g:i a', strtotime($event->confirmed))?></td></tr>
+      </table>
+    <?php else: ?>
+      <table class="table table-sm table-bordered w-auto border-dark-subtle">
+        <tr><th class="bg-dark-subtle px-3">Confirmed:</th><td class="px-3">No</td></tr>
+      </table>
+    <?php endif;?>
   </div>
 
   <div class="row">

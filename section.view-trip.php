@@ -123,9 +123,15 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       </table>
     <?php endif;?>
 
-    <table class="table table-sm table-bordered w-auto border-dark-subtle">
-      <tr><th class="bg-dark-subtle px-3">Confirmed:</th><td class="px-3"><?=$trip->confirmed ? Date('F j g:i a', strtotime($trip->confirmed)) : 'No'?></td></tr>
-    </table>
+    <?php if ($trip->confirmed): ?>
+      <table class="table table-sm table-bordered w-auto border-success">
+        <tr><th class="bg-success text-bg-success px-3">Confirmed:</th><td class="px-3"><?=Date('F j g:i a', strtotime($trip->confirmed))?></td></tr>
+      </table>
+    <?php else:?>
+      <table class="table table-sm table-bordered w-auto border-dark-subtle">
+        <tr><th class="bg-dark-subtle px-3">Confirmed:</th><td class="px-3">No</td></tr>
+      </table>
+    <?php endif;?>
 
     <!--
     <table class="table table-sm table-bordered w-auto border-dark-subtle">
