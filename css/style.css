@@ -10,6 +10,10 @@
   box-shadow: var(--bs-box-shadow-lg) !important;
 }
 
+.font-handwriting {
+  font-family: 'Kalam', cursive;
+}
+
 
 nav.navbar {
   background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%);

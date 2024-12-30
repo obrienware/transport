@@ -117,7 +117,7 @@ class Airline
 	static public function getAirlines(): mixed
 	{
 		$db = new data();
-		$sql = 'SELECT * FROM airlines ORDER BY name';
+		$sql = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
 		return $db->get_results($sql);
 	}
 

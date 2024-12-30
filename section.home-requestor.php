@@ -177,7 +177,7 @@ require_once 'class.airline.php';
 
   <section id="request-pickup-time-section" class="section d-none">
     <p class="lead mb-3">
-      Please confirm the date and time to be picked up.
+      Please confirm the date and time to be picked up
     </p>
     <div class="row">
       <div class="col">
@@ -291,6 +291,7 @@ require_once 'class.airline.php';
     $('#flight-number').val('');
     $('#flight-etd').val('');
     $('#flight-number-prefix').html('');
+    $('#flight-time').val('');
     $('#location').val('');
     $('#pickup-date').val('');
     $('#pickup-time').val('');
@@ -299,6 +300,7 @@ require_once 'class.airline.php';
     $('#till-datetime').val('');
     $('#notes').val('');
     $('#event-detail').val('');
+
 
     request = {
       requestorId: <?=$user->userId?>,
