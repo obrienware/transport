@@ -193,7 +193,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 <script type="text/javascript">
 
   window.cancelTrip = async function (tripId) {
-    if (confirm('Are you sure you want to cancel this trip?')) {
+    if (await ask('Are you sure you want to cancel this trip?')) {
       const resp = await post('/api/post.cancel-trip.php', {tripId});
       if (resp?.result) {
         $(document).trigger('tripChange', {tripId});
@@ -209,7 +209,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     const tripId = <?=$trip->tripId?>;
 
     function loadConversation() {
-      $('#trip-chat').load('section.chat-trip.php', {tripId});
+      $('#trip-chat').load('section.chat.php', {tripId});
     }
     clearInterval(window.loadInterval_1);
     window.loadInterval_1 = setInterval(loadConversation, 5000);
@@ -225,7 +225,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       if (message) {
         const resp = await post('/api/post.send-message.php', {tripId, message});
         if (resp?.result) {
-          $('#trip-chat').load('section.chat-trip.php', {tripId});
+          $('#trip-chat').load('section.chat.php', {tripId});
           $('#trip-message').val('').focus();
         }
       }
@@ -250,7 +250,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
         $(document).trigger('tripChange', {tripId});
         return toastr.success('Trip confirmed.', 'Success');
       }
-      return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      return toastr.error('Seems to be a problem confirming this trip!', 'Error');
     });
 
 });

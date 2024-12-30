@@ -24,6 +24,7 @@ class Event
   public $vehicles = [];
   public $notes;
   public $confirmed;
+  public $cancelled;
   public $originalRequest;
 
   public function __construct($eventId = null)
@@ -51,6 +52,7 @@ class Event
       $this->notes = $item->notes;
       $this->confirmed = $item->confirmed;
       $this->originalRequest = $item->original_request;
+      $this->cancelled = $item->cancellation_requested;
 
       if ($this->requestorId) $this->requestor = new User($this->requestorId);
       if ($this->locationId) $this->location = new Location($this->locationId);
@@ -153,6 +155,40 @@ class Event
 		$audit->commit();
 		return $result;
 	}
+
+	public function cancel()
+	{
+		$audit = new Audit();
+		$audit->action = 'update';
+		$audit->table = 'events';
+		$audit->before = json_encode($this->row);
+
+		$sql = 'UPDATE events SET cancellation_requested = NOW() WHERE id = :event_id';
+		$data = ['event_id' => $this->eventId];
+		$result = $this->db->query($sql, $data);
+
+		$audit->description = 'Event cancellation requested: '.$this->name;
+		$this->getEvent($this->eventId);
+		$audit->after = json_encode($this->row);
+		$audit->commit();
+		return $result;
+	}
+
+	public function isEditable()
+	{
+		if (!$this->endDate) return true;
+		return !(strtotime($this->endDate) <= strtotime('now'));
+	}
+
+	public function isConfirmed()
+	{
+		return $this->confirmed ? true : false;
+	}
+
+  public function isCancelled()
+  {
+    return $this->cancelled ? true : false;
+  }
 
 	public function getState(): string
 	{

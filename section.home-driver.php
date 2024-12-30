@@ -76,7 +76,7 @@ $user = new User($_SESSION['user']->id);
         }
 
         if (data?.event?.extendedProps?.type == 'event') {
-          app.openTab('edit-event', 'Event (edit)', `section.edit-event.php?id=${data.event.id}`);
+          app.openTab('view-event', 'Event (view)', `section.view-event.php?id=${data.event.id}`);
         }
       },
       loading: isLoading => {

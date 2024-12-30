@@ -100,7 +100,7 @@ $sql = "
             const self = ƒ.currentTarget;
             const id = $(self).data('id');
             targetId = id;
-            app.openTab('edit-event', 'Event (edit)', `section.edit-event.php?id=${id}`);
+            app.openTab('view-event', 'Event (view)', `section.view-event.php?id=${id}`);
           });
         }
         bindRowClick()

@@ -21,6 +21,7 @@ WHERE
     (e.end_date BETWEEN :start AND :end)
   )
   AND e.archived IS NULL
+  AND e.cancellation_requested IS NULL
   {$criteria}
 ";
 $data = ['start' => $start, 'end' => $end];
