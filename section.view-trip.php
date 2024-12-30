@@ -78,7 +78,10 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
             <div><?=$trip->vehicleId ? '<i class="bi bi-square-fill" style="color:'.$trip->vehicle->color.'"></i> '.$trip->vehicle->name : '' ?></div>
             <div><?=$trip->vehiclePUOptions?> - <?=$trip->vehicleDOOptions?></div>
           </div>
-          <div><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
+          <div class="w-25">
+            <div><img src="/images/drivers/<?=$trip->driver->username?>.jpg" class="img-fluid"></div>
+            <?=$trip->driverId ? $trip->driver->getName() : '' ?>
+          </div>
         </div>
       </div>
     </div>
