@@ -1,7 +1,7 @@
 <?php
 require_once 'class.trip.php';
 $trip = new Trip(tripId: $_REQUEST['id']);
-if ($trip->tripId && !$trip->confirmed) $orginalRequest = json_decode($trip->originalRequest);
+if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
 ?>
 <?php if (isset($_REQUEST['id']) && !$trip->tripId): ?>
 
