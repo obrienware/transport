@@ -5,7 +5,7 @@ $start = $_REQUEST['start'];
 $end = $_REQUEST['end'];
 
 if (isset($_REQUEST['requestorId'])) {
-  $criteria = "AND t.requestor_id = {$_REQUEST['requestorId']}";
+  $criteria = "AND e.requestor_id = {$_REQUEST['requestorId']}";
 }
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database

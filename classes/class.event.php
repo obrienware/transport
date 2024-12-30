@@ -1,12 +1,16 @@
 <?php
+date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+
+require_once 'class.audit.php';
 require_once 'class.data.php';
 require_once 'class.location.php';
 require_once 'class.user.php';
-if (!isset($db)) $db = new data();
 
 class Event
 {
-  private $row;
+	private $db;
+	private $row;
+	private $action = 'create';
   private $eventId;
 
   public $name;
@@ -16,25 +20,25 @@ class Event
   public $location;
   public $startDate;
   public $endDate;
-  public $drivers;
-  public $vehicles;
+  public $drivers = [];
+  public $vehicles = [];
   public $notes;
   public $confirmed;
+  public $originalRequest;
 
   public function __construct($eventId = null)
   {
-    $this->drivers = [];
-    $this->vehicles = [];
+		$this->db = new data();
     if ($eventId) $this->getEvent($eventId);
   }
 
   public function getEvent(int $eventId)
   {
-		global $db;
-    $sql = "SELECT * FROM events WHERE id = :event_id";
+	 $sql = "SELECT * FROM events WHERE id = :event_id";
 		$data = ['event_id' => $eventId];
-		if ($item = $db->get_row($sql, $data)) {
+		if ($item = $this->db->get_row($sql, $data)) {
       $this->row = $item;
+			$this->action = 'update';
 
 			$this->eventId = $item->id;
       $this->name = $item->name;
@@ -46,6 +50,7 @@ class Event
       $this->vehicles = explode(',', $item->vehicle_ids);
       $this->notes = $item->notes;
       $this->confirmed = $item->confirmed;
+      $this->originalRequest = $item->original_request;
 
       if ($this->requestorId) $this->requestor = new User($this->requestorId);
       if ($this->locationId) $this->location = new Location($this->locationId);
@@ -61,7 +66,11 @@ class Event
 
   public function save()
   {
-    global $db;
+		$audit = new Audit();
+		$audit->action = $this->action;
+		$audit->table = 'events';
+		$audit->before = json_encode($this->row);
+
     $data = [
       'name' => $this->name,
       'requestor_id' => $this->requestorId,
@@ -72,8 +81,8 @@ class Event
       'vehicle_ids' => implode(',', $this->vehicles),
       'notes' => $this->notes
     ];
-    if ($this->eventId) {
-      // Update
+    if ($this->action === 'update') {
+			$audit->description = 'Event updated: '.$this->name;
       $data['id'] = $this->eventId;
       $sql = "
         UPDATE events SET
@@ -88,7 +97,7 @@ class Event
         WHERE id = :id
       ";
     } else {
-      // Insert
+			$audit->description = 'Event created: '.$this->name;
       $sql = "
         INSERT INTO events SET
           name = :name,
@@ -104,33 +113,45 @@ class Event
       ";
       $data['user'] = $_SESSION['user']->username;
     }
-    $result = $db->query($sql, $data);
-    return [
-      'result' => $result,
-      'errors' => $db->errorInfo
-    ];
+		try {
+			$result = $this->db->query($sql, $data);
+			$id = ($this->action === 'create') ? $result : $this->eventId;
+			// We also want to add the original request if it exists here, but without creating a new audit entry
+			if ($this->originalRequest) $this->db->query('UPDATE events SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
+			$this->getEvent($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+
+			return ['result' => $result];
+		} catch (Exception $e) {
+			return [
+				'result' => false,
+				'error' => $e->getMessage()
+			];
+		}
   }
 
 	public function confirm()
 	{
-		global $db;
 		$sql = 'UPDATE events SET confirmed = NOW() WHERE id = :event_id';
 		$data = ['event_id' => $this->eventId];
-		$result = $db->query($sql, $data);
+		$result = $this->db->query($sql, $data);
 		return $result;
-	}
-
-	static public function deleteEvent($eventId)
-	{
-		global $db;
-		$sql = 'UPDATE events SET archived = NOW(), archived_by = :user WHERE id = :event_id';
-		$data = ['user' => $_SESSION['user']->username, 'event_id' => $eventId];
-		return $db->query($sql, $data);
 	}
 
 	public function delete()
 	{
-		return $this->deleteEvent($this->eventId);
+		$audit = new Audit();
+		$audit->action = 'delete';
+		$audit->table = 'events';
+		$audit->before = json_encode($this->row);
+
+		$sql = 'UPDATE events SET archived = NOW(), archived_by = :user WHERE id = :event_id';
+		$data = ['user' => $_SESSION['user']->username, 'trip_id' => $this->eventId];
+		$result = $this->db->query($sql, $data);
+		$audit->description = 'Event deleted: '.$this->name;
+		$audit->commit();
+		return $result;
 	}
 
 	public function getState(): string
@@ -140,7 +161,7 @@ class Event
 
   static public function nextEventByVehicle(int $vehicleId)
   {
-    global $db;
+    $db = new data();
     $sql = "
       SELECT id FROM events 
       WHERE  NOW() < start_date AND FIND_IN_SET(:vehicle_id, vehicle_ids)

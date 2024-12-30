@@ -23,9 +23,11 @@ switch ($json->type) {
     break;
 
   case 'vehicle':
+    addVehicleReservation($json);
     break;
 
   case 'event':
+    addEvent($json);
     break;
 }
 
@@ -135,4 +137,30 @@ function addPointToPoint($json)
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save();
+}
+
+function addVehicleReservation($json)
+{
+  $name = 'Vehicle Reservation - '.$json->whom->name;
+  $event = new Event();
+  $event->name = $name;
+  $event->requestorId = $json->requestorId;
+  $event->startDate = Date('Y-m-d H:i:s', strtotime($json->startDate));
+  $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
+  $event->notes = $json->notes;
+  $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
+  $event->save();
+}
+
+function addEvent($json)
+{
+  $name = 'Event';
+  $event = new Event();
+  $event->name = $name;
+  $event->requestorId = $json->requestorId;
+  $event->startDate = Date('Y-m-d H:i:s', strtotime($json->startDate));
+  $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
+  $event->notes = $json->detail;
+  $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
+  $event->save();
 }

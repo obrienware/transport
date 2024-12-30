@@ -33,6 +33,7 @@ $sql = "
     <table id="table-events" class="table align-middle table-hover row-select">
       <thead>
         <tr>
+          <th class="fit">Confirmed</th>
           <th class="fit">From</th>
           <th class="fit">To</th>
           <th>Description</th>
@@ -42,15 +43,31 @@ $sql = "
       <tbody>
         <?php foreach ($rs as $item): ?>
           <?php 
-            $tdClass = (strtotime($item->end_date) <= strtotime('now')) ? 'table-secondary' : '';
-            if (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+            $tdClass = '';
+            if ($item->cancellation_requested) {
+              $tdClass = 'table-secondary';
+            } elseif (!$item->end_date OR strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
+              $tdClass = 'table-secondary';
+            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
               $tdClass = 'table-success';
             }
           ?>
           <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
+            <td class="text-center fit" data-order="<?=$item->confirmed?>">
+              <?php if ($item->confirmed): ?>
+                <i class="fa-regular fa-square-check fa-xl text-success"></i>
+              <?php else: ?>
+                <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
+              <?php endif; ?>
+            </td>
             <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
             <td class="fit datetime short" data-order="<?=$item->end_date?>"><?=$item->end_date?></td>
-            <td><?=$item->name?></td>
+            <td>
+              <?php if ($item->cancellation_requested): ?>
+                <i class="badge bg-danger">Cancelled</i>
+              <?php endif;?>
+              <?=$item->name?>
+            </td>
             <td><?=$item->location?></td>
           </tr>
         <?php endforeach; ?>

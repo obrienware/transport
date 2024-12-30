@@ -300,7 +300,7 @@ require_once 'class.airline.php';
     $('#till-datetime').val('');
     $('#notes').val('');
     $('#event-detail').val('');
-
+    setTimeout(ec.refetchEvents, 1000);
 
     request = {
       requestorId: <?=$user->userId?>,
