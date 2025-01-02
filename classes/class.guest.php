@@ -143,7 +143,12 @@ class Guest
 	static function getAll(): array
 	{
 		$db = new data();
-		$query = "SELECT * FROM guests WHERE archived IS NULL ORDER BY first_name, last_name";
+		$query = "
+			SELECT g.*, o.opt_in, o.opt_out FROM guests g
+			LEFT OUTER JOIN opt_in_text o ON o.tel = g.phone_number
+			WHERE g.archived IS NULL 
+			ORDER BY g.first_name, g.last_name
+		";
 		return $db->get_rows($query);
 	}
 
