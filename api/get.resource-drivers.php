@@ -1,13 +1,13 @@
 <?php
 header('Content-Type: application/json');
 require_once 'class.user.php';
-$rs = User::getDrivers();
+$rows = User::getDrivers();
 $response = [];
-foreach ($rs as $item) {
+foreach ($rows as $row) {
   $response[] = (object) [
-    'id' => 'driver-'.$item->id,
-    'title' => $item->first_name.' '.$item->last_name,
-    // 'eventBackgroundColor' => $item->color
+    'id' => 'driver-'.$row->id,
+    'title' => $row->first_name.' '.$row->last_name,
+    // 'eventBackgroundColor' => $row->color
   ];
 }
 

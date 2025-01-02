@@ -14,11 +14,11 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Department::getDepartments()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->name?></td>
-            <td><?=$item->can_submit_requests?></td>
+      <?php if ($rows = Department::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->name?></td>
+            <td><?=$row->can_submit_requests?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

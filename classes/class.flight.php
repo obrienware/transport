@@ -1,26 +1,27 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+
+require_once 'class.audit.php';
 require_once 'class.utils.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
 class Flight
 {
 
-  static function getFlightStatus($flightNumber, $type, $iata, $date = NULL)
+  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object
   {
-    global $db;
+    $db = new data();
     if (!$date) $date = Date('Y-m-d'); // Default to today
     if ($type == 'arrival') {
-      $sql = "
+      $query = "
         SELECT * FROM flight_data 
         WHERE 
           DATE(scheduled_arrival) = :date
           AND airport_destination_iata = :iata
           AND flight_number = :flight_number
       ";
-    } else {
-      $sql = "
+    } else { // type == 'departure'
+      $query = "
         SELECT * FROM flight_data 
         WHERE 
           DATE(scheduled_departure) = :date
@@ -28,21 +29,23 @@ class Flight
           AND flight_number = :flight_number
       ";
     }
-    $data = [
+    $params = [
       'date' => $date,
       'iata' => $iata,
       'flight_number' => $flightNumber
     ];
-    return $db->get_row($sql, $data);
+    return $db->get_row($query, $params);
   }
 
+  
   /**
    * This will get the latest data for the specified flight and populate our flight_data table
-   * The remote call returns flight details for multiple days (both past, present and future). We'll aggregate all of it
+   * The remote call returns flight details for multiple days (both past, present and future). 
+   * We'll aggregate all of it
    */
-  static function updateFlight($flightNumber) 
+  static function updateFlight(string $flightNumber): bool
   {
-    global $db;
+    $db = new data();
     $db->query(
       "REPLACE INTO _flight_check SET flight_number = :flight_number, last_checked = NOW()",
       ['flight_number' => $flightNumber]
@@ -61,7 +64,7 @@ class Flight
     $obj = json_decode($result);
     if ($obj->result->response->data) {
       foreach ($obj->result->response->data as $flight) {
-        $sql = "
+        $query = "
           REPLACE INTO flight_data SET
             row = :row,
             flight_number = :flight_number,
@@ -80,7 +83,7 @@ class Flight
             real_arrival = :real_arrival,
             updated = :updated
         ";
-        $data = [
+        $params = [
           'row' => $flight->identification->row,
           'flight_number' => $flight->identification->number->default,
           'status_live' => $flight->status->live ? 1 : 0,
@@ -98,7 +101,7 @@ class Flight
           'real_arrival' => $flight->time->real->arrival ? Date('Y-m-d H:i:s', $flight->time->real->arrival) : NULL,
           'updated' => $flight->time->other->updated ? Date('Y-m-d H:i:s', $flight->time->other->updated) : NULL,
         ];
-        $db->query($sql, $data);
+        $db->query($query, $params);
       }
     }
     return true;
@@ -107,9 +110,9 @@ class Flight
   /**
    * Returns the number of minutes since the last check for this flight, or false if never checked
    */
-  static function lastChecked($flightNumber)
+  static function lastChecked(string $flightNumber): int | bool
   {
-    global $db;
+    $db = new data();
     $lastChecked = $db->get_var(
       "SELECT last_checked FROM _flight_check WHERE flight_number = :flight_number",
       ['flight_number' => $flightNumber]

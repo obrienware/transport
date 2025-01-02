@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once 'class.sms.php';
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   INSERT INTO webhook_clicksend SET
     originalsenderid = :originalsenderid,
     body = :body,
@@ -22,7 +22,7 @@ $sql = "
     timestamp = :timestamp,
     message_id =:message_id
 ";
-$data = [
+$params = [
   'originalsenderid' => $_POST['originalsenderid'],
   'body' => $_POST['body'],
   'message' => $_POST['message'],
@@ -40,7 +40,7 @@ $data = [
   'timestamp' => $_POST['timestamp'],
   'message_id' => $_POST['message_id']
 ];
-$id = $db->query($sql, $data);
+$id = $db->query($query, $params);
 
 // If someone responds with "STOP" to stop sending them messages.
 $pos = stripos($_POST['body'], 'stop');

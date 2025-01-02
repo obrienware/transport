@@ -1,11 +1,11 @@
 <?php require_once 'class.vehicle.php';?>
-<?php if ($rs = Vehicle::getVehicles()): ?>
+<?php if ($rows = Vehicle::getAll()): ?>
 
   <ul class="list-group list-group-flush" id="vehicle-list">
-    <?php foreach ($rs as $item): ?>
-      <li class="list-group-item list-group-item-action vehicle-item" data-id="<?=$item->id?>">
-        <i class="fa-solid fa-square fa-fw" style="color: <?=$item->color?>"></i>
-        <?=$item->name?>
+    <?php foreach ($rows as $row): ?>
+      <li class="list-group-item list-group-item-action vehicle-item" data-id="<?=$row->id?>">
+        <i class="fa-solid fa-square fa-fw" style="color: <?=$row->color?>"></i>
+        <?=$row->name?>
       </li>
     <?php endforeach; ?>
   </ul>

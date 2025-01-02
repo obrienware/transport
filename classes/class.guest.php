@@ -1,97 +1,90 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+
+require_once 'class.audit.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
 
 class Guest
 {
+	private $db;
+	private $id;
 	private $row;
+	private $lastError;
+	private $action = 'create';
+	private $archived;
 
-	public $guestId;
 	public $firstName;
 	public $lastName;
 	public $emailAddress;
 	public $phoneNumber;
 
-	public function __construct($guestId)
+	public function __construct(int $id = null)
 	{
-		if (isset($guestId)) {
-			$this->getGuest($guestId);
-		}
+		$this->db = new data();
+		if (isset($id)) $this->load($id);
 	}
 
-	public function getGuest($guestId)
-	{
-		global $db;
-		$sql = 'SELECT * FROM guests WHERE id = :guest_id';
-		$data = ['guest_id' => $guestId];
-		if ($row = $db->get_row($sql, $data)) {
-			$this->row = $row;
 
-			$this->guestId = $row->id;
+	public function load(int $id): bool
+	{
+		$query = 'SELECT * FROM guests WHERE id = :id';
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
 			$this->firstName = $row->first_name;
 			$this->lastName = $row->last_name;
 			$this->emailAddress = $row->email_address;
 			$this->phoneNumber = $row->phone_number;
+			$this->archived = $row->archived;
 			return true;
 		}
 		return false;
 	}
 
-	static public function getGuestByPhoneNumber($phoneNumber)
-	{
-		global $db;
-		$sql = 'SELECT * FROM guests WHERE phone_number = :phone_number';
-		$data = ['phone_number' => $phoneNumber];
-		if ($row = $db->get_row($sql, $data)) {
-			$guest = new Guest(null);
-			$guest->row = $row;
 
-			$guest->guestId = $row->id;
-			$guest->firstName = $row->first_name;
-			$guest->lastName = $row->last_name;
-			$guest->emailAddress = $row->email_address;
-			$guest->phoneNumber = $row->phone_number;
-			return $guest;
-		}
-		return false;
+	public function getId(): int | null
+	{
+		return $this->id;
 	}
 
-	public function getName(): string
-	{
-		return "{$this->firstName} {$this->lastName}";
-	}
 
-	static function getGuests()
+	public function save(string $user = null): bool
 	{
-		global $db;
-		$sql = "SELECT * FROM guests WHERE archived IS NULL ORDER BY first_name, last_name";
-		return $db->get_results($sql);
-	}
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = $this->action;
+		$audit->table = 'guests';
+		$audit->before = json_encode($this->row);
 
-	public function save()
-	{
-		global $db;
-		$data = [
+		$params = [
 			'first_name' => $this->firstName,
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
-			'phone_number' => $this->phoneNumber
+			'phone_number' => $this->phoneNumber,
+			'user' => $user
 		];
-		if ($this->guestId) {
-			// Update
-			$data['id'] = $this->guestId;
-			$sql = "
+
+		if ($this->action === 'update') {
+			$audit->description = 'Guest updated: '.$this->getName();
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE guests SET
 					first_name = :first_name,
 					last_name = :last_name,
 					email_address = :email_address,
-					phone_number = :phone_number
+					phone_number = :phone_number,
+					modified = NOW(),
+					modified_by = :user
 				WHERE id = :id
 			";
 		} else {
-			// Insert
-			$sql = "
+			$audit->description = 'Guest created: '.$this->getName();
+			$query = "
 				INSERT INTO guests SET
 					first_name = :first_name,
 					last_name = :last_name,
@@ -100,47 +93,108 @@ class Guest
 					created = NOW(),
 					created_by = :user
 			";
-			$data['user'] = $_SESSION['user']->username;
 		}
-		$result = $db->query($sql, $data);
-		
-		if ($this->guestId) {
-			$this->getGuest($this->guestId);
-		} else {
-			$this->getGuest($result);
+		try {
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+			$this->load($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+			return true;
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
 		}
+	}
 
-		return [
-			'result' => $result,
-			'errors' => $db->errorInfo
+
+	public function delete(string $user = null): bool
+	{
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'delete';
+		$audit->table = 'guests';
+		$audit->before = json_encode($this->row);
+
+		$query = "
+			UPDATE guests 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
 		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Guest deleted: '.$this->getName();
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
-	static function deleteGuest($guestId)
+
+	static function getAll(): array
 	{
-		global $db;
-		$sql = 'UPDATE guests SET archived = NOW(), archived_by = :user WHERE id = :guest_id';
-		$data = ['user' => $_SESSION['user']->username, 'guest_id' => $guestId];
-		return $db->query($sql, $data);
+		$db = new data();
+		$query = "SELECT * FROM guests WHERE archived IS NULL ORDER BY first_name, last_name";
+		return $db->get_rows($query);
 	}
 
-	public function delete()
+
+	public function isArchived(): bool
 	{
-		return $this->deleteGuest($this->guestId);
+		return isset($this->archived);
 	}
 
-	public function getState(): string
+
+	public function reset(): void
 	{
-		return json_encode($this->row);
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
+
+		$this->firstName = null;
+		$this->lastName = null;
+		$this->emailAddress = null;
+		$this->phoneNumber = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
 	}
 
-	static public function formattedPhoneNumber(string $number): string
+
+	public function getGuestByPhoneNumber(string $phoneNumber): bool
 	{
-		if (str_contains($number, '+')) {
-			return $number;
-		} else {
-			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
-		}	
+		$query = 'SELECT * FROM guests WHERE phone_number = :phone_number';
+		$params = ['phone_number' => $phoneNumber];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->firstName = $row->first_name;
+			$this->lastName = $row->last_name;
+			$this->emailAddress = $row->email_address;
+			$this->phoneNumber = $row->phone_number;
+			$this->archived = $row->archived;
+			return true;
+		}
+		return false;
+	}
+
+
+	public function getName(): string
+	{
+		return "{$this->firstName} {$this->lastName}";
 	}
 
 }

@@ -2,7 +2,7 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   SELECT 
   	t.id, t.driver_id, t. vehicle_id, t.airline_id,
   	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.confirmed,
@@ -34,7 +34,7 @@ $sql = "
       New Trip
     </button>
   </div>
-  <?php if ($rs = $db->get_results($sql)): ?>
+  <?php if ($rows = $db->get_rows($query)): ?>
 
     <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
       <thead>
@@ -49,64 +49,64 @@ $sql = "
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($rs as $item): ?>
+        <?php foreach ($rows as $row): ?>
           <?php 
             $tdClass = '';
-            if ($item->cancellation_requested) {
+            if ($row->cancellation_requested) {
               $tdClass = 'table-secondary';
-            } elseif (!$item->end_date OR strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
+            } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
               $tdClass = 'table-secondary';
-            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
               $tdClass = 'table-success';
             }
           ?>
-          <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-            <td class="text-center fit" data-order="<?=$item->confirmed?>">
-              <?php if ($item->confirmed): ?>
+          <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
+            <td class="text-center fit" data-order="<?=$row->confirmed?>">
+              <?php if ($row->confirmed): ?>
                 <i class="fa-regular fa-square-check fa-xl text-success"></i>
               <?php else: ?>
                 <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
               <?php endif; ?>
             </td>
-            <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
+            <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
             <td>
-              <?php if ($item->completed) :?>
+              <?php if ($row->completed) :?>
                 <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
-              <?php elseif ($item->started): ?>
+              <?php elseif ($row->started): ?>
                 <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
               <?php endif;?>
-              <?php if ($item->cancellation_requested): ?>
+              <?php if ($row->cancellation_requested): ?>
                 <i class="badge bg-danger">Cancelled</i>
               <?php endif;?>
-              <?=$item->summary?>
+              <?=$row->summary?>
             </td>
 
-            <td class="text-nowrap text-start" data-order="<?=$item->start_date?>">
+            <td class="text-nowrap text-start" data-order="<?=$row->start_date?>">
               <div>
-                <span class="time"><?=($item->start_date) ? Date('g:ia', strtotime($item->start_date)) : ''?></span>: 
-                <?=$item->pickup_location?>
+                <span class="time"><?=($row->start_date) ? Date('g:ia', strtotime($row->start_date)) : ''?></span>: 
+                <?=$row->pickup_location?>
               </div>
-              <?php if ($item->eta): ?>
+              <?php if ($row->eta): ?>
                 <span class="badge text-bg-secondary">
                   <i class="fa-duotone fa-solid fa-plane-arrival"></i>
-                  <?=$item->flight_number_prefix.' '.$item->flight_number?>
+                  <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
-                <small><?=Date('g:ia', strtotime($item->eta))?></small>
+                <small><?=Date('g:ia', strtotime($row->eta))?></small>
               <?php endif;?>
             </td>
 
             <td class="text-nowrap">
-              <div><?=$item->dropoff_location?></div>
-              <?php if ($item->etd): ?>
+              <div><?=$row->dropoff_location?></div>
+              <?php if ($row->etd): ?>
                 <span class="badge text-bg-secondary">
                   <i class="fa-duotone fa-solid fa-plane-departure"></i>
-                  <?=$item->flight_number_prefix.' '.$item->flight_number?>
+                  <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
-                <small><?=Date('g:ia', strtotime($item->etd))?></small>
+                <small><?=Date('g:ia', strtotime($row->etd))?></small>
               <?php endif;?>
             </td>
-            <td><?=$item->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
-            <td><?=$item->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <td><?=$row->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <td><?=$row->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>

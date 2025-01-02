@@ -1,7 +1,5 @@
 <?php
-require_once 'class.audit.php';
-require_once 'class.data.php';
-$db = new data();
+require_once 'class.vehicle-document.php';
 
 if (!empty($_FILES)) {
   $targetFilename = uniqid().'.'.pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
@@ -12,24 +10,16 @@ if (!empty($_FILES)) {
     chmod("$targetFolder", 0755);
   }
   if (move_uploaded_file($_FILES['file']['tmp_name'], $targetFolder.$targetFilename)) {
-    $sql = "
-      INSERT INTO vehicle_documents SET 
-        vehicle_id = :vehicle_id,
-        name = :document_name,
-        filename = :filename,
-        file_type = :file_type,
-        uploaded = NOW(),
-        uploaded_by = :uploaded_by
-    ";
-    $data = [
-      'vehicle_id' => $_POST['vehicleId'],
-      'document_name' => $_POST['documentName'],
-      'filename' => $targetFilename,
-      'file_type' => $_FILES['file']['type'],
-      'uploaded_by' => $_SESSION['user']->username
-    ];
-    $id = $db->query($sql, $data);
-    $after = json_encode($db->get_row("SELECT * FROM vehicle_documents WHERE id = :id", ['id' => $id]));
-    Audit::log('added', 'vehicle_documents', 'Uploaded new document: '.$_POST['documentName'], null, $after);
+    $doc = new VehicleDocument();
+    $doc->vehicleId = $_POST['vehicleId'];
+    $doc->name = $_POST['documentName'];
+    $doc->filename = $targetFilename;
+    $doc->fileType = $_FILES['file']['type'];
+    if ($doc->save($_SESSION['user']->username)) {
+      $result = $doc->getId();
+      die(json_encode(['result' => $result]));
+    }
   }
+  die(json_encode(['error' => 'Failed to save document']));
 }
+die(json_encode(['error' => 'No file uploaded']));

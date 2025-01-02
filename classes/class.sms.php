@@ -1,4 +1,6 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+
 require_once 'class.config.php';
 global $config;
 $config = Config::get('organization');
@@ -32,10 +34,10 @@ class SMS
   {
     global $config;
     global $db;
-    $tel = SMS::formattedPhoneNumber($recipient);
+    $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
-      $data = [
+      $params = [
         'To' => $tel,
         'From' => $config->textMessaging->textFromNumber,
         'Body' => $message
@@ -43,7 +45,7 @@ class SMS
       $result = Utils::callApi(
         'POST', 
         "https://api.twilio.com/2010-04-01/Accounts/{$_ENV['TWILIO_ACCOUNT_SID']}/Messages.json",
-        $data, [
+        $params, [
           'username' => $_ENV['TWILIO_ACCOUNT_SID'],
           'password' => $_ENV['TWILIO_AUTH_TOKEN']
         ]
@@ -65,7 +67,7 @@ class SMS
   static public function sendClickSend(string $recipient, string $message)
   {
     global $db;
-    $tel = SMS::formattedPhoneNumber($recipient);
+    $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       $messageObj = (object) ['messages' => [['body' => $message, 'to' => $tel]]];
@@ -91,10 +93,10 @@ class SMS
   {
     global $config;
     global $db;
-    $phone = SMS::formattedPhoneNumber($recipient);
-    $sql = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
-    $data = ['tel' => $phone];
-    $result = $db->query($sql, $data);
+    $phone = Utils::formattedPhoneNumber($recipient);
+    $query = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
+    $params = ['tel' => $phone];
+    $result = $db->query($query, $params);
     // Send a text confirmation
     $message = $config->textMessaging->optInConfirmationMessage;
     return SMS::send($phone, $message);
@@ -104,24 +106,13 @@ class SMS
   static public function optOut (string $recipient)
   {
     global $db;
-    $tel = SMS::formattedPhoneNumber($recipient);
-    $sql = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
-    $data = ['tel' => $tel];
+    $tel = Utils::formattedPhoneNumber($recipient);
+    $query = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
+    $params = ['tel' => $tel];
     if (isset($config->textMessaging->optOutMessage)) {
       // Only if we have defined an opt out message
       SMS::send($tel, $config->textMessaging->optOutMessage);
     }
-    return $db->query($sql, $data);  
-  }
-
-
-  static public function formattedPhoneNumber(string $phoneNumber)
-  {
-    $phoneNumber = str_replace('+1', '', $phoneNumber);
-    if (str_contains($phoneNumber, '+')) {
-      return str_replace(' ', '', $phoneNumber); // Just remove the spaces
-    } else {
-      return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $phoneNumber);
-    }  
+    return $db->query($query, $params);  
   }
 }

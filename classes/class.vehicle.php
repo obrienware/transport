@@ -1,13 +1,18 @@
 <?php
-require_once 'class.data.php';
-if (!isset($db)) $db = new data();
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
+require_once 'class.audit.php';
+require_once 'class.data.php';
 require_once 'class.location.php';
 
 class Vehicle
 {
+	private $db;
+	private $id;
 	private $row;
-	private $vehicleId;
+	private $lastError;
+	private $action = 'create';
+	private $archived;
 
 	public $color;
 	public $name;
@@ -29,65 +34,66 @@ class Vehicle
 	public $cleanExterior;
 	public $restock;
 
-	public function __construct($vehicleId)
+
+	public function __construct(int $id = null)
 	{
-		if (isset($vehicleId)) {
-			$this->getVehicle($vehicleId);
-		}
+		$this->db = new data();
+		if (isset($id)) $this->load($id);
 	}
 
-	public function getVehicle($vehicleId)
-	{
-		global $db;
-		$sql = "SELECT * FROM vehicles WHERE id = :vehicle_id";
-		$data = ['vehicle_id' => $vehicleId];
-		if ($item = $db->get_row($sql, $data)) {
-			$this->row = $item;
 
-			$this->vehicleId = $item->id;
-			$this->color = $item->color;
-			$this->name = $item->name;
-			$this->description = $item->description;
-			$this->licensePlate = $item->license_plate;
-			$this->passengers = $item->passengers;
-			$this->requireCDL = $item->require_cdl;
-			$this->hasCheckEngine = $item->check_engine;
-			$this->mileage = $item->mileage;
-			$this->stagingLocationId = $item->default_staging_location_id;
-			$this->lastUpdate = $item->last_update;
-			$this->lastUpdatedBy = $item->last_updated_by;
-			$this->locationId = $item->location_id;
-			$this->fuelLevel = $item->fuel_level;
-			$this->cleanInterior = $item->clean_interior;
-			$this->cleanExterior = $item->clean_exterior;
-			$this->restock = $item->restock;
+	public function load(int $id): bool
+	{
+		$query = "SELECT * FROM vehicles WHERE id = :id";
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->color = $row->color;
+			$this->name = $row->name;
+			$this->description = $row->description;
+			$this->licensePlate = $row->license_plate;
+			$this->passengers = $row->passengers;
+			$this->requireCDL = $row->require_cdl;
+			$this->hasCheckEngine = $row->check_engine;
+			$this->mileage = $row->mileage;
+			$this->stagingLocationId = $row->default_staging_location_id;
+			$this->lastUpdate = $row->last_update;
+			$this->lastUpdatedBy = $row->last_updated_by;
+			$this->locationId = $row->location_id;
+			$this->fuelLevel = $row->fuel_level;
+			$this->cleanInterior = $row->clean_interior;
+			$this->cleanExterior = $row->clean_exterior;
+			$this->restock = $row->restock;
 
 			if ($this->stagingLocationId) $this->stagingLocation = new Location($this->stagingLocationId);
 			if ($this->locationId) $this->currentLocation = new Location($this->locationId);
+			$this->archived = $row->archived;
+
 			return true;
 		}
 		return false;
 	}
 
-	public function getId(): int|null
+
+	public function getId(): int | null
 	{
-		return $this->vehicleId;
+		return $this->id;
 	}
 
-	static public function getVehicles()
-	{
-		global $db;
-		$sql = 'SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name';
-		if ($rs = $db->get_results($sql)) {
-			return $rs;
-		}
-		return false;
-	}
 
-	public function save()
+	public function save(string $user = null): bool
 	{
-		global $db;
-		$data = [
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = $this->action;
+		$audit->table = 'vehicles';
+		$audit->before = json_encode($this->row);
+
+		$params = [
 			'color' => $this->color,
 			'name' => $this->name,
 			'description' => $this->description,
@@ -104,10 +110,14 @@ class Vehicle
 			'fuel_level' => $this->fuelLevel,
 			'clean_interior' => $this->cleanInterior,
 			'clean_exterior' => $this->cleanExterior,
-			'restock' => $this->restock
+			'restock' => $this->restock,
+			'user' => $user
 		];
-		if ($this->vehicleId) {
-			$sql = "
+
+		if ($this->action === 'update') {
+			$audit->description = 'Vehicle updated: '.$this->name;
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE vehicles SET
 					color = :color,
 					name = :name,
@@ -125,12 +135,14 @@ class Vehicle
 					fuel_level = :fuel_level,
 					clean_interior = :clean_interior,
 					clean_exterior = :clean_exterior,
-					restock = :restock
-				WHERE id = :vehicle_id
+					restock = :restock,
+					modified = NOW(),
+					modified_by = :user
+				WHERE id = :id
 			";
-			$data['vehicle_id'] = $this->vehicleId;
 		} else {
-			$sql = "
+			$audit->description = 'Vehicle created: '.$this->name;
+			$query = "
 				INSERT INTO vehicles SET
 					color = :color,
 					name = :name,
@@ -148,32 +160,100 @@ class Vehicle
 					fuel_level = :fuel_level,
 					clean_interior = :clean_interior,
 					clean_exterior = :clean_exterior,
-					restock = :restock
+					restock = :restock,
+					created = NOW(),
+					created_by = :user
 			";
 		}
-		$result = $db->query($sql, $data);
-		return [
-			'result' => $result,
-			'errors' => $db->errorInfo
+		try {
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+			$this->load($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+			return true;
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
+	}
+
+
+	public function delete(string $user = null): bool
+	{
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'delete';
+		$audit->table = 'vehicles';
+		$audit->before = json_encode($this->row);
+
+		$query = "
+			UPDATE vehicles 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
 		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Vehicle deleted: '.$this->name;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
-	static function deleteVehicle($vehicleId)
+
+	static public function getAll(): array
 	{
-		global $db;
-		$sql = 'UPDATE vehicles SET archived = NOW(), archived_by = :user WHERE id = :vehicle_id';
-		$data = ['user' => $_SESSION['user']->username, 'vehicle_id' => $vehicleId];
-		return $db->query($sql, $data);
+		$db = new data();
+		$query = 'SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name';
+		return $db->get_rows($query);
 	}
 
-	public function delete()
+
+	public function isArchived(): bool
 	{
-		return $this->deleteVehicle($this->vehicleId);
+		return isset($this->archived);
 	}
 
-	public function getState(): string
+
+	public function reset(): void
 	{
-		return json_encode($this->row);
-	}
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
 
+		$this->color = null;
+		$this->name = null;
+		$this->description = null;
+		$this->licensePlate = null;
+		$this->passengers = null;
+		$this->requireCDL = null;
+		$this->hasCheckEngine = null;
+		$this->mileage = null;
+		$this->stagingLocationId = null;
+		$this->stagingLocation = null;
+		$this->lastUpdate = null;
+		$this->lastUpdatedBy = null;
+		$this->locationId = null;
+		$this->currentLocation = null;
+		$this->fuelLevel = null;
+		$this->cleanInterior = null;
+		$this->cleanExterior = null;
+		$this->restock = null;
+		$this->archived = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
+	}	
 }

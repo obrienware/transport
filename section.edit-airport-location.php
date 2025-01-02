@@ -4,7 +4,7 @@ require_once 'class.airline.php';
 require_once 'class.airport-location.php';
 $airportLocation = new AirportLocation($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$airportLocation->id): ?>
+<?php if (isset($_REQUEST['id']) && !$airportLocation->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -16,7 +16,7 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($airportLocation->id): ?>
+    <?php if ($airportLocation->getId()): ?>
       <h2>Edit Airport Location</h2>
     <?php else: ?>
       <h2>Add Airport Location</h2>
@@ -27,8 +27,8 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
         <label for="_airport" class="form-label">Airport</label>
         <select class="form-select" id="_airport">
           <option value="">Select Airport</option>
-          <?php foreach (Airport::getAirports() as $item): ?>
-            <option value="<?=$item->id?>" <?=($item->id == $airportLocation->airportId) ? 'selected' : ''?>><?=$item->name?></option>
+          <?php foreach (Airport::getAll() as $row): ?>
+            <option value="<?=$row->id?>" <?=($row->id == $airportLocation->airportId) ? 'selected' : ''?>><?=$row->name?></option>
           <?php endforeach; ?>
         </select>
       </div>
@@ -36,8 +36,8 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
         <label for="_airline" class="form-label">Airline</label>
         <select class="form-select" id="_airline">
           <option value="">Select Airline</option>
-          <?php foreach (Airline::getAirlines() as $item): ?>
-            <option value="<?=$item->id?>" <?=($item->id == $airportLocation->airlineId) ? 'selected' : ''?>><?=$item->name?></option>
+          <?php foreach (Airline::getAll() as $row): ?>
+            <option value="<?=$row->id?>" <?=($row->id == $airportLocation->airlineId) ? 'selected' : ''?>><?=$row->name?></option>
           <?php endforeach; ?>
         </select>
       </div>
@@ -68,7 +68,7 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
 
     <div class="row mt-3">
       <div class="col d-flex justify-content-between">
-        <?php if ($airportLocation->id): ?>
+        <?php if ($airportLocation->getId()): ?>
           <button id="btn-delete-airport-location" class="btn btn-outline-danger">Delete</button>
         <?php endif; ?>
 
@@ -82,7 +82,7 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const airportLocationId = <?=$airportLocation->id ?: 'null'?>;
+      const airportLocationId = <?=$airportLocation->getId() ?: 'null'?>;
 
       new Autocomplete(document.getElementById('_location'), {
         fullWidth: true,
@@ -112,7 +112,7 @@ $airportLocation = new AirportLocation($_REQUEST['id']);
       $('#btn-save-airport-location').off('click').on('click', async ƒ => {
         const data = await getData();
         const resp = await post('/api/post.save-airport-location.php', data);
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('airportLocationChange', {airportLocationId});
           app.closeOpenTab();
           if (airportLocationId) return toastr.success('Airport Location saved.', 'Success');

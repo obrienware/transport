@@ -24,9 +24,9 @@ if (!isset($db)) $db = new data();
 				<label for="table" class="mb-0">Table</label>
 				<select id="table" class="form-control">
 					<option value="">All Tables</option>
-					<?php if ($rs = $db->get_results("SELECT DISTINCT affected_tables FROM audit_trail")): ?>
-						<?php foreach ($rs as $item): ?>
-							<option value="<?=$item->affected_tables?>"><?=$item->affected_tables?></option>
+					<?php if ($rows = $db->get_rows("SELECT DISTINCT affected_tables FROM audit_trail")): ?>
+						<?php foreach ($rows as $row): ?>
+							<option value="<?=$row->affected_tables?>"><?=$row->affected_tables?></option>
 						<?php endforeach; ?>
 					<?php endif;?>
 				</select>
@@ -37,9 +37,9 @@ if (!isset($db)) $db = new data();
 				<label for="user" class="mb-0">User</label>
 				<select id="user" class="form-control">
 					<option value="">All Users</option>
-					<?php if ($rs = $db->get_results("SELECT DISTINCT user FROM audit_trail WHERE user <> ''")): ?>
-						<?php foreach ($rs as $item): ?>
-							<option value="<?=$item->user?>"><?=$item->user?></option>
+					<?php if ($rows = $db->get_rows("SELECT DISTINCT user FROM audit_trail WHERE user <> ''")): ?>
+						<?php foreach ($rows as $row): ?>
+							<option value="<?=$row->user?>"><?=$row->user?></option>
 						<?php endforeach; ?>
 					<?php endif;?>
 				</select>

@@ -1,124 +1,167 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+
+require_once 'class.audit.php';
 require_once 'class.data.php';
 
 class Airline
 {
 	private $db;
-	private $airlineId;
+	private $id;
 	private $row;
+	private $lastError;
+	private $action = 'create';
+	private $archived;
 
 	public $name;
 	public $flightNumberPrefix;
 	public $imageFilename;
 
-	public function __construct(int $airlineId = null)
+	
+	public function __construct(int $id = null)
 	{
 		$this->db = new data();
-		if (isset($airlineId)) $this->getAirline($airlineId);
+		if (isset($id)) $this->load($id);
 	}
 
 
-	public function getAirline(int $airlineId): bool
+	public function load(int $id): bool
 	{
-		$sql = 'SELECT * FROM airlines WHERE id = :airline_id';
-		$data = ['airline_id' => $airlineId];
-		if ($item = $this->db->get_row($sql, $data)) {
-			$this->row = $item;
-			$this->airlineId = $item->id;
-			$this->name = $item->name;
-			$this->flightNumberPrefix = $item->flight_number_prefix;
-			$this->imageFilename = $item->image_filename;
+		$query = 'SELECT * FROM airlines WHERE id = :id';
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->name = $row->name;
+			$this->flightNumberPrefix = $row->flight_number_prefix;
+			$this->imageFilename = $row->image_filename;
+			$this->archived = $row->archived;
 			return true;
 		}
 		return false;
 	}
 
 
-	public function getAirlineId(): int | null
+	public function getId(): int | null
 	{
-		return $this->airlineId;
+		return $this->id;
 	}
 
 
-	public function save()
+	public function save(string $user = null): bool
 	{
-		$data = [
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = $this->action;
+		$audit->table = 'airlines';
+		$audit->before = json_encode($this->row);
+
+		$params = [
 			'name' => $this->name,
 			'flight_number_prefix' => $this->flightNumberPrefix,
-			'image_filename' => $this->imageFilename
+			'image_filename' => $this->imageFilename,
+			'user' => $user
 		];
-		if ($this->airlineId) {
-			// Updating
-			$data['id'] = $this->airlineId;
-			$sql = "
+
+		if ($this->action === 'update') {
+			$audit->description = 'Airline updated: '.$this->name;
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE airlines SET
 					name = :name,
 					flight_number_prefix = :flight_number_prefix,
-					image_filename = :image_filename
+					image_filename = :image_filename,
+					modified = NOW(),
+					modified_by = :user
 				WHERE id = :id
 			";
 		} else {
-			// Adding
-			$sql = "
+			$audit->description = 'Airline created: '.$this->name;
+			$query = "
 				INSERT INTO airlines SET
 					name = :name,
 					flight_number_prefix = :flight_number_prefix,
-					image_filename = :image_filename
+					image_filename = :image_filename,
+					created = NOW(),
+					created_by = :user
 			";
 		}
-		$result = $this->db->query($sql, $data);
-		if ($this->airlineId) $this->getAirline($this->airlineId);
-		else $this->getAirline($result);
-		return $result;
+		try {
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+			$this->load($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+			return true;
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
 
-	public function getState(): string
+	public function delete(string $user = null): bool
 	{
-		return json_encode($this->row);
-	}
-	
-	
-	public function delete()
-	{
-		if ($this->airlineId) return Airline::deleteAirline($this->airlineId);
-		return false;
-	}
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'delete';
+		$audit->table = 'airlines';
+		$audit->before = json_encode($this->row);
 
-
-	/**
-	 * Caution: This is used internally by unit testing to cleanly remove data. 
-	 * Use the delete method instead in production to archive the user instead of completely removing the data
-	 */
-	public function remove()
-	{
-		$result = $this->db->query(
-			"DELETE FROM airlines WHERE id = :id",
-			['id' => $this->airlineId]
-		);
-		// Reset the object (as best we can)
-		foreach (get_class_vars(get_class($this)) as $name => $default) 
-  		$this->$name = $default;
-		unset($this->db);
-		unset($this->row);
-		unset($this->airlineId);
-		return $result;
-	}
-
-
-	static public function deleteAirline(int $airlineId)
-	{
-		$db = new data();
-		$sql = "UPDATE airlines SET archived = NOW(), archived_by = :archived_by WHERE id = :id";
-		$data = ['id' => $airlineId, 'archived_by' => isset($_SESSION['user']->username) ? $_SESSION['user']->username : null];
-		return $db->query($sql, $data);
+		$query = "
+			UPDATE airlines 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
+		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Airline deleted: '.$this->name;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
-	static public function getAirlines(): mixed
+
+	static public function getAll(): array
 	{
 		$db = new data();
-		$sql = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
-		return $db->get_results($sql);
+		$query = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
+		return $db->get_rows($query);
 	}
 
+
+	public function isArchived(): bool
+	{
+		return isset($this->archived);
+	}
+
+
+	public function reset()
+	{
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
+
+		$this->name = null;
+		$this->flightNumberPrefix = null;
+		$this->imageFilename = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
+	}
 }

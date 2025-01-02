@@ -1,14 +1,17 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
+require_once 'class.audit.php';
 require_once 'class.data.php';
-if (!isset($db)) {
-	$db = new data();
-}
 
 class Location
 {
+	private $db;
+	private $id;
 	private $row;
-	private $locationId;
+	private $lastError;
+	private $action = 'create';
+	private $archived;
 
 	public $name;
 	public $shortName;
@@ -21,53 +24,56 @@ class Location
 	public $IATA;
 	public $meta;
 
-	public function __construct($locationId)
+
+	public function __construct(int $id = null)
 	{
-		if (isset($locationId)) {
-			$this->getLocation($locationId);
-		}
+		$this->db = new data();
+		if (isset($id)) $this->load($id);
 	}
 
-	public function getLocation($locationId)
-	{
-		global $db;
-		$sql = 'SELECT * FROM locations WHERE id = :location_id';
-		$data = ['location_id' => $locationId];
-		if ($item = $db->get_row($sql, $data)) {
-			$this->row = $item;
 
-			$this->locationId = $item->id;
-			$this->name = $item->name;
-			$this->description = $item->description;
-			$this->shortName = $item->short_name;
-			$this->mapAddress = $item->map_address;
-			$this->lat = $item->lat;
-			$this->lon = $item->lon;
-			$this->placeId = $item->place_id;
-			$this->type = $item->type;
-			$this->IATA = $item->iata;
-			$this->meta = $item->meta;
+	public function load(int $id): bool
+	{
+		$query = 'SELECT * FROM locations WHERE id = :id';
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->name = $row->name;
+			$this->description = $row->description;
+			$this->shortName = $row->short_name;
+			$this->mapAddress = $row->map_address;
+			$this->lat = $row->lat;
+			$this->lon = $row->lon;
+			$this->placeId = $row->place_id;
+			$this->type = $row->type;
+			$this->IATA = $row->iata;
+			$this->meta = $row->meta;
+			$this->archived = $row->archived;
 			return true;
 		}
 		return false;
 	}
 
-	public function getLocationId()
+
+	public function getId(): int | null
 	{
-		return $this->locationId;
+		return $this->id;
 	}
 
-	static public function getLocations()
-	{
-		global $db;
-		$sql = "SELECT * FROM locations WHERE archived IS NULL ORDER BY name";
-		return $db->get_results($sql);
-	}
 
-	public function save()
+	public function save(string $user = null): bool
 	{
-		global $db;
-		$data = [
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = $this->action;
+		$audit->table = 'locations';
+		$audit->before = json_encode($this->row);
+
+		$params = [
 			'name' => $this->name,
 			'short_name' => $this->shortName,
 			'description' => $this->description,
@@ -77,11 +83,13 @@ class Location
 			'lat' => $this->lat,
 			'lon' => $this->lon,
 			'place_id' => $this->placeId,
+			'user' => $user,
 		];
-		if ($this->locationId) {
-			// Update
-			$data['id'] = $this->locationId;
-			$sql = "
+
+		if ($this->action === 'update') {
+			$audit->description = 'Location updated: '.$this->name;
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE locations SET
 					name = :name,
 					short_name = :short_name,
@@ -91,12 +99,14 @@ class Location
 					map_address = :map_address,
 					lat = :lat,
 					lon = :lon,
-					place_id = :place_id
+					place_id = :place_id,
+					modified = NOW(),
+					modified_by = :user
 				WHERE id = :id
 			";
 		} else {
-			// Insert
-			$sql = "
+			$audit->description = 'Location created: '.$this->name;
+			$query = "
 				INSERT INTO locations SET
 					name = :name,
 					short_name = :short_name,
@@ -106,31 +116,92 @@ class Location
 					map_address = :map_address,
 					lat = :lat,
 					lon = :lon,
-					place_id = :place_id
+					place_id = :place_id,
+					created = NOW(),
+					created_by = :user
 			";
 		}
-		$result = $db->query($sql, $data);
-		return [
-			'result' => $result,
-			'errors' => $db->errorInfo
+		try {
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+			$this->load($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+			return true;
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
+	}
+
+	
+	public function delete(string $user = null): bool
+	{
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'delete';
+		$audit->table = 'locations';
+		$audit->before = json_encode($this->row);
+
+		$query = "
+			UPDATE locations 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
 		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Location deleted: '.$this->name;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
-	static public function deleteLocation(int $locationId)
+
+	static public function getAll(): array
 	{
-		global $db;
-		$sql = "UPDATE locations SET archived = NOW(), archived_by = :user WHERE id = :location_id";
-		$data = ['user' => $_SESSION['user']->username, 'location_id' => $locationId];
-		return $db->query($sql, $data);
+		$db = new data();
+		$query = "SELECT * FROM locations WHERE archived IS NULL ORDER BY name";
+		return $db->get_rows($query);
 	}
 
-	public function delete()
+
+	public function isArchived(): bool
 	{
-		return $this->deleteLocation($this->locationId);
+		return isset($this->archived);
 	}
 
-	public function getState(): string
+
+	public function reset(): void
 	{
-		return json_encode($this->row);
-	}
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
+
+		$this->name = null;
+		$this->shortName = null;
+		$this->mapAddress = null;
+		$this->description = null;
+		$this->lat = null;
+		$this->lon = null;
+		$this->placeId = null;
+		$this->type = null;
+		$this->IATA = null;
+		$this->meta = null;
+	
+		// Reinitialize the database connection if needed
+		$this->db = new data();
+}
+
 }

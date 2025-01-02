@@ -2,7 +2,7 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   SELECT 
     e.*, 
     (
@@ -28,7 +28,7 @@ $sql = "
     </button>
   </div>
 
-  <?php if ($rs = $db->get_results($sql)): ?>
+  <?php if ($rows = $db->get_rows($query)): ?>
 
     <table id="table-events" class="table align-middle table-hover row-select">
       <thead>
@@ -41,34 +41,34 @@ $sql = "
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($rs as $item): ?>
+        <?php foreach ($rows as $row): ?>
           <?php 
             $tdClass = '';
-            if ($item->cancellation_requested) {
+            if ($row->cancellation_requested) {
               $tdClass = 'table-secondary';
-            } elseif (!$item->end_date OR strtotime($item->end_date) <= strtotime('now') OR $item->completed) {
+            } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
               $tdClass = 'table-secondary';
-            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($item->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($item->start_date))) {
+            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
               $tdClass = 'table-success';
             }
           ?>
-          <tr data-id="<?=$item->id?>" class="<?=$tdClass?>">
-            <td class="text-center fit" data-order="<?=$item->confirmed?>">
-              <?php if ($item->confirmed): ?>
+          <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
+            <td class="text-center fit" data-order="<?=$row->confirmed?>">
+              <?php if ($row->confirmed): ?>
                 <i class="fa-regular fa-square-check fa-xl text-success"></i>
               <?php else: ?>
                 <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
               <?php endif; ?>
             </td>
-            <td class="fit datetime short" data-order="<?=$item->start_date?>"><?=$item->start_date?></td>
-            <td class="fit datetime short" data-order="<?=$item->end_date?>"><?=$item->end_date?></td>
+            <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
+            <td class="fit datetime short" data-order="<?=$row->end_date?>"><?=$row->end_date?></td>
             <td>
-              <?php if ($item->cancellation_requested): ?>
+              <?php if ($row->cancellation_requested): ?>
                 <i class="badge bg-danger">Cancelled</i>
               <?php endif;?>
-              <?=$item->name?>
+              <?=$row->name?>
             </td>
-            <td><?=$item->location?></td>
+            <td><?=$row->location?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>

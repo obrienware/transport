@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.audit.php';
 require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -15,12 +14,9 @@ if (isset($json->isCleanOutside)) $vehicle->cleanExterior = ($json->isCleanOutsi
 if (isset($json->needsRestocking)) $vehicle->restock = ($json->needsRestocking) ? 1 : 0;
 $vehicle->lastUpdate = Date('Y-m-d H:i:s');
 $vehicle->lastUpdatedBy = $_SESSION['user']->username;
-$vehicle->save();
 
-$before = $vehicle->getState();
-$vehicle->getVehicle($vehicle->getId());
-$after = $vehicle->getState();
-$description = 'Updated vehicle condition/status: '.$vehicle->name;
-Audit::log('update', 'vehicles', $description, $before, $after);
-
-echo json_encode(['result' => true]);
+if ($vehicle->save()) {
+  $result = $vehicle->getId();
+  die(json_encode(['result' => $result]));
+}
+die(json_encode(['result' => false]));

@@ -16,13 +16,13 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Airport::getAirports()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->iata?></td>
-            <td><?=$item->name?></td>
-            <td data-order="<?=$item->lead_time?>"><?=intdiv($item->lead_time, 60).':'.sprintf('%02s', ($item->lead_time % 60))?></td>
-            <td data-order="<?=$item->travel_time?>"><?=intdiv($item->travel_time, 60).':'.sprintf('%02s', ($item->travel_time % 60))?></td>
+      <?php if ($rows = Airport::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->iata?></td>
+            <td><?=$row->name?></td>
+            <td data-order="<?=$row->lead_time?>"><?=intdiv($row->lead_time, 60).':'.sprintf('%02s', ($row->lead_time % 60))?></td>
+            <td data-order="<?=$row->travel_time?>"><?=intdiv($row->travel_time, 60).':'.sprintf('%02s', ($row->travel_time % 60))?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

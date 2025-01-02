@@ -300,7 +300,7 @@ $eventId = $event->getId();
       $('#btn-save-event').off('click').on('click', async function () {
         const data = getData();
         const resp = await post('/api/post.save-event.php', data);
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('eventChange', {eventId});
           app.closeOpenTab();
           if (eventId) return toastr.success('Event saved.', 'Success');
@@ -314,8 +314,8 @@ $eventId = $event->getId();
         const data = await getData();
         if (data) {
           const resp = await post('/api/post.save-event.php', data);
-          if (resp?.result?.result) {
-            const id = eventId || resp?.result?.result;
+          if (resp?.result) {
+            const id = eventId || resp?.result;
             const newResp = await post('/api/post.confirm-event.php', {id});
             if (newResp?.result) {
               $(document).trigger('eventChange');

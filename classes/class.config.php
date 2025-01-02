@@ -6,9 +6,9 @@ class Config
   public static function get($node)
   {
     $db = new data();
-    $sql = 'SELECT config FROM config WHERE node = :node';
-    $data = ['node' => $node];
-    if ($configString = $db->get_var($sql, $data)) {
+    $query = 'SELECT config FROM config WHERE node = :node';
+    $params = ['node' => $node];
+    if ($configString = $db->get_var($query, $params)) {
       return json_decode($configString);
     }
     return false;

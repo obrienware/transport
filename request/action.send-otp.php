@@ -4,7 +4,7 @@ require_once 'class.email.php';
 require_once 'class.user.php';
 $user = new User();
 $user->getUserByEmail($_REQUEST['email']);
-if (!$user->userId) {
+if (!$user->getId()) {
   $user->roles = ['requestor'];
   $user->save(); // So we can have a valid user object
 }

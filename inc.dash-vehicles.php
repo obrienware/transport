@@ -1,7 +1,7 @@
 <?php
 require_once 'class.data.php';
 if (!$db) $db = new data();
-$sql = "
+$query = "
   SELECT v.*, 
     CASE WHEN v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL THEN l.name ELSE NULL END AS location
   FROM vehicles v
@@ -19,53 +19,53 @@ $sql = "
   ORDER BY v.name
 ";
 ?>
-<?php if ($rs = $db->get_results($sql)): ?>
+<?php if ($rows = $db->get_rows($query)): ?>
 
   <div class="row row-cols-2 rows-cols-md-3 row-cols-xl-4 row-cols-xxl-5 g-4 mb-4">
-    <?php foreach ($rs as $item): ?>
+    <?php foreach ($rows as $row): ?>
 
       <div class="col">
         <div class="card">
-          <div class="card-header" style="background-color:<?=$item->color?>">
-            <button style="color: #<?=readableColor($item->color)?> !important" class="btn p-0" onclick="app.openTab('view-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$item->id?>');">
-            <?=$item->name?>
+          <div class="card-header" style="background-color:<?=$row->color?>">
+            <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="app.openTab('view-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$row->id?>');">
+            <?=$row->name?>
             </button>
           </div>
           <ul class="list-group list-group-flush">
 
-            <?php if ($item->check_engine): ?>
+            <?php if ($row->check_engine): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-engine-warning fa-fw fa-fade" style="color: orangered"></i> Check Engine
               </li>
             <?php endif; ?>
 
-            <?php if (!is_null($item->fuel_level) && $item->fuel_level <= 25): ?>
+            <?php if (!is_null($row->fuel_level) && $row->fuel_level <= 25): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Fuel Level: <?=$item->fuel_level?>%
+                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Fuel Level: <?=$row->fuel_level?>%
               </li>
             <?php endif;?>
 
-            <?php if ($item->clean_interior === 0): ?>
+            <?php if ($row->clean_interior === 0): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs interior cleaning
               </li>
             <?php endif; ?>
 
-            <?php if ($item->clean_exterior === 0): ?>
+            <?php if ($row->clean_exterior === 0): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs exterior cleaning
               </li>
             <?php endif; ?>
 
-            <?php if ($item->restock === 1): ?>
+            <?php if ($row->restock === 1): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs restocking
               </li>
             <?php endif; ?>
 
-            <?php if ($item->location): ?>
+            <?php if ($row->location): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: orangered"></i> <?=$item->location?>
+                <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: orangered"></i> <?=$row->location?>
               </li>
             <?php endif; ?>
 

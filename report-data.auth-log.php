@@ -2,18 +2,18 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   SELECT * FROM authentication_log
   WHERE
     datetimestamp BETWEEN :from_date AND :to_date
 ";
-$data = [
+$params = [
   'from_date' => $_REQUEST['from_date'],
   'to_date' => $_REQUEST['to_date'].' 23:59:59'
 ];
-$sql .= " ORDER BY datetimestamp DESC";
+$query .= " ORDER BY datetimestamp DESC";
 ?>
-<?php if ($rs = $db->get_results($sql, $data)): ?>
+<?php if ($rows = $db->get_rows($query, $params)): ?>
 
   <table class="table table-striped table-sm">
     <thead>
@@ -25,12 +25,12 @@ $sql .= " ORDER BY datetimestamp DESC";
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($rs as $item): ?>
-        <tr class="<?=($item->successful) ? 'table-success' : 'table-danger'?>">
-          <td class="fit"><?=date('d/m H:i', strtotime($item->datetimestamp))?></td>
-          <td class="fit"><?=$item->username?></td>
-          <td class="fit"><?=$item->password?></td>
-          <td><?=$item->successful?></td>
+      <?php foreach ($rows as $row): ?>
+        <tr class="<?=($row->successful) ? 'table-success' : 'table-danger'?>">
+          <td class="fit"><?=date('d/m H:i', strtotime($row->datetimestamp))?></td>
+          <td class="fit"><?=$row->username?></td>
+          <td class="fit"><?=$row->password?></td>
+          <td><?=$row->successful?></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

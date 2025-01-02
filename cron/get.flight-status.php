@@ -7,7 +7,7 @@ require_once 'class.data.php';
 
 // We want to know about flights happening today
 $db = new data();
-$sql = "
+$query = "
 SELECT 
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,
   CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
@@ -23,33 +23,33 @@ WHERE
 	(t.ETD IS NOT NULL AND DATE(t.ETD) = CURDATE()))
   AND t.archived IS NULL
 ";
-if ($rs = $db->get_results($sql)) {
-  foreach ($rs as $item) {
-    $lastChecked = Flight::lastChecked($item->flight_number);
+if ($rows = $db->get_rows($query)) {
+  foreach ($rows as $row) {
+    $lastChecked = Flight::lastChecked($row->flight_number);
     if ($lastChecked === false) {
       // If we haven't checked this flight before, we can check it rn and be done.
-      Flight::updateFlight($item->flight_number);
+      Flight::updateFlight($row->flight_number);
       continue;
     }
 
-    $flight = Flight::getFlightStatus($item->flight_number, $item->type, $item->iata);
+    $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata);
 
     $now = strtotime('now');
     
-    if ($item->type == 'arrival') {
+    if ($row->type == 'arrival') {
       if ($flight->real_arrival) continue; // Flight has already arrived
       $arrival_time = ($flight->estimated_arrival) ? strtotime($flight->estimated_arrival) : strtotime($flight->scheduled_arrival);
       $arrive_in = round(($arrival_time - $now) / 60, 2);
 
       // If our ETA is less than 15mins then we're re-checking every minute
       if ($arrive_in <= 15) {
-        Flight::updateFlight($item->flight_number);
+        Flight::updateFlight($row->flight_number);
       } elseif ($arrive_in <= 60) { 
         // If our ETA is less than an hour, then we're re-checking every 10mins
-        if ($lastChecked >= 10) Flight::updateFlight($item->flight_number);
+        if ($lastChecked >= 10) Flight::updateFlight($row->flight_number);
       } else {
         // If our ETA is today, then we're re-checking every 60mins
-        if ($lastChecked >= 60) Flight::updateFlight($item->flight_number);
+        if ($lastChecked >= 60) Flight::updateFlight($row->flight_number);
       }
     }
 
@@ -57,14 +57,14 @@ if ($rs = $db->get_results($sql)) {
      * When the flight is an outbound one, we want to update the status every 30 mins unless
      * the ETD has already passed.
      */
-    if ($item->type == 'departure') {
+    if ($row->type == 'departure') {
       if ($flight->real_departure) continue; // Flight has already departed
       $departure_time = ($flight->estimated_departure) ? strtotime($flight->estimated_departure) : strtotime($flight->scheduled_departure);
       $departs_in = round(($departure_time - $now) / 60, 2);
 
       if ($departs_in > 0) {
         // We havn't passed our ETD yet
-        if ($lastChecked >= 30) Flight::updateFlight($item->flight_number);
+        if ($lastChecked >= 30) Flight::updateFlight($row->flight_number);
       }
     }
 

@@ -32,7 +32,7 @@ $ics = new ICS([
   'description' => $description,
   'summary' => $trip->summary,
   'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-  'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->tripId
+  'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->getId()
 ]);
 
 echo $ics->to_string();

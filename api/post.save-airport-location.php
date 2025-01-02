@@ -9,5 +9,8 @@ $airportLocation->airlineId = $json->airlineId ?: NULL;
 $airportLocation->locationId = $json->locationId ?: NULL;
 $airportLocation->type = $json->type ?: NULL;
 
-$result = $airportLocation->save();
-echo json_encode(['result' => $result]);
+if ($airportLocation->save()) {
+  $result = $airportLocation->getId();
+  die(json_encode(['result' => $result]));
+}
+die(json_encode(['result' => false]));

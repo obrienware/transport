@@ -1,33 +1,33 @@
 <?php
 header('Content-Type: application/json');
 require_once 'class.data.php';
-$db = new Data();
+$db = new data();
 $json = json_decode(file_get_contents("php://input"));
 
 if ($json->tripId && $json->message) {
-  $sql = "
+  $query = "
     INSERT INTO trip_messages (datetimestamp, trip_id, user_id, message)
     VALUES (NOW(), :trip_id, :user_id, :message)
   ";
-  $data = [
+  $params = [
     'trip_id' => $json->tripId,
     'user_id' => $_SESSION['user']->id,
     'message' => $json->message
   ];
-  $result = $db->query($sql, $data);
+  $result = $db->query($query, $params);
 }
 
 if ($json->eventId && $json->message) {
-  $sql = "
+  $query = "
     INSERT INTO event_messages (datetimestamp, event_id, user_id, message)
     VALUES (NOW(), :event_id, :user_id, :message)
   ";
-  $data = [
+  $params = [
     'event_id' => $json->eventId,
     'user_id' => $_SESSION['user']->id,
     'message' => $json->message
   ];
-  $result = $db->query($sql, $data);
+  $result = $db->query($query, $params);
 }
 
 echo json_encode(['result' => $result]);

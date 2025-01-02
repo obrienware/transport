@@ -6,7 +6,7 @@ require_once 'class.config.php';
 $config = Config::get('system');
 $user = new User($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$user->userId): ?>
+<?php if (isset($_REQUEST['id']) && !$user->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -18,7 +18,7 @@ $user = new User($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($user->userId): ?>
+    <?php if ($user->getId()): ?>
       <h2>Edit User</h2>
     <?php else: ?>
       <h2>Add User</h2>
@@ -60,9 +60,9 @@ $user = new User($_REQUEST['id']);
             <label for="user-department-id" class="form-label">Department</label>
             <div>
               <select id="user-department-id" data-live-search="true" title="Please select a department..." class="show-tick">
-                <?php if ($rs = Department::getDepartments()): ?>
-                  <?php foreach ($rs as $item): ?>
-                    <option value="<?=$item->id?>" <?=($item->id == $user->departmentId) ? 'selected' : ''?>><?=$item->name?></option>
+                <?php if ($rows = Department::getAll()): ?>
+                  <?php foreach ($rows as $row): ?>
+                    <option value="<?=$row->id?>" <?=($row->id == $user->departmentId) ? 'selected' : ''?>><?=$row->name?></option>
                   <?php endforeach; ?>
                 <?php endif; ?>
               </select>
@@ -95,7 +95,7 @@ $user = new User($_REQUEST['id']);
 
       <div class="row my-4">
         <div class="col d-flex justify-content-between">
-          <?php if ($user->userId): ?>
+          <?php if ($user->getId()): ?>
             <button class="btn btn-outline-danger px-4" id="btn-delete-user">Delete</button>
           <?php endif; ?>
           <button class="btn btn-primary px-4" id="btn-save-user">Save</button>
@@ -109,7 +109,7 @@ $user = new User($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const userId = <?=$user->userId ?: 'null'?>;
+      const userId = <?=$user->getId() ?: 'null'?>;
       $('#btn-save-user').off('click').on('click', async ƒ => {
         const resp = await post('/api/post.save-user.php', {
           id: userId,
@@ -124,7 +124,7 @@ $user = new User($_REQUEST['id']);
           roles: $('.user-roles:checked').map((idx, el) => $(el).val()).get().join(','),
           resetPassword: checked('#reset-user')
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('userChange', {userId});
           app.closeOpenTab();
           if (userId) return toastr.success('User saved.', 'Success');
@@ -137,7 +137,7 @@ $user = new User($_REQUEST['id']);
       $('#btn-delete-user').off('click').on('click', async ƒ => {
         if (await ask('Are you sure you want to delete this user?')) {
           const resp = await get('/api/get.delete-user.php', {
-            id: '<?=$user->userId?>'
+            id: '<?=$user->getId()?>'
           });
           if (resp?.result) {
             $(document).trigger('userChange', {userId});

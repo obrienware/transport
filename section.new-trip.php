@@ -366,10 +366,10 @@
       const resp = await post('/api/post.save-guest.php', formData);
       if (resp?.result) {
         $(document).trigger('guestChange');
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $('#trip-guest')
             .val(formData.firstName + ' ' + formData.lastName)
-            .data('id', resp?.result?.result)
+            .data('id', resp?.result)
             .data('value', formData.firstName + ' ' + formData.lastName)
         }
         console.log(resp);
@@ -575,11 +575,11 @@
       const data = await getData();
       if (data) {
         const resp = await post('/api/post.save-trip.php', data);
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('tripChange');
           toastr.success('Trip added.', 'Success');
           app.closeOpenTab();
-          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result?.result}`);
+          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
           return;
         }
         toastr.error(resp.result.errors[2], 'Error');
@@ -591,8 +591,8 @@
       const data = await getData();
       if (data) {
         const resp = await post('/api/post.save-trip.php', data);
-        if (resp?.result?.result) {
-          const id = resp?.result?.result;
+        if (resp?.result) {
+          const id = resp?.result;
           const newResp = await post('/api/post.confirm-trip.php', {id});
           if (newResp?.result) {
             $(document).trigger('tripChange');

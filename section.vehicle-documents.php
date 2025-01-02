@@ -2,32 +2,32 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 $db = new data();
-$sql = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
-$data = ['vehicle_id' => $_REQUEST['vehicleId']];
+$query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
+$params = ['vehicle_id' => $_REQUEST['vehicleId']];
 ?>
 <section id="section-vehicle-documents-list">
 
   <div class="container-fluid">
-    <?php if ($rs = $db->get_results($sql, $data)): ?>
+    <?php if ($rows = $db->get_rows($query, $params)): ?>
 
       <table class="table table-bordered table-striped">
-        <?php foreach ($rs as $item): ?>
+        <?php foreach ($rows as $row): ?>
           <tr>
             <td>
               <div class="d-flex justify-content-between">
                 <div>
-                  <?php if ($item->file_type == 'application/pdf'): ?>
+                  <?php if ($row->file_type == 'application/pdf'): ?>
                     <i class="fa-solid fa-file-pdf me-2 fa-xl"></i>
-                  <?php elseif ($item->file_type == 'image/png'): ?>
+                  <?php elseif ($row->file_type == 'image/png'): ?>
                     <i class="fa-solid fa-file-png me-2 fa-xl"></i>
-                  <?php elseif ($item->file_type == 'image/jpg' || $item->file_type == 'image/jpeg'): ?>
+                  <?php elseif ($row->file_type == 'image/jpg' || $row->file_type == 'image/jpeg'): ?>
                     <i class="fa-solid fa-file-jpg me-2 fa-xl"></i>
                   <?php else: ?>
                     <i class="fa-solid fa-file me-2 fa-xl"></i>
                   <?php endif; ?>
-                  <a class="text-reset text-decoration-none text-capitalize" href="/documents/<?=$item->filename?>" target="_blank"><?=$item->name?></a>
+                  <a class="text-reset text-decoration-none text-capitalize" href="/documents/<?=$row->filename?>" target="_blank"><?=$row->name?></a>
                 </div>
-                <div><?=Date('m/d/Y', strtotime($item->uploaded))?></div>
+                <div><?=Date('m/d/Y', strtotime($row->uploaded))?></div>
               </div>
             </td>
           </tr>
@@ -66,7 +66,7 @@ $(async ƒ => {
 
   const vehicleId = '<?=$_REQUEST['vehicleId']?>';
   let documentName = '';
-  <?php $count = count($rs); ?>
+  <?php $count = count($rows); ?>
   <?php if ($count > 0): ?>
     $('#document-count').html('<?=$count?>').removeClass('d-none');
   <?php endif; ?>

@@ -2,26 +2,26 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   SELECT * FROM audit_trail
   WHERE
     datetimestamp BETWEEN :from_date AND :to_date
 ";
-$data = [
+$params = [
   'from_date' => $_REQUEST['from_date'],
   'to_date' => $_REQUEST['to_date'].' 23:59:59'
 ];
 if ($_REQUEST['table']) {
-  $sql .= " AND affected_tables = :table ";
-  $data['table'] = $_REQUEST['table'];
+  $query .= " AND affected_tables = :table ";
+  $params['table'] = $_REQUEST['table'];
 }
 if ($_REQUEST['user']) {
-  $sql .= " AND user = :user";
-  $data['user'] = $_REQUEST['user'];
+  $query .= " AND user = :user";
+  $params['user'] = $_REQUEST['user'];
 }
-$sql .= " ORDER BY datetimestamp DESC";
+$query .= " ORDER BY datetimestamp DESC";
 ?>
-<?php if ($rs = $db->get_results($sql, $data)): ?>
+<?php if ($rows = $db->get_rows($query, $params)): ?>
 
   <table class="table table-striped table-sm">
     <thead>
@@ -34,13 +34,13 @@ $sql .= " ORDER BY datetimestamp DESC";
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($rs as $item): ?>
-        <tr class="detail" data-id="<?=$item->id?>">
-          <td class="fit"><?=date('d/m H:i', strtotime($item->datetimestamp))?></td>
-          <td class="fit"><?=$item->user?></td>
-          <td class="fit"><?=$item->action?></td>
-          <td class="fit"><?=$item->affected_tables?></td>
-          <td><?=$item->description?></td>
+      <?php foreach ($rows as $row): ?>
+        <tr class="detail" data-id="<?=$row->id?>">
+          <td class="fit"><?=date('d/m H:i', strtotime($row->datetimestamp))?></td>
+          <td class="fit"><?=$row->user?></td>
+          <td class="fit"><?=$row->action?></td>
+          <td class="fit"><?=$row->affected_tables?></td>
+          <td><?=$row->description?></td>
         </tr>
       <?php endforeach; ?>
     </tbody>

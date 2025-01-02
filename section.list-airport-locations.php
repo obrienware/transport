@@ -16,13 +16,13 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = AirportLocation::getAll()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->airport?></td>
-            <td><?=$item->airline?></td>
-            <td><?=$item->type?></td>
-            <td><?=$item->location?></td>
+      <?php if ($rows = AirportLocation::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->airport?></td>
+            <td><?=$row->airline?></td>
+            <td><?=$row->type?></td>
+            <td><?=$row->location?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

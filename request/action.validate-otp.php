@@ -5,7 +5,7 @@ if (User::validateOTP($_REQUEST['email'], $_REQUEST['otp'])) {
   $user = new User();
   $user->getUserByEmail($_REQUEST['email']);
   $_SESSION['user'] = (object)[
-    'id' => $user->userId,
+    'id' => $user->getId(),
     'authenticated' => true,
   ];
   die(json_encode([

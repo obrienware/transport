@@ -15,12 +15,12 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Blockout::getBlockoutsForUser($_SESSION['user']->id)): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td class="datetime short fit" data-order="<?=$item->from_datetime?>"><?=$item->from_datetime?></td>
-            <td class="datetime short fit" data-order="<?=$item->to_datetime?>"><?=$item->to_datetime?></td>
-            <td><?=$item->note?></td>
+      <?php if ($rows = Blockout::getBlockoutsForUser($_SESSION['user']->id)): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td class="datetime short fit" data-order="<?=$row->from_datetime?>"><?=$row->from_datetime?></td>
+            <td class="datetime short fit" data-order="<?=$row->to_datetime?>"><?=$row->to_datetime?></td>
+            <td><?=$row->note?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

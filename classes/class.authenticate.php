@@ -1,15 +1,14 @@
 <?php
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
 class Authenticate
 {
   public static function logIn ($username, $password)
   {
-    global $db;
-    $sql = 'SELECT * FROM users WHERE (username = :username OR email_address = :username) AND password = :password';
-    $data = ['username' => $username, 'password' => md5($password)];
-    if ($id = $db->get_var($sql, $data)) {
+    $db = new data();
+    $query = 'SELECT * FROM users WHERE (username = :username OR email_address = :username) AND password = :password';
+    $params = ['username' => $username, 'password' => md5($password)];
+    if ($id = $db->get_var($query, $params)) {
       // Update last login
       $db->query(
         "UPDATE users SET last_logged_in = NOW() WHERE id = :user_id",

@@ -39,9 +39,9 @@ class Weather
   private function _getCodeData($weatherCode)
   {
     global $db;
-    $sql = "SELECT * FROM weather_codes WHERE code = :code";
-    $data = ['code' => $weatherCode];
-    return $db->get_row($sql, $data);
+    $query = "SELECT * FROM weather_codes WHERE code = :code";
+    $params = ['code' => $weatherCode];
+    return $db->get_row($query, $params);
   }
 
   public function getWeather() {

@@ -24,7 +24,7 @@ if (!$event->confirmed) {
     'description' => $event->notes,
     'summary' => $event->name,
     // 'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-    // 'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->tripId
+    // 'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->getId()
   ]);
   if ($event->location) $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));
   

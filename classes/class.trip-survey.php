@@ -23,16 +23,16 @@ class TripSurvey
   public function getSurvey(int $surveyId): bool
   {
     global $db;
-    $sql = "SELECT * FROM trip_surveys WHERE id = :id";
-    $data = ['id' => $surveyId];
-    if ($item = $db->get_row($sql, $data)) {
-      $this->surveyId = $item->id;
-      $this->tripId = $item->trip_id;
-      $this->ratingRoad = $item->rating_road;
-      $this->ratingTrip = $item->rating_trip;
-      $this->ratingWeather = $item->rating_weather;
-      $this->guestIssues = $item->guest_issues;
-      $this->comments = $item->comments;
+    $query = "SELECT * FROM trip_surveys WHERE id = :id";
+    $params = ['id' => $surveyId];
+    if ($row = $db->get_row($query, $params)) {
+      $this->surveyId = $row->id;
+      $this->tripId = $row->trip_id;
+      $this->ratingRoad = $row->rating_road;
+      $this->ratingTrip = $row->rating_trip;
+      $this->ratingWeather = $row->rating_weather;
+      $this->guestIssues = $row->guest_issues;
+      $this->comments = $row->comments;
       return true;
     }
     return false;
@@ -41,7 +41,7 @@ class TripSurvey
   public function save()
   {
     global $db;
-    $data = [
+    $params = [
       'trip_id' => $this->tripId,
       'rating_trip' => $this->ratingTrip,
       'rating_weather' => $this->ratingWeather,
@@ -50,9 +50,9 @@ class TripSurvey
       'comments' => $this->comments
     ];
     if ($this->surveyId) {
-      $data['id'] = $this->surveyId;
-      $data['datetimestamp'] = $this->dateTimeStamp;
-      $sql = "
+      $params['id'] = $this->surveyId;
+      $params['datetimestamp'] = $this->dateTimeStamp;
+      $query = "
         UPDATE tripsurveys SET
           trip_id = :trip_id,
           datetimestamp = :datetimestamp,
@@ -64,7 +64,7 @@ class TripSurvey
         WHERE id = :id
       ";
     } else {
-      $sql = "
+      $query = "
         INSERT INTO trip_surveys SET
           trip_id = :trip_id,
           datetimestamp = NOW(),
@@ -75,7 +75,7 @@ class TripSurvey
           comments = :comments
       ";
     }
-		$result = $db->query($sql, $data);
+		$result = $db->query($query, $params);
 		return [
 			'result' => $result,
 			'errors' => $db->errorInfo
@@ -85,9 +85,9 @@ class TripSurvey
 	static public function delete($surveyId)
 	{
 		global $db;
-		$sql = 'DELETE trip_surveys WHERE id = :id';
-		$data = ['id' => $surveyId];
-		return $db->query($sql, $data);
+		$query = 'DELETE trip_surveys WHERE id = :id';
+		$params = ['id' => $surveyId];
+		return $db->query($query, $params);
 	}
 
 }

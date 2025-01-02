@@ -2,7 +2,7 @@
 require_once 'class.airport.php';
 $airport = new Airport($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$airport->getAirportId()): ?>
+<?php if (isset($_REQUEST['id']) && !$airport->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -14,7 +14,7 @@ $airport = new Airport($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($airport->getAirportId()): ?>
+    <?php if ($airport->getId()): ?>
       <h2>Edit Airport</h2>
     <?php else: ?>
       <h2>Add Airport</h2>
@@ -82,7 +82,7 @@ $airport = new Airport($_REQUEST['id']);
 
       <div class="row my-4">
         <div class="col d-flex justify-content-between">
-          <?php if ($airport->getAirportId()): ?>
+          <?php if ($airport->getId()): ?>
             <button class="btn btn-outline-danger px-4" id="btn-delete-airport">Delete</button>
           <?php endif; ?>
           <button class="btn btn-primary px-4" id="btn-save-airport">Save</button>
@@ -96,7 +96,7 @@ $airport = new Airport($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const airportId = <?=$airport->getAirportId() ?: 'null'?>;
+      const airportId = <?=$airport->getId() ?: 'null'?>;
 
       function getData()
       {
@@ -132,7 +132,7 @@ $airport = new Airport($_REQUEST['id']);
         const data = getData();
         console.log(data);
         const resp = await post('/api/post.save-airport.php', data);
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('airportChange', {airportId});
           app.closeOpenTab();
           if (airportId) return toastr.success('Airport saved.', 'Success');

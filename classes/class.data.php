@@ -53,11 +53,16 @@ class data
 		$this->dbh->commit();
 	}
 
-	public function get_results($sql = null, $params = null, $fetch_mode = PDO::FETCH_OBJ)
+	public function get_rows($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ)
+	{
+		return $this->get_results($query, $params, $fetch_mode);
+	}
+
+	public function get_results($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ)
 	{
 		$this->errorInfo = null;
-		if (isset($sql)) {
-			$this->sth = $this->dbh->prepare($sql);
+		if (isset($query)) {
+			$this->sth = $this->dbh->prepare($query);
 		}
 		$this->sth->setFetchMode($fetch_mode);
 		if (is_array($params)) {
@@ -66,23 +71,23 @@ class data
 			$this->sth->execute();
 		}
 		$this->errorInfo = $this->sth->errorInfo();
-		$rs = $this->sth->fetchAll();
-		return $rs;
+		$rows = $this->sth->fetchAll();
+		return $rows;
 	}
 
-	public function get_row($sql = null, $params = null)
+	public function get_row($query = null, $params = null)
 	{
-		if ($tmp = $this->get_results($sql, $params)) {
+		if ($tmp = $this->get_results($query, $params)) {
 			return $tmp[0];
 		}
 		return false;
 	}
 
-	public function get_var($sql, $params = null)
+	public function get_var($query, $params = null)
 	{
 		$this->errorInfo = null;
-		if (isset($sql)) {
-			$this->sth = $this->dbh->prepare($sql);
+		if (isset($query)) {
+			$this->sth = $this->dbh->prepare($query);
 		}
 		$this->sth->setFetchMode(PDO::FETCH_NUM);
 		if (is_array($params)) {
@@ -91,31 +96,31 @@ class data
 			$this->sth->execute();
 		}
 		$this->errorInfo = $this->sth->errorInfo();
-		$rs = $this->sth->fetchAll();
-		return $rs[0][0];
+		$rows = $this->sth->fetchAll();
+		return $rows[0][0];
 	}
 
-	public function prep($sql)
+	public function prep($query)
 	{
-		$this->sth = $this->dbh->prepare($sql);
+		$this->sth = $this->dbh->prepare($query);
 	}
 
-	public function query($sql = null, $params = null)
+	public function query($query = null, $params = null)
 	{
 		$this->errorInfo = null;
 		if (is_array($params)) {
-			if (isset($sql)) {
-				$this->sth = $this->dbh->prepare($sql);
+			if (isset($query)) {
+				$this->sth = $this->dbh->prepare($query);
 			}
 			$this->sth->execute($params);
 			$this->errorInfo = $this->sth->errorInfo();
-			if (preg_match('/insert /', strtolower($sql))) {
+			if (preg_match('/insert /', strtolower($query))) {
 				return $this->dbh->lastInsertId();
 			}
 			return true;
 		}
-		$affected = $this->dbh->exec($sql);
-		if (preg_match('/insert /', strtolower($sql))) {
+		$affected = $this->dbh->exec($query);
+		if (preg_match('/insert /', strtolower($query))) {
 			return $this->dbh->lastInsertId();
 		}
 		return $affected;

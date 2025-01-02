@@ -62,8 +62,8 @@
             <label for="blockout-user" class="form-label">Driver</label>
             <select id="blockout-user" class="form-control">
               <option>
-                <?php if ($rs = User::getDrivers()): ?>
-                  <?php foreach ($rs as $driver): ?>
+                <?php if ($rows = User::getDrivers()): ?>
+                  <?php foreach ($rows as $driver): ?>
                     <option value="<?=$driver->id?>"><?=$driver->first_name?> <?=$driver->last_name?></option>
                   <?php endforeach;?>
                 <?php endif; ?>
@@ -107,7 +107,7 @@
           toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null,
           note: cleanVal('#blockout-note')
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('blockoutChange');
           app.closeOpenTab();
           return toastr.success('Blockout dates added.', 'Success')

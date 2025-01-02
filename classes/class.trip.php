@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
 require_once 'class.audit.php';
 require_once 'class.data.php';
@@ -13,10 +13,12 @@ require_once 'class.airport.php';
 class Trip
 {
 	private $db;
+	private $id;
 	private $row;
+	private $lastError;
 	private $action = 'create';
+	private $archived;
 
-	public $tripId;
 	public $requestorId;
 	public $summary;
 	public $startDate;
@@ -53,131 +55,91 @@ class Trip
 	public $originalRequest;
 	public $cancelled;
 
-	public function __construct($tripId = null)
+
+	public function __construct(int $id = null)
 	{
 		$this->db = new data();
-		if (isset($tripId)) {
-			$this->getTrip($tripId);
-		}
+		if (isset($id)) $this->load($id);
 	}
 
-	public function getTrip($tripId)
+
+	public function load(int $id): bool
 	{
-		$sql = 'SELECT * FROM trips WHERE id = :id';
-		$data = ['id' => $tripId];
-		if ($item = $this->db->get_row($sql, $data)) {
+		$query = 'SELECT * FROM trips WHERE id = :id';
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
 			$this->action = 'update';
-			$this->row = $item;
 
-			$this->tripId = $item->id;
-			$this->requestorId = $item->requestor_id;
-			$this->summary = $item->summary;
-			$this->startDate = $item->start_date;
-			$this->pickupDate = $item->pickup_date;
-			$this->endDate = $item->end_date;
-			$this->guests = $item->guests;
-			$this->guestId = $item->guest_id;
-			$this->passengers = $item->passengers;
-			$this->puLocationId = $item->pu_location;
-			$this->doLocationId = $item->do_location;
-			$this->driverId = $item->driver_id;
-			$this->vehicleId = $item->vehicle_id;
-			$this->airlineId = $item->airline_id;
-			$this->flightNumber = $item->flight_number;
-			$this->vehiclePUOptions = $item->vehicle_pu_options;
-			$this->vehicleDOOptions = $item->vehicle_do_options;
-			$this->ETA = $item->eta;
-			$this->ETD = $item->etd;
-			$this->IATA = $item->iata;
-			$this->guestNotes = $item->guest_notes;
-			$this->driverNotes = $item->driver_notes;
-			$this->generalNotes = $item->general_notes;
-      $this->confirmed = $item->confirmed;
-			$this->started = $item->started;
-			$this->completed = $item->completed;
-			$this->cancelled = $item->cancellation_requested;
-			$this->originalRequest = $item->original_request;
+			$this->id = $row->id;
+			$this->requestorId = $row->requestor_id;
+			$this->summary = $row->summary;
+			$this->startDate = $row->start_date;
+			$this->pickupDate = $row->pickup_date;
+			$this->endDate = $row->end_date;
+			$this->guests = $row->guests;
+			$this->guestId = $row->guest_id;
+			$this->passengers = $row->passengers;
+			$this->puLocationId = $row->pu_location;
+			$this->doLocationId = $row->do_location;
+			$this->driverId = $row->driver_id;
+			$this->vehicleId = $row->vehicle_id;
+			$this->airlineId = $row->airline_id;
+			$this->flightNumber = $row->flight_number;
+			$this->vehiclePUOptions = $row->vehicle_pu_options;
+			$this->vehicleDOOptions = $row->vehicle_do_options;
+			$this->ETA = $row->eta;
+			$this->ETD = $row->etd;
+			$this->IATA = $row->iata;
+			$this->guestNotes = $row->guest_notes;
+			$this->driverNotes = $row->driver_notes;
+			$this->generalNotes = $row->general_notes;
+      $this->confirmed = $row->confirmed;
+			$this->started = $row->started;
+			$this->completed = $row->completed;
+			$this->cancelled = $row->cancellation_requested;
+			$this->originalRequest = $row->original_request;
 
-			if ($this->requestorId) {
-				$this->getRequestor($this->requestorId);
-			}
-			if ($this->guestId) {
-				$this->getGuest($this->guestId);
-			}
-			if ($this->puLocationId) {
-				$this->getPULocation($this->puLocationId);
-			}
-			if ($this->doLocationId) {
-				$this->getDOLocation($this->doLocationId);
-			}
-			if ($this->driverId) {
-				$this->getDriver($this->driverId);
-			}
-			if ($this->vehicleId) {
-				$this->getVehicle($this->vehicleId);
-			}
-			if ($this->airlineId) {
-				$this->getAirline($this->airlineId);
-			}
+			if ($this->requestorId) $this->requestor = new User($this->requestorId);
+			if ($this->guestId) $this->guest = new Guest($this->guestId);
+			if ($this->puLocationId) $this->puLocation = new Location($this->puLocationId);
+			if ($this->doLocationId) $this->doLocation = new Location($this->doLocationId);
+			if ($this->driverId) $this->driver = new User($this->driverId);
+			if ($this->vehicleId) $this->vehicle = new Vehicle($this->vehicleId);
+			if ($this->airlineId) $this->airline = new Airline($this->airlineId);
 			if ($this->ETA && $this->puLocationId) {
 				$location = new Location($this->puLocationId);
 				$this->airport = new Airport();
-				$this->airport->getAirportByIATA($location->IATA);
+				$this->airport->loadAirportByIATA($location->IATA);
 			}
 			if ($this->ETD && $this->doLocationId) {
 				$location = new Location($this->doLocationId);
 				$this->airport = new Airport();
-				$this->airport->getAirportByIATA($location->IATA);
+				$this->airport->loadAirportByIATA($location->IATA);
 			}
-			
+			$this->archived = $row->archived;
 			return true;
 		}
 		return false;
 	}
 
-	public function getDriver($driverId)
+
+	public function getId(): int | null
 	{
-		$this->driver = new User($driverId);
+		return $this->id;
 	}
 
-	public function getRequestor($requestorId)
-	{
-		$this->requestor = new User($requestorId);
-	}
 
-	public function getGuest($guestId)
+	public function save(string $user = null): bool
 	{
-		$this->guest = new Guest($guestId);
-	}
-
-	public function getPULocation($locationId)
-	{
-		$this->puLocation = new Location(($locationId));
-	}
-
-	public function getDOLocation($locationId)
-	{
-		$this->doLocation = new Location($locationId);
-	}
-
-	public function getVehicle($vehicleId)
-	{
-		$this->vehicle = new Vehicle($vehicleId);
-	}
-
-	public function getAirline($ailineId)
-	{
-		$this->airline = new Airline($ailineId);
-	}
-
-	public function save(): array
-	{
+		$this->lastError = null;
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = $this->action;
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
 
-		$data = [
+		$params = [
 			'requestor_id' => $this->requestorId,
 			'summary' => $this->summary,
 			'start_date' => $this->startDate,
@@ -198,12 +160,14 @@ class Trip
 			'etd' => $this->ETD,
 			'guest_notes' => $this->guestNotes,
 			'driver_notes' => $this->driverNotes,
-			'general_notes' => $this->generalNotes
+			'general_notes' => $this->generalNotes,
+			'user' => $user
 		];
+
 		if ($this->action === 'update') {
 			$audit->description = 'Trip updated: '.$this->summary;
-			$data['id'] = $this->tripId;
-			$sql = "
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE trips SET
 					requestor_id = :requestor_id,
 					summary = :summary,
@@ -225,12 +189,14 @@ class Trip
 					etd = :etd,
 					guest_notes = :guest_notes,
 					driver_notes = :driver_notes,
-					general_notes = :general_notes
+					general_notes = :general_notes,
+					modified = NOW(),
+					modified_by = :user
 				WHERE id = :id
 			";
 		} else {
 			$audit->description = 'Trip created: '.$this->summary;
-			$sql = "
+			$query = "
 				INSERT INTO trips SET
 					requestor_id = :requestor_id,
 					summary = :summary,
@@ -256,70 +222,130 @@ class Trip
 					created = NOW(),
 					created_by = :user
 			";
-			$data['user'] = $_SESSION['user']->username;
 		}
 		try {
-			$result = $this->db->query($sql, $data);
-			$id = ($this->action === 'create') ? $result : $this->tripId;
-			// We also want to add the original request if it exists here, but without creating a new audit entry
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
 			if ($this->originalRequest) $this->db->query('UPDATE trips SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
-			$this->getTrip($id);
+			$this->load($id);
 			$audit->after = json_encode($this->row);
 			$audit->commit();
-
-			return ['result' => $result];
+			return true;
 		} catch (Exception $e) {
-			return [
-				'result' => false,
-				'error' => $e->getMessage()
-			];
+			$this->lastError = $e->getMessage();
+			return false;
 		}
 	}
 
-	public function confirm()
-	{
-		$sql = 'UPDATE trips SET confirmed = NOW() WHERE id = :trip_id';
-		$data = ['trip_id' => $this->tripId];
-		$result = $this->db->query($sql, $data);
-		return $result;
-	}
 
-	public function delete()
+	public function delete(string $user = null): bool
 	{
+		$this->lastError = null;
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = 'delete';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
 
-		$sql = 'UPDATE trips SET archived = NOW(), archived_by = :user WHERE id = :trip_id';
-		$data = ['user' => $_SESSION['user']->username, 'trip_id' => $this->tripId];
-		$result = $this->db->query($sql, $data);
-		$audit->description = 'Trip deleted: '.$this->summary;
-		$audit->commit();
-		return $result;
+		$query = "
+			UPDATE trips 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
+		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Trip deleted: '.$this->summary;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
 	}
 
-	public function cancel()
+
+	public function isArchived(): bool
+	{
+		return isset($this->archived);
+	}
+
+
+	public function reset(): void
+	{
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
+
+		$this->requestorId = null;
+		$this->summary = null;
+		$this->startDate = null;
+		$this->pickupDate = null;
+		$this->endDate = null;
+		$this->guests = null;
+		$this->guestId = null;
+		$this->passengers = null;
+		$this->puLocationId = null;
+		$this->doLocationId = null;
+		$this->driverId = null;
+		$this->vehicleId = null;
+		$this->airlineId = null;
+		$this->flightNumber = null;
+		$this->vehiclePUOptions = null;
+		$this->vehicleDOOptions = null;
+		$this->ETA = null;
+		$this->ETD = null;
+		$this->IATA = null;
+		$this->airport = null;
+		$this->guestNotes = null;
+		$this->driverNotes = null;
+		$this->generalNotes = null;
+		$this->driver = null;
+		$this->requestor = null;
+		$this->guest = null;
+		$this->vehicle = null;
+		$this->airline = null;
+		$this->confirmed = null;
+		$this->started = null;
+		$this->completed = null;
+		$this->cancelled = null;
+		$this->originalRequest = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
+	}
+
+
+	public function cancel(): bool
 	{
 		$audit = new Audit();
 		$audit->action = 'update';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
 
-		$sql = 'UPDATE trips SET cancellation_requested = NOW() WHERE id = :trip_id';
-		$data = ['trip_id' => $this->tripId];
-		$result = $this->db->query($sql, $data);
+		$query = 'UPDATE trips SET cancellation_requested = NOW() WHERE id = :id';
+		$params = ['id' => $this->id];
+		$this->db->query($query, $params);
 
 		$audit->description = 'Trip cancellation requested: '.$this->summary;
-		$this->getTrip($this->tripId);
+		$this->load($this->id);
 		$audit->after = json_encode($this->row);
 		$audit->commit();
-		return $result;
+		return true;
 	}
 
-	public function isEditable()
+
+	public function isEditable(): bool
 	{
 		if (!$this->endDate) return true;
+		if (!$this->confirmed) return true;
 		return !(
 			$this->started 
 			OR $this->completed 
@@ -327,33 +353,30 @@ class Trip
 		);
 	}
 
-	public function isConfirmed()
+
+	public function isConfirmed(): bool
 	{
 		return $this->confirmed ? true : false;
 	}
 
-	public function getState(): string
-	{
-		return json_encode($this->row);
-	}
 
-	static public function nextTripByVehicle(int $vehicleId)
+	static public function nextTripByVehicle(int $vehicleId): int | null
 	{
 		$db = new data();
-		$sql = "
+		$query = "
 			SELECT id FROM trips 
 				WHERE  NOW() < start_date AND vehicle_id = :vehicle_id
 				ORDER BY start_date
 			LIMIT 1
 		";
-		$data = ['vehicle_id' => $vehicleId];
-		return $db->get_var($sql, $data);	
+		$params = ['vehicle_id' => $vehicleId];
+		return $db->get_var($query, $params);	
 	}
 
-	static public function upcomingTrips($limit = 5)
+	static public function upcomingTrips($limit = 5): array
 	{
 		$db = new data();
-		$sql = "
+		$query = "
 			SELECT 
 				t.*,
 				CONCAT(g.first_name,' ',g.last_name) AS guest,
@@ -376,8 +399,43 @@ class Trip
 			ORDER BY t.start_date
 			LIMIT {$limit}
 		";
-		$data = ['id' => $_SESSION['user']->id];
-		return $db->get_results($sql, $data);	
+		$params = ['id' => $_SESSION['user']->id];
+		return $db->get_rows($query, $params);	
 	}
 
+
+	public function confirm(): bool
+	{
+		$audit = new Audit();
+		$audit->action = 'update';
+		$audit->table = 'trips';
+		$audit->before = json_encode($this->row);
+	
+		$query = 'UPDATE trips SET confirmed = NOW() WHERE id = :id';
+		$params = ['id' => $this->id];
+		$this->db->query($query, $params);
+
+		$audit->description = 'Trip confirmed: '.$this->summary;
+		$this->load($this->id);
+		$audit->after = json_encode($this->row);
+		$audit->commit();
+		return true;
+	}
+
+
+	public function __clone()
+	{
+			// If you need to perform any deep copying or reset certain properties, do it here
+			$this->id = null; // Reset the ID for the cloned instance
+			$this->action = 'create'; // Reset the action to 'create'
+			$this->summary = $this->summary.' (copy)';
+			$this->confirmed = null;
+			$this->archived = null;
+	}
+
+
+	public function clone(): Trip
+	{
+			return clone $this;
+	}	
 }

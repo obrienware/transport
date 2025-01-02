@@ -111,7 +111,7 @@ $blockoutId = $blockout->blockoutId;
           toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null,
           note: cleanVal('#blockout-note')
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('blockoutChange', {blockoutId});
           app.closeOpenTab();
           if (blockoutId) return toastr.success('Blockout dates saved.', 'Success');

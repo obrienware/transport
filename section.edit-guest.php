@@ -1,8 +1,8 @@
 <?php
 require_once 'class.guest.php';
-$item = new Guest($_REQUEST['id']);
+$guest = new Guest($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$item->guestId): ?>
+<?php if (isset($_REQUEST['id']) && !$guest->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -14,7 +14,7 @@ $item = new Guest($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($item->guestId): ?>
+    <?php if ($guest->getId()): ?>
       <h2>Edit Contact</h2>
     <?php else: ?>
       <h2>Add Contact</h2>
@@ -24,19 +24,19 @@ $item = new Guest($_REQUEST['id']);
         <div class="col-md-6">
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="guest-first-name" placeholder="First Name" value="<?=$item->firstName?>">
+            <input type="text" class="form-control" id="guest-first-name" placeholder="First Name" value="<?=$guest->firstName?>">
             <label for="guest-first-name">First Name</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="guest-last-name" placeholder="Last Name" value="<?=$item->lastName?>">
+            <input type="text" class="form-control" id="guest-last-name" placeholder="Last Name" value="<?=$guest->lastName?>">
             <label for="guest-last-name">Last Name</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="guest-phone-number" placeholder="Phone Number" value="<?=$item->phoneNumber?>">
+            <input type="text" class="form-control" id="guest-phone-number" placeholder="Phone Number" value="<?=$guest->phoneNumber?>">
             <label for="guest-phone-number">Phone Number</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="guest-email-address" placeholder="Email Address" value="<?=$item->emailAddress?>">
+            <input type="email" class="form-control" id="guest-email-address" placeholder="Email Address" value="<?=$guest->emailAddress?>">
             <label for="guest-email-address">Email Address</label>
           </div>
 
@@ -45,7 +45,7 @@ $item = new Guest($_REQUEST['id']);
 
       <div class="row my-4">
         <div class="col d-flex justify-content-between">
-          <?php if ($item->guestId): ?>
+          <?php if ($guest->getId()): ?>
             <button class="btn btn-outline-danger px-4" id="btn-delete-guest">Delete</button>
           <?php endif; ?>
           <button class="btn btn-primary px-4" id="btn-save-guest">Save</button>
@@ -59,7 +59,7 @@ $item = new Guest($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const guestId = <?=$item->guestId ?: 'null'?>;
+      const guestId = <?=$guest->getId() ?: 'null'?>;
       $('#btn-save-guest').off('click').on('click', async ƒ => {
         const resp = await post('/api/post.save-guest.php', {
           id: guestId,
@@ -68,7 +68,7 @@ $item = new Guest($_REQUEST['id']);
           emailAddress: cleanVal('#guest-email-address'),
           phoneNumber: cleanVal('#guest-phone-number'),
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           // setTimeout(ƒ => {location.href = 'page.guests.list.php'}, 3000);
           $(document).trigger('guestChange', {guestId});
           app.closeOpenTab();
@@ -82,7 +82,7 @@ $item = new Guest($_REQUEST['id']);
       $('#btn-delete-guest').on('click', async ƒ => {
         if (await ask('Are you sure you want to delete this guest?')) {
           const resp = await get('/api/get.delete-guest.php', {
-            id: '<?=$item->guestId?>'
+            id: '<?=$guest->getId()?>'
           });
           if (resp?.result) {
             $(document).trigger('guestChange', {guestId});

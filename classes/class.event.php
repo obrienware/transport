@@ -9,9 +9,11 @@ require_once 'class.user.php';
 class Event
 {
 	private $db;
+	private $id;
 	private $row;
+	private $lastError;
 	private $action = 'create';
-  private $eventId;
+	private $archived;
 
   public $name;
   public $requestorId;
@@ -27,53 +29,60 @@ class Event
   public $cancelled;
   public $originalRequest;
 
-  public function __construct($eventId = null)
+  
+  public function __construct($id = null)
   {
 		$this->db = new data();
-    if ($eventId) $this->getEvent($eventId);
+    if ($id) $this->load($id);
   }
 
-  public function getEvent(int $eventId)
+
+  public function load(int $id): bool
   {
-	 $sql = "SELECT * FROM events WHERE id = :event_id";
-		$data = ['event_id' => $eventId];
-		if ($item = $this->db->get_row($sql, $data)) {
-      $this->row = $item;
+	 $query = "SELECT * FROM events WHERE id = :id";
+		$params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
 			$this->action = 'update';
 
-			$this->eventId = $item->id;
-      $this->name = $item->name;
-      $this->requestorId = $item->requestor_id;
-      $this->locationId = $item->location_id;
-      $this->startDate = $item->start_date;
-      $this->endDate = $item->end_date;
-      $this->drivers = explode(',', $item->driver_ids);
-      $this->vehicles = explode(',', $item->vehicle_ids);
-      $this->notes = $item->notes;
-      $this->confirmed = $item->confirmed;
-      $this->originalRequest = $item->original_request;
-      $this->cancelled = $item->cancellation_requested;
+			$this->id = $row->id;
+      $this->name = $row->name;
+      $this->requestorId = $row->requestor_id;
+      $this->locationId = $row->location_id;
+      $this->startDate = $row->start_date;
+      $this->endDate = $row->end_date;
+      $this->drivers = explode(',', $row->driver_ids);
+      $this->vehicles = explode(',', $row->vehicle_ids);
+      $this->notes = $row->notes;
+      $this->confirmed = $row->confirmed;
+      $this->originalRequest = $row->original_request;
+      $this->cancelled = $row->cancellation_requested;
 
       if ($this->requestorId) $this->requestor = new User($this->requestorId);
       if ($this->locationId) $this->location = new Location($this->locationId);
+      $this->archived = $row->archived;
 			return true;
 		}
 		return false;
   }
 
-  public function getId()
-  {
-    return $this->eventId;
-  }
 
-  public function save()
-  {
+	public function getId(): int | null
+	{
+		return $this->id;
+	}
+
+
+	public function save(string $user = null): bool
+	{
+		$this->lastError = null;
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = $this->action;
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
 
-    $data = [
+    $params = [
       'name' => $this->name,
       'requestor_id' => $this->requestorId,
       'location_id' => $this->locationId,
@@ -81,12 +90,14 @@ class Event
       'end_date' => $this->endDate,
       'driver_ids' => implode(',', $this->drivers),
       'vehicle_ids' => implode(',', $this->vehicles),
-      'notes' => $this->notes
+      'notes' => $this->notes,
+      'user' => $user
     ];
+
     if ($this->action === 'update') {
 			$audit->description = 'Event updated: '.$this->name;
-      $data['id'] = $this->eventId;
-      $sql = "
+      $params['id'] = $this->id;
+      $query = "
         UPDATE events SET
           name = :name,
           requestor_id = :requestor_id,
@@ -95,12 +106,14 @@ class Event
           end_date = :end_date,
           driver_ids = :driver_ids,
           vehicle_ids = :vehicle_ids,
-          notes = :notes
+          notes = :notes,
+          modified = NOW(),
+          modified_by = :user
         WHERE id = :id
       ";
     } else {
 			$audit->description = 'Event created: '.$this->name;
-      $sql = "
+      $query = "
         INSERT INTO events SET
           name = :name,
           requestor_id = :requestor_id,
@@ -113,48 +126,89 @@ class Event
           created = NOW(),
           created_by = :user
       ";
-      $data['user'] = $_SESSION['user']->username;
     }
 		try {
-			$result = $this->db->query($sql, $data);
-			$id = ($this->action === 'create') ? $result : $this->eventId;
-			// We also want to add the original request if it exists here, but without creating a new audit entry
-			if ($this->originalRequest) $this->db->query('UPDATE events SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
-			$this->getEvent($id);
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+      if ($this->originalRequest) $this->db->query('UPDATE events SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
+			$this->load($id);
 			$audit->after = json_encode($this->row);
 			$audit->commit();
-
-			return ['result' => $result];
+			return true;
 		} catch (Exception $e) {
-			return [
-				'result' => false,
-				'error' => $e->getMessage()
-			];
+			$this->lastError = $e->getMessage();
+			return false;
 		}
   }
 
-	public function confirm()
-	{
-		$sql = 'UPDATE events SET confirmed = NOW() WHERE id = :event_id';
-		$data = ['event_id' => $this->eventId];
-		$result = $this->db->query($sql, $data);
-		return $result;
-	}
 
-	public function delete()
+	public function delete(string $user = null): bool
 	{
+		$this->lastError = null;
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = 'delete';
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
 
-		$sql = 'UPDATE events SET archived = NOW(), archived_by = :user WHERE id = :event_id';
-		$data = ['user' => $_SESSION['user']->username, 'trip_id' => $this->eventId];
-		$result = $this->db->query($sql, $data);
-		$audit->description = 'Event deleted: '.$this->name;
-		$audit->commit();
+		$query = "
+			UPDATE events 
+			SET 
+				archived = NOW(), archived_by = :user 
+			WHERE id = :id
+		";
+		$params = [
+			'user' => $user, 
+			'id' => $this->id
+		];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Event deleted: '.$this->name;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
+	}
+
+
+  public function reset()
+  {
+    $this->id = null;
+    $this->row = null;
+    $this->lastError = null;
+    $this->action = 'create';
+    $this->archived = null;
+
+    $this->name = null;
+    $this->requestorId = null;
+    $this->requestor = null;
+    $this->locationId = null;
+    $this->location = null;
+    $this->startDate = null;
+    $this->endDate = null;
+    $this->drivers = [];
+    $this->vehicles = [];
+    $this->notes = null;
+    $this->confirmed = null;
+    $this->cancelled = null;
+    $this->originalRequest = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
+  }
+
+
+	public function confirm()
+	{
+		$query = 'UPDATE events SET confirmed = NOW() WHERE id = :event_id';
+		$params = ['event_id' => $this->id];
+		$result = $this->db->query($query, $params);
 		return $result;
 	}
+  
 
 	public function cancel()
 	{
@@ -163,49 +217,54 @@ class Event
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
 
-		$sql = 'UPDATE events SET cancellation_requested = NOW() WHERE id = :event_id';
-		$data = ['event_id' => $this->eventId];
-		$result = $this->db->query($sql, $data);
+		$query = 'UPDATE events SET cancellation_requested = NOW() WHERE id = :event_id';
+		$params = ['event_id' => $this->id];
+		$result = $this->db->query($query, $params);
 
 		$audit->description = 'Event cancellation requested: '.$this->name;
-		$this->getEvent($this->eventId);
+		$this->load($this->id);
 		$audit->after = json_encode($this->row);
 		$audit->commit();
 		return $result;
 	}
 
-	public function isEditable()
+
+	public function isArchived(): bool
+	{
+		return isset($this->archived);
+	}
+
+
+	public function isEditable(): bool
 	{
 		if (!$this->endDate) return true;
 		return !(strtotime($this->endDate) <= strtotime('now'));
 	}
 
-	public function isConfirmed()
+
+	public function isConfirmed(): bool
 	{
 		return $this->confirmed ? true : false;
 	}
 
-  public function isCancelled()
+
+  public function isCancelled(): bool
   {
     return $this->cancelled ? true : false;
   }
 
-	public function getState(): string
-	{
-		return json_encode($this->row);
-	}
 
   static public function nextEventByVehicle(int $vehicleId)
   {
     $db = new data();
-    $sql = "
+    $query = "
       SELECT id FROM events 
       WHERE  NOW() < start_date AND FIND_IN_SET(:vehicle_id, vehicle_ids)
       ORDER BY start_date
       LIMIT 1
     ";
-    $data = ['vehicle_id' => $vehicleId];
-    return $db->get_var($sql, $data);
+    $params = ['vehicle_id' => $vehicleId];
+    return $db->get_var($query, $params);
   }
 
 }

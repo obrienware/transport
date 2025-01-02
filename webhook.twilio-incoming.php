@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once 'class.sms.php';
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
   INSERT INTO webhook_twilio SET
     ToCountry = :ToCountry,
     ToState = :ToState,
@@ -27,7 +27,7 @@ $sql = "
     AccountSid = :AccountSid,
     ApiVersion = :ApiVersion
 ";
-$data = [
+$params = [
   'ToCountry' => $_POST['ToCountry'],
   'ToState' => $_POST['ToState'],
   'SmsMessageSid' => $_POST['SmsMessageSid'],
@@ -52,7 +52,7 @@ $data = [
   'ApiVersion' => $_POST['ApiVersion'],
 
 ];
-$id = $db->query($sql, $data);
+$id = $db->query($query, $params);
 
 // If someone responds with "STOP" to stop sending them messages.
 $pos = stripos($_POST['Body'], 'stop');

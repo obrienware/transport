@@ -16,12 +16,12 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Guest::getGuests()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->first_name.' '.$item->last_name?></td>
-            <td><?=$item->phone_number?></td>
-            <td><?=$item->email_address?></td>
+      <?php if ($rows = Guest::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->first_name.' '.$row->last_name?></td>
+            <td><?=$row->phone_number?></td>
+            <td><?=$row->email_address?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

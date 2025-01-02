@@ -1,9 +1,9 @@
 <?php
 require_once 'class.trip.php';
-$trip = new Trip(tripId: $_REQUEST['id']);
-if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
+$trip = new Trip(id: $_REQUEST['id']);
+if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
 ?>
-<?php if (isset($_REQUEST['id']) && !$trip->tripId): ?>
+<?php if (isset($_REQUEST['id']) && !$trip->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -19,7 +19,7 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
 
     <div class="d-flex justify-content-between">
       <?php if ($trip->isEditable()): ?>
-        <?php if ($trip->tripId): ?>
+        <?php if ($trip->getId()): ?>
 
           <h2>Edit Trip</h2>
 
@@ -32,7 +32,7 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
     </div>
 
     <div class="mb-5">
-      <input type="hidden" id="tripId" name="tripId" value="<?=$trip->tripId?>" />
+      <input type="hidden" id="tripId" name="tripId" value="<?=$trip->getId()?>" />
 
       <div class="row">
         <div class="col">
@@ -164,7 +164,6 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
             <input type="number" class="form-control" id="trip-passengers" placeholder="# Passengers" value="<?=$trip->passengers?>">
           </div>
         </div>
-
         
       </div>
 
@@ -390,7 +389,7 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
       
       <div class="row">
         <div class="col d-flex justify-content-between">
-          <?php if ($trip->tripId): ?>
+          <?php if ($trip->getId()): ?>
             <button id="btn-delete-trip" class="btn btn-outline-danger">Delete</button>
           <?php endif; ?>
 
@@ -408,7 +407,7 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
     $(async ƒ => {
 
       let formDirty = false;
-      const tripId = <?=$trip->tripId ?: 'null'?>;
+      const tripId = <?=$trip->getId() ?: 'null'?>;
       let drivers;
       let vehicles;
       let startDate;
@@ -632,14 +631,14 @@ if ($trip->tripId && !$trip->confirmed && $trip->originalRequest) $orginalReques
         const data = await getData();
         if (data) {
           const resp = await post('/api/post.save-trip.php', data);
-          if (resp?.result?.result) {
+          if (resp?.result) {
             $(document).trigger('tripChange', {tripId});
             app.closeOpenTab();
             if (tripId) {
               app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${tripId}`);
               return toastr.success('Trip saved.', 'Success');
             }
-            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result?.result}`);
+            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
             return toastr.success('Trip added.', 'Success');
           }
           toastr.error(resp.result.errors[2], 'Error');

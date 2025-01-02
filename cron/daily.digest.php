@@ -43,12 +43,12 @@ foreach ($drivers as $driver) {
 
     if ($trips) {
       $content .= "You are assigned to the following trips scheduled in the next 24hrs:\n\n";
-      foreach ($trips as $item) {
-        $trip = new Trip(($item->id));
+      foreach ($trips as $row) {
+        $trip = new Trip(($row->id));
         $content .= Date('g:ia', strtotime($trip->startDate)).': '.$trip->summary."\n";
         // Generate the driver sheet for this trip and attach it
         include '../inc.trip-driver-sheet.php';
-        $filename = sys_get_temp_dir().'/'.$trip->tripId.'-trip-driver-sheet.pdf';
+        $filename = sys_get_temp_dir().'/'.$trip->getId().'-trip-driver-sheet.pdf';
         $pdf->output('F', $filename);
         $email->addAttachment($filename);
       }
@@ -57,8 +57,8 @@ foreach ($drivers as $driver) {
 
     if ($events) {
       $content .= "You are assigned to the following events scheduled in the next 24hrs:\n\n";
-      foreach ($events as $item) {
-        $event = new Event($item->id);
+      foreach ($events as $row) {
+        $event = new Event($row->id);
         $content .= Date('m/d g:ia', strtotime($event->startDate)).' - '.Date('m/d g:ia', strtotime($event->endDate)).': '.$event->name."\n";
       }  
       $content .= "\n";
@@ -86,15 +86,15 @@ Transportation Team
 function getTripsFor($driverId)
 {
   global $db;
-  $sql = "SELECT * FROM trips WHERE start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR) AND driver_id = :driver_id";
-  $data = ['driver_id' => $driverId];
-  return $db->get_results($sql, $data);
+  $query = "SELECT * FROM trips WHERE start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 24 HOUR) AND driver_id = :driver_id";
+  $params = ['driver_id' => $driverId];
+  return $db->get_rows($query, $params);
 }
 
 function getEventsFor($driverId)
 {
   global $db;
-  $sql = "
+  $query = "
     SELECT * FROM events
     WHERE
     (
@@ -104,6 +104,6 @@ function getEventsFor($driverId)
     )
     AND FIND_IN_SET(:driver_id, driver_ids)
   ";
-  $data = ['driver_id' => $driverId];
-  return $db->get_results($sql, $data);
+  $params = ['driver_id' => $driverId];
+  return $db->get_rows($query, $params);
 }

@@ -9,8 +9,6 @@ require_once 'class.trip.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $trip = new Trip($json->id);
-$previousSummary =$trip->summary;
-
 $trip->requestorId = $json->requestorId ?: NULL;
 $trip->summary = $json->summary ?: NULL;
 $trip->startDate = $json->startDate ?: NULL;
@@ -42,8 +40,11 @@ if ($trip->ETD) {
   $trip->IATA = $location->IATA;
 }
 
-$result = $trip->save();
-die(json_encode(['result' => $result]));
+if ($trip->save()) {
+  $result = $trip->getId();
+  die(json_encode(['result' => $result]));
+}
+die(json_encode(['result' => false]));
 
 // We may come back to using way points in the future
 
@@ -59,7 +60,7 @@ if ($trip->flightNumber) {
   Flight::updateFlight($flightNumber);
 }
 
-$tripId = $trip->tripId;
+$tripId = $trip->getId();
 
 // Let's generate some waypoints!
 require_once 'class.vehicle.php';

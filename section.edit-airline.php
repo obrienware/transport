@@ -2,7 +2,7 @@
 require_once 'class.airline.php';
 $airline = new Airline($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$airline->getAirlineId()): ?>
+<?php if (isset($_REQUEST['id']) && !$airline->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -14,7 +14,7 @@ $airline = new Airline($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($airline->getAirlineId()): ?>
+    <?php if ($airline->getId()): ?>
       <h2>Edit Airline</h2>
     <?php else: ?>
       <h2>Add Airline</h2>
@@ -45,7 +45,7 @@ $airline = new Airline($_REQUEST['id']);
 
       <div class="row my-4">
         <div class="col d-flex justify-content-between">
-          <?php if ($airline->getAirlineId()): ?>
+          <?php if ($airline->getId()): ?>
             <button class="btn btn-outline-danger px-4" id="btn-delete-airline">Delete</button>
           <?php endif; ?>
           <button class="btn btn-primary px-4" id="btn-save-airline">Save</button>
@@ -59,7 +59,7 @@ $airline = new Airline($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const airlineId = <?=$airline->getAirlineId() ?: 'null'?>;
+      const airlineId = <?=$airline->getId() ?: 'null'?>;
       let airlineImage = '<?=$airline->imageFilename?>';
 
       function reloadSection () {

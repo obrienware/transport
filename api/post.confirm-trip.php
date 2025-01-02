@@ -21,12 +21,12 @@ if (!$trip->confirmed) {
 
   // Generate the driver sheet
   include '../inc.trip-driver-sheet.php';
-  $filename1 = sys_get_temp_dir().'/'.$trip->tripId.'-trip-driver-sheet.pdf';
+  $filename1 = sys_get_temp_dir().'/'.$trip->getId().'-trip-driver-sheet.pdf';
   $pdf->output('F', $filename1);
 
   // Generate the guest sheet
   include '../inc.trip-guest-sheet.php';
-  $filename2 = sys_get_temp_dir().'/'.$trip->tripId.'-trip-guest-sheet.pdf';
+  $filename2 = sys_get_temp_dir().'/'.$trip->getId().'-trip-guest-sheet.pdf';
   $pdf->output('F', $filename2);
 
   // Generate ics file
@@ -54,7 +54,7 @@ if (!$trip->confirmed) {
     'description' => $description,
     'summary' => $trip->summary,
     'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-    'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->tripId
+    'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->getId()
   ]);
   
 

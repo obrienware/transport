@@ -4,7 +4,7 @@ require_once 'class.data.php';
 $db = new data();
 
 // We want to exclude current trips and/or current events
-$sql = "
+$query = "
 SELECT GROUP_CONCAT(id) FROM vehicles v
 WHERE
 	v.archived IS NULL
@@ -31,16 +31,16 @@ WHERE
 ";
 $current_tripId = $_REQUEST['tripId'] ?: 0;
 $current_eventId = $_REQUEST['eventId'] ?: 0;
-$data = [
+$params = [
   'from_date' => $_REQUEST['startDate'],
   'to_date' => $_REQUEST['endDate'],
 	'trip_id' => $current_tripId,
 	'event_id' => $current_eventId
 ];
-$ids = $db->get_var($sql, $data);
+$ids = $db->get_var($query, $params);
 $arrayIds = $ids ? explode(',',$ids) : [];
 
-$sql = "
+$query = "
 SELECT
   id, name, require_cdl, color
 FROM vehicles v
@@ -48,10 +48,10 @@ WHERE
 	v.archived IS NULL
 ORDER BY name
 ";
-$rs = $db->get_results($sql);
-foreach ($rs as $key => $item) {
-	$rs[$key]->available = (array_search($item->id, $arrayIds) !== false);
+$rows = $db->get_rows($query);
+foreach ($rows as $key => $row) {
+	$rows[$key]->available = (array_search($row->id, $arrayIds) !== false);
 }
 
-die(json_encode($rs));
+die(json_encode($rows));
 // TODO: Check whether the vehicle will be in the shop for maintenance at this time

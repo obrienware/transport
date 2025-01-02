@@ -11,7 +11,7 @@ if (isset($_REQUEST['requestorId'])) {
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
 require_once 'class.data.php';
 $db = new data();
-$sql = "
+$query = "
 SELECT 
   t.*, v.color, v.name as vehicle,
   CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_location,
@@ -33,39 +33,39 @@ WHERE
   AND t.cancellation_requested IS NULL
   {$criteria}
 ";
-$data = ['start' => $start, 'end' => $end];
+$params = ['start' => $start, 'end' => $end];
 
-// $sql = "SELECT * FROM trips";
-// $data = [];
+// $query = "SELECT * FROM trips";
+// $params = [];
 
 
 $result = [];
-if ($rs = $db->get_results($sql, $data)) {
-  foreach ($rs as $item) {
-    $bgColor = ($item->color) ?: '#AAAAAA';
+if ($rows = $db->get_rows($query, $params)) {
+  foreach ($rows as $row) {
+    $bgColor = ($row->color) ?: '#AAAAAA';
     $textColor = '#'.readableColor($bgColor);
     $event = (object) [
-      'id' => $item->id,
-      'title' => $item->summary.' @'.Date('g:ia', strtotime($item->pickup_date)),
-      'resourceIds' => ["vehicle-{$item->vehicle_id}", "driver-{$item->driver_id}"],
+      'id' => $row->id,
+      'title' => $row->summary.' @'.Date('g:ia', strtotime($row->pickup_date)),
+      'resourceIds' => ["vehicle-{$row->vehicle_id}", "driver-{$row->driver_id}"],
       'allDay' => false,
-      'start' => $item->start_date,
-      'end' => $item->end_date ?: Date('Y-m-d 23:59:59', strtotime($item->start_date)),
+      'start' => $row->start_date,
+      'end' => $row->end_date ?: Date('Y-m-d 23:59:59', strtotime($row->start_date)),
       'extendedProps' => [
         'type' => 'trip',
-        'guest' => $item->guest,
-        'pickup' => $item->pickup_location,
-        'dropoff' => $item->dropoff_location,
-        'vehicle' => $item->vehicle,
-        'driver' => $item->driver,
-        'confirmed' => $item->confirmed
+        'guest' => $row->guest,
+        'pickup' => $row->pickup_location,
+        'dropoff' => $row->dropoff_location,
+        'vehicle' => $row->vehicle,
+        'driver' => $row->driver,
+        'confirmed' => $row->confirmed
       ],
       'backgroundColor' => $bgColor,
       'textColor' => $textColor
     ];
     // Format for the requestor's view
     if (isset($_REQUEST['requestorId'])) {
-      if ($item->confirmed) {
+      if ($row->confirmed) {
         $event->backgroundColor = '#03fc30';
         $event->textColor = '#000000';
       } else {

@@ -8,16 +8,17 @@ class Audit
   public $description;
   public $before;
   public $after;
+  public $user;
 
   public function commit()
   {
-    Audit::log($this->action, $this->table, $this->description, $this->before, $this->after);
+    Audit::log($this->action, $this->table, $this->description, $this->before, $this->after, $this->user);
   }
 
-  static public function log(string $action, string $table, string $description, $before = null, $after = null)
+  static public function log(string $action, string $table, string $description, $before = null, $after = null, $user = null)
   {
     $db = new data();
-    $sql = "
+    $query = "
     INSERT INTO audit_trail SET
       datetimestamp = NOW(),
       `user` = :user,
@@ -27,14 +28,14 @@ class Audit
       `before` = :before,
       `after` = :after
     ";
-    $data = array (
-      'user' => $_SESSION['user']->username,
+    $params = array (
+      'user' => $user,
       'action' => $action,
       'table' => $table,
       'description' => $description,
       'before' => $before,
       'after' => $after
     );
-    $db->query($sql, $data);  
+    $db->query($query, $params);  
   }
 }

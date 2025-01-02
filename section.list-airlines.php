@@ -15,16 +15,16 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Airline::getAirlines()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
+      <?php if ($rows = Airline::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
             <td>
-              <?php if ($item->image_filename): ?>
-                <img src="/images/airlines/<?=$item->image_filename?>" style="max-height:35px">
+              <?php if ($row->image_filename): ?>
+                <img src="/images/airlines/<?=$row->image_filename?>" style="max-height:35px">
               <?php endif; ?>
             </td>
-            <td><?=$item->name?></td>
-            <td><?=$item->flight_number_prefix?></td>
+            <td><?=$row->name?></td>
+            <td><?=$row->flight_number_prefix?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

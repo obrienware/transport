@@ -6,9 +6,9 @@ $treewalker = new TreeWalker([
 ]);
 require_once 'class.data.php';
 $db = new data();
-$sql = "SELECT * FROM audit_trail WHERE id = :id";
-$data = ['id' => $_REQUEST['id']];
-$row = $db->get_row($sql, $data);
+$query = "SELECT * FROM audit_trail WHERE id = :id";
+$params = ['id' => $_REQUEST['id']];
+$row = $db->get_row($query, $params);
 if ($row->before && $row->after) {
 	$before = json_decode($row->before);
 	$after = json_decode($row->after);

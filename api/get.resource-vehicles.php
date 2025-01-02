@@ -1,13 +1,13 @@
 <?php
 header('Content-Type: application/json');
 require_once 'class.vehicle.php';
-$rs = Vehicle::getVehicles();
+$rows = Vehicle::getAll();
 $response = [];
-foreach ($rs as $item) {
+foreach ($rows as $row) {
   $response[] = (object) [
-    'id' => 'vehicle-'.$item->id,
-    'title' => $item->name,
-    'eventBackgroundColor' => $item->color
+    'id' => 'vehicle-'.$row->id,
+    'title' => $row->name,
+    'eventBackgroundColor' => $row->color
   ];
 }
 

@@ -33,8 +33,8 @@ Class Waypoints
     // In future we'll first need to check if the user has manually modified the waypoints
     $db->query("DELETE FROM trip_waypoints WHERE trip_id = :trip_id", ['trip_id' => $this->tripId]);
 
-    foreach ($this->waypoints as $seq => $item) {
-      $sql = "
+    foreach ($this->waypoints as $seq => $row) {
+      $query = "
         INSERT INTO trip_waypoints SET
           trip_id = :trip_id,
           seq = :seq,
@@ -42,14 +42,14 @@ Class Waypoints
           pickup = :pickup,
           description = :description
       ";
-      $data = [
+      $params = [
         'trip_id' => $this->tripId,
         'seq' => $seq,
-        'location_id' => $item->locationId,
-        'pickup' => $item->isPickupLocation ? 1 : 0,
-        'description' => $item->description,
+        'location_id' => $row->locationId,
+        'pickup' => $row->isPickupLocation ? 1 : 0,
+        'description' => $row->description,
       ];
-      $db->query($sql, $data);
+      $db->query($query, $params);
     }
   }
 }

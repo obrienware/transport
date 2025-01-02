@@ -14,11 +14,11 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Location::getLocations()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->name?></td>
-            <td><?=$item->map_address?></td>
+      <?php if ($rows = Location::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->name?></td>
+            <td><?=$row->map_address?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

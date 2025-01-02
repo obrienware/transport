@@ -20,15 +20,15 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
           <?php endif;?>
           <li><button id="<?=$sectionId?>-btn-duplicate" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
           <?php if ($trip->isConfirmed()): ?>
-            <li><a href="print.trip-driver-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Driver Sheet)</a></li>
+            <li><a href="print.trip-driver-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Driver Sheet)</a></li>
           <?php endif;?>
         <?php endif;?>
         <?php if ($trip->isConfirmed()): ?>
-          <li><a href="print.trip-guest-sheet.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Guest Sheet)</a></li>
-          <li><a href="download.trip-ics.php?id=<?=$trip->tripId?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Add Calendar item</a></li>
+          <li><a href="print.trip-guest-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Guest Sheet)</a></li>
+          <li><a href="download.trip-ics.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Add Calendar item</a></li>
         <?php endif;?>
         <?php if (array_search($_SESSION['view'], ['requestor']) !== false):?>
-          <li><button class="dropdown-item btn btn-secondary text-danger" onclick="cancelTrip(<?=$trip->tripId?>)"><i class="fa-solid fa-ban"></i> Cancel Request</button></li>
+          <li><button class="dropdown-item btn btn-secondary text-danger" onclick="cancelTrip(<?=$trip->getId()?>)"><i class="fa-solid fa-ban"></i> Cancel Request</button></li>
         <?php endif; ?>
       </ul>
     </div>
@@ -215,7 +215,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
   $(async ƒ => {
     const sectionId = '<?=$sectionId?>';
-    const tripId = <?=$trip->tripId?>;
+    const tripId = <?=$trip->getId()?>;
 
     function loadConversation() {
       $('#trip-chat').load('section.chat.php', {tripId});

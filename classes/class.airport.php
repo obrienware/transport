@@ -1,14 +1,18 @@
 <?php
-require_once 'class.data.php';
-global $db;
-if (!isset($db)) $db = new data();
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
+require_once 'class.audit.php';
+require_once 'class.data.php';
 require_once 'class.location.php';
 
 class Airport
 {
-	private $airportId;
+	private $db;
+	private $id;
 	private $row;
+	private $lastError;
+	private $action = 'create';
+	private $archived;
 
 	public $name;
 	public $IATA;
@@ -20,75 +24,95 @@ class Airport
 	public $arrivalInstructionsGroup;
 
 
-	public function __construct($airportId = null)
+	public function __construct(int $id = null)
 	{
-		if (isset($airportId)) {
-			$this->getAirport($airportId);
-		}
+    $this->db = new data();
+    if ($id) $this->load($id);
 	}
 
-	public function getAirport(int $airportId): bool
+
+	public function load(int $id): bool
 	{
-		global $db;
-		$sql = 'SELECT * FROM airports WHERE id = :airport_id';
-		$data = ['airport_id' => $airportId];
-		if ($item = $db->get_row($sql, $data)) {
-			$this->row = $item;
-			$this->airportId = $item->id;
-			$this->name = $item->name;
-			$this->IATA = $item->iata;
-			$this->stagingLocationId = $item->staging_location_id;
-      $this->leadTime = $item->lead_time;
-			$this->travelTime = $item->travel_time;
-			$this->arrivalInstructions = $item->arrival_instructions_small;
-			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
+		$query = 'SELECT * FROM airports WHERE id = :id';
+    $params = ['id' => $id];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->name = $row->name;
+			$this->IATA = $row->iata;
+			$this->stagingLocationId = $row->staging_location_id;
+      $this->leadTime = $row->lead_time;
+			$this->travelTime = $row->travel_time;
+			$this->arrivalInstructions = $row->arrival_instructions_small;
+			$this->arrivalInstructionsGroup = $row->arrival_instructions_group;
+			$this->archived = $row->archived;
+
 			if ($this->stagingLocationId) $this->stagingLocation = new Location($this->stagingLocationId);
+			
 			return true;
 		}
 		return false;
 	}
 
-  public function getAirportByIATA(string $IATA): bool
+
+  public function loadAirportByIATA(string $IATA): bool
   {
-		global $db;
-		$sql = 'SELECT * FROM airports WHERE iata = :iata';
-		$data = ['iata' => $IATA];
-		if ($item = $db->get_row($sql, $data)) {
-			$this->row = $item;
-			$this->airportId = $item->id;
-			$this->name = $item->name;
-			$this->IATA = $item->iata;
-      $this->leadTime = $item->lead_time;
-			$this->travelTime = $item->travel_time;
-			$this->stagingLocationId = $item->staging_location_id;
-			$this->arrivalInstructions = $item->arrival_instructions_small;
-			$this->arrivalInstructionsGroup = $item->arrival_instructions_group;
+		$query = 'SELECT * FROM airports WHERE iata = :iata';
+		$params = ['iata' => $IATA];
+		if ($row = $this->db->get_row($query, $params)) {
+			$this->row = $row;
+			$this->action = 'update';
+
+			$this->id = $row->id;
+			$this->name = $row->name;
+			$this->IATA = $row->iata;
+			$this->stagingLocationId = $row->staging_location_id;
+      $this->leadTime = $row->lead_time;
+			$this->travelTime = $row->travel_time;
+			$this->arrivalInstructions = $row->arrival_instructions_small;
+			$this->arrivalInstructionsGroup = $row->arrival_instructions_group;
+			$this->archived = $row->archived;
+
 			if ($this->stagingLocationId) $this->stagingLocation = new Location($this->stagingLocationId);
+			
 			return true;
 		}
 		return false;
   }
 
-	public function getAirportId(): int
+
+	public function getId(): int | null
 	{
-		return $this->airportId;
+		return $this->id;
 	}
 
-	public function save()
+
+	public function save(string $user = null): bool
 	{
-		global $db;
-		$data = [
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = $this->action;
+		$audit->table = 'airports';
+		$audit->before = json_encode($this->row);
+
+		$params = [
 			'iata' => $this->IATA,
 			'name' => $this->name,
 			'lead_time' => $this->leadTime,
 			'travel_time' => $this->travelTime,
 			'staging_location_id' => $this->stagingLocationId,
 			'arrival_instructions_small' => $this->arrivalInstructions,
-			'arrival_instructions_group' => $this->arrivalInstructionsGroup
+			'arrival_instructions_group' => $this->arrivalInstructionsGroup,
+			'user' => $user
 		];
-		if ($this->airportId) {
-			$data['id'] = $this->airportId;
-			$sql = "
+
+		if ($this->action == 'update') {
+			$audit->description = 'Airport created: '.$this->name;
+			$params['id'] = $this->id;
+			$query = "
 				UPDATE airports SET
 					iata = :iata,
 					name = :name,
@@ -96,11 +120,14 @@ class Airport
 					travel_time = :travel_time,
 					staging_location_id = :staging_location_id,
 					arrival_instructions_small = :arrival_instructions_small,
-					arrival_instructions_group = :arrival_instructions_group
+					arrival_instructions_group = :arrival_instructions_group,
+					modified = NOW(),
+					modified_by = :user
 				WHERE id = :id
 			";
 		} else {
-			$sql = "
+			$audit->description = 'Airport updated: '.$this->name;
+			$query = "
 				INSERT INTO airports SET
 					iata = :iata,
 					name = :name,
@@ -108,43 +135,82 @@ class Airport
 					travel_time = :travel_time,
 					staging_location_id = :staging_location_id,
 					arrival_instructions_small = :arrival_instructions_small,
-					arrival_instructions_group = :arrival_instructions_group
+					arrival_instructions_group = :arrival_instructions_group,
+					created = NOW(),
+					created_by = :user
 			";
 		}
-		$result = $db->query($sql, $data);
-		if ($this->airportId) { 
-			$this->getAirport($this->airportId);
-		} else {
-			$this->getAirport($result);
+		try {
+			$result = $this->db->query($query, $params);
+			$id = ($this->action === 'create') ? $result : $this->id;
+			$this->load($id);
+			$audit->after = json_encode($this->row);
+			$audit->commit();
+			return true;
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
 		}
-		return [
-			'result' => $result,
-			'errors' => $db->errorInfo
-		];
 	}
 
-	public function getState(): string
-	{
-		return json_encode($this->row);
-	}	
 
-	static public function getAirports(): mixed // false | array
+  public function delete(string $user = null): bool
+  {
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'delete';
+		$audit->table = 'airports';
+		$audit->before = json_encode($this->row);
+
+    $query = "UPDATE airports SET archived = NOW(), archived_by = :user WHERE id = :id";
+    $params = ['id' => $this->id, 'user' => $user];
+		try {
+			$this->db->query($query, $params);
+			$audit->description = 'Airport deleted: '.$this->name;
+			$audit->commit();
+			$this->reset();
+			return true;	
+		} catch (Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
+  }
+
+
+	static public function getAll(): array
 	{
-		global $db;
-		$sql = 'SELECT * FROM airports WHERE archived IS NULL ORDER BY name';
-		return $db->get_results($sql);
+		$db = new data();
+		$query = 'SELECT * FROM airports WHERE archived IS NULL ORDER BY name';
+		return $db->get_rows($query);
+	}
+
+
+	public function isArchived(): bool
+	{
+		return isset($this->archived);
+	}
+
+
+	private function reset()
+	{
+		$this->id = null;
+		$this->row = null;
+		$this->lastError = null;
+		$this->action = 'create';
+		$this->archived = null;
+
+		$this->name = null;
+		$this->IATA = null;
+		$this->stagingLocationId = null;
+		$this->stagingLocation = null;
+		$this->leadTime = null;
+		$this->travelTime = null;
+		$this->arrivalInstructions = null;
+		$this->arrivalInstructionsGroup = null;
+
+		// Reinitialize the database connection if needed
+		$this->db = new data();
 	}
 	
-	static public function deleteAirport(int $airportId): mixed
-	{
-		global $db;
-		$sql = 'UPDATE airports SET archived = NOW(), archived_by = :user WHERE id = :airport_id';
-		$data = ['user' => $_SESSION['user']->username, 'airport_id' => $airportId];
-		return $db->query($sql, $data);
-	}
-
-	public function delete(): mixed
-	{
-		return $this->deleteAirport($this->airportId);
-	}
 }

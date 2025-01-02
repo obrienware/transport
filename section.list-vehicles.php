@@ -21,28 +21,28 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Vehicle::getVehicles()): ?>
-        <?php foreach ($rs as $item): ?>
-          <?php $rowClass = ($item->check_engine) ? 'table-warning' : '';?>
-          <tr data-id="<?=$item->id?>" class="<?=$rowClass?>">
-            <td class="fit"><?=$item->id?></td>
-            <?php if ($item->color): ?>
+      <?php if ($rows = Vehicle::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <?php $rowClass = ($row->check_engine) ? 'table-warning' : '';?>
+          <tr data-id="<?=$row->id?>" class="<?=$rowClass?>">
+            <td class="fit"><?=$row->id?></td>
+            <?php if ($row->color): ?>
               <td class="fit">
-                <i class="bi bi-square-fill" style="color:<?=$item->color?>"></i>
+                <i class="bi bi-square-fill" style="color:<?=$row->color?>"></i>
               </td>
             <?php else: ?>
               <td class="fit">&nbsp;</td>
             <?php endif;?>
             <td>
-              <?php if ($item->check_engine): ?>
+              <?php if ($row->check_engine): ?>
                 <i class="fa-duotone fa-solid fa-engine-warning fa-lg" style="color:var(--bs-orange)"></i>
               <?php endif; ?>
             </td>
-            <td><?=$item->name?></td>
-            <td><?=$item->description?></td>
-            <td><?=$item->license_plate?></td>
-            <td class="text-center fit"><?=$item->passengers?></td>
-            <td class="text-center fit"><?=($item->require_cdl) ? '<i class="bi bi-check-square text-success"></i>' : ''?></td>
+            <td><?=$row->name?></td>
+            <td><?=$row->description?></td>
+            <td><?=$row->license_plate?></td>
+            <td class="text-center fit"><?=$row->passengers?></td>
+            <td class="text-center fit"><?=($row->require_cdl) ? '<i class="bi bi-check-square text-success"></i>' : ''?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

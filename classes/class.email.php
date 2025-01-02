@@ -1,4 +1,5 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
 use Config as GlobalConfig;
 use PHPMailer\PHPMailer\PHPMailer;

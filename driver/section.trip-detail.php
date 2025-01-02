@@ -3,7 +3,7 @@ date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.flight.php';
 require_once 'class.data.php';
 if (!isset($db)) $db = new data();
-$sql = "
+$query = "
 SELECT 
   t.*,
   CASE WHEN t.eta IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
@@ -22,8 +22,8 @@ LEFT OUTER JOIN airlines a ON a.id = t.airline_id
 WHERE 
   t.id = :id
 ";
-$data = ['id' => $_REQUEST['id']];
-$trip = $db->get_row($sql, $data);
+$params = ['id' => $_REQUEST['id']];
+$trip = $db->get_row($query, $params);
 ?>
 <div class="row mb-2">
   <div class="col">

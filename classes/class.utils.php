@@ -74,5 +74,50 @@ class Utils
     if($difference != 1) $periods[$j].= "s";
     return "$difference $periods[$j]";
   }
-  
+
+
+  static public function formattedPhoneNumber(string $number): string
+	{
+		if (str_contains($number, '+')) {
+			return $number;
+		} else {
+			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+		}	
+	}
+
+  static public function formattedCurrency($amount, $currency = 'USD'): string
+  {
+    return number_format($amount, 2, '.', ',').' '.$currency;
+  }
+
+  static public function formattedDate($date, $format = 'Y-m-d H:i:s'): string
+  {
+    return date($format, strtotime($date));
+  }
+
+  static public function formattedTime($date): string
+  {
+    return date('H:i:s', strtotime($date));
+  }
+
+  static public function formattedDateHuman($date): string
+  {
+    return date('F j, Y', strtotime($date));
+  }
+
+  static public function formattedDateTimeHuman($date): string
+  {
+    return date('F j, Y H:i:s', strtotime($date));
+  }
+
+  static public function formattedDateShort($date): string
+  {
+    return date('M j, Y', strtotime($date));
+  }
+
+  static public function formattedDateTimeShort($date): string
+  {
+    return date('M j, Y H:i:s', strtotime($date));
+  }
+
 }

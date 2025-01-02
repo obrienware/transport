@@ -114,7 +114,7 @@ require_once 'class.airline.php';
           <label for="airport" class="form-label">Airport</label>
           <select class="form-select" id="airport">
             <option value="">Please Select</option>
-            <?php foreach (Airport::getAirports() as $airport): ?>
+            <?php foreach (Airport::getAll() as $airport): ?>
               <option value="<?=$airport->iata?>" data-lead-time="<?=$airport->lead_time?>" data-travel-time="<?=$airport->travel_time?>"><?=$airport->name?> (<?=$airport->iata?>)</option>
             <?php endforeach; ?>
           </select>
@@ -128,7 +128,7 @@ require_once 'class.airline.php';
           <label for="flight-airline" class="form-label">Airline</label>
           <select class="form-select" id="flight-airline">
             <option value="">Please Select</option>
-            <?php foreach (Airline::getAirlines() as $airline): ?>
+            <?php foreach (Airline::getAll() as $airline): ?>
               <option value="<?=$airline->id?>" data-prefix="<?=$airline->flight_number_prefix?>"><?=$airline->name?></option>
             <?php endforeach; ?>
           </select>
@@ -271,7 +271,7 @@ require_once 'class.airline.php';
 <script type="text/javascript">
 
   let request = {
-    requestorId: <?=$user->userId?>,
+    requestorId: <?=$user->getId()?>,
   }; // This will hold all the content needed to create the request
 
   function cancelWizard() 
@@ -303,7 +303,7 @@ require_once 'class.airline.php';
     setTimeout(ec.refetchEvents, 1000);
 
     request = {
-      requestorId: <?=$user->userId?>,
+      requestorId: <?=$user->getId()?>,
     }; // Reset the request object
   }
 
@@ -567,7 +567,7 @@ require_once 'class.airline.php';
   }
 
   $(async ƒ => {
-    let requestorId = <?=$user->userId?>;
+    let requestorId = <?=$user->getId()?>;
 
     $('.btn-check').on('change', e => {
       $('.btn-next').prop('disabled', false);

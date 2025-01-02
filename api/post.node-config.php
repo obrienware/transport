@@ -8,26 +8,26 @@ $json->nodeConfig->updated = (object) [
   'by' => $_SESSION['user']->username
 ];
 
-$sql = "UPDATE config SET config = :config, json5 = :json5 WHERE node = :node";
-$data = [
+$query = "UPDATE config SET config = :config, json5 = :json5 WHERE node = :node";
+$params = [
   'config' => json_encode($json->nodeConfig, JSON_PRETTY_PRINT),
   'json5' => $json->configString,
   'node' => $json->node
 ];
-$db->query($sql, $data);
+$db->query($query, $params);
 
 echo json_encode(['result' => true, 'meta' => $db->errorInfo]);
 
-$sql = "
+$query = "
   INSERT INTO config_log SET
     datetimestamp = NOW(),
     node = :node,
     config = :config,
     user = :user
 ";
-$data = [
+$params = [
   'node' => $json->node,
   'config' => $json->configString,
   'user' => $_SESSION['user']->username
 ];
-$db->query($sql, $data);
+$db->query($query, $params);

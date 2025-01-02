@@ -16,13 +16,13 @@
       </tr>
     </thead>
     <tbody>
-      <?php if ($rs = Blockout::getBlockouts()): ?>
-        <?php foreach ($rs as $item): ?>
-          <tr data-id="<?=$item->id?>">
-            <td><?=$item->user?></td>
-            <td class="datetime short fit" data-order="<?=$item->from_datetime?>"><?=$item->from_datetime?></td>
-            <td class="datetime short fit" data-order="<?=$item->to_datetime?>"><?=$item->to_datetime?></td>
-            <td><?=$item->note?></td>
+      <?php if ($rows = Blockout::getAll()): ?>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?=$row->id?>">
+            <td><?=$row->user?></td>
+            <td class="datetime short fit" data-order="<?=$row->from_datetime?>"><?=$row->from_datetime?></td>
+            <td class="datetime short fit" data-order="<?=$row->to_datetime?>"><?=$row->to_datetime?></td>
+            <td><?=$row->note?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

@@ -1,7 +1,7 @@
 <?php
 require_once 'class.location.php';
 $location = new Location($_REQUEST['id']);
-$locationId = $location->getLocationId();
+$locationId = $location->getId();
 ?>
 <?php if (isset($_REQUEST['id']) && !$locationId): ?>
 
@@ -126,7 +126,7 @@ $locationId = $location->getLocationId();
           placeId: val('#location-place-id'),
           meta: $('#location-map-address').data('meta')
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('locationChange', {locationId});
           app.closeOpenTab();
           if (locationId) return toastr.success('Location saved.', 'Success');

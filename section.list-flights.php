@@ -4,7 +4,7 @@ require_once 'class.flight.php';
 require_once 'class.data.php';
 if (!isset($db)) $db = new data();
 
-$sql = "
+$query = "
 SELECT 
   t.summary, t.guests,
   t.pickup_date,
@@ -34,25 +34,25 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
 function showFlightsFor($iata, $type)
 {
   global $db;
-  global $sql;
+  global $query;
   $count = 0;
-  if ($rs = $db->get_results($sql)) {
-    foreach ($rs as $item) {
-      if ($item->type !== $type) continue;
-      if ($item->iata !== $iata) continue;
-      $flight = Flight::getFlightStatus($item->flight_number, $item->type, $item->iata, Date('Y-m-d', strtotime($item->target_datetime)));
+  if ($rows = $db->get_rows($query)) {
+    foreach ($rows as $row) {
+      if ($row->type !== $type) continue;
+      if ($row->iata !== $iata) continue;
+      $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata, Date('Y-m-d', strtotime($row->target_datetime)));
       if (!$flight->flight_number) continue; // exclude flights we didn't track.
       $count++;
       echo '<tr class="border-0 border-5 border-top">';
 
       echo '<td class="fit text-center align-middle border-bottom" rowspan="2">';
-      echo '<div class="badge bg-danger">'.Date('M', strtotime($item->pickup_date)).'</div>';
-      echo '<div>'.Date('D', strtotime($item->pickup_date)).'</div>';
-      echo '<div class="fs-4 fw-bold font-monospace">'.Date('d', strtotime($item->pickup_date)).'</div>';
+      echo '<div class="badge bg-danger">'.Date('M', strtotime($row->pickup_date)).'</div>';
+      echo '<div>'.Date('D', strtotime($row->pickup_date)).'</div>';
+      echo '<div class="fs-4 fw-bold font-monospace">'.Date('d', strtotime($row->pickup_date)).'</div>';
       echo '</td>';
 
       echo '<td class="border-bottom">';
-      echo '<img src="/images/airlines/'.$item->image_filename.'" class="img-fluid" style="max-height:30px">';
+      echo '<img src="/images/airlines/'.$row->image_filename.'" class="img-fluid" style="max-height:30px">';
       echo '</td>';
 
       echo '<td class="border-bottom align-middle">';
@@ -85,8 +85,8 @@ function showFlightsFor($iata, $type)
       echo '<tr>';
       echo '<td colspan="3">';
       echo '<div class="d-flex justify-content-between">';
-      echo '<div>'.$item->guests.'</div>';
-      echo '<div class="text-muted">| '.$item->driver.'</div>';
+      echo '<div>'.$row->guests.'</div>';
+      echo '<div class="text-muted">| '.$row->driver.'</div>';
       echo '</div>';
       echo '</td>';
       echo '</tr>';
@@ -105,7 +105,7 @@ function showFlightsFor($iata, $type)
 <div class="container-fluid mt-2">
   <h1>Flight Statuses</h1>
 
-  <?php if ($airports = $db->get_results("SELECT * FROM airports")): ?>
+  <?php if ($airports = $db->get_rows("SELECT * FROM airports")): ?>
     <?php foreach ($airports as $airport): ?>
       <div class="row mb-4">
         <div class="col">

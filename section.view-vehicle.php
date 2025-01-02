@@ -179,7 +179,7 @@ $vehicle = new Vehicle($vehicleId);
 
     <div class="tab-pane fade" id="pills-snags" role="tabpanel" aria-labelledby="pills-snags-tab" tabindex="0">
       <!-- SNAGLIST -->
-      <?php if ($rs = Snag::getSnags($vehicleId)): ?>
+      <?php if ($rows = Snag::getSnags($vehicleId)): ?>
         <table class="table table-bordered table-sm mb-0">
           <thead>
             <tr>
@@ -191,26 +191,26 @@ $vehicle = new Vehicle($vehicleId);
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($rs as $item): ?>
+            <?php foreach ($rows as $row): ?>
               <tr>
-                <td class="datetime short" style="font-size:small"><?=$item->datetimestamp?></td>
+                <td class="datetime short" style="font-size:small"><?=$row->datetimestamp?></td>
                 <td>
-                  <div><?=$item->description?></div>
-                  <div><div class="badge bg-dark-subtle"><?=$item->created_by?></div></div>
+                  <div><?=$row->description?></div>
+                  <div><div class="badge bg-dark-subtle"><?=$row->created_by?></div></div>
                 </td>
                 <td>
-                  <?php if ($item->acknowledged): ?>
-                    <div><div class="badge bg-dark-subtle"><?=$item->acknowledged_by?></div></div>
+                  <?php if ($row->acknowledged): ?>
+                    <div><div class="badge bg-dark-subtle"><?=$row->acknowledged_by?></div></div>
                   <?php endif; ?>
                 </td>
                 <td>
-                  <?php if ($item->resolved): ?>
-                    <div><?=$item->resolution?></div>
-                    <div><div class="badge bg-dark-subtle"><?=$item->resolved_by?></div></div>
+                  <?php if ($row->resolved): ?>
+                    <div><?=$row->resolution?></div>
+                    <div><div class="badge bg-dark-subtle"><?=$row->resolved_by?></div></div>
                   <?php endif; ?>
                 </td>
                 <td>
-                  <div><?=$item->comments?></div>
+                  <div><?=$row->comments?></div>
                 </td>
               </tr>
             <?php endforeach; ?>

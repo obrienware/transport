@@ -2,7 +2,7 @@
 require_once 'class.department.php';
 $department = new Department($_REQUEST['id']);
 ?>
-<?php if (isset($_REQUEST['id']) && !$department->getDepartmentId()): ?>
+<?php if (isset($_REQUEST['id']) && !$department->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -14,7 +14,7 @@ $department = new Department($_REQUEST['id']);
 <?php else: ?>
 
   <div class="container mt-2">
-    <?php if ($department->getDepartmentId()): ?>
+    <?php if ($department->getId()): ?>
       <h2>Edit Department</h2>
     <?php else: ?>
       <h2>Add Department</h2>
@@ -38,7 +38,7 @@ $department = new Department($_REQUEST['id']);
 
       <div class="row my-4">
         <div class="col d-flex justify-content-between">
-          <?php if ($department->getDepartmentId()): ?>
+          <?php if ($department->getId()): ?>
             <button class="btn btn-outline-danger px-4" id="btn-delete-department">Delete</button>
           <?php endif; ?>
           <button class="btn btn-primary px-4" id="btn-save-department">Save</button>
@@ -52,14 +52,14 @@ $department = new Department($_REQUEST['id']);
 
     $(async ƒ => {
 
-      const departmentId = <?=$department->getDepartmentId() ?: 'null'?>;
+      const departmentId = <?=$department->getId() ?: 'null'?>;
       $('#btn-save-department').off('click').on('click', async ƒ => {
         const resp = await post('/api/post.save-department.php', {
           id: departmentId,
           name: cleanVal('#department-name'),
           mayRequest: checked('#department-may-request'),
         });
-        if (resp?.result?.result) {
+        if (resp?.result) {
           $(document).trigger('departmentChange', {departmentId});
           app.closeOpenTab();
           if (departmentId) return toastr.success('Department saved.', 'Success');
