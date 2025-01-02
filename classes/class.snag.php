@@ -82,9 +82,9 @@ class Snag
       'vehicle_id' => $this->vehicleId,
       'summary' => $this->summary,
       'description' => $this->description,
-      'acknowledged' => $this->acknowledged,
+      'acknowledged' => $this->acknowledged ? $this->acknowledged : null,
       'acknowledged_by' => $this->acknowledgedBy,
-      'resolved' => $this->resolved,
+      'resolved' => $this->resolved ? $this->resolved : null,
       'resolved_by' => $this->resolvedBy,
       'resolution' => $this->resolution,
       'comments' => $this->comments,
@@ -207,7 +207,7 @@ class Snag
   }
 
 
-	public function getLastError(): string
+	public function getLastError(): string | null
 	{
 		return $this->lastError;
 	}

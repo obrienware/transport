@@ -180,7 +180,7 @@ class Blockout
 	}
 
 	
-	public function getLastError(): string
+	public function getLastError(): string | null
 	{
 		return $this->lastError;
 	}
