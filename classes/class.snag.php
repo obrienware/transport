@@ -217,7 +217,7 @@ class Snag
   {
     $db = new data();
     if ($vehicleId) {
-      $query = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY datetimestamp";
+      $query = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY logged";
       $params = ['vehicle_id' => $vehicleId];
     } else {
       $query = "
@@ -226,7 +226,7 @@ class Snag
         LEFT OUTER JOIN vehicles v ON v.id = s.vehicle_id
         WHERE 
           s.archived IS NULL 
-        ORDER BY v.name, s.datetimestamp
+        ORDER BY v.name, s.logged
       ";
     }
     return $db->get_rows($query, $params);
