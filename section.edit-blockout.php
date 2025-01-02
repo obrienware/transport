@@ -1,7 +1,7 @@
 <?php
 require_once 'class.blockout.php';
 $blockout = new Blockout($_REQUEST['id']);
-$blockoutId = $blockout->blockoutId;
+$blockoutId = $blockout->getId();
 ?>
 <?php if (isset($_REQUEST['id']) && !$blockoutId): ?>
 
