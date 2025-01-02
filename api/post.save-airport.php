@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.airport.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -12,7 +15,7 @@ $airport->travelTime = $json->travelTime ?: NULL;
 $airport->arrivalInstructions = $json->arrivalInstructions ?: NULL;
 $airport->arrivalInstructionsGroup = $json->arrivalInstructionsGroup ?: NULL;
 
-if ($airport->save()) {
+if ($airport->save($user->getUsername())) {
   $result = $airport->getId();
   die(json_encode(['result' => $result]));
 }

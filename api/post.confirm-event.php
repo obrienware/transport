@@ -15,7 +15,7 @@ $event = new Event($json->id);
 
 if (!$event->confirmed) {
   
-  $results[] = $event->confirm();
+  $results[] = $event->confirm($me->getUsername());
 
   // Generate ics file
   $ics = new ICS([

@@ -1,4 +1,5 @@
 <?php
+//TODO: This should have its own class
 header('Content-Type: application/json');
 require_once 'class.data.php';
 $db = new data();

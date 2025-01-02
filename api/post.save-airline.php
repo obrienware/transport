@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.airline.php';
 
 if (!empty($_FILES)) {
@@ -22,7 +25,7 @@ $airline->name = $_POST['name'];
 $airline->flightNumberPrefix = $_POST['flightNumberPrefix'];
 if (isset($targetFilename)) $airline->imageFilename = $targetFilename;
 
-if ($airline->save()) {
+if ($airline->save($user->getUsername())) {
   $result = $airline->getId();
   die(json_encode(['result' => $result]));
 }

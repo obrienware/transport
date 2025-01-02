@@ -211,6 +211,12 @@ class User
 	}
 
 
+	public function getUsername(): string
+	{
+		return $this->username ? $this->username : $this->emailAddress;
+	}
+
+
 	public function resetPassword(): bool
 	{
 		if ($this->emailAddress) {

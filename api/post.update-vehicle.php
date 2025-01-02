@@ -1,6 +1,9 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: application/json');
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -15,7 +18,7 @@ if (isset($json->needsRestocking)) $vehicle->restock = ($json->needsRestocking) 
 $vehicle->lastUpdate = Date('Y-m-d H:i:s');
 $vehicle->lastUpdatedBy = $_SESSION['user']->username;
 
-if ($vehicle->save()) {
+if ($vehicle->save($user->getUsername())) {
   $result = $vehicle->getId();
   die(json_encode(['result' => $result]));
 }

@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
 
 require_once 'class.flight.php';
 require_once 'class.airport.php';
@@ -40,7 +42,7 @@ if ($trip->ETD) {
   $trip->IATA = $location->IATA;
 }
 
-if ($trip->save()) {
+if ($trip->save($user->getUsername())) {
   $result = $trip->getId();
   die(json_encode(['result' => $result]));
 }

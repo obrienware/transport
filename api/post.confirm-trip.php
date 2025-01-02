@@ -16,7 +16,7 @@ $trip = new Trip($json->id);
 
 if (!$trip->confirmed) {
   
-  $results[] = $trip->confirm();
+  $results[] = $trip->confirm($me->getUsername());
   // Create the trip sheets and email them to the respective people
 
   // Generate the driver sheet

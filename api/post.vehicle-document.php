@@ -1,4 +1,8 @@
 <?php
+header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.vehicle-document.php';
 
 if (!empty($_FILES)) {
@@ -15,7 +19,7 @@ if (!empty($_FILES)) {
     $doc->name = $_POST['documentName'];
     $doc->filename = $targetFilename;
     $doc->fileType = $_FILES['file']['type'];
-    if ($doc->save($_SESSION['user']->username)) {
+    if ($doc->save($user->getUsername())) {
       $result = $doc->getId();
       die(json_encode(['result' => $result]));
     }

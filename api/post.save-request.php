@@ -2,6 +2,8 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: application/json');
 $json = json_decode(file_get_contents("php://input"));
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
 
 require_once 'class.utils.php';
 require_once 'class.trip.php';
@@ -38,6 +40,7 @@ echo json_encode([
 
 function addAirportDropoff($json)
 {
+  global $user;
   $airport = new Airport();
   $airport->loadAirportByIATA($json->airport);
   $turnAroundTime = 30;
@@ -60,7 +63,7 @@ function addAirportDropoff($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save();
+    $guest->save($user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
@@ -71,12 +74,13 @@ function addAirportDropoff($json)
   $trip->doLocationId = AirportLocation::getAirportLocation($airport->getId(), $json->flight->airlineId, 'Departure');
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save();
+  $trip->save($user->getUsername());
 }
 
 
 function addAirportPickup($json)
 {
+  global $user;
   $airport = new Airport();
   $airport->loadAirportByIATA($json->airport);
   $waitTimeAtAirport = 30;
@@ -98,7 +102,7 @@ function addAirportPickup($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save();
+    $guest->save($user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
@@ -109,12 +113,13 @@ function addAirportPickup($json)
   $trip->puLocationId = AirportLocation::getAirportLocation($airport->getId(), $json->flight->airlineId, 'Arrival');
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save();
+  $trip->save($user->getUsername());
 }
 
 
 function addPointToPoint($json)
 {
+  global $user;
   $summary = 'Transport - '.$json->whom->name;
   $trip = new trip();
   $trip->requestorId = $json->requestorId;
@@ -135,18 +140,19 @@ function addPointToPoint($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save();
+    $guest->save($user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
   $trip->passengers = $json->whom->pax;
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save();
+  $trip->save($user->getUsername());
 }
 
 function addVehicleReservation($json)
 {
+  global $user;
   $name = 'Vehicle Reservation - '.$json->whom->name;
   $event = new Event();
   $event->name = $name;
@@ -155,11 +161,12 @@ function addVehicleReservation($json)
   $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
   $event->notes = $json->notes;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $event->save();
+  $event->save($user->getUsername());
 }
 
 function addEvent($json)
 {
+  global $user;
   $name = 'Event';
   $event = new Event();
   $event->name = $name;
@@ -168,5 +175,5 @@ function addEvent($json)
   $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
   $event->notes = $json->detail;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $event->save();
+  $event->save($user->getUsername());
 }

@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.event.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -13,7 +16,7 @@ $event->drivers = $json->drivers ?: [];
 $event->vehicles = $json->vehicles ?: [];
 $event->notes = $json->notes ?: NULL;
 
-if ($event->save()) {
+if ($event->save($user->getUsername())) {
   $result = $event->getId();
   die(json_encode(['result' => $result]));
 }

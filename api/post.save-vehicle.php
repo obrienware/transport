@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -11,7 +14,7 @@ $vehicle->licensePlate = $json->licensePlate;
 $vehicle->passengers = $json->passengers;
 $vehicle->requireCDL = $json->requireCDL ? 1 : 0;
 
-if ($vehicle->save()) {
+if ($vehicle->save($user->getUsername())) {
   $result = $vehicle->getId();
   die(json_encode(['result' => $result]));
 }

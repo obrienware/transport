@@ -1,5 +1,8 @@
 <?php
 header('Content-Type: application/json');
+require_once 'class.user.php';
+$user = new User($_SESSION['user']->id);
+
 require_once 'class.location.php';
 $json = json_decode(file_get_contents("php://input"));
 
@@ -15,7 +18,7 @@ $location->lon = $json->lon ?: NULL;
 $location->placeId = $json->placeId ?: NULL;
 $location->meta = json_encode($json->meta);
 
-if ($location->save()) {
+if ($location->save($user->getUsername())) {
   $result = $location->getId();
   die(json_encode(['result' => $result]));
 }
