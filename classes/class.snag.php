@@ -182,7 +182,7 @@ class Snag
 	}
 
 
-  public function reset(): void
+  private function reset(): void
   {
     $this->id = null;
     $this->row = null;
@@ -205,6 +205,12 @@ class Snag
 		// Reinitialize the database connection if needed
 		$this->db = new data();
   }
+
+
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
 
 
   public static function getSnags($vehicleId = null): array

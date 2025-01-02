@@ -161,7 +161,7 @@ class Blockout
 	}
 
 
-	public function reset(): void
+	private function reset(): void
 	{
 		$this->id = null;
 		$this->row = null;
@@ -180,6 +180,12 @@ class Blockout
 	}
 
 	
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
+
+
 	public static function getBlockoutsForUser(int $userId): array
 	{
 		$db = new data();

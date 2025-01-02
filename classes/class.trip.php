@@ -276,7 +276,7 @@ class Trip
 	}
 
 
-	public function reset(): void
+	private function reset(): void
 	{
 		$this->id = null;
 		$this->row = null;
@@ -323,9 +323,16 @@ class Trip
 	}
 
 
-	public function cancel(): bool
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
+
+
+	public function cancel(string $user = null): bool
 	{
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = 'update';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
@@ -404,9 +411,10 @@ class Trip
 	}
 
 
-	public function confirm(): bool
+	public function confirm(string $user = null): bool
 	{
 		$audit = new Audit();
+		$audit->user = $user;
 		$audit->action = 'update';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);

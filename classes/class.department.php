@@ -59,7 +59,7 @@ class Department
 
 		$params = [
 			'name' => $this->name,
-			'can_submit_requests' => $this->mayRequest,
+			'can_submit_requests' => $this->mayRequest ? 1 : 0,
 			'user' => $user
 		];
 
@@ -144,7 +144,7 @@ class Department
 	}
 
 
-	public function reset(): void
+	private function reset(): void
 	{
 		$this->id = null;
 		$this->row = null;
@@ -157,5 +157,11 @@ class Department
 
 		// Reinitialize the database connection if needed
 		$this->db = new data();
+	}
+
+
+	function getLastError(): string | null
+	{
+		return $this->lastError;
 	}
 }

@@ -185,7 +185,7 @@ class AirportLocation
 	}
 
 
-  public function reset(): void
+  private function reset(): void
   {
 		$this->id = null;
 		$this->row = null;
@@ -206,6 +206,12 @@ class AirportLocation
   }
 
 
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
+
+
   public static function getAirportLocation(int $airportId, int $airlineId, string $type): int
   {
     $db = new data();
@@ -224,4 +230,5 @@ class AirportLocation
     ];
     return $db->get_var($query, $params);
   }
+
 }

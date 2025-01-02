@@ -181,7 +181,7 @@ class Location
 	}
 
 
-	public function reset(): void
+	private function reset(): void
 	{
 		$this->id = null;
 		$this->row = null;
@@ -202,6 +202,11 @@ class Location
 	
 		// Reinitialize the database connection if needed
 		$this->db = new data();
-}
+	}
 
+
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
 }

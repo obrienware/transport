@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
 require_once 'class.audit.php';
 require_once 'class.data.php';
@@ -174,7 +174,7 @@ class Event
 	}
 
 
-  public function reset()
+  private function reset()
   {
     $this->id = null;
     $this->row = null;
@@ -201,18 +201,36 @@ class Event
   }
 
 
-	public function confirm()
+  public function getLastError(): string
 	{
-		$query = 'UPDATE events SET confirmed = NOW() WHERE id = :event_id';
-		$params = ['event_id' => $this->id];
-		$result = $this->db->query($query, $params);
-		return $result;
+		return $this->lastError;
+	}
+
+
+  public function confirm(string $user = null): bool
+	{
+		$audit = new Audit();
+		$audit->user = $user;
+		$audit->action = 'update';
+		$audit->table = 'events';
+		$audit->before = json_encode($this->row);
+	
+		$query = 'UPDATE events SET confirmed = NOW() WHERE id = :id';
+		$params = ['id' => $this->id];
+		$this->db->query($query, $params);
+
+		$audit->description = 'Event confirmed: '.$this->name;
+		$this->load($this->id);
+		$audit->after = json_encode($this->row);
+		$audit->commit();
+		return true;
 	}
   
 
-	public function cancel()
+	public function cancel(string $user = null): bool
 	{
 		$audit = new Audit();
+    $audit->user = $user;
 		$audit->action = 'update';
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
@@ -225,7 +243,7 @@ class Event
 		$this->load($this->id);
 		$audit->after = json_encode($this->row);
 		$audit->commit();
-		return $result;
+		return true;
 	}
 
 
@@ -238,6 +256,7 @@ class Event
 	public function isEditable(): bool
 	{
 		if (!$this->endDate) return true;
+    if (!$this->confirmed) return true;
 		return !(strtotime($this->endDate) <= strtotime('now'));
 	}
 
@@ -254,7 +273,7 @@ class Event
   }
 
 
-  static public function nextEventByVehicle(int $vehicleId)
+  static public function nextEventByVehicle(int $vehicleId): int | null
   {
     $db = new data();
     $query = "

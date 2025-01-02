@@ -146,7 +146,7 @@ class VehicleDocument
 	}
 
 
-	public function reset(): void
+	private function reset(): void
 	{
 		$this->id = null;
 		$this->row = null;
@@ -164,7 +164,13 @@ class VehicleDocument
 	}
 
 
-  static public function getDocuments($vehicleId): array
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
+
+
+	static public function getDocuments($vehicleId): array
   {
     $db = new data();
     $query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";

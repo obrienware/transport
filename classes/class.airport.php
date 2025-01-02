@@ -213,4 +213,9 @@ class Airport
 		$this->db = new data();
 	}
 	
+
+	public function getLastError(): string
+	{
+		return $this->lastError;
+	}
 }
