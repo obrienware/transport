@@ -110,7 +110,7 @@ class Airport
 		];
 
 		if ($this->action == 'update') {
-			$audit->description = 'Airport created: '.$this->name;
+			$audit->description = 'Airport updated: '.$this->name;
 			$params['id'] = $this->id;
 			$query = "
 				UPDATE airports SET
@@ -126,7 +126,7 @@ class Airport
 				WHERE id = :id
 			";
 		} else {
-			$audit->description = 'Airport updated: '.$this->name;
+			$audit->description = 'Airport created: '.$this->name;
 			$query = "
 				INSERT INTO airports SET
 					iata = :iata,
