@@ -173,7 +173,7 @@ class VehicleDocument
 	static public function getDocuments($vehicleId): array
   {
     $db = new data();
-    $query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
+    $query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY created";
     $params = ['vehicle_id' => $vehicleId];
     return $db->get_rows($query, $params);
   }
