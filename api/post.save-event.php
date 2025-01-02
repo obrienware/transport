@@ -16,7 +16,7 @@ $event->drivers = $json->drivers ?: [];
 $event->vehicles = $json->vehicles ?: [];
 $event->notes = $json->notes ?: NULL;
 
-if ($event->save($user->getUsername())) {
+if ($event->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $event->getId();
   die(json_encode(['result' => $result]));
 }

@@ -53,11 +53,11 @@ class Blockout
 	}
 
 	
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'user_blockouts';
 		$audit->before = json_encode($this->row);
@@ -67,7 +67,7 @@ class Blockout
 			'from_datetime' => $this->fromDateTime,
 			'to_datetime' => $this->toDateTime,
 			'note' => $this->note,
-			'user' => $user
+			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
@@ -109,11 +109,11 @@ class Blockout
 	}
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'user_blockouts';
 		$audit->before = json_encode($this->row);
@@ -125,7 +125,7 @@ class Blockout
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

@@ -42,7 +42,7 @@ if ($trip->ETD) {
   $trip->IATA = $location->IATA;
 }
 
-if ($trip->save($user->getUsername())) {
+if ($trip->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $trip->getId();
   die(json_encode(['result' => $result]));
 }

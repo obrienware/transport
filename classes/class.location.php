@@ -64,11 +64,11 @@ class Location
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'locations';
 		$audit->before = json_encode($this->row);
@@ -83,7 +83,7 @@ class Location
 			'lat' => $this->lat,
 			'lon' => $this->lon,
 			'place_id' => $this->placeId,
-			'user' => $user,
+			'user' => $userResponsibleForOperation,
 		];
 
 		if ($this->action === 'update') {
@@ -135,11 +135,11 @@ class Location
 	}
 
 	
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'locations';
 		$audit->before = json_encode($this->row);
@@ -151,7 +151,7 @@ class Location
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

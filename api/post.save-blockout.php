@@ -12,7 +12,7 @@ $blockout->fromDateTime = $json->fromDateTime ?: NULL;
 $blockout->toDateTime = $json->toDateTime ?: NULL;
 $blockout->note = $json->note ?: NULL;
 
-if ($blockout->save($user->getUsername())) {
+if ($blockout->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $blockout->getId();
   die(json_encode(['result' => $result]));
 }

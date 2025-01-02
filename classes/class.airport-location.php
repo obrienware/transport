@@ -70,11 +70,11 @@ class AirportLocation
 	}
 
 
-  public function save(string $user = null): bool
+  public function save(string $userResponsibleForOperation = null): bool
   {
     $this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'airport_locations';
 		$audit->before = json_encode($this->row);
@@ -84,7 +84,7 @@ class AirportLocation
       'airline_id' => $this->airlineId,
       'location_id' => $this->locationId,
       'type' => $this->type,
-      'user' => $user
+      'user' => $userResponsibleForOperation
     ];
 
     if ($this->action == 'create') {
@@ -134,17 +134,17 @@ class AirportLocation
   }
 
 
-  public function delete(string $user = null): bool
+  public function delete(string $userResponsibleForOperation = null): bool
   {
     $this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'airport_locations';
 		$audit->before = json_encode($this->row);
 
     $query = "UPDATE airport_locations SET archived = NOW(), archived_by = :user WHERE id = :id";
-    $params = ['id' => $this->id, 'user' => $user];
+    $params = ['id' => $this->id, 'user' => $userResponsibleForOperation];
 		try {
 			$this->db->query($query, $params);
 			$audit->description = 'Airport Location deleted';

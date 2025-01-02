@@ -10,7 +10,7 @@ $department = new Department($json->id);
 $department->name = $json->name;
 $department->mayRequest = $json->mayRequest ? 1 : 0;
 
-if ($department->save($user->getUsername())) {
+if ($department->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $department->getId();
   die(json_encode(['result' => $result]));
 }

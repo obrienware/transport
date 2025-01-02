@@ -18,7 +18,7 @@ $location->lon = $json->lon ?: NULL;
 $location->placeId = $json->placeId ?: NULL;
 $location->meta = json_encode($json->meta);
 
-if ($location->save($user->getUsername())) {
+if ($location->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $location->getId();
   die(json_encode(['result' => $result]));
 }

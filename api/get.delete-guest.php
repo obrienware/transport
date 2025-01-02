@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.guest.php';
 $guest = new Guest($_REQUEST['id']);
-$result = $guest->delete($user->getUsername());
+$result = $guest->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

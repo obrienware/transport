@@ -67,11 +67,11 @@ class Snag
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'snags';
 		$audit->before = json_encode($this->row);
@@ -88,7 +88,7 @@ class Snag
       'resolved_by' => $this->resolvedBy,
       'resolution' => $this->resolution,
       'comments' => $this->comments,
-      'user' => $user
+      'user' => $userResponsibleForOperation
     ];
 
 		if ($this->action === 'update') {
@@ -144,11 +144,11 @@ class Snag
   }
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'snags';
 		$audit->before = json_encode($this->row);
@@ -160,7 +160,7 @@ class Snag
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

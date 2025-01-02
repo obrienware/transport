@@ -7,7 +7,7 @@ $user = new User($_SESSION['user']->id);
 $user->preferences = $json;
 
 
-if ($user->save($user->getUsername())) {
+if ($user->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $user->getId();
   die(json_encode(['result' => $result]));
 }

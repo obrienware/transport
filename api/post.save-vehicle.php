@@ -14,7 +14,7 @@ $vehicle->licensePlate = $json->licensePlate;
 $vehicle->passengers = $json->passengers;
 $vehicle->requireCDL = $json->requireCDL ? 1 : 0;
 
-if ($vehicle->save($user->getUsername())) {
+if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $vehicle->getId();
   die(json_encode(['result' => $result]));
 }

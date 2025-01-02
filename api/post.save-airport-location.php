@@ -12,7 +12,7 @@ $airportLocation->airlineId = $json->airlineId ?: NULL;
 $airportLocation->locationId = $json->locationId ?: NULL;
 $airportLocation->type = $json->type ?: NULL;
 
-if ($airportLocation->save($user->getUsername())) {
+if ($airportLocation->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $airportLocation->getId();
   die(json_encode(['result' => $result]));
 }

@@ -63,7 +63,7 @@ function addAirportDropoff($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save($user->getUsername());
+    $guest->save(userResponsibleForOperation: $user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
@@ -74,7 +74,7 @@ function addAirportDropoff($json)
   $trip->doLocationId = AirportLocation::getAirportLocation($airport->getId(), $json->flight->airlineId, 'Departure');
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save($user->getUsername());
+  $trip->save(userResponsibleForOperation: $user->getUsername());
 }
 
 
@@ -102,7 +102,7 @@ function addAirportPickup($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save($user->getUsername());
+    $guest->save(userResponsibleForOperation: $user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
@@ -113,7 +113,7 @@ function addAirportPickup($json)
   $trip->puLocationId = AirportLocation::getAirportLocation($airport->getId(), $json->flight->airlineId, 'Arrival');
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save($user->getUsername());
+  $trip->save(userResponsibleForOperation: $user->getUsername());
 }
 
 
@@ -140,14 +140,14 @@ function addPointToPoint($json)
     $guest->lastName = array_pop($parts);
     $guest->firstName = implode(' ', $parts);
     $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
-    $guest->save($user->getUsername());
+    $guest->save(userResponsibleForOperation: $user->getUsername());
     $trip->guestId = $guest->getId();
   }
 
   $trip->passengers = $json->whom->pax;
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $trip->save($user->getUsername());
+  $trip->save(userResponsibleForOperation: $user->getUsername());
 }
 
 function addVehicleReservation($json)
@@ -161,7 +161,7 @@ function addVehicleReservation($json)
   $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
   $event->notes = $json->notes;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $event->save($user->getUsername());
+  $event->save(userResponsibleForOperation: $user->getUsername());
 }
 
 function addEvent($json)
@@ -175,5 +175,5 @@ function addEvent($json)
   $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
   $event->notes = $json->detail;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $event->save($user->getUsername());
+  $event->save(userResponsibleForOperation: $user->getUsername());
 }

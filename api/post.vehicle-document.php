@@ -19,7 +19,7 @@ if (!empty($_FILES)) {
     $doc->name = $_POST['documentName'];
     $doc->filename = $targetFilename;
     $doc->fileType = $_FILES['file']['type'];
-    if ($doc->save($user->getUsername())) {
+    if ($doc->save(userResponsibleForOperation: $user->getUsername())) {
       $result = $doc->getId();
       die(json_encode(['result' => $result]));
     }

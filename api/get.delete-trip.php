@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.trip.php';
 $trip = new Trip($_REQUEST['id']);
-$result = $trip->delete($user->getUsername());
+$result = $trip->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

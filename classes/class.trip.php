@@ -130,11 +130,11 @@ class Trip
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
@@ -161,7 +161,7 @@ class Trip
 			'guest_notes' => $this->guestNotes,
 			'driver_notes' => $this->driverNotes,
 			'general_notes' => $this->generalNotes,
-			'user' => $user
+			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
@@ -238,11 +238,11 @@ class Trip
 	}
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
@@ -254,7 +254,7 @@ class Trip
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {
@@ -329,10 +329,10 @@ class Trip
 	}
 
 
-	public function cancel(string $user = null): bool
+	public function cancel(string $userResponsibleForOperation = null): bool
 	{
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'update';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);
@@ -411,10 +411,10 @@ class Trip
 	}
 
 
-	public function confirm(string $user = null): bool
+	public function confirm(string $userResponsibleForOperation = null): bool
 	{
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'update';
 		$audit->table = 'trips';
 		$audit->before = json_encode($this->row);

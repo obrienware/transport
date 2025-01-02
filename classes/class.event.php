@@ -73,11 +73,11 @@ class Event
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
@@ -91,7 +91,7 @@ class Event
       'driver_ids' => implode(',', $this->drivers),
       'vehicle_ids' => implode(',', $this->vehicles),
       'notes' => $this->notes,
-      'user' => $user
+      'user' => $userResponsibleForOperation
     ];
 
     if ($this->action === 'update') {
@@ -142,11 +142,11 @@ class Event
   }
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
@@ -158,7 +158,7 @@ class Event
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {
@@ -207,10 +207,10 @@ class Event
 	}
 
 
-  public function confirm(string $user = null): bool
+  public function confirm(string $userResponsibleForOperation = null): bool
 	{
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'update';
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
@@ -227,17 +227,17 @@ class Event
 	}
   
 
-	public function cancel(string $user = null): bool
+	public function cancel(string $userResponsibleForOperation = null): bool
 	{
 		$audit = new Audit();
-    $audit->user = $user;
+    $audit->user = $userResponsibleForOperation;
 		$audit->action = 'update';
 		$audit->table = 'events';
 		$audit->before = json_encode($this->row);
 
 		$query = 'UPDATE events SET cancellation_requested = NOW() WHERE id = :event_id';
 		$params = ['event_id' => $this->id];
-		$result = $this->db->query($query, $params);
+		$this->db->query($query, $params);
 
 		$audit->description = 'Event cancellation requested: '.$this->name;
 		$this->load($this->id);

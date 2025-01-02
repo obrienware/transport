@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.event.php';
 $event = new Event($_REQUEST['id']);
-$result = $event->delete($user->getUsername());
+$result = $event->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

@@ -15,7 +15,7 @@ $airport->travelTime = $json->travelTime ?: NULL;
 $airport->arrivalInstructions = $json->arrivalInstructions ?: NULL;
 $airport->arrivalInstructionsGroup = $json->arrivalInstructionsGroup ?: NULL;
 
-if ($airport->save($user->getUsername())) {
+if ($airport->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $airport->getId();
   die(json_encode(['result' => $result]));
 }

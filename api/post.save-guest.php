@@ -13,7 +13,7 @@ $guest->lastName = $json->lastName ?: NULL;
 $guest->emailAddress = $json->emailAddress ?: NULL;
 $guest->phoneNumber = Utils::formattedPhoneNumber($json->phoneNumber);
 
-if ($guest->save($user->getUsername())) {
+if ($guest->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $guest->getId();
   die(json_encode(['result' => $result]));
 }

@@ -18,7 +18,7 @@ if (isset($json->needsRestocking)) $vehicle->restock = ($json->needsRestocking) 
 $vehicle->lastUpdate = Date('Y-m-d H:i:s');
 $vehicle->lastUpdatedBy = $_SESSION['user']->username;
 
-if ($vehicle->save($user->getUsername())) {
+if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $vehicle->getId();
   die(json_encode(['result' => $result]));
 }

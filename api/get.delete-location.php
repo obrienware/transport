@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.location.php';
 $location = new Location($_REQUEST['id']);
-$result = $location->delete($user->getUsername());
+$result = $location->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

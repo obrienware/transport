@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.department.php';
 $department = new Department($_REQUEST['id']);
-$result = $department->delete($user->getUsername());
+$result = $department->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

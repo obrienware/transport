@@ -68,11 +68,11 @@ class User
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'users';
 		$audit->before = json_encode($this->row);
@@ -88,7 +88,7 @@ class User
 			'department_id' => $this->departmentId,
 			'cdl' => $this->CDL ? 1 : 0,
 			'personal_preferences' => ($this->preferences) ? json_encode($this->preferences) : NULL,
-			'user' => $user
+			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
@@ -142,11 +142,11 @@ class User
 	}
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'users';
 		$audit->before = json_encode($this->row);
@@ -158,7 +158,7 @@ class User
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

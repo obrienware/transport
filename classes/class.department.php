@@ -48,11 +48,11 @@ class Department
 	}
   
   
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'departments';
 		$audit->before = json_encode($this->row);
@@ -60,7 +60,7 @@ class Department
 		$params = [
 			'name' => $this->name,
 			'can_submit_requests' => $this->mayRequest ? 1 : 0,
-			'user' => $user
+			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
@@ -98,11 +98,11 @@ class Department
   }
 	
 	
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'departments';
 		$audit->before = json_encode($this->row);
@@ -114,7 +114,7 @@ class Department
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

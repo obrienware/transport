@@ -5,5 +5,5 @@ $user = new User($_SESSION['user']->id);
 
 require_once 'class.airline.php';
 $airline = new Airline($_REQUEST['id']);
-$result = $airline->delete($user->getUsername());
+$result = $airline->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

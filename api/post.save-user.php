@@ -17,7 +17,7 @@ $user->position = $json->position ?: NULL;
 $user->departmentId = $json->departmentId ?: NULL;
 $user->CDL = $json->cdl ?: NULL;
 
-if ($user->save($sessionUser->getUsername())) {
+if ($user->save(userResponsibleForOperation: $sessionUser->getUsername())) {
 	if ($json->resetPassword) {
 		$user->resetPassword();
 	}

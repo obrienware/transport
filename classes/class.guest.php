@@ -52,11 +52,11 @@ class Guest
 	}
 
 
-	public function save(string $user = null): bool
+	public function save(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = $this->action;
 		$audit->table = 'guests';
 		$audit->before = json_encode($this->row);
@@ -66,7 +66,7 @@ class Guest
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
 			'phone_number' => $this->phoneNumber,
-			'user' => $user
+			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
@@ -108,11 +108,11 @@ class Guest
 	}
 
 
-	public function delete(string $user = null): bool
+	public function delete(string $userResponsibleForOperation = null): bool
 	{
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $user;
+		$audit->user = $userResponsibleForOperation;
 		$audit->action = 'delete';
 		$audit->table = 'guests';
 		$audit->before = json_encode($this->row);
@@ -124,7 +124,7 @@ class Guest
 			WHERE id = :id
 		";
 		$params = [
-			'user' => $user, 
+			'user' => $userResponsibleForOperation, 
 			'id' => $this->id
 		];
 		try {

@@ -25,7 +25,7 @@ $airline->name = $_POST['name'];
 $airline->flightNumberPrefix = $_POST['flightNumberPrefix'];
 if (isset($targetFilename)) $airline->imageFilename = $targetFilename;
 
-if ($airline->save($user->getUsername())) {
+if ($airline->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $airline->getId();
   die(json_encode(['result' => $result]));
 }
