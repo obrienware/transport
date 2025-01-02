@@ -12,6 +12,8 @@ class Audit
 
   public function commit()
   {
+    if ($this->before == 'null') $this->before = null;
+    if ($this->after == 'null') $this->after = null;
     Audit::log($this->action, $this->table, $this->description, $this->before, $this->after, $this->user);
   }
 
