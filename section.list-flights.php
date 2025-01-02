@@ -40,6 +40,7 @@ function showFlightsFor($iata, $type)
     foreach ($rows as $row) {
       if ($row->type !== $type) continue;
       if ($row->iata !== $iata) continue;
+      if (!$row->flight_number) continue;
       $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata, Date('Y-m-d', strtotime($row->target_datetime)));
       if (!$flight->flight_number) continue; // exclude flights we didn't track.
       $count++;
