@@ -1,26 +1,25 @@
 <?php
-include 'inc.stdout-log.php';
 require 'inc.user.php';
 include 'inc.header.php';
 include 'inc.menu.php';
 ?>
 <div class="container-fluid mt-3">
 
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active px-4 py-2" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">Home contents</div>
+  </div>
 
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
-  </li>
-</ul>
-<div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active px-4 py-2" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">Home contents</div>
-</div>
-
-</div>
+</div><!-- .container-fluid -->
 
 <script type="text/javascript">
 
   $(async ƒ => {
+
     <?php if (array_search($_SESSION['view'], ['developer','manager']) !== false):?>
       $('#home-tab-pane').load('section.home-manager.php');
     <?php elseif (array_search($_SESSION['view'], ['driver']) !== false):?>
@@ -36,6 +35,7 @@ include 'inc.menu.php';
         location.reload();
       }
     }, 60 * 1000);
+
   });
 
 </script>

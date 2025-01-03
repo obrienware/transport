@@ -1,5 +1,4 @@
 <?php
-
 // This should only be included before any output has been sent to the browser
 if (!isset($_SESSION['user']) || !isset($_SESSION['user']->authenticated) || !isset($_SESSION['user']->id)) {
 	// Redirect to a login page
@@ -7,6 +6,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user']->authenticated) || !is
 	header('location: page.authenticate.php?return=' . $request_uri);
 	die();
 }
+
 require_once 'class.user.php';
 $user = new User($_SESSION['user']->id);
 

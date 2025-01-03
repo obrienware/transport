@@ -12,19 +12,19 @@ if (!isset($_SESSION['view'])) {
 	<meta charset="utf-8">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="description" content="">
+	<meta name="description" content="Transportation System - Management Console">
 	<meta name="author" content="Richard O'Brien">
-	<link rel="icon" type="image/png" href="/Icon.png" />
+	<link rel="icon" type="image/x-icon" href="/images/logo.svg">
 
 	<title>Transportation Management Console</title>
 
 	<!-- Fontawesome - necessary for icons -->
 	<script src="https://kit.fontawesome.com/cc9f38bd60.js" crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"> -->
 
 	
 	<!-- Necessary Javascript that should come before anything else -->
-	<!-- Still rely heavily on jQuery. It serves our purpose quite well -->
+	<!-- Still rely heavily on jQuery. It serves our purposes quite well -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<!-- And of course our Bootstrap javascript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js" integrity="sha512-7Pi/otdlbbCR+LnW+F7PwFcSDJOuUJB3OxtEHbg4vSMvzvJjde4Po1v4BR9Gdc9aXNUNFVUY+SK51wWT8WF0Gg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -84,7 +84,7 @@ if (!isset($_SESSION['view'])) {
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.7.0/event-calendar.min.css">
 	<script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.7.0/event-calendar.min.js"></script>
 	
-	<!-- All our customized javascript -->
+	<!-- All our custom javascript -->
 	<script type="text/javascript" src="js/common.js?<?=filemtime('js/common.js')?>"></script>
 	<script type="text/javascript" src="js/tab-management.js"></script>
 
@@ -94,8 +94,6 @@ if (!isset($_SESSION['view'])) {
 
 	<!-- And of course our own styling -->
 	<link rel="stylesheet" type="text/css" href="css/style.css?<?=filemtime('css/style.css')?>">
-
-	<link rel="icon" type="image/x-icon" href="/images/logo.svg">
 </head>
 
 <body class="bg-body-secondary">
