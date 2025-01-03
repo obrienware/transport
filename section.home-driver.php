@@ -126,7 +126,7 @@ $user = new User($_SESSION['user']->id);
 
     // We're just going to have this auto-update every minute as well
     setInterval(() => {
-      $(document).on('tripChange', ec.refetchEvents);
+      ec.refetchEvents();
       loadJITContent();
     }, 60 * 1000);
 

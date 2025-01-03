@@ -79,7 +79,7 @@ class Utils
   static public function formattedPhoneNumber(string $number): string
 	{
 		if (str_contains($number, '+')) {
-			return $number;
+			return preg_replace('/(?<!^)\D/', '', $number); // Remove all non-numeric characters except the leading +
 		} else {
 			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
 		}	

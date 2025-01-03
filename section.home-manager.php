@@ -41,6 +41,7 @@ $user = new User($_SESSION['user']->id);
 <script type="text/javascript">
 
   $(async ƒ => {
+
     let vehicleResources = await get('/api/get.resource-vehicles.php');
     let driverResources = await get('/api/get.resource-drivers.php');
 
@@ -128,7 +129,7 @@ $user = new User($_SESSION['user']->id);
 
     // We're just going to have this auto-update every minute as well
     setInterval(() => {
-      $(document).on('tripChange', ec.refetchEvents);
+      ec.refetchEvents();
       loadJITContent();
     }, 60 * 1000);
 

@@ -3,7 +3,7 @@
 
 require_once 'class.audit.php';
 require_once 'class.data.php';
-
+require_once 'class.utils.php';
 
 class Guest
 {
@@ -65,7 +65,7 @@ class Guest
 			'first_name' => $this->firstName,
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
-			'phone_number' => $this->phoneNumber,
+			'phone_number' => $this->phoneNumber ? Utils::formattedPhoneNumber($this->phoneNumber) : null,
 			'user' => $userResponsibleForOperation
 		];
 
