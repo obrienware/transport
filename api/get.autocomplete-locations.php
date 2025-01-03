@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require_once 'class.data.php';
 $db = new data();
-$query = '%' . $_GET['query'] . '%';
+$q = '%' . $_GET['query'] . '%';
 $query = "
   SELECT 
     id AS value,
@@ -12,7 +12,7 @@ $query = "
   FROM locations WHERE `name` LIKE :query OR short_name LIKE :query
   ORDER BY `name`
 ";
-$params = ['query' => $query];
+$params = ['query' => $q];
 if ($rows = $db->get_rows($query, $params)) {
   die(json_encode($rows));
 }

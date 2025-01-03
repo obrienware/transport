@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require_once 'class.data.php';
 $db = new data();
-$query = '%' . $_GET['query'] . '%';
+$q = '%' . $_GET['query'] . '%';
 $query = "
   SELECT 
     id AS value,
@@ -14,7 +14,7 @@ $query = "
     AND archived IS NULL
   ORDER BY first_name, last_name
 ";
-$params = ['query' => $query];
+$params = ['query' => $q];
 if ($rows = $db->get_rows($query, $params)) {
   die(json_encode($rows));
 }
