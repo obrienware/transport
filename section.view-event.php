@@ -33,21 +33,21 @@ $event = new Event($_REQUEST['id']);
       <div class="col-3">
         <div class="mb-3">
           <label for="event-start-date" class="form-label">Starts</label>
-          <input type="text" class="form-control" id="event-start-date" value="<?=($event->startDate) ? Date('m/d/Y h:i A', strtotime($event->startDate)) : '' ?>" readonly>
+          <input type="text" class="form-control" id="event-start-date" value="<?=($event->startDate) ? Date('m/d/Y h:i A', strtotime($event->startDate)) : '' ?>" readonly disabled>
         </div>
       </div>
 
       <div class="col-3">
         <div class="mb-3">
           <label for="event-end-date" class="form-label">Ends</label>
-          <input type="text" class="form-control" id="event-start-date" value="<?=($event->endDate) ? Date('m/d/Y h:i A', strtotime($event->endDate)) : '' ?>" readonly>
+          <input type="text" class="form-control" id="event-start-date" value="<?=($event->endDate) ? Date('m/d/Y h:i A', strtotime($event->endDate)) : '' ?>" readonly disabled>
         </div>
       </div>
 
       <div class="col">
         <div class="mb-3">
           <label for="event-name" class="form-label">Description</label>
-          <input type="text" class="form-control" id="event-name" value="<?=$event->name?>" readonly>
+          <input type="text" class="form-control" id="event-name" value="<?=$event->name?>" readonly disabled>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@ $event = new Event($_REQUEST['id']);
       <div class="col">
         <div class="mb-3">
           <label for="event-location" class="form-label">Location</label>
-          <input type="text" class="form-control" value="<?=$event->location->name?>" readonly>
+          <input type="text" class="form-control" value="<?=$event->location->name?>" readonly disabled>
         </div>
       </div>
     </div>
@@ -90,7 +90,7 @@ $event = new Event($_REQUEST['id']);
       <div class="col">
         <div class="mb-3">
           <label for="event-notes" class="form-label">Notes</label>
-          <textarea class="form-control" id="event-notes" rows="7" readonly><?=$event->notes?></textarea>
+          <textarea class="form-control" id="event-notes" rows="7" readonly disabled><?=$event->notes?></textarea>
         </div>
       </div>
     </div>

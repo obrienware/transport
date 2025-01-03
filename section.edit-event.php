@@ -298,19 +298,27 @@ $eventId = $event->getId();
       }
 
       $('#btn-save-event').off('click').on('click', async function () {
+        const buttonSavedText = $('#btn-save-event').text();
+        $('#btn-save-event').prop('disabled', true).text('Saving...');
+
         const data = getData();
         const resp = await post('/api/post.save-event.php', data);
         if (resp?.result) {
           $(document).trigger('eventChange', {eventId});
           app.closeOpenTab();
           if (eventId) return toastr.success('Event saved.', 'Success');
+          $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
           return toastr.success('Event added.', 'Success')
         }
         toastr.error(resp . result . errors[2], 'Error');
         console.log(resp);
+        $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
       });
 
       $('#btn-save-confirm-event').off('click').on('click', async function () {
+        const buttonSavedText = $('#btn-save-confirm-event').text();
+        $('#btn-save-confirm-event').prop('disabled', true).text('Saving...');
+
         const data = await getData();
         if (data) {
           const resp = await post('/api/post.save-event.php', data);
@@ -320,27 +328,35 @@ $eventId = $event->getId();
             if (newResp?.result) {
               $(document).trigger('eventChange');
               app.closeOpenTab();
+              $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
               return toastr.success('Event added.', 'Success');
             }
+            $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
             return toastr.error('Seems to be a problem confirming this event!', 'Error');
           }
           toastr.error(resp.result.errors[2], 'Error');
           console.error(resp);
+          $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
         }
       });
 
       $('#btn-delete-event').on('click', async ƒ => {
         if (await ask('Are you sure you want to delete this event?')) {
+          const buttonSavedText = $('#btn-delete-event').text();
+          $('#btn-delete-event').prop('disabled', true).text('Deleting...');
+
           const resp = await get('/api/get.delete-event.php', {
             id: '<?=$eventId?>'
           });
           if (resp?.result) {
             $(document).trigger('eventChange', {eventId});
+            $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
             app.closeOpenTab();
             return toastr.success('Event deleted.', 'Success')
           }
           console.log(resp);
           toastr.error('There seems to be a problem deleting event.', 'Error');
+          $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
         }
       });
     });

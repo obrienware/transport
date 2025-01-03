@@ -15,7 +15,7 @@ $event = new Event($json->id);
 
 if (!$event->confirmed) {
   
-  $results[] = $event->confirm($me->getUsername());
+  $results[] = $event->confirm(userResponsibleForOperation: $me->getUsername());
 
   // Generate ics file
   $ics = new ICS([
@@ -23,8 +23,6 @@ if (!$event->confirmed) {
     'dtend' => $event->endDate,
     'description' => $event->notes,
     'summary' => $event->name,
-    // 'location' => str_replace("\n", "\\n", $trip->puLocation->mapAddress),
-    // 'url' => 'https://'.$_SERVER['HTTP_HOST'].'/print.trip-driver-sheet.php?id='.$trip->getId()
   ]);
   if ($event->location) $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));
   
