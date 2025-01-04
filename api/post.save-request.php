@@ -12,6 +12,12 @@ require_once 'class.guest.php';
 require_once 'class.airport.php';
 require_once 'class.airport-location.php';
 
+require_once 'class.config.php';
+require_once 'class.email.php';
+require_once 'class.email-templates.php';
+require_once 'class.template.php';
+
+
 switch ($json->type) {
   case 'airport-dropoff':
     addAirportDropoff($json);
@@ -75,6 +81,13 @@ function addAirportDropoff($json)
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+    'summary' => $trip->summary,
+    'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+    'notes' => $json->notes,
+    'requestorEmail' => $user->emailAddress,
+  ]);
 }
 
 
@@ -114,6 +127,13 @@ function addAirportPickup($json)
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+    'summary' => $trip->summary,
+    'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+    'notes' => $json->notes,
+    'requestorEmail' => $user->emailAddress,
+  ]);
 }
 
 
@@ -148,6 +168,13 @@ function addPointToPoint($json)
   $trip->generalNotes = $json->notes;
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+    'summary' => $trip->summary,
+    'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+    'notes' => $json->notes,
+    'requestorEmail' => $user->emailAddress,
+  ]);
 }
 
 function addVehicleReservation($json)
@@ -162,6 +189,14 @@ function addVehicleReservation($json)
   $event->notes = $json->notes;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $event->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('event', 'New Event Request: '.$event->name, [
+    'summary' => $event->name,
+    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+    'notes' => $json->notes,
+    'requestorEmail' => $user->emailAddress,
+  ]);
 }
 
 function addEvent($json)
@@ -176,4 +211,28 @@ function addEvent($json)
   $event->notes = $json->detail;
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $event->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('event', 'New Event Request: '.$event->name, [
+    'summary' => $event->name,
+    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+    'notes' => $json->notes,
+    'requestorEmail' => $user->emailAddress,
+  ]);
+}
+
+
+function notifyManagers($type, $subject, $variables)
+{
+  $template = ($type == 'trip') ? new Template(EmailTemplates::get('Email Manager New Trip Request')) : new Template(EmailTemplates::get('Email Manager New Event Request'));
+  $templateData = $variables;
+  $managers = User::getManagers();
+  foreach ($managers as $manager) {
+    $templateData['name'] = $manager->first_name;
+    $email = new Email();
+    $email->addRecipient($manager->email_address, $manager->first_name.' '.$manager->last_name);
+    $email->setSubject($subject);
+    $email->setContent($template->render($templateData));
+    $email->sendText();
+  }
 }

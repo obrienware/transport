@@ -212,7 +212,7 @@ class AirportLocation
 	}
 
 
-  public static function getAirportLocation(int $airportId, int $airlineId, string $type): int
+  public static function getAirportLocation(int $airportId, int $airlineId, string $type): int | null
   {
     $db = new data();
     $query = "

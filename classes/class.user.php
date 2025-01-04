@@ -286,15 +286,28 @@ class User
 
 	static public function getDrivers(): array
 	{
+		return self::getUsersByRole('driver');
+	}
+
+
+	static public function getManagers(): array
+	{
+		return self::getUsersByRole('manager');
+	}
+
+
+	static public function getUsersByRole(string $role): array
+	{
 		$db = new data();
 		$query = "
 			SELECT * FROM users 
 			WHERE 
-				FIND_IN_SET('driver', roles)
+				FIND_IN_SET(:role, roles)
 				AND archived IS NULL
 			ORDER BY first_name, last_name
 		";
-		return $db->get_rows($query);
+		$params = ['role' => $role];
+		return $db->get_rows($query, $params);
 	}
 
 
