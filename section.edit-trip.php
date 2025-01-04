@@ -628,6 +628,9 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
       checkForFlight();
 
       $('#btn-save-trip').off('click').on('click', async ƒ => {
+        const buttonSavedText = $('#btn-save-trip').text();
+        $('#btn-save-trip').prop('disabled', true).text('Saving...');
+
         const data = await getData();
         if (data) {
           const resp = await post('/api/post.save-trip.php', data);
@@ -636,18 +639,24 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
             app.closeOpenTab();
             if (tripId) {
               app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${tripId}`);
+              $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
               return toastr.success('Trip saved.', 'Success');
             }
             app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
+            $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
             return toastr.success('Trip added.', 'Success');
           }
           toastr.error(resp.result.errors[2], 'Error');
           console.error(resp);
+          $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
         }
       });
 
       $('#btn-delete-trip').off('click').on('click', async ƒ => {
         if (await ask('Are you sure you want to delete this trip?')) {
+          const buttonSavedText = $('#btn-delete-trip').text();
+          $('#btn-delete-trip').prop('disabled', true).text('Deleting...');
+
           const resp = await get('/api/get.delete-trip.php', {
             id: tripId
           });
@@ -658,6 +667,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
           }
           console.error(resp);
           toastr.error('There seems to be a problem deleting this trip.', 'Error');
+          $('#btn-delete-trip').prop('disabled', false).text(buttonSavedText);
         }
       });
 

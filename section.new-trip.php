@@ -588,6 +588,8 @@
     });
 
     $('#btn-save-confirm-trip').off('click').on('click', async e => {
+      const saveButtonText = $('#btn-save-confirm-trip').text();
+      $('#btn-save-confirm-trip').prop('disabled', true).text('Saving...');
       const data = await getData();
       if (data) {
         const resp = await post('/api/post.save-trip.php', data);
@@ -600,10 +602,12 @@
             app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
             return toastr.success('Trip added.', 'Success');
           }
+          $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
           return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
         }
         toastr.error(resp.result.errors[2], 'Error');
         console.error(resp);
+        $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
       }
     });
 

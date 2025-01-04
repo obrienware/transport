@@ -23,6 +23,8 @@ function notifyParticipants(Event $event): void
   require_once 'class.email.php';
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
+  $startDate = Date('m/d/Y', strtotime($event->startDate));
+  $endDate = Date('m/d/Y', strtotime($event->endDate));
 
   // Email to the requestor
   $requestorName = $event->requestor->firstName;

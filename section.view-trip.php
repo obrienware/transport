@@ -217,6 +217,10 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     const sectionId = '<?=$sectionId?>';
     const tripId = <?=$trip->getId()?>;
 
+    function reloadSection () {
+      $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    }
+
     function loadConversation() {
       $('#trip-chat').load('section.chat.php', {tripId});
     }
@@ -257,6 +261,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       const resp = await post('/api/post.confirm-trip.php', {id: tripId});
       if (resp?.result) {
         $(document).trigger('tripChange', {tripId});
+        reloadSection();
         return toastr.success('Trip confirmed.', 'Success');
       }
       return toastr.error('Seems to be a problem confirming this trip!', 'Error');
