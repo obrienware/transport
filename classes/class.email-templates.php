@@ -32,7 +32,7 @@ class EmailTemplates
       $this->id = $row->id;
       $this->name = $row->name;
       $this->content = $row->content;
-      $this->availableVariables = explode(', ', $row->available_variables);
+      $this->availableVariables = $row->available_variables ? explode(', ', $row->available_variables) : [];
       return true;
     }
     return false;
