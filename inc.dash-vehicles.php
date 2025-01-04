@@ -35,7 +35,7 @@ $query = "
 
             <?php if ($row->check_engine): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-engine-warning fa-fw fa-fade" style="color: orangered"></i> Check Engine
+                <i class="fa-xl fa-solid fa-engine-warning fa-fw fa-fade me-2" style="color: orangered"></i> Check Engine
               </li>
             <?php endif; ?>
 
@@ -47,25 +47,25 @@ $query = "
 
             <?php if ($row->clean_interior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-vacuum fa-fw" style="color: orangered"></i> Needs interior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-vacuum fa-fw" style="color: cornflowerblue"></i> Needs interior cleaning
               </li>
             <?php endif; ?>
 
             <?php if ($row->clean_exterior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-car-wash fa-fw" style="color: orangered"></i> Needs exterior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-car-wash fa-fw" style="color: cornflowerblue"></i> Needs exterior cleaning
               </li>
             <?php endif; ?>
 
             <?php if ($row->restock === 1): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-bottle-water fa-fw" style="color: orangered"></i> Needs restocking
+                <i class="fa-xl fa-duotone fa-solid fa-bottle-water fa-fw" style="color: cornflowerblue"></i> Needs restocking
               </li>
             <?php endif; ?>
 
             <?php if ($row->location): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: orangered"></i> <?=$row->location?>
+                <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: darkorange"></i> <?=$row->location?>
               </li>
             <?php endif; ?>
 
