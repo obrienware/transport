@@ -70,6 +70,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
               <li><a class="dropdown-item menu-item" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-airports.php" data-target-id="list-airports">Airports</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-airport-locations.php" data-target-id="list-airport-locations">Airport Locations</a></li>
+              <li><a class="dropdown-item menu-item" href="#section.list-email-templates.php" data-target-id="list-email-templates">Email Templates</a></li>
               
               <?php if ($user->hasRole(['admin','developer'])):?>
               <li>
@@ -147,7 +148,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
 
     $('.menu-item').on('click', function(e) {
       e.preventDefault();
-      e.stopPropagation();
+      // e.stopPropagation();
       const targetTab = $(this).data('target-id');
       const tabLabel = $(this).data('target-label') || $(this).html();
       const sectionToLoad = $(this).attr('href').slice(1); // Remove the '#'
