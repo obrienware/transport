@@ -11,6 +11,7 @@ require_once 'class.trip.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $changes = [];
+$driversToNotify = [];
 
 $trip = new Trip($json->id);
 
@@ -64,10 +65,13 @@ if ($trip->getId() && $trip->isConfirmed() && $trip->endDate > Date('Y-m-d H:i:s
     if (!$trip->driverId) {
       $newDriver = new User($json->driverId);
       $changes[] = "Driver was assigned: {$newDriver->getName()}";
+      $driversToNotify[] = $newDriver;
     } else {
       $driver = new User($trip->driverId);
       $newDriver = new User($json->driverId);
       $changes[] = "The driver was changed from \"{$driver->getName()}\" to \"{$newDriver->getName()}\"";
+      $driversToNotify[] = $driver;
+      $driversToNotify[] = $newDriver;
     }
   }
   if ($trip->vehicleId != $json->vehicleId) {
@@ -140,9 +144,7 @@ if ($trip->save(userResponsibleForOperation: $user->getUsername())) {
 die(json_encode(['result' => false]));
 
 
-// TODO: We want to send notifications to drivers who are no longer assigned to the event as well.
-
-function notifyParticipants(Trip $trip, array $changes): void
+function notifyParticipants(Trip $trip, array $changes, array $driversToNotify): void
 {
   require_once 'class.ics.php';
   require_once 'class.utils.php';
@@ -154,7 +156,6 @@ function notifyParticipants(Trip $trip, array $changes): void
 
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
-  $tripDate = Date('m/d/Y', strtotime($trip->pickupDate));
   $changesString = '- '.implode("\n\n- ", $changes);
 
   // Generate the driver sheet
@@ -169,6 +170,7 @@ function notifyParticipants(Trip $trip, array $changes): void
 
   // Generate ics file
   include '../inc.trip-ics.php';
+
 
   // Email to the requestor (include the guest sheet to pass along)
   $template = new Template(EmailTemplates::get('Email Requestor Trip Change'));
@@ -189,28 +191,30 @@ function notifyParticipants(Trip $trip, array $changes): void
   $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
   $email->setContent($template->render($templateData));
   $email->addAttachment($filename2);
-  $results[] = $email->sendText();
+  $email->sendText();
 
 
-  // Email the driver
+  // Email the driver(s)
   $template = new Template(EmailTemplates::get('Email Driver Trip Change'));
-  $templateData = [
-    'name' => $trip->driver->firstName,
-    'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
-    'tripSummary' => $trip->summary,
-    'changes' => $changesString,
-  ];
-
-  $email = new Email();
-  $email->addRecipient($trip->driver->emailAddress, $driverName);
-  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-  $email->addReplyTo($me->emailAddress, $me->getName());
-  $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
-  $email->setContent($template->render($templateData));
-  $email->addAttachment($filename1);
-  $ical = $ics->to_string();
-  $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-  $results[] = $email->sendText();
+  foreach ($driversToNotify as $driver) {
+    $templateData = [
+      'name' => $driver->firstName,
+      'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+      'tripSummary' => $trip->summary,
+      'changes' => $changesString,
+    ];
+  
+    $email = new Email();
+    $email->addRecipient($driver->emailAddress, $driver->getName());
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+    $email->addReplyTo($me->emailAddress, $me->getName());
+    $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
+    $email->setContent($template->render($templateData));
+    $email->addAttachment($filename1);
+    $ical = $ics->to_string();
+    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
+    $email->sendText();  
+  }
 
   unlink($filename1);
   unlink($filename2);

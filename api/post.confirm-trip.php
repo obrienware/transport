@@ -17,8 +17,7 @@ $trip = new Trip($json->id);
 
 if (!$trip->confirmed) {
   
-  $results[] = $trip->confirm($me->getUsername());
-  // Create the trip sheets and email them to the respective people
+  $trip->confirm($me->getUsername());
 
   // Generate the driver sheet
   include '../inc.trip-driver-sheet.php';
@@ -32,6 +31,7 @@ if (!$trip->confirmed) {
 
   // Generate ics file
   include '../inc.trip-ics.php';
+
 
   // Email to the requestor (include the guest sheet to pass along)
   $template = new Template(EmailTemplates::get('Email Requestor New Trip'));
@@ -51,7 +51,7 @@ if (!$trip->confirmed) {
   $email->setSubject('Information regarding trip: '.$trip->summary);
   $email->setContent($template->render($templateData));
   $email->addAttachment($filename2);
-  $results[] = $email->sendText();
+  $email->sendText();
 
 
   // Email the driver
@@ -63,7 +63,7 @@ if (!$trip->confirmed) {
   ];
 
   $email = new Email();
-  $email->addRecipient($trip->driver->emailAddress, $driverName);
+  $email->addRecipient($trip->driver->emailAddress, $trip->driver->getName());
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
   $email->setSubject('A trip has been assigned to you: '.$trip->summary);
@@ -71,14 +71,11 @@ if (!$trip->confirmed) {
   $email->addAttachment($filename1);
   $ical = $ics->to_string();
   $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-  $results[] = $email->sendText();
+  $email->sendText();
 
 }
 
-echo json_encode([
-  'result' => $result,
-  'results' => $results
-]);
+echo json_encode(['result' => $result]);
 
 unlink($filename1);
 unlink($filename2);
