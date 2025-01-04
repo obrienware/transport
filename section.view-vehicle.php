@@ -126,11 +126,11 @@ $vehicle = new Vehicle($vehicleId);
               <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
             <?php elseif ($vehicle->fuelLevel <= 25) :?>
               <div class="progress mt-1 bg-secondary" role="progressbar" style="height: 20px">
-                <div class="progress-bar bg-danger overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=$vehicle->fuelLevel?>%&nbsp;</div>
+                <div class="progress-bar bg-danger overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=fuelLevelAsFractions($vehicle->fuelLevel)?>&nbsp;</div>
               </div>
             <?php else:?>
               <div class="progress mt-1 bg-secondary" role="progressbar" style="height: 20px">
-                <div class="progress-bar bg-success overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=$vehicle->fuelLevel?>%&nbsp;</div>
+                <div class="progress-bar bg-success overflow-visible" style="width: <?=$vehicle->fuelLevel?>%">&nbsp;<?=fuelLevelAsFractions($vehicle->fuelLevel)?>&nbsp;</div>
               </div>
             <?php endif;?>
           </div>
@@ -260,3 +260,24 @@ $vehicle = new Vehicle($vehicleId);
 
   });
 </script>
+
+<?php
+function fuelLevelAsFractions($fuel_level)
+{
+  if ($fuel_level <= 10) {
+    return 'Empty';
+  } elseif ($fuel_level <= 20) {
+    return '⅛';
+  } elseif ($fuel_level <= 30) {
+    return '¼';
+  } elseif ($fuel_level <= 40) {
+    return '⅜';
+  } elseif ($fuel_level <= 60) {
+    return '½';
+  } elseif ($fuel_level <= 80) {
+    return '¾';
+  } else {
+    return 'Full';
+  }
+}
+?>

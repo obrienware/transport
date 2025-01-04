@@ -25,7 +25,7 @@ $query = "
     <?php foreach ($rows as $row): ?>
 
       <div class="col">
-        <div class="card">
+        <div class="card h-100">
           <div class="card-header" style="background-color:<?=$row->color?>">
             <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="app.openTab('view-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$row->id?>');">
             <?=$row->name?>
@@ -41,19 +41,19 @@ $query = "
 
             <?php if (!is_null($row->fuel_level) && $row->fuel_level <= 25): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-gas-pump fa-fw" style="color: orangered"></i> Fuel Level: <?=$row->fuel_level?>%
+                <i class="fa-xl fa-duotone fa-solid fa-gas-pump fa-fw" style="color: orangered"></i> Fuel Level: <?=fuelLevelAsFractions($row->fuel_level)?>
               </li>
             <?php endif;?>
 
             <?php if ($row->clean_interior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-vacuum fa-fw" style="color: cornflowerblue"></i> Needs interior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-vacuum fa-fw" style="color: cornflowerblue"></i> Needs cleaning
               </li>
             <?php endif; ?>
 
             <?php if ($row->clean_exterior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-duotone fa-solid fa-car-wash fa-fw" style="color: cornflowerblue"></i> Needs exterior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-car-wash fa-fw" style="color: cornflowerblue"></i> Needs cleaning
               </li>
             <?php endif; ?>
 
@@ -96,5 +96,24 @@ function readableColor($bg)
     return '000000';
   } else {
     return 'FFFFFF';
+  }
+}
+
+function fuelLevelAsFractions($fuel_level)
+{
+  if ($fuel_level <= 10) {
+    return 'Empty';
+  } elseif ($fuel_level <= 20) {
+    return '⅛';
+  } elseif ($fuel_level <= 30) {
+    return '¼';
+  } elseif ($fuel_level <= 40) {
+    return '⅜';
+  } elseif ($fuel_level <= 60) {
+    return '½';
+  } elseif ($fuel_level <= 80) {
+    return '¾';
+  } else {
+    return 'Full';
   }
 }
