@@ -41,25 +41,25 @@ $query = "
 
             <?php if (!is_null($row->fuel_level) && $row->fuel_level <= 25): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Fuel Level: <?=$row->fuel_level?>%
+                <i class="fa-xl fa-duotone fa-solid fa-gas-pump fa-fw" style="color: orangered"></i> Fuel Level: <?=$row->fuel_level?>%
               </li>
             <?php endif;?>
 
             <?php if ($row->clean_interior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs interior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-vacuum fa-fw" style="color: orangered"></i> Needs interior cleaning
               </li>
             <?php endif; ?>
 
             <?php if ($row->clean_exterior === 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs exterior cleaning
+                <i class="fa-xl fa-duotone fa-solid fa-car-wash fa-fw" style="color: orangered"></i> Needs exterior cleaning
               </li>
             <?php endif; ?>
 
             <?php if ($row->restock === 1): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-triangle-exclamation fa-fw" style="color: orangered"></i> Needs restocking
+                <i class="fa-xl fa-duotone fa-solid fa-bottle-water fa-fw" style="color: orangered"></i> Needs restocking
               </li>
             <?php endif; ?>
 
