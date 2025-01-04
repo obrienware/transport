@@ -9,6 +9,7 @@ require_once 'class.event.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $changes = [];
+$driversToNotify = [];
 
 $event = new Event($json->eventId);
 
@@ -43,13 +44,16 @@ if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:
       if (!$driverId) continue;
       $driver = new User($driverId);
       $drivers[] = $driver->getName();
+      $driversToNotify[] = $driver;
     }
     $newDrivers = [];
     foreach ($json->drivers as $driverId) {
       $driver = new User($driverId);
       $newDrivers[] = $driver->getName();
+      $driversToNotify[] = $driver;
     }
     $changes[] = "The drivers were changed from \"".implode(', ', $drivers)."\" to \"".implode(', ', $newDrivers)."\"";
+    $driversToNotify = getUniqueDrivers($driversToNotify);
   }
   if ($event->vehicles != $json->vehicles) {
     $vehicles = [];
@@ -94,46 +98,33 @@ die(json_encode(['result' => false]));
 
 
 
-// TODO: We want to send notifications to drivers who are no longer assigned to the event as well.
-
-function notifyParticipants(Event $event, array $changes): void
+function notifyParticipants(Event $event, array $changes, array $driversToNotify): void
 {
   require_once 'class.ics.php';
   require_once 'class.config.php';
   require_once 'class.email.php';
+  require_once 'class.email-templates.php';
+  require_once 'class.template.php';
+
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
+  $changesString = '- '.implode("\n\n- ", $changes);
 
   // Generate ics file
-  $ics = new ICS([
-    'dtstart' => $event->startDate,
-    'dtend' => $event->endDate,
-    'description' => $event->notes,
-    'summary' => $event->name,
-  ]);
-  if ($event->location) $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));
-
-  $changesString = '- '.implode("\n\n- ", $changes);
+  include '../inc.event-ics.php';
  
   
   // Email to the requestor
-  $requestorName = $event->requestor->firstName;
+  $template = new Template(EmailTemplates::get('Email Requestor Event Change'));
+  $templateData = [
+    'name' => $event->requestor->firstName,
+    'eventName' => $event->name,
+    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+    'changes' => $changesString,
+  ];
+
   $email = new Email();
-  $email->setSubject('Confirmation of changes regarding event: '.$event->name);
-  $email->setContent("
-Hello {$requestorName},
-
-The following changes have been made to the event:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-{$changesString}
-
-
-Regards,
-Transportation Team
-  ");
   if ($config->email->sendRequestorMessagesTo == 'requestor') {
     if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
   } else {
@@ -141,36 +132,48 @@ Transportation Team
   }
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
-  $results[] = $email->sendText();
+  $email->setSubject('Confirmation of changes regarding event: '.$event->name);
+  $email->setContent($template->render($templateData));
+  $email->sendText();
 
 
   // Email the driver(s)
-  foreach ($event->drivers as $driverId) {
-    if (!$driverId) continue;
-    $driver = new User($driverId);
-    $driverName = $driver->firstName;
+  $template = new Template(EmailTemplates::get('Email Driver Event Change'));
+  foreach ($driversToNotify as $driver) {
+    $templateData = [
+      'name' => $driver->firstName,
+      'eventName' => $event->name,
+      'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+      'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+      'changes' => $changesString,
+    ];
+
     $email = new Email();
-    $ical = $ics->to_string();
-    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-    $email->setSubject('Confirmation of changes regarding event: '.$event->name);
-    $email->setContent("
-Hello {$driverName},
-
-The following changes have been made to the event:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-{$changesString}
-
-
-Regards,
-Transportation Team
-    ");
-    $email->addRecipient($driver->emailAddress, $driverName);
+    $email->addRecipient($driver->emailAddress, $driver->getName());
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $results[] = $email->sendText();
+    $email->setSubject('Confirmation of changes regarding event: '.$event->name);
+    $email->setContent($template->render($templateData));
+    $ical = $ics->to_string();
+    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
+    $email->sendText();
   }
   
+}
+
+
+function getUniqueDrivers(array $drivers): array
+{
+  $uniqueDrivers = [];
+  $seenIds = [];
+
+  foreach ($drivers as $driver) {
+    $driverId = $driver->getId();
+    if (!in_array($driverId, $seenIds)) {
+      $uniqueDrivers[] = $driver;
+      $seenIds[] = $driverId;
+    }
+  }
+
+  return $uniqueDrivers;
 }

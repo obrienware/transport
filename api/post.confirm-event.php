@@ -5,6 +5,8 @@ require_once 'class.config.php';
 require_once 'class.email.php';
 require_once 'class.event.php';
 require_once 'class.user.php';
+require_once 'class.email-templates.php';
+require_once 'class.template.php';
 
 $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');
@@ -18,72 +20,52 @@ if (!$event->confirmed) {
   $results[] = $event->confirm(userResponsibleForOperation: $me->getUsername());
 
   // Generate ics file
-  $ics = new ICS([
-    'dtstart' => $event->startDate,
-    'dtend' => $event->endDate,
-    'description' => $event->notes,
-    'summary' => $event->name,
-  ]);
-  if ($event->location) $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));
-  
+  include '../inc.event-ics.php';
 
 
-  // Email to the requestor (include the guest sheet to pass along)
-  $requestorName = $event->requestor->firstName;
-  $startDate = Date('m/d/Y', strtotime($event->startDate));
-  $endDate = Date('m/d/Y', strtotime($event->endDate));
+  // Email to the requestor
+  $template = new Template(EmailTemplates::get('Email Requestor New Event'));
+  $templateData = [
+    'name' => $event->requestor->firstName,
+    'eventName' => $event->name,
+    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+  ];
+
   $email = new Email();
-  $email->setSubject('Information regarding event: '.$event->name);
-  $email->setContent("
-Hello {$requestorName},
-
-The following event has been scheduled:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-Regards,
-Transportation Team
-  ");
   if ($config->email->sendRequestorMessagesTo == 'requestor') {
-    if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
+    if ($event->requestor) $email->addRecipient($event->requestor->emailAddress, $event->requestor->getName());
   } else {
     $email->addRecipient($config->email->sendRequestorMessagesTo);
   }
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
-  $results[] = $email->sendText();
+  $email->setSubject('Information regarding event: '.$event->name);
+  $email->setContent($template->render($templateData));
+  $email->sendText();
 
 
   // Email the drivers
+  $template = new Template(EmailTemplates::get('Email Driver New Event'));
   foreach ($event->drivers as $driverId) {
     $driver = new User($driverId);
-    $driverName = $driver->firstName;
-    $startDate = Date('m/d/Y', strtotime($event->startDate));
-    $endDate = Date('m/d/Y', strtotime($event->endDate));
+    $templateData = [
+      'name' => $driver->firstName,
+      'eventName' => $event->name,
+      'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+      'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+    ];
+
     $email = new Email();
-    $ical = $ics->to_string();
-    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-    $email->setSubject('An event has been assigned to you: '.$event->name);
-    $email->setContent("
-Hello {$driverName},
-
-The following event has been assigned to you:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-Regards,
-Transportation Team
-    ");
-    $email->addRecipient($driver->emailAddress, $driverName);
+    $email->addRecipient($driver->emailAddress, $driver->getName());
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $results[] = $email->sendText();
-    }
+    $email->setSubject('An event has been assigned to you: '.$event->name);
+    $email->setContent($template->render($templateData));
+    $ical = $ics->to_string();
+    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
+    $email->sendText();
+  }
 }
 
-echo json_encode([
-  'result' => $result,
-  'results' => $results
-]);
+echo json_encode(['result' => $result]);

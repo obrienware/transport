@@ -21,27 +21,24 @@ function notifyParticipants(Event $event): void
 {
   require_once 'class.config.php';
   require_once 'class.email.php';
+  require_once 'class.email-templates.php';
+  require_once 'class.template.php';
+
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
   $startDate = Date('m/d/Y', strtotime($event->startDate));
   $endDate = Date('m/d/Y', strtotime($event->endDate));
 
   // Email to the requestor
-  $requestorName = $event->requestor->firstName;
+  $template = new Template(EmailTemplates::get('Email Requestor Event Deleted'));
+  $templateData = [
+    'name' => $event->requestor->firstName,
+    'eventName' => $event->name,
+    'startDate' => $startDate,
+    'endDate' => $endDate,
+  ];
+
   $email = new Email();
-  $email->setSubject('Confirmation of cancellation/deletion of event: '.$event->name);
-  $email->setContent("
-Hello {$requestorName},
-
-The following event has been cancelled/deleted:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-
-Regards,
-Transportation Team
-  ");
   if ($config->email->sendRequestorMessagesTo == 'requestor') {
     if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
   } else {
@@ -49,33 +46,29 @@ Transportation Team
   }
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
-  $results[] = $email->sendText();
-
+  $email->setSubject('Confirmation of cancellation/deletion of event: '.$event->name);
+  $email->setContent($template->render($templateData));
+  $email->sendText();
 
 
   // Email the driver(s)
+  $template = new Template(EmailTemplates::get('Email Driver Event Deleted'));
   foreach ($event->drivers as $driverId) {
     if (!$driverId) continue;
     $driver = new User($driverId);
-    $driverName = $driver->firstName;
+    $templateData = [
+      'name' => $driver->firstName,
+      'eventName' => $event->name,
+      'startDate' => $startDate,
+      'endDate' => $endDate,
+    ];
     $email = new Email();
-    $email->setSubject('Confirmation of cancellation/deletion of event: '.$event->name);
-    $email->setContent("
-Hello {$driverName},
-
-The following event has been cancelled/deleted:
-
-{$startDate} - {$endDate}
-{$event->name}
-
-
-Regards,
-Transportation Team
-    ");
     $email->addRecipient($driver->emailAddress, $driverName);
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $results[] = $email->sendText();
+    $email->setSubject('Confirmation of cancellation/deletion of event: '.$event->name);
+    $email->setContent($template->render($templateData));
+    $email->sendText();
   }
 
 }

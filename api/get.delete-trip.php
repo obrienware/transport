@@ -21,55 +21,48 @@ function notifyParticipants(Trip $trip): void
 {
   require_once 'class.config.php';
   require_once 'class.email.php';
+  require_once 'class.email-templates.php';
+  require_once 'class.template.php';
+
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
   $tripDate = Date('m/d/Y', strtotime($trip->pickupDate));
 
   // Email to the requestor
-  $requestorName = $trip->requestor->firstName;
+  $template = new Template(EmailTemplates::get('Email Requestor Trip Deleted'));
+  $templateData = [
+    'name' => $trip->requestor->firstName,
+    'tripSummary' => $trip->summary,
+    'tripDate' => $tripDate,
+  ];
+
   $email = new Email();
-  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
-  $email->setContent("
-Hello {$requestorName},
-
-The following trip has been cancelled/deleted:
-
-{$tripDate}
-{$trip->summary}
-
-
-Regards,
-Transportation Team
-  ");
   if ($config->email->sendRequestorMessagesTo == 'requestor') {
-    if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress);
+    if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress, $trip->requestor->getName());
   } else {
     $email->addRecipient($config->email->sendRequestorMessagesTo);
   }
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
-  $results[] = $email->sendText();
+  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
+  $email->setContent($template->render($templateData));
+  $email->sendText();
 
 
   // Email the driver
-  $driverName = $trip->driver->firstName;
+  $template = new Template(EmailTemplates::get('Email Driver Trip Deleted'));
+  $templateData = [
+    'name' => $trip->driver->firstName,
+    'tripDate' => $tripDate,
+    'tripSummary' => $trip->summary,
+  ];
+
   $email = new Email();
-  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
-  $email->setContent("
-Hello {$driverName},
-
-The following trip has been cancelled/deleted:
-
-{$tripDate}
-{$trip->summary}
-
-
-Regards,
-Transportation Team
-  ");
-  $email->addRecipient($trip->driver->emailAddress, $driverName);
+  $email->addRecipient($trip->driver->emailAddress, $driver->getName());
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
-  $results[] = $email->sendText();
+  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
+  $email->setContent($template->render($templateData));
+  $email->sendText();
 
 }
