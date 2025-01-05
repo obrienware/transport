@@ -369,7 +369,7 @@ class Trip
 
 	static public function nextTripByVehicle(int $vehicleId): int | null
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT id FROM trips 
 				WHERE  NOW() < start_date AND vehicle_id = :vehicle_id
@@ -382,7 +382,7 @@ class Trip
 
 	static public function upcomingTrips($limit = 5): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT 
 				t.*,

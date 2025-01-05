@@ -1,7 +1,5 @@
 <?php
-
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
 class TripSurvey
 {
@@ -22,7 +20,7 @@ class TripSurvey
 
   public function getSurvey(int $surveyId): bool
   {
-    global $db;
+    $db = data::getInstance();
     $query = "SELECT * FROM trip_surveys WHERE id = :id";
     $params = ['id' => $surveyId];
     if ($row = $db->get_row($query, $params)) {
@@ -40,7 +38,7 @@ class TripSurvey
 
   public function save()
   {
-    global $db;
+    $db = data::getInstance();
     $params = [
       'trip_id' => $this->tripId,
       'rating_trip' => $this->ratingTrip,
@@ -84,7 +82,7 @@ class TripSurvey
 
 	static public function delete($surveyId)
 	{
-		global $db;
+		$db = data::getInstance();
 		$query = 'DELETE trip_surveys WHERE id = :id';
 		$params = ['id' => $surveyId];
 		return $db->query($query, $params);

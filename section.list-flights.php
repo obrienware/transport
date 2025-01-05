@@ -2,7 +2,6 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.flight.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
 
 $query = "
 SELECT 
@@ -33,7 +32,7 @@ ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ET
 
 function showFlightsFor($iata, $type)
 {
-  global $db;
+  $db = data::getInstance();
   global $query;
   $count = 0;
   if ($rows = $db->get_rows($query)) {

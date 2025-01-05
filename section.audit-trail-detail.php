@@ -5,7 +5,7 @@ $treewalker = new TreeWalker([
   "returntype" => "array"   //Returntype = ["obj","jsonstring","array"]
 ]);
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $query = "SELECT * FROM audit_trail WHERE id = :id";
 $params = ['id' => $_REQUEST['id']];
 $row = $db->get_row($query, $params);

@@ -2,7 +2,7 @@
 //TODO: This should have its own class
 header('Content-Type: application/json');
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $json = json_decode(file_get_contents("php://input"));
 $json->nodeConfig->updated = (object) [
   'date' => date('Y-m-d H:i:s'),

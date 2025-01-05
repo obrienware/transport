@@ -275,7 +275,7 @@ class Event
 
   static public function nextEventByVehicle(int $vehicleId): int | null
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = "
       SELECT id FROM events 
       WHERE  NOW() < start_date AND FIND_IN_SET(:vehicle_id, vehicle_ids)

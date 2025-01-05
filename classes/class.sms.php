@@ -7,8 +7,6 @@ $config = Config::get('organization');
 
 require_once 'class.utils.php';
 require_once 'class.data.php';
-global $db;
-if (!isset($db)) $db = new data();
 
 class SMS
 {
@@ -33,7 +31,7 @@ class SMS
   static public function sendTwilio(string $recipient, string $message)
   {
     global $config;
-    global $db;
+    $db = data::getInstance();
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
@@ -67,7 +65,7 @@ class SMS
 
   static public function sendClickSend(string $recipient, string $message)
   {
-    global $db;
+    $db = data::getInstance();
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
@@ -94,7 +92,7 @@ class SMS
   static public function optIn (string $recipient)
   {
     global $config;
-    global $db;
+    $db = data::getInstance();
     $phone = Utils::formattedPhoneNumber($recipient);
     $query = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
     $params = ['tel' => $phone];
@@ -108,7 +106,7 @@ class SMS
   static public function optOut (string $recipient)
   {
     global $config;
-    global $db;
+    $db = data::getInstance();
     $tel = Utils::formattedPhoneNumber($recipient);
     $query = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
     $params = ['tel' => $tel];

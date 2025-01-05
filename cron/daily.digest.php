@@ -10,7 +10,6 @@ require_once 'class.trip.php';
 require_once 'class.user.php';
 require_once 'class.utils.php';
 
-$db = new data();
 $config = Config::get('organization');
 
 /**
@@ -96,7 +95,7 @@ foreach ($managers as $manager) {
 
 function getTripsFor(int $driverId): array
 {
-  global $db;
+  $db = data::getInstance();
   $query = "
     SELECT * FROM trips 
     WHERE 
@@ -112,7 +111,7 @@ function getTripsFor(int $driverId): array
 
 function getEventsFor(int $driverId): array
 {
-  global $db;
+  $db = data::getInstance();
   $query = "
     SELECT * FROM events
     WHERE
@@ -185,7 +184,7 @@ function getAttachmentsForUpcomingTrip(array $trips): array
 
 function getUnconfirmedTrips(): array
 {
-  global $db;
+  $db = data::getInstance();
   $query = "
     SELECT * FROM trips
     WHERE 
@@ -198,7 +197,7 @@ function getUnconfirmedTrips(): array
 
 function getUnconfirmedEvents(): array
 {
-  global $db;
+  $db = data::getInstance();
   $query = "
     SELECT * FROM events
     WHERE 

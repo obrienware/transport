@@ -2,7 +2,7 @@
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.flight.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
+$db = data::getInstance();
 $query = "
 SELECT 
   t.*,

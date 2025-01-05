@@ -1,7 +1,7 @@
 <?php
 $me = $_SESSION['user']->id;
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 if ($_REQUEST['tripId']) {
   $query = "
     SELECT * FROM trip_messages m

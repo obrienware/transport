@@ -241,7 +241,7 @@ class User
 	static public function sendResetLink(string $username) 
 	{
 		// First determine if we have a user that matches the given username
-		$db = new data();
+		$db = data::getInstance();
 		require_once 'class.email.php';
 		$query = "SELECT id FROM users WHERE username = :username AND archived IS NULL";
 		$params = ['username' => $username];
@@ -298,7 +298,7 @@ class User
 
 	static public function getUsersByRole(string $role): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT * FROM users 
 			WHERE 
@@ -313,7 +313,7 @@ class User
 
 	static public function getUsers(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT u.*, d.name AS department FROM users u 
 			LEFT OUTER JOIN departments d ON d.id = u.department_id
@@ -338,7 +338,7 @@ class User
 
 	static public function validateOTP($email, $otp)
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT * FROM users 
 			WHERE 
@@ -357,7 +357,7 @@ class User
 
 	static public function login(string $username, string $password): mixed
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "SELECT * FROM users WHERE username = :username AND password = :password";
 		$params = [
   		'username' => $username,
@@ -369,7 +369,7 @@ class User
 	// TODO: This makes no sense here! Change it!
 	static public function getUserSession(string $username): mixed
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "SELECT * FROM users WHERE username = :username";
 		$params = ['username' => $username];
 		$result = $db->get_row($query, $params);

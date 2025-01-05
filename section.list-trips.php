@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $query = "
   SELECT 
   	t.id, t.driver_id, t. vehicle_id, t.airline_id,

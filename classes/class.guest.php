@@ -142,7 +142,7 @@ class Guest
 
 	static function getAll(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT g.*, o.opt_in, o.opt_out FROM guests g
 			LEFT OUTER JOIN opt_in_text o ON o.tel = g.phone_number

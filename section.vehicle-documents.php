@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
 $params = ['vehicle_id' => $_REQUEST['vehicleId']];
 ?>

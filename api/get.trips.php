@@ -10,7 +10,7 @@ if (isset($_REQUEST['requestorId'])) {
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $query = "
 SELECT 
   t.*, v.color, v.name as vehicle,

@@ -137,7 +137,7 @@ class Airline
 
 	static public function getAll(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
 		return $db->get_rows($query);
 	}

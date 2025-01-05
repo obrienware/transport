@@ -213,7 +213,7 @@ class Vehicle
 
 	static public function getAll(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = 'SELECT * FROM vehicles WHERE archived IS NULL ORDER BY name';
 		return $db->get_rows($query);
 	}

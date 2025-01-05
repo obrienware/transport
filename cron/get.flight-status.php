@@ -6,7 +6,7 @@ require_once 'class.flight.php';
 require_once 'class.data.php';
 
 // We want to know about flights happening today
-$db = new data();
+$db = data::getInstance();
 $query = "
 SELECT 
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,

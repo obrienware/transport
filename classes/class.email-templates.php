@@ -91,7 +91,7 @@ class EmailTemplates
 
   static public function getAll(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = 'SELECT * FROM email_templates WHERE archived IS NULL ORDER BY name';
 		return $db->get_rows($query);
 	}
@@ -104,7 +104,7 @@ class EmailTemplates
   
   
   public static function get($templateName) {
-    $db = new data();
+    $db = data::getInstance();
     $sqlQuery = "SELECT content FROM email_templates WHERE name = :name";
     $params = ['name' => $templateName];
     return $db->get_var($sqlQuery, $params);

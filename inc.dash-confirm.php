@@ -4,7 +4,7 @@ $config = Config::get('organization');
 if ($config->alertUnconfirmedTrips === false) die();
 
 require_once 'class.data.php';
-if (!$db) $db = new data();
+$db = data::getInstance();
 
 // Check for upcoming trips that need to be confirmed
 $query = "

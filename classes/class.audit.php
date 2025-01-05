@@ -19,7 +19,7 @@ class Audit
 
   static public function log(string $action, string $table, string $description, $before = null, $after = null, $user = null)
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = "
     INSERT INTO audit_trail SET
       datetimestamp = NOW(),

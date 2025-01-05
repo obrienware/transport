@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $q = '%' . $_GET['query'] . '%';
 $query = "
   SELECT 

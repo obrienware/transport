@@ -2,6 +2,7 @@
 
 class data
 {
+	private static $instance = null;
 	private $prep_stmt;
 
 	public $dbh;
@@ -36,6 +37,19 @@ class data
 		} catch (PDOException $e) {
 			die('Failed: ' . $e->getMessage());
 		}
+	}
+
+
+	public static function getInstance(
+		$dbuser = null,
+		$dbpassword = null,
+		$dbname = null,
+		$dbhost = null
+	) {
+		if (self::$instance === null) {
+			self::$instance = new self($dbuser, $dbpassword, $dbname, $dbhost);
+		}
+		return self::$instance;
 	}
 
 	public function start()

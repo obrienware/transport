@@ -143,7 +143,7 @@ class Blockout
 
 	public static function getAll(): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "
 			SELECT b.*, CONCAT(u.first_name,' ',u.last_name) AS user
 			FROM user_blockouts b
@@ -188,7 +188,7 @@ class Blockout
 
 	public static function getBlockoutsForUser(int $userId): array
 	{
-		$db = new data();
+		$db = data::getInstance();
 		$query = "SELECT * FROM user_blockouts WHERE to_datetime > NOW() AND user_id = :user_id ORDER BY from_datetime";
     $params = ['user_id' => $userId];
 		return $db->get_rows($query, $params);

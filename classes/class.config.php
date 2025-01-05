@@ -5,7 +5,7 @@ class Config
 {
   public static function get($node)
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = 'SELECT config FROM config WHERE node = :node';
     $params = ['node' => $node];
     if ($configString = $db->get_var($query, $params)) {

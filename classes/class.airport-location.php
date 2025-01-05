@@ -160,7 +160,7 @@ class AirportLocation
 
   public static function getAll(): array
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = "
       SELECT 
         loc.*,
@@ -214,7 +214,7 @@ class AirportLocation
 
   public static function getAirportLocation(int $airportId, int $airlineId, string $type): int | null
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = "
       SELECT location_id FROM airport_locations
       WHERE 

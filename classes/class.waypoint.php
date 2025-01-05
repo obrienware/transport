@@ -1,7 +1,7 @@
 <?php
 require_once 'class.utils.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
+$db = data::getInstance();
 
 Class Waypoints
 {
@@ -28,7 +28,7 @@ Class Waypoints
 
   public function save()
   {
-    global $db;
+    $db = data::getInstance();
     // For now, we need to replace any existing waypoints with our newly generated waypoints.
     // In future we'll first need to check if the user has manually modified the waypoints
     $db->query("DELETE FROM trip_waypoints WHERE trip_id = :trip_id", ['trip_id' => $this->tripId]);

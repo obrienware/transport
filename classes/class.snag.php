@@ -215,7 +215,7 @@ class Snag
 
   public static function getSnags($vehicleId = null): array
   {
-    $db = new data();
+    $db = data::getInstance();
     if ($vehicleId) {
       $query = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY logged";
       $params = ['vehicle_id' => $vehicleId];

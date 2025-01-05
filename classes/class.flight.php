@@ -11,7 +11,7 @@ class Flight
 
   static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object | bool
   {
-    $db = new data();
+    $db = data::getInstance();
     if (!$date) $date = Date('Y-m-d'); // Default to today
     if ($type == 'arrival') {
       $query = "
@@ -46,7 +46,7 @@ class Flight
    */
   static function updateFlight(string $flightNumber): bool
   {
-    $db = new data();
+    $db = data::getInstance();
     $keys = Config::get('system')->keys;
     $db->query(
       "REPLACE INTO _flight_check SET flight_number = :flight_number, last_checked = NOW()",
@@ -114,7 +114,7 @@ class Flight
    */
   static function lastChecked(string $flightNumber): int | bool
   {
-    $db = new data();
+    $db = data::getInstance();
     $lastChecked = $db->get_var(
       "SELECT last_checked FROM _flight_check WHERE flight_number = :flight_number",
       ['flight_number' => $flightNumber]

@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
+$db = data::getInstance();
 ?>
 <a href="#" class="back-to-top"><i class="fa-solid fa-circle-arrow-up fa-2x"></i></a>
 <div class="container-fluid mt-2" id="master">

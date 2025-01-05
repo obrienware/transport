@@ -1,6 +1,6 @@
 <?php
 require_once 'class.data.php';
-$db = new data();
+$db = data::getInstance();
 $query = "SELECT * FROM users WHERE reset_token = :token AND token_expiration >= NOW()";
 $params = ['token' => $_REQUEST['path']];
 if ($user = $db->get_row($query, $params)) {

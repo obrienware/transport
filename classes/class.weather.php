@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 require_once 'class.utils.php';
 require_once 'class.data.php';
-if (!isset($db)) $db = new data();
+$db = data::getInstance();
 
 class Weather
 {
@@ -38,7 +38,7 @@ class Weather
 
   private function _getCodeData($weatherCode)
   {
-    global $db;
+    $db = data::getInstance();
     $query = "SELECT * FROM weather_codes WHERE code = :code";
     $params = ['code' => $weatherCode];
     return $db->get_row($query, $params);

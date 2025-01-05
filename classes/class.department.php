@@ -132,7 +132,7 @@ class Department
 
   public static function getAll(): array
   {
-    $db = new data();
+    $db = data::getInstance();
     $query = "SELECT * FROM departments WHERE archived IS NULL ORDER BY name";
     return $db->get_rows($query);
   }
