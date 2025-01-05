@@ -28,7 +28,7 @@
             <td class="fit"><?=$row->id?></td>
             <?php if ($row->color): ?>
               <td class="fit">
-                <i class="bi bi-square-fill" style="color:<?=$row->color?>"></i>
+                <i class="fa-solid fa-square" style="color:<?=$row->color?>"></i>
               </td>
             <?php else: ?>
               <td class="fit">&nbsp;</td>
