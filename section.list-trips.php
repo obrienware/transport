@@ -30,7 +30,7 @@ $query = "
 <div class="container-fluid">
   <div class="d-flex justify-content-between mt-2">
     <h2>Trips</h2>
-    <button id="btn-add-trip"" class="btn btn-outline-primary btn-sm my-auto px-3">
+    <button id="btn-add-trip"" class="btn btn-outline-primary btn-sm my-auto px-3" onclick="app.openTab('new-trip', 'New Trip', 'section.new-trip.php')">
       New Trip
     </button>
   </div>
@@ -61,6 +61,7 @@ $query = "
             }
           ?>
           <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
+            <!-- Confirmed -->
             <td class="text-center fit" data-order="<?=$row->confirmed?>">
               <?php if ($row->confirmed): ?>
                 <i class="fa-regular fa-square-check fa-xl text-success"></i>
@@ -68,19 +69,23 @@ $query = "
                 <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
               <?php endif; ?>
             </td>
+            <!-- When -->
             <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
+            <!-- Trip Summary -->
             <td>
-              <?php if ($row->completed) :?>
-                <i class="fa-duotone fa-regular fa-circle-check text-success" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
-              <?php elseif ($row->started): ?>
-                <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
-              <?php endif;?>
-              <?php if ($row->cancellation_requested): ?>
-                <i class="badge bg-danger">Cancelled</i>
-              <?php endif;?>
-              <?=$row->summary?>
+              <div class="d-flex justify-content-between">
+                <?php if ($row->completed) :?>
+                  <i class="fa-duotone fa-regular fa-circle-check text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
+                <?php elseif ($row->started): ?>
+                  <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
+                <?php endif;?>
+                <?php if ($row->cancellation_requested): ?>
+                  <i class="badge bg-danger align-self-center me-2">Cancelled</i>
+                <?php endif;?>
+                <div><?=$row->summary?></div>
+              </div>
             </td>
-
+            <!-- Pick Up -->
             <td class="text-nowrap text-start" data-order="<?=$row->start_date?>">
               <div>
                 <span class="time"><?=($row->start_date) ? Date('g:ia', strtotime($row->start_date)) : ''?></span>: 
@@ -94,7 +99,7 @@ $query = "
                 <small><?=Date('g:ia', strtotime($row->eta))?></small>
               <?php endif;?>
             </td>
-
+            <!-- Drop Off -->
             <td class="text-nowrap">
               <div><?=$row->dropoff_location?></div>
               <?php if ($row->etd): ?>
@@ -105,12 +110,15 @@ $query = "
                 <small><?=Date('g:ia', strtotime($row->etd))?></small>
               <?php endif;?>
             </td>
+            <!-- Driver -->
             <td><?=$row->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <!-- Vehicle -->
             <td><?=$row->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
     </table>
+
 
     <script type="text/javascript">
 
@@ -142,8 +150,7 @@ $query = "
             app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
           });
         }
-        bindRowClick()
-
+        bindRowClick();
         dataTable.on('draw.dt', bindRowClick);
 
         $(document).off('tripChange.ns').on('tripChange.ns', reloadSection);
@@ -164,12 +171,3 @@ $query = "
 
   <?php endif; ?>
 </div>
-<script type="text/javascript">
-
-  $(async ƒ => {
-    $('#btn-add-trip').off('click').on('click', ƒ => {
-        app.openTab('new-trip', 'New Trip', `section.new-trip.php`);
-      });
-  });
-
-</script>

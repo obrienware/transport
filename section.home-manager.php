@@ -29,31 +29,21 @@ $user = new User($_SESSION['user']->id);
       </div>
       <div>
         <button id="btn-refresh-calendar" class="btn btn-outline-primary"><i class="fa-solid fa-rotate"></i></button>
-        <button id="btn-new-event" class="btn btn-outline-primary">New Event</button>
-        <button id="btn-new-trip" class="btn btn-outline-primary">New Trip</button>
+        <button id="btn-new-event" class="btn btn-outline-primary" onclick="app.openTab('new-event', 'New Event', 'section.edit-event.php')">New Event</button>
+        <button id="btn-new-trip" class="btn btn-outline-primary" onclick="app.openTab('new-trip', 'New Trip', 'section.new-trip.php')">New Trip</button>
       </div>
     </div>
     <div id="ec" class="col bg-body py-2"></div>
-    <div id="trip-text"></div>
   </div>
 </div>
+
 
 <script type="text/javascript">
 
   $(async ƒ => {
 
     let vehicleResources = await get('/api/get.resource-vehicles.php');
-    let driverResources = await get('/api/get.resource-drivers.php');
-
-    
-    async function loadJITContent() {
-      <?php if (array_search($_SESSION['view'], ['manager']) !== false):?>
-        $('#trips-to-confirm').load('inc.dash-confirm.php');
-        $('#vehicle-alerts').load('inc.dash-vehicles.php');
-      <?php endif; ?>
-    }
-    loadJITContent();
-    
+    let driverResources = await get('/api/get.resource-drivers.php');    
 
     const ec = new EventCalendar(document.getElementById('ec'), {
       view: 'dayGridMonth',
@@ -82,9 +72,6 @@ $user = new User($_SESSION['user']->id);
           app.openTab('view-event', 'Event (view)', `section.view-event.php?id=${data.event.id}`);
         }
       },
-      loading: isLoading => {
-        // console.log('isLoading:', isLoading);
-      },
       eventDidMount: info => {
         const el = info.el;
         const title = info.event.title;
@@ -92,28 +79,32 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
-    $('#view-vehicles').on('click', () => {
-      $('#trip-text').html('');
+    async function loadJITContent() {
+      <?php if (array_search($_SESSION['view'], ['manager']) !== false):?>
+        $('#trips-to-confirm').load('inc.dash-confirm.php');
+        $('#vehicle-alerts').load('inc.dash-vehicles.php');
+      <?php endif; ?>
+    }
+
+    $('#view-vehicles').on('click', ƒ => {
       ec.setOption('resources', vehicleResources);
       ec.setOption('view', 'resourceTimelineMonth');
     });
 
-    $('#view-drivers').on('click', () => {
-      $('#trip-text').html('');
+    $('#view-drivers').on('click', ƒ => {
       ec.setOption('resources', driverResources);
       ec.setOption('view', 'resourceTimelineMonth');
     });
 
-    $('#view-calendar').on('click', () => {
-      $('#trip-text').html('');
+    $('#view-calendar').on('click', ƒ => {
       ec.setOption('view', 'dayGridMonth');
     });
 
-    $('#opt-list-events').on('click', () => {
-      $('#trip-text').html('');
+    $('#opt-list-events').on('click', ƒ => {
       ec.setOption('view', 'listMonth');
     });
 
+    $('#btn-refresh-calendar').on('click', ec.refetchEvents);
 
     $(document).on('vehicleChange', async function (event, data) {
       vehicleResources = await get('/api/get.resource-vehicles.php');
@@ -127,20 +118,6 @@ $user = new User($_SESSION['user']->id);
 
     $(document).on('tripChange', ec.refetchEvents);
 
-    // We're just going to have this auto-update every minute as well
-    setInterval(() => {
-      ec.refetchEvents();
-      loadJITContent();
-    }, 60 * 1000);
-
-    $('#btn-new-trip').on('click', () => {
-      app.openTab('new-trip', 'New Trip', `section.new-trip.php`);
-    });
-    
-    $('#btn-new-event').on('click', () => {
-      app.openTab('new-event', 'New Event', `section.edit-event.php`);
-    });
-    
     $('#ec').on('click', async e => {
       if (e.target.className == 'ec-bg-events') {
         const date = $(e.target).prev().attr('datetime');
@@ -156,9 +133,12 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
-    $('#btn-refresh-calendar').on('click', e => {
+    // We're also going to have this auto-update every minute as well
+    setInterval(() => {
       ec.refetchEvents();
-    });
+      loadJITContent();
+    }, 60 * 1000);
+    loadJITContent();
 
   });
 
