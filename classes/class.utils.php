@@ -1,23 +1,30 @@
 <?php
+@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
 class Utils
 {
-  static public function GUID() {
+  
+  static public function GUID() 
+  {
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
   }
 
-  static public function randomPassword($length = 8) {
+
+  static public function randomPassword($length = 8) 
+  {
     $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-    $pass = array(); //remember to declare $pass as an array
-    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+    $pass = [];
+    $alphaLength = strlen($alphabet) - 1;
     for ($i = 0; $i < $length; $i++) {
         $n = rand(0, $alphaLength);
         $pass[] = $alphabet[$n];
     }
-    return implode($pass); //turn the array into a string
+    return implode($pass);
   }
 
-  static public function callApi ($method, $url, $data = [], $auth = null, $headers = []) {
+
+  static public function callApi ($method, $url, $data = [], $auth = null, $headers = []) 
+  {
     $curl = curl_init();
     switch ($method) {
       case "POST":
@@ -55,7 +62,9 @@ class Utils
     return $result;
   }
 
-  static function ago($time1, $time2 = 'now', $short = false) {
+
+  static public function ago($time1, $time2 = 'now', $short = false): string
+  {
     if ($short) {
       $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
     } else {
@@ -85,39 +94,27 @@ class Utils
 		}	
 	}
 
-  static public function formattedCurrency($amount, $currency = 'USD'): string
+
+  static public function showDate($date): string
   {
-    return number_format($amount, 2, '.', ',').' '.$currency;
+    $baseline = Date('Y-m-d', strtotime($date));
+    if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline))) return 'today';
+    if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline.' -1 day'))) return 'tomorrow';
+    return 'In '.self::ago('now', $date).' ('.Date('l m/d @ g:ia', strtotime($date)).')';
   }
 
-  static public function formattedDate($date, $format = 'Y-m-d H:i:s'): string
-  {
-    return date($format, strtotime($date));
-  }
 
-  static public function formattedTime($date): string
+  static public function numberToOrdinalWord(int $number): string
   {
-    return date('H:i:s', strtotime($date));
-  }
+    $ordinals = [
+      1 => 'firstly',
+      2 => 'secondly',
+      3 => 'thirdly',
+      4 => 'fourthly',
+      5 => 'fifthly'
+    ];
 
-  static public function formattedDateHuman($date): string
-  {
-    return date('F j, Y', strtotime($date));
+    return $ordinals[$number] ?? 'out of range';
   }
-
-  static public function formattedDateTimeHuman($date): string
-  {
-    return date('F j, Y H:i:s', strtotime($date));
-  }
-
-  static public function formattedDateShort($date): string
-  {
-    return date('M j, Y', strtotime($date));
-  }
-
-  static public function formattedDateTimeShort($date): string
-  {
-    return date('M j, Y H:i:s', strtotime($date));
-  }
-
+  
 }

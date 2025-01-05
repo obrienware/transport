@@ -1,34 +1,6 @@
 <?php
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-
-function showDate($date) {
-  $baseline = Date('Y-m-d', strtotime($date));
-  if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline))) return 'TODAY';
-  if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline.' -1 day'))) return 'TOMORROW';
-  return 'In '.ago('now', $date).' ('.Date('l m/d @ g:ia', strtotime($date)).')';
-}
-
-function ago($time1, $time2 = 'now', $short = false) {
-	if ($short) {
-		$periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
-	} else {
-		$periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
-	}
-	$lengths = array("60","60","24","7","4.35","12","10");
-	$time1 = strtotime($time1);
-	$time2 = strtotime($time2);
-
-	$difference = $time2 - $time1;
-
-	for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
-		$difference /= $lengths[$j];
-	}
-	$difference = round($difference);
-	if($difference != 1) $periods[$j].= "s";
-	return "$difference $periods[$j]";
-}
-
-
+require_once 'class.utils.php';
 require_once 'class.trip.php';
 $trips = Trip::upcomingTrips();
 ?>
@@ -38,7 +10,7 @@ $trips = Trip::upcomingTrips();
   <?php foreach ($trips as $trip): ?>
     <?php
     $badgeClass = 'bg-dark-subtle';
-    $showDate = showDate($trip->start_date);
+    $showDate = Utils::showDate($trip->start_date);
     if ($showDate == 'TODAY') $badgeClass = 'bg-success';
     if ($showDate == 'TOMORROW') $badgeClass = 'bg-danger';
     ?>

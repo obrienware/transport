@@ -1,4 +1,11 @@
 <?php
+/**
+ * This script is called every minute. It checks whether there are any 
+ * trips or events starting in the next hour and sends a text reminder to the driver(s).
+ * 
+ * This works because the date/time stored in the database is granular to the minute.
+ */
+
 date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 require_once 'class.sms.php';
 require_once 'class.data.php';
