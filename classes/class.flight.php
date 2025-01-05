@@ -8,7 +8,7 @@ require_once 'class.data.php';
 class Flight
 {
 
-  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object
+  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object | null
   {
     $db = new data();
     if (!$date) $date = Date('Y-m-d'); // Default to today
