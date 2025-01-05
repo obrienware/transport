@@ -1,6 +1,7 @@
 <?php
 @date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
+require_once 'class.config.php';
 require_once 'class.audit.php';
 require_once 'class.utils.php';
 require_once 'class.data.php';
@@ -46,6 +47,7 @@ class Flight
   static function updateFlight(string $flightNumber): bool
   {
     $db = new data();
+    $keys = Config::get('system')->keys;
     $db->query(
       "REPLACE INTO _flight_check SET flight_number = :flight_number, last_checked = NOW()",
       ['flight_number' => $flightNumber]
@@ -57,7 +59,7 @@ class Flight
         'query' => $flightNumber
       ], null,
       [
-        'X-Rapidapi-Key: '.$_ENV['FLIGHT_RADAR_API'],
+        'X-Rapidapi-Key: '.$keys->FLIGHT_RADAR_API,
         'X-Rapidapi-Host: flight-radar1.p.rapidapi.com'
       ]
     );

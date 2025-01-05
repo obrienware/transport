@@ -34,6 +34,7 @@ class SMS
   {
     global $config;
     global $db;
+    $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
@@ -46,8 +47,8 @@ class SMS
         'POST', 
         "https://api.twilio.com/2010-04-01/Accounts/{$_ENV['TWILIO_ACCOUNT_SID']}/Messages.json",
         $params, [
-          'username' => $_ENV['TWILIO_ACCOUNT_SID'],
-          'password' => $_ENV['TWILIO_AUTH_TOKEN']
+          'username' => $keys->TWILIO_ACCOUNT_SID,
+          'password' => $keys->TWILIO_AUTH_TOKEN
         ]
       );
       $db->query(
@@ -67,14 +68,15 @@ class SMS
   static public function sendClickSend(string $recipient, string $message)
   {
     global $db;
+    $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
     if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       $messageObj = (object) ['messages' => [['body' => $message, 'to' => $tel]]];
       $data = json_encode($messageObj);
       $result = Utils::callApi('POST', 'https://rest.clicksend.com/v3/sms/send' , $data, [
-        'username' => $_ENV['CLICKSEND_USERNAME'],
-        'password' => $_ENV['CLICKSEND_PASSWORD']
+        'username' => $keys->CLICKSEND_USERNAME,
+        'password' => $keys->CLICKSEND_PASSWORD
       ], ['Content-Type: application/json']);
       $db->query(
         "INSERT INTO text_out SET datetimestamp = NOW(), recipient = :recipient, message = :message, result = :result",

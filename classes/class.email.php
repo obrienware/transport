@@ -1,11 +1,7 @@
 <?php
 @date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
-// use Config as GlobalConfig;
 use PHPMailer\PHPMailer\PHPMailer;
-// use PHPMailer\PHPMailer\Exception;
-// use PSpell\Config;
-
 require 'phpmailer/Exception.php';
 require 'phpmailer/PHPMailer.php';
 require 'phpmailer/SMTP.php';
@@ -21,13 +17,14 @@ class Email extends PHPMailer
   public function __construct()
   {
     parent::__construct(true);
+    $keys = Config::get('system')->keys;
 
     $config = Config::get('organization');
     $this->isSMTP();
     $this->Host = 'smtp.sparkpostmail.com';
     $this->SMTPAuth = true;
     $this->Username = 'SMTP_Injection';
-    $this->Password = $_ENV['SPARKPOST_KEY'];
+    $this->Password = $keys->SPARKPOST_KEY;
     $this->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $this->Port = 587;
     $this->setFrom($config->email->fromEmailAddress, $config->email->fromEmailName);
