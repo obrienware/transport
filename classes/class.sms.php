@@ -37,7 +37,7 @@ class SMS
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
-    if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
+    if ($db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       $params = [
         'To' => $tel,
         'From' => $config->textMessaging->textFromNumber,
@@ -71,7 +71,7 @@ class SMS
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
-    if ($ok = $db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
+    if ($db->get_row("SELECT * FROM opt_in_text WHERE tel = :tel", ['tel' => $tel])) {
       $messageObj = (object) ['messages' => [['body' => $message, 'to' => $tel]]];
       $data = json_encode($messageObj);
       $result = Utils::callApi('POST', 'https://rest.clicksend.com/v3/sms/send' , $data, [
@@ -98,7 +98,7 @@ class SMS
     $phone = Utils::formattedPhoneNumber($recipient);
     $query = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
     $params = ['tel' => $phone];
-    $result = $db->query($query, $params);
+    $db->query($query, $params);
     // Send a text confirmation
     $message = $config->textMessaging->optInConfirmationMessage;
     return SMS::send($phone, $message);
@@ -107,6 +107,7 @@ class SMS
 
   static public function optOut (string $recipient)
   {
+    global $config;
     global $db;
     $tel = Utils::formattedPhoneNumber($recipient);
     $query = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
