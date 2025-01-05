@@ -20,7 +20,7 @@ $template = new EmailTemplates($_REQUEST['id']);
         <h3>Template: <?=$template->name?></h3>
         Available variables for this template:
         <?php foreach ($template->availableVariables as $variable): ?>
-          <span class="badge bg-primary fw-light">{{<?=$variable?>}}</span>
+          <span class="badge bg-primary fw-light fs-6">{{<?=$variable?>}}</span>
         <?php endforeach; ?>
       </div>
     </div>
@@ -28,7 +28,7 @@ $template = new EmailTemplates($_REQUEST['id']);
     <div class="row">
       <div class="col">
         <label for="template-content" class="form-label">Content</label>
-        <textarea class="form-control" id="template-content" rows="15"><?=$template->content?></textarea>
+        <textarea class="form-control font-monospace" id="template-content" rows="15"><?=$template->content?></textarea>
       </div>
     </div>
 

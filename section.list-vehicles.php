@@ -12,7 +12,6 @@
       <tr>
         <th class="fit">ID</th>
         <th class="fit" data-dt-order="disable">&nbsp;</th>
-        <th data-dt-order="disable">&nbsp;</th>
         <th>Name</th>
         <th>Vehicle Description</th>
         <th>License Plate</th>
@@ -34,11 +33,11 @@
               <td class="fit">&nbsp;</td>
             <?php endif;?>
             <td>
+              <?=$row->name?>
               <?php if ($row->check_engine): ?>
                 <i class="fa-duotone fa-solid fa-engine-warning fa-lg" style="color:var(--bs-orange)"></i>
               <?php endif; ?>
             </td>
-            <td><?=$row->name?></td>
             <td><?=$row->description?></td>
             <td><?=$row->license_plate?></td>
             <td class="text-center fit"><?=$row->passengers?></td>
