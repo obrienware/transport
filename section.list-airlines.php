@@ -9,7 +9,7 @@
   <table id="table-airlines" class="table table-striped table-hover row-select">
     <thead>
       <tr>
-        <th>&nbsp;</th>
+        <th data-dt-order="disable">&nbsp;</th>
         <th>AirLine</th>
         <th data-bs-toggle="tooltip" data-bs-title="Flight Number Prefix.">Prefix</th>
       </tr>
