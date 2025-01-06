@@ -51,7 +51,7 @@ if ($rows = $db->get_rows($query, $params)) {
         'type' => 'event',
         'confirmed' => $row->confirmed,
       ],
-      'backgroundColor' => ($row->color) ?: '#AAAAAA'
+      'backgroundColor' => ($row->confirmed) ? 'green' : '#AAAAAA'
     ];
     // Format for the requestor's view
     if (isset($_REQUEST['requestorId'])) {
