@@ -3,11 +3,17 @@
 class data
 {
 	private static $instance = null;
-	private $prep_stmt;
 
 	public $dbh;
 	public $sth;
 	public $errorInfo = null;
+
+	/**
+	 * In most instances, we want to use this a singleton, so that we're only 
+	 * making a single connection to the database.
+	 * However, we're keeping the constructor public so that we have the option
+	 * of creating additional instances (connections) if we need to.
+	 */
 
 	public function __construct(
 		$dbuser = null,
@@ -45,34 +51,35 @@ class data
 		$dbpassword = null,
 		$dbname = null,
 		$dbhost = null
-	) {
+	): data
+	{
 		if (self::$instance === null) {
 			self::$instance = new self($dbuser, $dbpassword, $dbname, $dbhost);
 		}
 		return self::$instance;
 	}
 
-	public function start()
+	public function start(): void
 	{
 		$this->dbh->beginTransaction();
 	}
 
-	public function cancel()
+	public function cancel(): void
 	{
 		$this->dbh->rollBack();
 	}
 
-	public function complete()
+	public function complete(): void
 	{
 		$this->dbh->commit();
 	}
 
-	public function get_rows($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ)
+	public function get_rows($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ): array
 	{
 		return $this->get_results($query, $params, $fetch_mode);
 	}
 
-	public function get_results($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ)
+	public function get_results($query = null, $params = null, $fetch_mode = PDO::FETCH_OBJ): array
 	{
 		$this->errorInfo = null;
 		if (isset($query)) {
