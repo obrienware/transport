@@ -1,14 +1,16 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.config.php';
-require_once 'class.data.php';
-require_once 'class.email.php';
-require_once 'class.email-templates.php';
-require_once 'class.event.php';
-require_once 'class.template.php';
-require_once 'class.trip.php';
-require_once 'class.user.php';
-require_once 'class.utils.php';
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Database;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Event;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
+use Transport\Utils;
+
 
 $config = Config::get('organization');
 
@@ -95,7 +97,7 @@ foreach ($managers as $manager) {
 
 function getTripsFor(int $driverId): array
 {
-  $db = data::getInstance();
+  $db = Database::getInstance();
   $query = "
     SELECT * FROM trips 
     WHERE 
@@ -111,7 +113,7 @@ function getTripsFor(int $driverId): array
 
 function getEventsFor(int $driverId): array
 {
-  $db = data::getInstance();
+  $db = Database::getInstance();
   $query = "
     SELECT * FROM events
     WHERE
@@ -184,7 +186,7 @@ function getAttachmentsForUpcomingTrip(array $trips): array
 
 function getUnconfirmedTrips(): array
 {
-  $db = data::getInstance();
+  $db = Database::getInstance();
   $query = "
     SELECT * FROM trips
     WHERE 
@@ -197,7 +199,7 @@ function getUnconfirmedTrips(): array
 
 function getUnconfirmedEvents(): array
 {
-  $db = data::getInstance();
+  $db = Database::getInstance();
   $query = "
     SELECT * FROM events
     WHERE 

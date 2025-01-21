@@ -3,7 +3,7 @@ require 'inc.user.php';
 allowRoles(['admin','manager','developer']);
 ?>
 
-<?php if ($_REQUEST['node'] === 'system' && !allowedRoles(['admin','developer'])): ?>
+<?php if ($_GET['node'] === 'system' && !allowedRoles(['admin','developer'])): ?>
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
       <h1 class="fw-bold"><i class="fa-sharp-duotone fa-solid fa-lock"></i> Denied</h1>
@@ -28,7 +28,7 @@ allowRoles(['admin','manager','developer']);
 <script type="text/javascript">
   $(async ƒ => {
 
-    const node = '<?=$_REQUEST['node']?>';
+    const node = '<?=$_GET['node']?>';
     const data = await get(`/api/get.node-config.php?node=${node}`);
     let masterConfig;
 

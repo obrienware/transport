@@ -1,21 +1,33 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\User;
+use Transport\Vehicle;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $vehicle = new Vehicle($json->vehicleId);
-$vehicle->color = $json->color;
-$vehicle->name = $json->name;
-$vehicle->description = $json->description;
-$vehicle->licensePlate = $json->licensePlate;
-$vehicle->passengers = $json->passengers;
-$vehicle->requireCDL = $json->requireCDL ? 1 : 0;
+$vehicle->color = parseValue($json->color);
+$vehicle->name = parseValue($json->name);
+$vehicle->description = parseValue($json->description);
+$vehicle->licensePlate = parseValue($json->licensePlate);
+$vehicle->passengers = parseValue($json->passengers);
+$vehicle->requireCDL = parseValue($json->requireCDL);
+
+function hasValue($value) {
+    return isset($value) && $value !== '';
+}
+
+function parseValue($value) {
+    return hasValue($value) ? $value : NULL;
+}
 
 if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $vehicle->getId();
-  die(json_encode(['result' => $result]));
+    $result = $vehicle->getId();
+    die(json_encode(['result' => $result]));
 }
 die(json_encode(['result' => false]));

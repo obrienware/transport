@@ -1,13 +1,22 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.trip.php';
-$trip = new Trip($_REQUEST['id']);
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$trip = new Trip($id);
 $result = $trip->delete(userResponsibleForOperation: $user->getUsername());
 
-$trip = new Trip($_REQUEST['id']);
+$trip = new Trip($id);
 if ($trip->getId() && $trip->isConfirmed() && $trip->endDate > Date('Y-m-d H:i:s')) {
   notifyParticipants($trip);
 }
@@ -19,11 +28,6 @@ die(json_encode(['result' => $result]));
 
 function notifyParticipants(Trip $trip): void
 {
-  require_once 'class.config.php';
-  require_once 'class.email.php';
-  require_once 'class.email-templates.php';
-  require_once 'class.template.php';
-
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
   $tripDate = Date('m/d/Y', strtotime($trip->pickupDate));
@@ -58,7 +62,7 @@ function notifyParticipants(Trip $trip): void
   ];
 
   $email = new Email();
-  $email->addRecipient($trip->driver->emailAddress, $driver->getName());
+  $email->addRecipient($trip->driver->emailAddress, $trip->driver->getName());
   if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
   $email->addReplyTo($me->emailAddress, $me->getName());
   $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);

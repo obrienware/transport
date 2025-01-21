@@ -1,12 +1,19 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
-$user = new User($_SESSION['user']->id);
 
-require_once 'class.flight.php';
-require_once 'class.airport.php';
-require_once 'class.location.php';
-require_once 'class.trip.php';
+require_once '../autoload.php';
+
+use Transport\Airline;
+use Transport\Config;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Location;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
+use Transport\Vehicle;
+
+$user = new User($_SESSION['user']->id);
 
 $json = json_decode(file_get_contents("php://input"));
 
@@ -146,14 +153,6 @@ die(json_encode(['result' => false]));
 
 function notifyParticipants(Trip $trip, array $changes, array $driversToNotify): void
 {
-  require_once 'class.ics.php';
-  require_once 'class.utils.php';
-  require_once 'class.trip.php';
-  require_once 'class.config.php';
-  require_once 'class.email.php';
-  require_once 'class.email-templates.php';
-  require_once 'class.template.php';
-
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
   $changesString = '- '.implode("\n\n- ", $changes);

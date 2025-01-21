@@ -1,9 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\EmailTemplates;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.email-templates.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $template = new EmailTemplates($json->id);

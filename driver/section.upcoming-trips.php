@@ -1,7 +1,9 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.utils.php';
-require_once 'class.trip.php';
+require_once '../autoload.php';
+
+use Transport\Trip;
+use Transport\Utils;
+
 $trips = Trip::upcomingTrips();
 ?>
 <?php if ($trips): ?>

@@ -1,4 +1,4 @@
-<?php $return = ($_REQUEST['return']) ? base64_decode($_REQUEST['return']) : './';?>
+<?php $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -86,7 +86,7 @@
 			});
 
 			$('#btnContinue').on('click', async ƒ => {
-        const userId = '<?=$_SESSION['user']->id?>';
+        const userId = <?=$_SESSION['user']->id?>;
         const password = cleanVal('#password');
         const confirmPassword = cleanVal('#confirm-password');
 

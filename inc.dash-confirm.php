@@ -1,10 +1,13 @@
 <?php
-require_once 'class.config.php';
+require_once 'autoload.php';
+
+use Transport\Config;
+use Transport\Database;
+
 $config = Config::get('organization');
 if ($config->alertUnconfirmedTrips === false) die();
 
-require_once 'class.data.php';
-$db = data::getInstance();
+$db = Database::getInstance();
 
 // Check for upcoming trips that need to be confirmed
 $query = "

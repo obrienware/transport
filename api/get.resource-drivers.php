@@ -1,6 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\User;
+
 $rows = User::getDrivers();
 $response = [];
 foreach ($rows as $row) {

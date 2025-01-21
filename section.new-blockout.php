@@ -1,4 +1,8 @@
-<?php require_once 'class.user.php'?>
+<?php 
+require_once 'autoload.php';
+
+use Transport\User;
+?>
   <div class="container mt-2">
     <h2>Add Blockout Dates</h2>
     <div>

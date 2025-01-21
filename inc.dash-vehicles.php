@@ -1,6 +1,9 @@
 <?php
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once 'autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "
   SELECT v.*, 
     CASE WHEN v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL THEN l.name ELSE NULL END AS location

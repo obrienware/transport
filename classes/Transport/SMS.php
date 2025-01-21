@@ -1,21 +1,17 @@
 <?php
-@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+declare(strict_types=1);
+namespace Transport;
 
-require_once 'class.config.php';
-global $config;
-$config = Config::get('organization');
-
-require_once 'class.utils.php';
-require_once 'class.data.php';
+require_once __DIR__.'/../../autoload.php';
 
 class SMS
 {
 
-  static public function send (string $recipient, string $message)
+  public static function send (string $recipient, string $message)
   {
-    global $config;
-    switch ($config->textMessaging->provider) {
-
+    $config = Config::get('organization');
+    switch ($config->textMessaging->provider) 
+    {
       case 'Twilio':
         return SMS::sendTwilio($recipient, $message);
         break;
@@ -27,11 +23,10 @@ class SMS
     return false;
   }
 
-
-  static public function sendTwilio(string $recipient, string $message)
+  public static function sendTwilio(string $recipient, string $message)
   {
-    global $config;
-    $db = data::getInstance();
+    $config = Config::get('organization');
+    $db = Database::getInstance();
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
@@ -63,9 +58,9 @@ class SMS
   }
 
 
-  static public function sendClickSend(string $recipient, string $message)
+  public static function sendClickSend(string $recipient, string $message)
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     $keys = Config::get('system')->keys;
     $tel = Utils::formattedPhoneNumber($recipient);
     // Only if the recipient has opted in to recieve messages
@@ -89,10 +84,10 @@ class SMS
     return false;
   }
 
-  static public function optIn (string $recipient)
+  public static function optIn (string $recipient)
   {
-    global $config;
-    $db = data::getInstance();
+    $config = Config::get('organization');
+    $db = Database::getInstance();
     $phone = Utils::formattedPhoneNumber($recipient);
     $query = "REPLACE INTO opt_in_text SET tel = :tel, opt_in = NOW()";
     $params = ['tel' => $phone];
@@ -103,10 +98,10 @@ class SMS
   }
 
 
-  static public function optOut (string $recipient)
+  public static function optOut (string $recipient)
   {
-    global $config;
-    $db = data::getInstance();
+    $config = Config::get('organization');
+    $db = Database::getInstance();
     $tel = Utils::formattedPhoneNumber($recipient);
     $query = "UPDATE opt_in_text SET opt_out = NOW() WHERE tel = :tel";
     $params = ['tel' => $tel];

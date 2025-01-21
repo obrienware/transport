@@ -1,8 +1,12 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.sms.php';
-require_once 'class.data.php';
-$db = data::getInstance();
+
+require_once 'autoload.php';
+
+use Transport\SMS;
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "
   INSERT INTO webhook_twilio SET
     ToCountry = :ToCountry,

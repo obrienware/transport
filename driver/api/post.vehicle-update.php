@@ -1,10 +1,13 @@
 <?php
 header('Content-Type: application/json');
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.user.php';
+
+require_once '../../autoload.php';
+
+use Transport\User;
+use Transport\Vehicle;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.vehicle.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $vehicle = new Vehicle($json->vehicleId);

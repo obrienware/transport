@@ -1,6 +1,10 @@
 <?php
-require_once 'class.trip.php';
-$trip = new Trip($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Trip;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$trip = new Trip($id);
 $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 ?>
 <div class="container-fluid mt-3">
@@ -39,10 +43,10 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       <div class="card h-100">
         <div class="card-header d-flex justify-content-between">
           <h5 class="my-0"><i class="fa-solid fa-up"></i> Pick Up</h5>
-          <span class="badge bg-primary align-self-center"><?=Date('g:ia', strtotime($trip->startDate))?></span>
+          <span class="badge bg-primary align-self-center"><?=is_null($trip->startDate) ? '' : Date('g:ia', strtotime($trip->startDate))?></span>
         </div>
         <div class="card-body">
-          <div><?=Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
+          <div><?=is_null($trip->pickupDate) ? '' : Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
           <div class="fs-3 fw-bold">
             <?=$trip->guests?> 
             <?php if ($trip->passengers): ?>
@@ -102,9 +106,9 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
             <div><?=$trip->airline->flightNumberPrefix?> <?=$trip->flightNumber?></div>
             <div>
               <?php if ($trip->ETA): ?>
-                ETA: <?=Date('g:i a', strtotime($trip->ETA))?>
+                ETA: <?=is_null($trip->ETA) ? '' : Date('g:i a', strtotime($trip->ETA))?>
               <?php else: ?>
-                ETD:  <?=Date('g:i a', strtotime($trip->ETD))?>
+                ETD:  <?=is_null($trip->ETD) ? '' : Date('g:i a', strtotime($trip->ETD))?>
               <?php endif; ?>
             </div>
           </div>
@@ -120,15 +124,15 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       <tr><th class="bg-dark-subtle px-3">Requestor:</th><td class="px-3"><?=$trip->requestor ? $trip->requestor->getName() : ''?></td></tr>
     </table>
 
-    <?php if ($trip->cancelled):?>
+    <?php if ($trip->isCancelled()):?>
       <table class="table table-sm table-bordered w-auto border-danger">
-        <tr><th class="bg-danger text-bg-danger px-3">Cancelled:</th><td class="px-3"><?=Date('F j g:i a', strtotime($trip->cancelled))?></td></tr>
+        <tr><th class="bg-danger text-bg-danger px-3">Cancelled:</th><td class="px-3"><?=is_null($trip->cancelled) ? '' : Date('F j g:i a', strtotime($trip->cancelled))?></td></tr>
       </table>
     <?php endif;?>
 
-    <?php if ($trip->confirmed): ?>
+    <?php if ($trip->isConfirmed()): ?>
       <table class="table table-sm table-bordered w-auto border-success">
-        <tr><th class="bg-success text-bg-success px-3">Confirmed:</th><td class="px-3"><?=Date('F j g:i a', strtotime($trip->confirmed))?></td></tr>
+        <tr><th class="bg-success text-bg-success px-3">Confirmed:</th><td class="px-3"><?=is_null($trip->confirmed) ? '' : Date('F j g:i a', strtotime($trip->confirmed))?></td></tr>
       </table>
     <?php else:?>
       <table class="table table-sm table-bordered w-auto border-dark-subtle">
@@ -218,7 +222,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     const tripId = <?=$trip->getId()?>;
 
     function reloadSection () {
-      $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
     }
 
     function loadConversation() {

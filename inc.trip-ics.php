@@ -1,5 +1,5 @@
 <?php
-require_once 'class.ics.php';
+require_once 'autoload.php';
 
 $description = "";
 $description .= "Using ".$trip->vehicle->name.": ".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions."\\n\\n";

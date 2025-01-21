@@ -1,9 +1,13 @@
 <?php
-require_once 'class.location.php';
-$location = new Location($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Location;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$location = new Location($id);
 $locationId = $location->getId();
 ?>
-<?php if (isset($_REQUEST['id']) && !$locationId): ?>
+<?php if (isset($_GET['id']) && !$locationId): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

@@ -1,8 +1,12 @@
 <?php
-require_once 'class.vehicle.php';
-$vehicle = new Vehicle($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Vehicle;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$vehicle = new Vehicle($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$vehicle->getId()): ?>
+<?php if (isset($_GET['id']) && !$vehicle->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

@@ -1,8 +1,11 @@
 <?php
-require_once 'class.utils.php';
-require_once 'class.snag.php';
-require_once 'class.vehicle.php';
-$vehicleId = $_REQUEST['id'];
+require_once 'autoload.php';
+
+use Transport\Snag;
+use Transport\Utils;
+use Transport\Vehicle;
+
+$vehicleId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 $vehicle = new Vehicle($vehicleId);
 ?>
 <div class="container">
@@ -246,7 +249,7 @@ $vehicle = new Vehicle($vehicleId);
       const resp = await post('/api/post.update-vehicle.php', formData);
       if (resp?.result) {
         $(document).trigger('vehicleChange');
-        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
       }
     }    
 

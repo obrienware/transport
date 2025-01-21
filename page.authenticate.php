@@ -1,6 +1,6 @@
 <?php 
 session_destroy(); 
-$return = ($_REQUEST['return']) ? base64_decode($_REQUEST['return']) : './';
+$return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 ?>
 <!DOCTYPE html>
 <html lang="en">

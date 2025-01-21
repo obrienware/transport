@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+namespace Transport;
+
 header('Content-Type: application/json');
-require_once 'class.utils.php';
-require_once 'class.data.php';
-$db = data::getInstance();
+
+require_once __DIR__.'/../../autoload.php';
 
 class Weather
 {
@@ -38,7 +40,7 @@ class Weather
 
   private function _getCodeData($weatherCode)
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     $query = "SELECT * FROM weather_codes WHERE code = :code";
     $params = ['code' => $weatherCode];
     return $db->get_row($query, $params);

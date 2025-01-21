@@ -1,4 +1,8 @@
-<?php require_once 'class.airline.php'; ?>
+<?php 
+require_once 'autoload.php';
+
+use Transport\Airline;
+?>
 <div class="container">
   <div class="d-flex justify-content-between mt-3">
     <h2>Airlines</h2>
@@ -40,7 +44,7 @@
     let targetId;
 
     function reloadSection () {
-      $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
     }
 
     if ($.fn.dataTable.isDataTable('#table-airlines')) {

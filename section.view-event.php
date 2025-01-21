@@ -1,9 +1,13 @@
 <?php
+require_once 'autoload.php';
+
+use Transport\Event;
+use Transport\User;
+use Transport\Vehicle;
+
 $prefix = bin2hex(random_bytes(10 / 2));
-require_once 'class.user.php';
-require_once 'class.vehicle.php';
-require_once 'class.event.php';
-$event = new Event($_REQUEST['id']);
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$event = new Event($id);
 ?>
 <div class="container-fluid mt-3">
   <div class="d-flex">

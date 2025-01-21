@@ -1,8 +1,12 @@
 <?php
-require_once 'class.email-templates.php';
-$template = new EmailTemplates($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\EmailTemplates;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$template = new EmailTemplates($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$template->getId()): ?>
+<?php if (isset($_GET['id']) && !$template->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

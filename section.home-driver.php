@@ -1,5 +1,8 @@
 <?php
-require_once 'class.user.php';
+require_once 'autoload.php';
+
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 ?>
 <div class="container-fluid">

@@ -1,8 +1,12 @@
 <?php
-require_once 'class.airport.php';
-$airport = new Airport($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Airport;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$airport = new Airport($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$airport->getId()): ?>
+<?php if (isset($_GET['id']) && !$airport->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

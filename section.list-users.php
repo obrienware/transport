@@ -1,4 +1,8 @@
-<?php require_once 'class.user.php';?>
+<?php 
+require_once 'autoload.php';
+
+use Transport\User;
+?>
 <div class="container">
   <div class="d-flex justify-content-between mt-3">
     <h2>Users</h2>
@@ -49,7 +53,7 @@
     let targetId;
 
     function reloadSection () {
-      $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
     }
 
     if ($.fn.dataTable.isDataTable('#table-users')) {

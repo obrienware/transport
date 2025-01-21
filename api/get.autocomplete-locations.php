@@ -1,7 +1,12 @@
 <?php
+
+use Transport\Database;
+
 header('Content-Type: application/json');
-require_once 'class.data.php';
-$db = data::getInstance();
+
+require_once '../autoload.php';
+
+$db = Database::getInstance();
 $q = '%' . $_GET['query'] . '%';
 $query = "
   SELECT 

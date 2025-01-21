@@ -1,7 +1,10 @@
 <?php 
-require_once 'class.user.php';
+require_once 'autoload.php';
+
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
-$prefs = $user->preferences;
+$prefs = $user->getPreferences();
 ?>
 <div class="container">
 

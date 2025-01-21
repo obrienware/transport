@@ -1,12 +1,13 @@
 <?php
 header('Content-Type: application/json');
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 
-require_once 'class.flight.php';
-require_once 'class.data.php';
+require_once '../autoload.php';
+
+use Transport\Database;
+use Transport\Flight;
 
 // We want to know about flights happening today
-$db = data::getInstance();
+$db = Database::getInstance();
 $query = "
 SELECT 
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,

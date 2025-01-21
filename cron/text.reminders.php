@@ -6,11 +6,15 @@
  * This works because the date/time stored in the database is granular to the minute.
  */
 
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.sms.php';
-require_once 'class.data.php';
-require_once 'class.trip.php';
-require_once 'class.event.php';
+require_once '../autoload.php';
+
+use Transport\Database;
+use Transport\Event;
+use Transport\SMS;
+use Transport\Trip;
+use Transport\User;
+
+$db = Database::getInstance();
 
 $nextHour = Date('Y-m-d H:i:00', strtotime('now +1 hour'));
 

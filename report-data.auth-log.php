@@ -1,15 +1,17 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once 'autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "
   SELECT * FROM authentication_log
   WHERE
     datetimestamp BETWEEN :from_date AND :to_date
 ";
 $params = [
-  'from_date' => $_REQUEST['from_date'],
-  'to_date' => $_REQUEST['to_date'].' 23:59:59'
+  'from_date' => $_GET['from_date'],
+  'to_date' => $_GET['to_date'].' 23:59:59'
 ];
 $query .= " ORDER BY datetimestamp DESC";
 ?>

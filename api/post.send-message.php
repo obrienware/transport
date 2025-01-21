@@ -1,8 +1,12 @@
 <?php
 //TODO: This should have its own class
 header('Content-Type: application/json');
-require_once 'class.data.php';
-$db = data::getInstance();
+
+require_once '../autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $json = json_decode(file_get_contents("php://input"));
 
 if ($json->tripId && $json->message) {

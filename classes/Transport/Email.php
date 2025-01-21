@@ -1,12 +1,13 @@
 <?php
-@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+declare(strict_types=1);
+namespace Transport;
 
 use PHPMailer\PHPMailer\PHPMailer;
 require 'phpmailer/Exception.php';
 require 'phpmailer/PHPMailer.php';
 require 'phpmailer/SMTP.php';
 
-require_once 'class.config.php';
+require_once __DIR__.'/../../autoload.php';
 
 class Email extends PHPMailer
 {
@@ -55,7 +56,7 @@ class Email extends PHPMailer
     try {
       $this->send();
       return true;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $this->errorMessage = "Message could not be sent. Mailer Error: {$this->ErrorInfo}";
       return false;
     }
@@ -68,7 +69,7 @@ class Email extends PHPMailer
       $this->AltBody = $this->altContent;
       $this->send();
       return true;
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
       $this->errorMessage = "Message could not be sent. Mailer Error: {$this->ErrorInfo}";
       return false;
     }

@@ -1,15 +1,19 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.utils.php';
-require_once 'class.config.php';
+
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Utils;
+
 $config = Config::get('system');
 $keys = $config->keys;
 
 // address | latlng
 
-$placeId = $_REQUEST['placeId'];
-$latlng = $_REQUEST['latlng'];
-$address = $_REQUEST['address'];
+$placeId = $_GET['placeId'];
+$latlng = $_GET['latlng'];
+$address = $_GET['address'];
 
 
 if ($placeId) {

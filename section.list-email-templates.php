@@ -1,4 +1,8 @@
-<?php require_once 'class.email-templates.php'; ?>
+<?php 
+require_once 'autoload.php';
+
+use Transport\EmailTemplates;
+?>
 <div class="container">
   <div class="d-flex justify-content-between mt-3">
     <h2>Email Templates</h2>

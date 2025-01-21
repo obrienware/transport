@@ -1,13 +1,15 @@
 <?php
-require_once 'class.treewalker.php';
+require_once 'autoload.php';
+
+use Transport\Database;
+
 $treewalker = new TreeWalker([
   "debug" => false,          //true => return the execution time, false => not
   "returntype" => "array"   //Returntype = ["obj","jsonstring","array"]
 ]);
-require_once 'class.data.php';
-$db = data::getInstance();
+$db = Database::getInstance();
 $query = "SELECT * FROM audit_trail WHERE id = :id";
-$params = ['id' => $_REQUEST['id']];
+$params = ['id' => $_GET['id']];
 $row = $db->get_row($query, $params);
 if ($row->before && $row->after) {
 	$before = json_decode($row->before);

@@ -1,80 +1,79 @@
 <?php
-@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+declare(strict_types=1);
+namespace Transport;
 
-require_once 'class.audit.php';
-require_once 'class.data.php';
+require_once __DIR__.'/../../autoload.php';
 
-class User
+use DateTime;
+use DateTimeZone;
+
+class User extends Base
 {
-	private $db;
-	private $id;
-	private $row;
-	private $lastError;
-	private $action = 'create';
-	private $archived;
+	protected $tableName = 'users';
+	protected $tableDescription = 'Users';
 
-	public $username;
-	public $firstName;
-	public $lastName;
-	public $emailAddress;
-	public $phoneNumber;
-	public $roles;
-	public $position;
-	public $departmentId;
-	public $CDL;
-	public $changePassword;
-	public $preferences;
+	public ?string $username = null;
+	public ?string $firstName = null;
+	public ?string $lastName = null;
+	public ?string $emailAddress = null;
+	public ?string $phoneNumber = null;
+	public array $roles = [];
+	public ?string $position = null;
+	public ?int $departmentId = null;
+	public bool $CDL = false;
+	public bool $changePassword = false;
+	public ?string $preferences = null;
 
-	public $otp;
-
-
-	public function __construct(int $id = null)
+	public function getName(): string
 	{
-		$this->db = new data();
-		if (isset($id)) $this->load($id);
+		if ($this->id) return "{$this->firstName} {$this->lastName}";
+		return '';
 	}
-
 
 	public function load(int $id): bool
 	{
-		$query = 'SELECT * FROM users WHERE id = :id';
+		$db = Database::getInstance();
+		$query = "SELECT * FROM {$this->tableName} WHERE id = :id";
 		$params = ['id' => $id];
-		if ($row = $this->db->get_row($query, $params)) {
-			$this->row = $row;
-			$this->action = 'update';
-
-			$this->id = $row->id;
-			$this->username = $row->username;
-			$this->firstName = $row->first_name;
-			$this->lastName = $row->last_name;
-			$this->emailAddress = $row->email_address;
-			$this->phoneNumber = $row->phone_number;
-			$this->roles = $row->roles ? explode(',', $row->roles) : null;
-			$this->position = $row->position;
-			$this->departmentId = $row->department_id;
-			$this->CDL = $row->cdl;
-			$this->changePassword = $row->change_password;
-			$this->preferences = ($row->personal_preferences) ? json_decode($row->personal_preferences) : null;
-			$this->archived = $row->archived;
+		if ($row = $db->get_row($query, $params)) {
+			$this->mapRowToProperties($row);
 			return true;
 		}
 		return false;
 	}
 
-
-	public function getId(): int | null
+	protected function mapRowToProperties(object $row): void
 	{
-		return $this->id;
+		$utc = new DateTimeZone('UTC');
+		$this->row = $row;
+		$this->action = 'update';
+
+		$this->id = $row->id;
+		$this->username = $row->username;
+		$this->firstName = $row->first_name;
+		$this->lastName = $row->last_name;
+		$this->emailAddress = $row->email_address;
+		$this->phoneNumber = $row->phone_number;
+		$this->roles = $row->roles ? explode(',', $row->roles) : [];
+		$this->position = $row->position;
+		$this->departmentId = $row->department_id;
+		$this->CDL = ($row->cdl == 1);
+		$this->changePassword = ($row->change_password == 1);
+		$this->preferences = $row->personal_preferences;
+
+		if (!empty($row->archived)) {
+			$this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+		}
 	}
 
-
-	public function save(string $userResponsibleForOperation = null): bool
+	public function save(?string $userResponsibleForOperation = null): bool
 	{
+    $db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
-		$audit->user = $userResponsibleForOperation;
+		$audit->username = $userResponsibleForOperation;
 		$audit->action = $this->action;
-		$audit->table = 'users';
+		$audit->tableName = $this->tableName;
 		$audit->before = json_encode($this->row);
 
 		$params = [
@@ -83,19 +82,19 @@ class User
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
 			'phone_number' => $this->phoneNumber,
-			'roles' => $this->roles ? implode(',', $this->roles) : null,
+			'roles' => $this->roles ? implode(',', $this->roles) : '',
 			'position' => $this->position,
 			'department_id' => $this->departmentId,
 			'cdl' => $this->CDL ? 1 : 0,
-			'personal_preferences' => ($this->preferences) ? json_encode($this->preferences) : NULL,
+			'personal_preferences' => $this->preferences ?? null,
 			'user' => $userResponsibleForOperation
 		];
 
 		if ($this->action === 'update') {
-			$audit->description = 'User updated: '.$this->getName();
+			$audit->description = $this->tableDescription.' updated: '.$this->getName();
 			$params['id'] = $this->id;
 			$query = "
-				UPDATE users SET
+				UPDATE {$this->tableName} SET
 					username = :username,
 					first_name = :first_name,
 					last_name = :last_name,
@@ -111,9 +110,9 @@ class User
 				WHERE id = :id
 			";
 		} else {
-			$audit->description = 'User created: '.$this->getName();
+			$audit->description = $this->tableDescription.' created: '.$this->getName();
 			$query = "
-				INSERT INTO users SET
+				INSERT INTO {$this->tableName} SET
 					username = :username,
 					first_name = :first_name,
 					last_name = :last_name,
@@ -129,103 +128,48 @@ class User
 			";
 		}
 		try {
-			$result = $this->db->query($query, $params);
+			$result = $db->query($query, $params);
 			$id = ($this->action === 'create') ? $result : $this->id;
 			$this->load($id);
 			$audit->after = json_encode($this->row);
 			$audit->commit();
 			return true;
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$this->lastError = $e->getMessage();
 			return false;
 		}
 	}
 
-
-	public function delete(string $userResponsibleForOperation = null): bool
+	protected function reset(): void
 	{
-		$this->lastError = null;
-		$audit = new Audit();
-		$audit->user = $userResponsibleForOperation;
-		$audit->action = 'delete';
-		$audit->table = 'users';
-		$audit->before = json_encode($this->row);
-
-		$query = "
-			UPDATE users 
-			SET 
-				archived = NOW(), archived_by = :user 
-			WHERE id = :id
-		";
-		$params = [
-			'user' => $userResponsibleForOperation, 
-			'id' => $this->id
-		];
-		try {
-			$this->db->query($query, $params);
-			$audit->description = 'User deleted: '.$this->getName();
-			$audit->commit();
-			$this->reset();
-			return true;	
-		} catch (Exception $e) {
-			$this->lastError = $e->getMessage();
-			return false;
-		}
-	}
-
-
-	public function isArchived(): bool
-	{
-		return isset($this->archived);
-	}
-
-
-	private function reset(): void
-	{
-		$this->id = null;
-		$this->row = null;
-		$this->lastError = null;
-		$this->action = 'create';
-		$this->archived = null;
+		parent::reset();
 
 		$this->username = null;
 		$this->firstName = null;
 		$this->lastName = null;
 		$this->emailAddress = null;
 		$this->phoneNumber = null;
-		$this->roles = null;
+		$this->roles = [];
 		$this->position = null;
 		$this->departmentId = null;
-		$this->CDL = null;
-		$this->changePassword = null;
+		$this->CDL = false;
+		$this->changePassword = false;
 		$this->preferences = null;
-
-		// Reinitialize the database connection if needed
-		$this->db = new data();
 	}
-
-
-	public function getLastError(): string | null
-	{
-		return $this->lastError;
-	}
-
 
 	public function getUsername(): string
 	{
 		return $this->username ? $this->username : $this->emailAddress;
 	}
 
-
 	public function resetPassword(): bool
 	{
 		if ($this->emailAddress) {
-			require_once 'class.utils.php';
-			require_once 'class.email.php';
+			$db = Database::getInstance();
 			$newPassword = Utils::randomPassword(10);
 			$query = 'UPDATE users SET password = :password, change_password = 1 WHERE id = :user_id';
 			$params = ['password' => md5($newPassword), 'user_id' => $this->id];
-			$this->db->query($query, $params);
+			$db->query($query, $params);
 
 			$email = new Email();
 			$email->setSubject('Your password has been reset.');
@@ -237,12 +181,10 @@ class User
 		return false;
 	}
 
-
-	static public function sendResetLink(string $username) 
+	public static function sendResetLink(string $username) 
 	{
 		// First determine if we have a user that matches the given username
-		$db = data::getInstance();
-		require_once 'class.email.php';
+		$db = Database::getInstance();
 		$query = "SELECT id FROM users WHERE username = :username AND archived IS NULL";
 		$params = ['username' => $username];
 		$id = $db->get_var($query, $params);
@@ -262,6 +204,7 @@ class User
 
 	public function setPasswordToken(): string
 	{
+		$db = Database::getInstance();
 		$query = "
 			UPDATE users SET 
 				reset_token = :token, token_expiration = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
@@ -271,34 +214,35 @@ class User
 			'token' => bin2hex(random_bytes(10 / 2)),
 			'user_id' => $this->id
 		];
-		$this->db->query($query, $params);
+		$db->query($query, $params);
 		return $params['token'];
 	}
 
 
 	public function setNewPassword($newPassword)
 	{
+		$db = Database::getInstance();
 		$query = 'UPDATE users SET password = :new_password, change_password = 0, reset_token = NULL, token_expiration = NULL WHERE id = :id';
 		$params = ['new_password' => md5($newPassword), 'id' => $this->id];
-		return $this->db->query($query, $params);
+		return $db->query($query, $params);
 	}
 
 
-	static public function getDrivers(): array
+	public static function getDrivers(): array
 	{
 		return self::getUsersByRole('driver');
 	}
 
 
-	static public function getManagers(): array
+	public static function getManagers(): array
 	{
 		return self::getUsersByRole('manager');
 	}
 
 
-	static public function getUsersByRole(string $role): array
+	public static function getUsersByRole(string $role): array | false
 	{
-		$db = data::getInstance();
+		$db = Database::getInstance();
 		$query = "
 			SELECT * FROM users 
 			WHERE 
@@ -311,9 +255,9 @@ class User
 	}
 
 
-	static public function getUsers(): array
+	public static function getUsers(): array | false
 	{
-		$db = data::getInstance();
+		$db = Database::getInstance();
 		$query = "
 			SELECT u.*, d.name AS department FROM users u 
 			LEFT OUTER JOIN departments d ON d.id = u.department_id
@@ -325,10 +269,11 @@ class User
 
 	public function getUserByEmail($emailAddress): bool
 	{
+		$db = Database::getInstance();
 		$query = "SELECT * FROM users WHERE email_address = :email_address AND archived IS NULL";
 		$params = ['email_address' => $emailAddress];
-		if ($row = $this->db->get_row($query, $params)) {
-			$this->load($row->id);
+		if ($row = $db->get_row($query, $params)) {
+			$this->mapRowToProperties($row);
 			return true;
 		}
 		$this->emailAddress = $emailAddress;
@@ -336,9 +281,9 @@ class User
 	}
 
 
-	static public function validateOTP($email, $otp)
+	public static function validateOTP($email, $otp): bool
 	{
-		$db = data::getInstance();
+		$db = Database::getInstance();
 		$query = "
 			SELECT * FROM users 
 			WHERE 
@@ -355,9 +300,9 @@ class User
 	}
 
 
-	static public function login(string $username, string $password): mixed
+	public static function login(string $username, string $password): mixed
 	{
-		$db = data::getInstance();
+		$db = Database::getInstance();
 		$query = "SELECT * FROM users WHERE username = :username AND password = :password";
 		$params = [
   		'username' => $username,
@@ -367,9 +312,9 @@ class User
 	}
 
 	// TODO: This makes no sense here! Change it!
-	static public function getUserSession(string $username): mixed
+	public static function getUserSession(string $username): mixed
 	{
-		$db = data::getInstance();
+		$db = Database::getInstance();
 		$query = "SELECT * FROM users WHERE username = :username";
 		$params = ['username' => $username];
 		$result = $db->get_row($query, $params);
@@ -391,17 +336,11 @@ class User
 
 	public function addRole(string $role): void
 	{
-		if ($this->roles) {
-			$this->roles[] = $role;
-		} else {
-			$this->roles = [$role];
-		}
+		$this->roles[] = $role;
 	}
 
-
-	public function getName(): string
+	public function getPreferences(): ?object
 	{
-		if ($this->id) return "{$this->firstName} {$this->lastName}";
-		return '';
+		return json_decode($this->preferences);
 	}
 }

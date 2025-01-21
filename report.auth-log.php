@@ -1,4 +1,3 @@
-<?php date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');?>
 <a href="#" class="back-to-top"><i class="fa-solid fa-circle-arrow-up fa-2x"></i></a>
 <div class="container-fluid mt-2" id="master">
 	<h1>Authentication Log</h1>

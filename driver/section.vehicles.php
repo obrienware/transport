@@ -1,4 +1,8 @@
-<?php require_once 'class.vehicle.php';?>
+<?php 
+require_once '../autoload.php';
+
+use Transport\Vehicle;
+?>
 <?php if ($rows = Vehicle::getAll()): ?>
 
   <ul class="list-group list-group-flush" id="vehicle-list">

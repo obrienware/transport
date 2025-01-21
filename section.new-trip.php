@@ -21,7 +21,7 @@
               type="text"
               class="form-control"
               data-td-target="#datetimepicker-trip-pickup-date"
-              value="<?=$_REQUEST['dateHint']?>"/>
+              value="<?=$_GET['dateHint']?>"/>
             <span
               class="input-group-text"
               data-td-target="#datetimepicker-trip-pickup-date"

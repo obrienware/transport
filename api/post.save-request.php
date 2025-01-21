@@ -1,21 +1,23 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: application/json');
+
+require_once '../autoload.php';
+
+use Transport\Airport;
+use Transport\AirportLocation;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Event;
+use Transport\Guest;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
+use Transport\Utils;
+
+
 $json = json_decode(file_get_contents("php://input"));
-require_once 'class.user.php';
+
 $user = new User($_SESSION['user']->id);
-
-require_once 'class.utils.php';
-require_once 'class.trip.php';
-require_once 'class.event.php';
-require_once 'class.guest.php';
-require_once 'class.airport.php';
-require_once 'class.airport-location.php';
-
-require_once 'class.config.php';
-require_once 'class.email.php';
-require_once 'class.email-templates.php';
-require_once 'class.template.php';
 
 
 switch ($json->type) {
@@ -52,7 +54,7 @@ function addAirportDropoff($json)
   $turnAroundTime = 30;
   $summary = $json->airport.' Drop Off - '.$json->whom->name;
 
-  $trip = new trip();
+  $trip = new Trip();
   $trip->requestorId = $json->requestorId;
   $trip->summary = $summary;
   $trip->startDate = Date('Y-m-d H:i:s', strtotime($json->datetime));

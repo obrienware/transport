@@ -1,17 +1,18 @@
 <?php
-@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+declare(strict_types=1);
+namespace Transport;
 
-require_once 'class.config.php';
-require_once 'class.audit.php';
-require_once 'class.utils.php';
-require_once 'class.data.php';
+require_once __DIR__.'/../../autoload.php';
+
+use DateTime;
+use DateTimeZone;
 
 class Flight
 {
 
-  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object | bool
+  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object | false
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     if (!$date) $date = Date('Y-m-d'); // Default to today
     if ($type == 'arrival') {
       $query = "
@@ -46,7 +47,7 @@ class Flight
    */
   static function updateFlight(string $flightNumber): bool
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     $keys = Config::get('system')->keys;
     $db->query(
       "REPLACE INTO _flight_check SET flight_number = :flight_number, last_checked = NOW()",
@@ -114,7 +115,7 @@ class Flight
    */
   static function lastChecked(string $flightNumber): int | bool
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     $lastChecked = $db->get_var(
       "SELECT last_checked FROM _flight_check WHERE flight_number = :flight_number",
       ['flight_number' => $flightNumber]

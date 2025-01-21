@@ -1,8 +1,12 @@
 <?php
-require_once 'class.department.php';
-$department = new Department($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Department;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$department = new Department($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$department->getId()): ?>
+<?php if (isset($_GET['id']) && !$department->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

@@ -1,9 +1,11 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once 'autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
-$params = ['vehicle_id' => $_REQUEST['vehicleId']];
+$params = ['vehicle_id' => $_GET['vehicleId']];
 ?>
 <section id="section-vehicle-documents-list">
 
@@ -64,7 +66,7 @@ $params = ['vehicle_id' => $_REQUEST['vehicleId']];
 
 $(async ƒ => {
 
-  const vehicleId = '<?=$_REQUEST['vehicleId']?>';
+  const vehicleId = '<?=$_GET['vehicleId']?>';
   let documentName = '';
   <?php $count = count($rows); ?>
   <?php if ($count > 0): ?>

@@ -1,16 +1,19 @@
 <?php
 header('Content-Type: application/json');
+
+require_once '../autoload.php';
+
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
+
 $json = json_decode(file_get_contents("php://input"));
-require_once 'class.user.php';
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.trip.php';
 $trip = new Trip($json->tripId);
 $trip->cancel($user->getUsername());
-
-require_once 'class.email.php';
-require_once 'class.email-templates.php';
-require_once 'class.template.php';
 
 $template = new Template(EmailTemplates::get('Email Manager Trip Request Cancellation'));
 $managers = User::getManagers();

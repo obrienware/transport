@@ -1,6 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.vehicle.php';
+
+require_once '../autoload.php';
+
+use Transport\Vehicle;
+
 $rows = Vehicle::getAll();
 $response = [];
 foreach ($rows as $row) {

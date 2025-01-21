@@ -1,7 +1,9 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once 'autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "
   SELECT 
     e.*, 
@@ -82,7 +84,7 @@ $query = "
         let targetId;
 
         function reloadSection () {
-          $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+          $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
         }
 
         if ($.fn.dataTable.isDataTable('#table-events') ) {

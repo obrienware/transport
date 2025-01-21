@@ -1,12 +1,13 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
 header('Content-Type: text/calendar; charset=utf-8');
 header('Content-Disposition: attachment; filename=invite.ics');
-// echo '<pre>';
 
-require_once 'class.trip.php';
-require_once 'class.ics.php';
-$trip = new Trip($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Trip;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$trip = new Trip($id);
 
 $description = "";
 $description .= "Using ".$trip->vehicle->name.": ".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions."\\n\\n";

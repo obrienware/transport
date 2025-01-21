@@ -1,16 +1,21 @@
 <?php
-@date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
+declare(strict_types=1);
+namespace Transport;
 
+require_once __DIR__.'/../../autoload.php';
+
+
+// TODO: Much of this should be refactored as traits
 class Utils
 {
   
-  static public function GUID() 
+  public static function GUID() 
   {
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
   }
 
 
-  static public function randomPassword($length = 8) 
+  public static function randomPassword($length = 8) 
   {
     $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $pass = [];
@@ -23,7 +28,7 @@ class Utils
   }
 
 
-  static public function callApi ($method, $url, $data = [], $auth = null, $headers = []) 
+  public static function callApi ($method, $url, $data = [], $auth = null, $headers = []) 
   {
     $curl = curl_init();
     switch ($method) {
@@ -63,7 +68,7 @@ class Utils
   }
 
 
-  static public function ago($time1, $time2 = 'now', $short = false): string
+  public static function ago($time1, $time2 = 'now', $short = false): string
   {
     if ($short) {
       $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
@@ -85,7 +90,7 @@ class Utils
   }
 
 
-  static public function formattedPhoneNumber(string $number): string
+  public static function formattedPhoneNumber(string $number): string
 	{
 		if (str_contains($number, '+')) {
 			return preg_replace('/(?<!^)\D/', '', $number); // Remove all non-numeric characters except the leading +
@@ -95,7 +100,7 @@ class Utils
 	}
 
 
-  static public function showDate($date): string
+  public static function showDate($date): string
   {
     $baseline = Date('Y-m-d', strtotime($date));
     if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline))) return 'today';
@@ -104,7 +109,7 @@ class Utils
   }
 
 
-  static public function numberToOrdinalWord(int $number): string
+  public static function numberToOrdinalWord(int $number): string
   {
     $ordinals = [
       1 => 'firstly',

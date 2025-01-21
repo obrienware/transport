@@ -1,9 +1,12 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
-$user = new User($_SESSION['user']->id);
 
-require_once 'class.vehicle-document.php';
+require_once '../autoload.php';
+
+use Transport\User;
+use Transport\VehicleDocument;
+
+$user = new User($_SESSION['user']->id);
 
 if (!empty($_FILES)) {
   $targetFilename = uniqid().'.'.pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);

@@ -1,12 +1,15 @@
 <?php
-require_once 'class.user.php';
-require_once 'class.department.php';
-require_once 'class.config.php';
+require_once 'autoload.php';
+
+use Transport\Config;
+use Transport\Department;
+use Transport\User;
 
 $config = Config::get('system');
-$user = new User($_REQUEST['id']);
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$user = new User($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$user->getId()): ?>
+<?php if (isset($_GET['id']) && !$user->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

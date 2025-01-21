@@ -1,8 +1,10 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.flight.php';
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once '../autoload.php';
+
+use Transport\Database;
+use Transport\Flight;
+
+$db = Database::getInstance();
 $query = "
 SELECT 
   t.*,
@@ -22,7 +24,7 @@ LEFT OUTER JOIN airlines a ON a.id = t.airline_id
 WHERE 
   t.id = :id
 ";
-$params = ['id' => $_REQUEST['id']];
+$params = ['id' => $_GET['id']];
 $trip = $db->get_row($query, $params);
 ?>
 <div class="row mb-2">

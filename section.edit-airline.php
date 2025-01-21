@@ -1,8 +1,12 @@
 <?php
-require_once 'class.airline.php';
-$airline = new Airline($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Airline;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$airline = new Airline($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$airline->getId()): ?>
+<?php if (isset($_GET['id']) && !$airline->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">
@@ -63,7 +67,7 @@ $airline = new Airline($_REQUEST['id']);
       let airlineImage = '<?=$airline->imageFilename?>';
 
       function reloadSection () {
-        $('#<?=$_REQUEST["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
       }
 
       function getData () {

@@ -1,9 +1,13 @@
 <?php
-require_once 'class.trip.php';
-$trip = new Trip(id: $_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Trip;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$trip = new Trip($id);
 if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
 ?>
-<?php if (isset($_REQUEST['id']) && !$trip->getId()): ?>
+<?php if (isset($_GET['id']) && !$trip->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

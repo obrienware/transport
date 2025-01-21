@@ -1,9 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.email.php';
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\User;
+use Transport\Email;
+
 $user = new User();
-$user->getUserByEmail($_REQUEST['email']);
+$user->getUserByEmail($_GET['email']);
 if (!$user->getId()) {
   $user->roles = ['requestor'];
   $user->save(); // So we can have a valid user object

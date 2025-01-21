@@ -1,8 +1,12 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.trip.php';
-require_once 'class.event.php';
-$vehicleId = $_REQUEST['id'];
+
+require_once '../../autoload.php';
+
+use Transport\Trip;
+use Transport\Event;
+
+$vehicleId = !empty($_GET['id']) ? (int)$_GET['id'] : null;
 
 // Let's check for trips first
 $id = Trip::nextTripByVehicle($vehicleId);

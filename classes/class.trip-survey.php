@@ -80,7 +80,7 @@ class TripSurvey
 		];
   }
 
-	static public function delete($surveyId)
+	public static function delete($surveyId)
 	{
 		$db = data::getInstance();
 		$query = 'DELETE trip_surveys WHERE id = :id';

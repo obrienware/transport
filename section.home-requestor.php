@@ -1,9 +1,11 @@
 <?php
-require_once 'class.user.php';
-$user = new User($_SESSION['user']->id);
+require_once 'autoload.php';
 
-require_once 'class.airport.php';
-require_once 'class.airline.php';
+use Transport\Airline;
+use Transport\Airport;
+use Transport\User;
+
+$user = new User($_SESSION['user']->id);
 ?>
 <div class="container-fluid">
 

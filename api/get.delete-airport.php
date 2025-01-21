@@ -1,9 +1,14 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Airport;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.airport.php';
-$airport = new Airport($_REQUEST['id']);
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$airport = new Airport($id);
 $result = $airport->delete(userResponsibleForOperation: $user->getUsername());
 die(json_encode(['result' => $result]));

@@ -1,16 +1,28 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Blockout;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.blockout.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $blockout = new Blockout($json->id);
-if ($json->userId) $blockout->userId = $json->userId;
-$blockout->fromDateTime = $json->fromDateTime ?: NULL;
-$blockout->toDateTime = $json->toDateTime ?: NULL;
-$blockout->note = $json->note ?: NULL;
+if (hasValue($json->userId)) $blockout->userId = $json->userId;
+$blockout->fromDateTime = parseValue($json->fromDateTime);
+$blockout->toDateTime = parseValue($json->toDateTime);
+$blockout->note = parseValue($json->note);
+
+function hasValue($value) {
+    return isset($value) && $value !== '';
+}
+
+function parseValue($value) {
+    return hasValue($value) ? $value : NULL;
+}
 
 if ($blockout->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $blockout->getId();

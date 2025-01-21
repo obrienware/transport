@@ -1,9 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Airline;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.airline.php';
 
 if (!empty($_FILES)) {
   $targetFilename = uniqid().'.'.pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);

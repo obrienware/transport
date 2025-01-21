@@ -1,7 +1,12 @@
 <?php
+
+use Transport\Database;
+
 header('Content-Type: application/json');
-require_once 'class.data.php';
-$db = data::getInstance();
+
+require_once '../autoload.php';
+
+$db = Database::getInstance();
 
 // We want to exclude current trips and/or current events
 $query = "
@@ -40,11 +45,11 @@ WHERE
 	)
 ";
 
-$current_tripId = $_REQUEST['tripId'] ?: 0;
-$current_eventId = $_REQUEST['eventId'] ?: 0;
+$current_tripId = $_GET['tripId'] ?? 0;
+$current_eventId = $_GET['eventId'] ?? 0;
 $params = [
-  'from_date' => $_REQUEST['startDate'],
-  'to_date' => $_REQUEST['endDate'],
+  'from_date' => $_GET['startDate'],
+  'to_date' => $_GET['endDate'],
 	'trip_id' => $current_tripId,
 	'event_id' => $current_eventId
 ];

@@ -1,13 +1,22 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Event;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Template;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.event.php';
-$event = new Event($_REQUEST['id']);
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$event = new Event($id);
 $result = $event->delete(userResponsibleForOperation: $user->getUsername());
 
-$event = new Event($_REQUEST['id']);
+$event = new Event($id);
 if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:i:s')) {
   notifyParticipants($event);
 }
@@ -19,11 +28,6 @@ die(json_encode(['result' => $result]));
 
 function notifyParticipants(Event $event): void
 {
-  require_once 'class.config.php';
-  require_once 'class.email.php';
-  require_once 'class.email-templates.php';
-  require_once 'class.template.php';
-
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
   $startDate = Date('m/d/Y', strtotime($event->startDate));
@@ -63,7 +67,7 @@ function notifyParticipants(Event $event): void
       'endDate' => $endDate,
     ];
     $email = new Email();
-    $email->addRecipient($driver->emailAddress, $driverName);
+    $email->addRecipient($driver->emailAddress, $driver->getName());
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
     $email->setSubject('Confirmation of cancellation/deletion of event: '.$event->name);

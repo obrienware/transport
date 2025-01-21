@@ -1,9 +1,13 @@
 <?php
-require_once 'class.config.php';
-require_once 'class.qrcode.php';
-require_once 'class.pdf.php';
-require_once 'class.trip.php';
-if (!isset($trip)) $trip = new Trip($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Config;
+use Transport\Trip;
+
+if (!isset($trip)) {
+  $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+  $trip = new Trip($id);
+}
 
 $config = Config::get('organization');
 

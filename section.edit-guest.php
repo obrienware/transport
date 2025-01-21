@@ -1,8 +1,12 @@
 <?php
-require_once 'class.guest.php';
-$guest = new Guest($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Guest;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$guest = new Guest($id);
 ?>
-<?php if (isset($_REQUEST['id']) && !$guest->getId()): ?>
+<?php if (isset($_GET['id']) && !$guest->getId()): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

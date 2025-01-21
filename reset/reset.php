@@ -1,8 +1,12 @@
 <?php
-require_once 'class.data.php';
-$db = data::getInstance();
+
+use Transport\Database;
+
+require_once '../autoload.php';
+
+$db = Database::getInstance();
 $query = "SELECT * FROM users WHERE reset_token = :token AND token_expiration >= NOW()";
-$params = ['token' => $_REQUEST['path']];
+$params = ['token' => $_GET['path']];
 if ($user = $db->get_row($query, $params)) {
   $db->query("UPDATE users SET reset_token = NULL, token_expiration = NULL, change_password = 1 WHERE id = :id", ['id' => $user->id]);
   $_SESSION['user'] = (object) [

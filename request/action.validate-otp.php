@@ -1,9 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
-if (User::validateOTP($_REQUEST['email'], $_REQUEST['otp'])) {
+
+require_once '../autoload.php';
+
+use Transport\User;
+
+if (User::validateOTP($_GET['email'], $_GET['otp'])) {
   $user = new User();
-  $user->getUserByEmail($_REQUEST['email']);
+  $user->getUserByEmail($_GET['email']);
   $_SESSION['user'] = (object)[
     'id' => $user->getId(),
     'authenticated' => true,

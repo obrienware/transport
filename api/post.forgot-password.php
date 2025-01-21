@@ -1,6 +1,9 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\User;
 
 $json = json_decode(file_get_contents("php://input"));
 

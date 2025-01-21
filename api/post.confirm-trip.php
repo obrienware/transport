@@ -1,12 +1,14 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.config.php';
-require_once 'class.email.php';
-require_once 'class.utils.php';
-require_once 'class.trip.php';
-require_once 'class.user.php';
-require_once 'class.email-templates.php';
-require_once 'class.template.php';
+
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Template;
+use Transport\Trip;
+use Transport\User;
 
 $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');

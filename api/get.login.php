@@ -1,11 +1,13 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Authenticate;
+use Transport\User;
 
 $username = $_GET['username'];
 $password = $_GET['password'];
-
-require_once 'class.authenticate.php';
 
 if ($id = Authenticate::logIn($username, $password)) {
   $_SESSION['user'] = (object) [

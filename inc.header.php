@@ -1,6 +1,9 @@
 <?php
+require_once 'autoload.php';
+
+use Transport\User;
+
 if (!isset($_SESSION['view'])) {
-	require_once 'class.user.php';
 	if (!isset($user)) $user = new User($_SESSION['user']->id);
 	$_SESSION['view'] = $user->roles[0];
 }

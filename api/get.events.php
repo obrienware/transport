@@ -1,16 +1,19 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
-$start = $_REQUEST['start'];
-$end = $_REQUEST['end'];
 
-if (isset($_REQUEST['requestorId'])) {
-  $criteria = "AND e.requestor_id = {$_REQUEST['requestorId']}";
+require_once '../autoload.php';
+
+use Transport\Database;
+
+$start = $_GET['start'];
+$end = $_GET['end'];
+
+if (isset($_GET['requestorId'])) {
+  $criteria = "AND e.requestor_id = {$_GET['requestorId']}";
 }
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
-require_once 'class.data.php';
-$db = data::getInstance();
+$db = Database::getInstance();
 $query = "
 SELECT 
   e.* 
@@ -54,7 +57,7 @@ if ($rows = $db->get_rows($query, $params)) {
       'backgroundColor' => ($row->confirmed) ? 'green' : '#AAAAAA'
     ];
     // Format for the requestor's view
-    if (isset($_REQUEST['requestorId'])) {
+    if (isset($_GET['requestorId'])) {
       if ($row->confirmed) {
         $event->backgroundColor = '#03fc30';
         $event->textColor = '#000000';

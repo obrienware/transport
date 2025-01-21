@@ -1,5 +1,8 @@
 <?php
-require_once 'class.user.php';
+require_once 'autoload.php';
+
+use Transport\User;
+
 if (!isset($user)) $user = new User($_SESSION['user']->id);
 ?>
 <nav data-bs-theme="dark" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
@@ -72,7 +75,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
               <li><a class="dropdown-item menu-item" href="#section.list-airport-locations.php" data-target-id="list-airport-locations">Airport Locations</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-email-templates.php" data-target-id="list-email-templates">Email Templates</a></li>
               
-              <?php if ($user->hasRole(['admin','developer'])):?>
+              <?php if ($user->hasRole(['admin','developer','manager'])):?>
               <li>
                 <div class="nav-item dropdown-submenu">
                   <a href="#" role="button" data-toggle="dropdown" class="dropdown-item dropdown-toggle">Config <i class="fa-duotone fa-solid fa-caret-right"></i></a>

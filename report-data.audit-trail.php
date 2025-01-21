@@ -1,23 +1,25 @@
 <?php
-date_default_timezone_set($_ENV['TZ'] ?: 'America/Denver');
-require_once 'class.data.php';
-$db = data::getInstance();
+require_once 'autoload.php';
+
+use Transport\Database;
+
+$db = Database::getInstance();
 $query = "
   SELECT * FROM audit_trail
   WHERE
     datetimestamp BETWEEN :from_date AND :to_date
 ";
 $params = [
-  'from_date' => $_REQUEST['from_date'],
-  'to_date' => $_REQUEST['to_date'].' 23:59:59'
+  'from_date' => $_GET['from_date'],
+  'to_date' => $_GET['to_date'].' 23:59:59'
 ];
-if ($_REQUEST['table']) {
+if ($_GET['table']) {
   $query .= " AND affected_tables = :table ";
-  $params['table'] = $_REQUEST['table'];
+  $params['table'] = $_GET['table'];
 }
-if ($_REQUEST['user']) {
+if ($_GET['user']) {
   $query .= " AND user = :user";
-  $params['user'] = $_REQUEST['user'];
+  $params['user'] = $_GET['user'];
 }
 $query .= " ORDER BY datetimestamp DESC";
 ?>

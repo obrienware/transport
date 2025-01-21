@@ -1,9 +1,13 @@
 <?php
-require_once 'class.event.php';
-$event = new Event($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Event;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$event = new Event($id);
 $eventId = $event->getId();
 ?>
-<?php if (isset($_REQUEST['id']) && !$eventId): ?>
+<?php if (isset($_GET['id']) && !$eventId): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

@@ -1,11 +1,19 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Config;
+use Transport\Email;
+use Transport\EmailTemplates;
+use Transport\Event;
+use Transport\Location;
+use Transport\Template;
+use Transport\User;
+use Transport\Vehicle;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.location.php';
-require_once 'class.vehicle.php';
-require_once 'class.event.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $changes = [];
@@ -100,11 +108,6 @@ die(json_encode(['result' => false]));
 
 function notifyParticipants(Event $event, array $changes, array $driversToNotify): void
 {
-  require_once 'class.ics.php';
-  require_once 'class.config.php';
-  require_once 'class.email.php';
-  require_once 'class.email-templates.php';
-  require_once 'class.template.php';
 
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);

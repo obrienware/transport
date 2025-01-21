@@ -1,11 +1,14 @@
 <?php
-require_once 'class.data.php';
+declare(strict_types=1);
+namespace Transport;
+
+require_once __DIR__.'/../../autoload.php';
 
 class Authenticate
 {
   public static function logIn ($username, $password)
   {
-    $db = data::getInstance();
+    $db = Database::getInstance();
     $query = 'SELECT * FROM users WHERE (username = :username OR email_address = :username) AND password = :password';
     $params = ['username' => $username, 'password' => md5($password)];
     if ($id = $db->get_var($query, $params)) {

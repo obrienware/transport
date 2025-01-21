@@ -1,22 +1,34 @@
 <?php
 header('Content-Type: application/json');
-require_once 'class.user.php';
+
+require_once '../autoload.php';
+
+use Transport\Airport;
+use Transport\User;
+
 $user = new User($_SESSION['user']->id);
 
-require_once 'class.airport.php';
 $json = json_decode(file_get_contents("php://input"));
 
 $airport = new Airport($json->id);
-$airport->IATA = $json->iata ?: NULL;
-$airport->name = $json->name ?: NULL;
-$airport->stagingLocationId = $json->stagingLocationId ?: NULL;
-$airport->leadTime = $json->leadTime ?: NULL;
-$airport->travelTime = $json->travelTime ?: NULL;
-$airport->arrivalInstructions = $json->arrivalInstructions ?: NULL;
-$airport->arrivalInstructionsGroup = $json->arrivalInstructionsGroup ?: NULL;
+$airport->IATA = parseValue($json->iata);
+$airport->name = parseValue($json->name);
+$airport->stagingLocationId = parseValue($json->stagingLocationId);
+$airport->leadTime = parseValue($json->leadTime);
+$airport->travelTime = parseValue($json->travelTime);
+$airport->arrivalInstructions = parseValue($json->arrivalInstructions);
+$airport->arrivalInstructionsGroup = parseValue($json->arrivalInstructionsGroup);
+
+function hasValue($value) {
+    return isset($value) && $value !== '';
+}
+
+function parseValue($value) {
+    return hasValue($value) ? $value : NULL;
+}
 
 if ($airport->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $airport->getId();
-  die(json_encode(['result' => $result]));
+    $result = $airport->getId();
+    die(json_encode(['result' => $result]));
 }
 die(json_encode(['result' => false]));

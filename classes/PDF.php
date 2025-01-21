@@ -1,5 +1,4 @@
 <?php
-require_once 'class.fpdf.php';
 /**
  * The following has been extensively modified from the original to adhere
  * as far as possible to current coding standards AND to work with PHP8+

@@ -1,8 +1,11 @@
 <?php
+require_once 'autoload.php';
+
+use Transport\Database;
+
 $me = $_SESSION['user']->id;
-require_once 'class.data.php';
-$db = data::getInstance();
-if ($_REQUEST['tripId']) {
+$db = Database::getInstance();
+if ($_GET['tripId']) {
   $query = "
     SELECT * FROM trip_messages m
     LEFT OUTER JOIN users u ON m.user_id = u.id
@@ -10,11 +13,11 @@ if ($_REQUEST['tripId']) {
     ORDER BY m.datetimestamp
   ";
   $params = [
-    'trip_id' => $_REQUEST['tripId']
+    'trip_id' => $_GET['tripId']
   ];
 }
 
-if ($_REQUEST['eventId']) {
+if ($_GET['eventId']) {
   $query = "
     SELECT * FROM event_messages m
     LEFT OUTER JOIN users u ON m.user_id = u.id
@@ -22,7 +25,7 @@ if ($_REQUEST['eventId']) {
     ORDER BY m.datetimestamp
   ";
   $params = [
-    'event_id' => $_REQUEST['eventId']
+    'event_id' => $_GET['eventId']
   ];
 }
 

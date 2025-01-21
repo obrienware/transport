@@ -1,8 +1,13 @@
 <?php
 header('Content-Type: application/json');
+
+require_once '../autoload.php';
+
+use Transport\User;
+use Transport\Utils;
+
 $json = json_decode(file_get_contents("php://input"));
-require_once 'class.utils.php';
-require_once 'class.user.php';
+
 $user = new User();
 
 $user->getUserByEmail($json->email);

@@ -1,9 +1,13 @@
 <?php
-require_once 'class.blockout.php';
-$blockout = new Blockout($_REQUEST['id']);
+require_once 'autoload.php';
+
+use Transport\Blockout;
+
+$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$blockout = new Blockout($id);
 $blockoutId = $blockout->getId();
 ?>
-<?php if (isset($_REQUEST['id']) && !$blockoutId): ?>
+<?php if (isset($_GET['id']) && !$blockoutId): ?>
 
   <div class="container-fluid text-center">
     <div class="alert alert-danger mt-5 w-50 mx-auto">

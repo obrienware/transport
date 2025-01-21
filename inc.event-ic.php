@@ -1,5 +1,5 @@
 <?php
-require_once 'class.ics.php';
+require_once 'autoload.php';
 
 $ics = new ICS([
   'dtstart' => $event->startDate,
