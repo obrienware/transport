@@ -40,7 +40,7 @@ class Airport extends Base
 
 	protected function mapRowToProperties(object $row): void
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
 		$this->row = $row;
 		$this->action = 'update';
 
@@ -57,7 +57,7 @@ class Airport extends Base
 			$this->stagingLocation = new Location($this->stagingLocationId);
 		}
     if (!empty($row->archived)) {
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
 	}
 

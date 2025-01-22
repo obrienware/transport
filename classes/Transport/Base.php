@@ -22,7 +22,7 @@ abstract class Base
   
   public function __construct(mixed $id = null)
   {
-    $timezoneString = isset($_SESSION['userTimezone']) ? $_SESSION['userTimezone'] : 'UTC';
+    $timezoneString = isset($_SESSION['userTimezone']) ? $_SESSION['userTimezone'] : $_ENV['TZ'];
     $this->timezone = new DateTimeZone($timezoneString);
     if ($id) $this->load($id);
   }

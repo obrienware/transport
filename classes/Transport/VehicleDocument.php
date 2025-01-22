@@ -36,7 +36,7 @@ class VehicleDocument extends Base
 
 	protected function mapRowToProperties(object $row): void
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
 		$this->row = $row;
 		$this->action = 'update';
 
@@ -47,7 +47,7 @@ class VehicleDocument extends Base
 		$this->fileType = $row->file_type;
 
 		if (!empty($row->archived)) {
-			$this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+			$this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
 		}
 	}
 

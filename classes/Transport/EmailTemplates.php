@@ -35,7 +35,7 @@ class EmailTemplates extends Base
 
   protected function mapRowToProperties(object $row): void
   {
-    $utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $this->row = $row;
     $this->action = 'update';
 
@@ -45,7 +45,7 @@ class EmailTemplates extends Base
     $this->availableVariables = $row->available_variables ? explode(', ', $row->available_variables) : [];
 
     if (!empty($row->archived)) {
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
   }
 

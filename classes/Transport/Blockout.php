@@ -37,7 +37,7 @@ class Blockout extends Base
 
 	protected function mapRowToProperties(object $row): void
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
 		$this->row = $row;
 		$this->action = 'update';
 
@@ -46,15 +46,15 @@ class Blockout extends Base
 		$this->note = $row->note;
 
 		if (!empty($row->from_datetime)) {
-			$this->fromDateTime = (new DateTime($row->from_datetime, $utc))->setTimezone($this->timezone);
+			$this->fromDateTime = (new DateTime($row->from_datetime, $defaultTimezone))->setTimezone($this->timezone);
 		}
 
 		if (!empty($row->to_datetime)) {
-			$this->toDateTime = (new DateTime($row->to_datetime, $utc))->setTimezone($this->timezone);
+			$this->toDateTime = (new DateTime($row->to_datetime, $defaultTimezone))->setTimezone($this->timezone);
 		}
 
 		if (!empty($row->archived)) {
-			$this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+			$this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
 		}
 	}
 

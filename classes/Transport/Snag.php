@@ -44,7 +44,7 @@ class Snag extends Base
 
   protected function mapRowToProperties(object $row): void
   {
-    $utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $this->row = $row;
     $this->action = 'update';
 
@@ -59,19 +59,19 @@ class Snag extends Base
     $this->comments = $row->comments;
 
     if (!empty($row->logged)) {
-      $this->logged = (new DateTime($row->logged, $utc))->setTimezone($this->timezone);
+      $this->logged = (new DateTime($row->logged, $defaultTimezone))->setTimezone($this->timezone);
     }
 
     if (!empty($row->acknowledged)) {
-      $this->acknowledged = (new DateTime($row->acknowledged, $utc))->setTimezone($this->timezone);
+      $this->acknowledged = (new DateTime($row->acknowledged, $defaultTimezone))->setTimezone($this->timezone);
     }
 
     if (!empty($row->resolved)) {
-      $this->resolved = (new DateTime($row->resolved, $utc))->setTimezone($this->timezone);
+      $this->resolved = (new DateTime($row->resolved, $defaultTimezone))->setTimezone($this->timezone);
     }
 
     if (!empty($row->archived)) {
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
   }
 
@@ -106,7 +106,7 @@ class Snag extends Base
 
 	public function save(?string $userResponsibleForOperation = null): bool
 	{
-    $utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
@@ -116,14 +116,14 @@ class Snag extends Base
 		$audit->before = json_encode($this->row);
 
     $params = [
-      'logged' => (!is_null($this->logged)) ? $this->logged->setTimezone($utc)->format('Y-m-d H:i:s') : null,
+      'logged' => (!is_null($this->logged)) ? $this->logged->setTimezone($defaultTimezone)->format('Y-m-d H:i:s') : null,
       'user_id' => $this->userId,
       'vehicle_id' => $this->vehicleId,
       'summary' => $this->summary,
       'description' => $this->description,
-      'acknowledged' => (!is_null($this->acknowledged)) ? $this->acknowledged->setTimezone($utc)->format('Y-m-d H:i:s') : null,
+      'acknowledged' => (!is_null($this->acknowledged)) ? $this->acknowledged->setTimezone($defaultTimezone)->format('Y-m-d H:i:s') : null,
       'acknowledged_by' => $this->acknowledgedBy,
-      'resolved' => (!is_null($this->resolved)) ? $this->resolved->setTimezone($utc)->format('Y-m-d H:i:s') : null,
+      'resolved' => (!is_null($this->resolved)) ? $this->resolved->setTimezone($defaultTimezone)->format('Y-m-d H:i:s') : null,
       'resolved_by' => $this->resolvedBy,
       'resolution' => $this->resolution,
       'comments' => $this->comments,

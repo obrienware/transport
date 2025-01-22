@@ -46,7 +46,7 @@ class Event extends Base
 
   protected function mapRowToProperties(object $row): void
   {
-    $utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $this->row = $row;
     $this->action = 'update';
 
@@ -70,19 +70,19 @@ class Event extends Base
       $this->vehicles = explode(',', $row->vehicles);
     }
     if (!empty($row->start_date)) {
-      $this->startDate = (new DateTime($row->start_date, $utc))->setTimezone($this->timezone);
+      $this->startDate = (new DateTime($row->start_date, $defaultTimezone))->setTimezone($this->timezone);
     }
     if (!empty($row->end_date)) {
-      $this->endDate = (new DateTime($row->end_date, $utc))->setTimezone($this->timezone);
+      $this->endDate = (new DateTime($row->end_date, $defaultTimezone))->setTimezone($this->timezone);
     }
     if (!empty($row->confirmed)) {
-      $this->confirmed = (new DateTime($row->confirmed, $utc))->setTimezone($this->timezone);
+      $this->confirmed = (new DateTime($row->confirmed, $defaultTimezone))->setTimezone($this->timezone);
     }
     if (!empty($row->cancellation_requested)) {
-      $this->cancelled = (new DateTime($row->cancellation_requested, $utc))->setTimezone($this->timezone);
+      $this->cancelled = (new DateTime($row->cancellation_requested, $defaultTimezone))->setTimezone($this->timezone);
     }
     if (!empty($row->archived)) {
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
   }
 
@@ -119,7 +119,7 @@ class Event extends Base
 
 	public function save(?string $userResponsibleForOperation = null): bool
 	{
-    $utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
@@ -132,8 +132,8 @@ class Event extends Base
       'name' => $this->name,
       'requestor_id' => $this->requestorId,
       'location_id' => $this->locationId,
-      'start_date' => is_null($this->startDate) ? null : $this->startDate->setTimezone($utc)->format('Y-m-d H:i:s'),
-      'end_date' => is_null($this->endDate) ? null : $this->endDate->setTimezone($utc)->format('Y-m-d H:i:s'),
+      'start_date' => is_null($this->startDate) ? null : $this->startDate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
+      'end_date' => is_null($this->endDate) ? null : $this->endDate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
       'driver_ids' => implode(',', $this->drivers),
       'vehicle_ids' => implode(',', $this->vehicles),
       'notes' => $this->notes,

@@ -54,7 +54,7 @@ class Vehicle extends Base
 
 	protected function mapRowToProperties(object $row): void
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
 		$this->row = $row;
 		$this->action = 'update';
 
@@ -69,7 +69,7 @@ class Vehicle extends Base
 		$this->mileage = $row->mileage;
 		$this->stagingLocationId = $row->default_staging_location_id;
 		if (!empty($row->last_update))
-			$this->lastUpdate = (new DateTime($row->last_update, $utc))->setTimezone($this->timezone);
+			$this->lastUpdate = (new DateTime($row->last_update, $defaultTimezone))->setTimezone($this->timezone);
 		$this->lastUpdatedBy = $row->last_updated_by;
 		$this->locationId = $row->location_id;
 		$this->fuelLevel = $row->fuel_level;
@@ -82,7 +82,7 @@ class Vehicle extends Base
 		if (!is_null($this->locationId))
 			$this->currentLocation = new Location($this->locationId);
     if (!empty($row->archived))
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
 	}
 
   public function __set($name, $value)
@@ -112,7 +112,7 @@ class Vehicle extends Base
 
 	public function save(string $userResponsibleForOperation = null): bool
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
@@ -132,7 +132,7 @@ class Vehicle extends Base
 			'check_engine' => is_null($this->hasCheckEngine) ? null : ($this->hasCheckEngine ? 1 : 0),
 
 			'default_staging_location_id' => $this->stagingLocationId,
-			'last_update' => is_null($this->lastUpdate) ? null : $this->lastUpdate->setTimezone($utc)->format('Y-m-d H:i:s'),
+			'last_update' => is_null($this->lastUpdate) ? null : $this->lastUpdate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
 			'last_updated_by' => $this->lastUpdatedBy,
 			'location_id' => $this->locationId,
 			'fuel_level' => $this->fuelLevel,

@@ -68,7 +68,7 @@ class Trip extends Base
 
 	protected function mapRowToProperties(object $row): void
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
 		$this->row = $row;
 		$this->action = 'update';
 
@@ -76,13 +76,13 @@ class Trip extends Base
 		$this->requestorId = $row->requestor_id;
 		$this->summary = $row->summary;
 		if (!empty($row->start_date)) {
-			$this->startDate = (new DateTime($row->start_date, $utc))->setTimezone($this->timezone);
+			$this->startDate = (new DateTime($row->start_date, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->pickup_date)) {
-			$this->pickupDate = (new DateTime($row->pickup_date, $utc))->setTimezone($this->timezone);
+			$this->pickupDate = (new DateTime($row->pickup_date, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->end_date)) {
-			$this->endDate = (new DateTime($row->end_date, $utc))->setTimezone($this->timezone);
+			$this->endDate = (new DateTime($row->end_date, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		$this->guests = $row->guests;
 		$this->guestId = $row->guest_id;
@@ -96,26 +96,26 @@ class Trip extends Base
 		$this->vehiclePUOptions = $row->vehicle_pu_options;
 		$this->vehicleDOOptions = $row->vehicle_do_options;
 		if (!empty($row->eta)) {
-			$this->ETA = (new DateTime($row->eta, $utc))->setTimezone($this->timezone);
+			$this->ETA = (new DateTime($row->eta, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->etd)) {
-			$this->ETD = (new DateTime($row->etd, $utc))->setTimezone($this->timezone);
+			$this->ETD = (new DateTime($row->etd, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		$this->IATA = $row->iata;
 		$this->guestNotes = $row->guest_notes;
 		$this->driverNotes = $row->driver_notes;
 		$this->generalNotes = $row->general_notes;
 		if (!empty($row->confirmed)) {
-			$this->confirmed = (new DateTime($row->confirmed, $utc))->setTimezone($this->timezone);
+			$this->confirmed = (new DateTime($row->confirmed, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->started)) {
-			$this->started = (new DateTime($row->started, $utc))->setTimezone($this->timezone);
+			$this->started = (new DateTime($row->started, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->completed)) {
-			$this->completed = (new DateTime($row->completed, $utc))->setTimezone($this->timezone);
+			$this->completed = (new DateTime($row->completed, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		if (!empty($row->cancellation_requested)) {
-			$this->cancelled = (new DateTime($row->cancellation_requested, $utc))->setTimezone($this->timezone);
+			$this->cancelled = (new DateTime($row->cancellation_requested, $defaultTimezone))->setTimezone($this->timezone);
 		}
 		$this->originalRequest = $row->original_request;
 
@@ -137,7 +137,7 @@ class Trip extends Base
 			$this->airport->loadAirportByIATA($location->IATA);
 		}
     if (!empty($row->archived)) {
-      $this->archived = (new DateTime($row->archived, $utc))->setTimezone($this->timezone);
+      $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
 	}
 
@@ -185,7 +185,7 @@ class Trip extends Base
 
 	public function save(string $userResponsibleForOperation = null): bool
 	{
-		$utc = new DateTimeZone('UTC');
+		$defaultTimezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
     $db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
@@ -197,9 +197,9 @@ class Trip extends Base
 		$params = [
 			'requestor_id' => $this->requestorId,
 			'summary' => $this->summary,
-			'start_date' => is_null($this->startDate) ? null : $this->startDate->setTimezone($utc)->format('Y-m-d H:i:s'),
-			'pickup_date' => is_null($this->pickupDate) ? null : $this->pickupDate->setTimezone($utc)->format('Y-m-d H:i:s'),
-			'end_date' => is_null($this->endDate) ? null : $this->endDate->setTimezone($utc)->format('Y-m-d H:i:s'),
+			'start_date' => is_null($this->startDate) ? null : $this->startDate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
+			'pickup_date' => is_null($this->pickupDate) ? null : $this->pickupDate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
+			'end_date' => is_null($this->endDate) ? null : $this->endDate->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
 			'guests' => $this->guests,
 			'guest_id' => $this->guestId,
 			'passengers' => $this->passengers,
@@ -211,8 +211,8 @@ class Trip extends Base
 			'flight_number' => $this->flightNumber,
 			'vehicle_pu_options' => $this->vehiclePUOptions,
 			'vehicle_do_options' => $this->vehicleDOOptions,
-			'eta' => is_null($this->ETA) ? null : $this->ETA->setTimezone($utc)->format('Y-m-d H:i:s'),
-			'etd' => is_null($this->ETD) ? null : $this->ETD->setTimezone($utc)->format('Y-m-d H:i:s'),
+			'eta' => is_null($this->ETA) ? null : $this->ETA->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
+			'etd' => is_null($this->ETD) ? null : $this->ETD->setTimezone($defaultTimezone)->format('Y-m-d H:i:s'),
 			'guest_notes' => $this->guestNotes,
 			'driver_notes' => $this->driverNotes,
 			'general_notes' => $this->generalNotes,
