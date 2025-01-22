@@ -145,7 +145,7 @@ if ($trip->ETD) {
 
 if ($trip->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $trip->getId();
-  if ($changes) notifyParticipants($trip, $changes);
+  if ($changes) notifyParticipants($trip, $changes, $driversToNotify);
   die(json_encode(['result' => $result]));
 }
 die(json_encode(['result' => false]));
