@@ -30,7 +30,7 @@ $user = new User($_SESSION['user']->id);
           <button id="btn-request" class="btn btn-outline-primary" onclick="showNext()">New Request</button>
         </div>
       </div>
-      <div id="ec" class="col bg-body py-2"></div>
+      <div id="ec" class="col py-2"></div>
       <div id="trip-text"></div>
     </div>
   </section>

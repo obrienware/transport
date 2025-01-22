@@ -36,7 +36,7 @@ $user = new User($_SESSION['user']->id);
         <button id="btn-new-trip" class="btn btn-outline-primary">New Trip</button>
       </div>
     </div>
-    <div id="ec" class="col bg-body py-2"></div>
+    <div id="ec" class="col py-2"></div>
     <div id="trip-text"></div>
   </div>
 </div>

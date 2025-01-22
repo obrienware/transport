@@ -1,0 +1,25 @@
+#ec {
+  /* background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%); */
+  background: lightsteelblue;
+}
+
+.ec {
+  background-color: rgba(0, 0, 0, 0.2);
+  --ec-button-bg-color: #fff;
+}
+
+.ec-title {
+  color: #fff;
+}
+
+.ec-header, .ec-list .ec-day-head {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.ec-day {
+  color: #fff;
+}
+
+.ec-content .ec-resource {
+  color: #fff;
+}

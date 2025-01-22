@@ -12,11 +12,9 @@
 
 [SweetAlert2](https://sweetalert2.github.io)
 
-[DateTime picker (Tempus Dominus)](https://getdatepicker.com)
-
 [Google Distance Matrix API](https://developers.google.com/maps/documentation/distance-matrix/distance-matrix)
 
-[Rating javascript plugin](http://dreyescat.github.io/bootstrap-rating/)
+[~Rating javascript plugin~](http://dreyescat.github.io/bootstrap-rating/)
 
 [Tiny MCE](https://www.tiny.cloud/solutions/wysiwyg-bootstrap-rich-text-editor/)
 
