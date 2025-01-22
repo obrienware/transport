@@ -205,7 +205,7 @@ use Transport\Vehicle;
 
     function getData() {
       const data = {vehicleId};
-      if ($('#mileage').val() && parseInt($('#mileage').val()) > 0) data.mileage = parseInt(('#mileage').val());
+      if ($('#mileage').val() && parseInt($('#mileage').val()) > 0) data.mileage = parseInt($('#mileage').val());
       if ($('#veh-location').data('id')) data.locationId = $('#veh-location').data('id');
       if ($('input[name="opt-check-engine"]:checked').val() !== '') data.hasCheckEngine = $('input[name="opt-check-engine"]:checked').val();
       if ($('input[name="opt-restock"]:checked').val() !== '') data.restock = $('input[name="opt-restock"]:checked').val();
@@ -226,25 +226,25 @@ use Transport\Vehicle;
       $('#vehicle-location').html(vehicle.currentLocation?.name);
       $('#vehicle-mileage').html(vehicle?.mileage?.toLocaleString());
 
-      if (vehicle.restock === 0) {
+      if (vehicle.restock === false) {
         $('#vehicle-restock').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.restock === 1) {
+      } else if (vehicle.restock === true) {
         $('#vehicle-restock').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
       } else {
         $('#vehicle-restock').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
       }
 
-      if (vehicle.cleanInterior === 1) {
+      if (vehicle.cleanInterior === true) {
         $('#vehicle-interior').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.cleanInterior === 0) {
+      } else if (vehicle.cleanInterior === false) {
         $('#vehicle-interior').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
       } else {
         $('#vehicle-interior').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
       }
 
-      if (vehicle.cleanExterior === 1) {
+      if (vehicle.cleanExterior === true) {
         $('#vehicle-exterior').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.cleanExterior === 0) {
+      } else if (vehicle.cleanExterior === false) {
         $('#vehicle-exterior').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
       } else {
         $('#vehicle-exterior').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
@@ -262,9 +262,9 @@ use Transport\Vehicle;
         </div>`);
       }
 
-      if (vehicle.hasCheckEngine === 0) {
+      if (vehicle.hasCheckEngine === false) {
         $('#vehicle-check-engine').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.hasCheckEngine === 1) {
+      } else if (vehicle.hasCheckEngine === true) {
         $('#vehicle-check-engine').html(`<span class="fw-light badge bg-danger w-100">Attention</span>`);
       } else {
         $('#vehicle-check-engine').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
