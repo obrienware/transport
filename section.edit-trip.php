@@ -644,7 +644,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
           }
           return false;
         }
-        data.puLocationId = control.data('id');
+        data.puLocationId = control.data('id'); data.puLocationId = (data.puLocationId == '') ? null : parseInt(data.puLocationId);
 
         control = $('#trip-guest');
         if ($('#trip-guest').data('value') != $('#trip-guest').val()) {
@@ -654,7 +654,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
           }
           return false
         }
-        data.guestId = control.data('id');
+        data.guestId = control.data('id'); data.guestId = (data.guestId == '') ? null : parseInt(data.guestId);
         data.guests = cleanVal('#trip-guests');
         data.passengers = cleanNumberVal('#trip-passengers');
 
@@ -666,11 +666,11 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
           }
           return false;
         }
-        data.doLocationId = control.data('id');
+        data.doLocationId = control.data('id'); data.doLocationId = (data.doLocationId == '') ? null : parseInt(data.doLocationId);
 
-        data.vehicleId = val('#trip-vehicle-id');
-        data.driverId = val('#trip-driver-id');
-        data.airlineId = val('#trip-airline-id');
+        data.vehicleId = val('#trip-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
+        data.driverId = val('#trip-driver-id'); data.driverId = (data.driverId == '') ? null : parseInt(data.driverId);
+        data.airlineId = val('#trip-airline-id'); data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
 
         data.flightNumber = cleanUpperVal('#trip-flight-number');
         data.ETA = val('#trip-eta') ? moment(val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
@@ -687,7 +687,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
           }
           return false;
         }
-        data.requestorId = control.data('id');
+        data.requestorId = control.data('id'); data.requestorId = (data.requestorId == '') ? null : parseInt(data.requestorId);
 
         data.guestNotes = cleanVal('#trip-guest-notes');
         data.driverNotes = cleanVal('#trip-driver-notes');
