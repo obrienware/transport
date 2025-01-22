@@ -95,10 +95,10 @@ class Trip extends Base
 		$this->flightNumber = $row->flight_number;
 		$this->vehiclePUOptions = $row->vehicle_pu_options;
 		$this->vehicleDOOptions = $row->vehicle_do_options;
-		if (!empty($row->ETA)) {
+		if (!empty($row->eta)) {
 			$this->ETA = (new DateTime($row->eta, $utc))->setTimezone($this->timezone);
 		}
-		if (!empty($row->ETD)) {
+		if (!empty($row->etd)) {
 			$this->ETD = (new DateTime($row->etd, $utc))->setTimezone($this->timezone);
 		}
 		$this->IATA = $row->iata;

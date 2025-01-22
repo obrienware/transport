@@ -1,5 +1,5 @@
-#ec {
-  /* background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%); */
+/* #ec {
+  background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%);
   background: lightsteelblue;
 }
 
@@ -16,10 +16,18 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.ec-day {
-  color: #fff;
+.ec-day-grid .ec-day-head {
+  color: black;
 }
 
 .ec-content .ec-resource {
   color: #fff;
+}
+
+.ec-bg-events {
+  background-color: rgba(255,255,255, .5);
+} */
+
+.ec-header, .ec-list .ec-day-head {
+  background-color: rgba(255, 255, 255, 0.5);
 }
