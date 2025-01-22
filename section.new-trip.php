@@ -11,24 +11,7 @@
       <div class="col-4">
         <div class="mb-3">
           <label for="trip-pickup-date" class="form-label">When is the pick up?</label>
-          <div
-            class="input-group log-event"
-            id="datetimepicker-trip-pickup-date"
-            data-td-target-input="nearest"
-            data-td-target-toggle="nearest">
-            <input
-              id="trip-pickup-date"
-              type="text"
-              class="form-control"
-              data-td-target="#datetimepicker-trip-pickup-date"
-              value="<?=$_GET['dateHint']?>"/>
-            <span
-              class="input-group-text"
-              data-td-target="#datetimepicker-trip-pickup-date"
-              data-td-toggle="datetimepicker">
-                <i class="fa-duotone fa-calendar"></i>
-            </span>
-          </div>
+          <input type="hidden" id="trip-pickup-date" value="<?=$_GET['dateHint']?>" min="<?=date('Y-m-d\TH:i')?>" />
         </div>
       </div>
 
@@ -220,46 +203,14 @@
             <div class="col-6 d-none" id="eta-section">
               <div class="mb-3">
                 <label for="trip-eta" class="form-label">ETA</label>
-                <div
-                  class="input-group log-event"
-                  id="datetimepicker2"
-                  data-td-target-input="nearest"
-                  data-td-target-toggle="nearest">
-                  <input
-                    id="trip-eta"
-                    type="text"
-                    class="form-control"
-                    data-td-target="#datetimepicker2"/>
-                  <span
-                    class="input-group-text"
-                    data-td-target="#datetimepicker2"
-                    data-td-toggle="datetimepicker">
-                    <i class="fa-duotone fa-calendar"></i>
-                  </span>
-                </div>
+                <input type="datetime-local" class="form-control" id="trip-eta" value="" min="<?=date('Y-m-d\TH:i')?>">
               </div>
             </div>
 
             <div class="col-6 d-none" id="etd-section">
               <div class="mb-3">
                 <label for="trip-etd" class="form-label">ETD</label>
-                <div
-                  class="input-group log-event"
-                  id="datetimepicker3"
-                  data-td-target-input="nearest"
-                  data-td-target-toggle="nearest">
-                  <input
-                    id="trip-etd"
-                    type="text"
-                    class="form-control"
-                    data-td-target="#datetimepicker3"/>
-                  <span
-                    class="input-group-text"
-                    data-td-target="#datetimepicker3"
-                    data-td-toggle="datetimepicker">
-                    <i class="fa-duotone fa-calendar"></i>
-                  </span>
-                </div>
+                <input type="datetime-local" class="form-control" id="trip-etd" value="" min="<?=date('Y-m-d\TH:i')?>">
               </div>
             </div>
           </div>
@@ -325,9 +276,6 @@
     let drivers;
     let vehicles;
     const airlines = await get('/api/get.resource-airlines.php');
-    const pickupDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker-trip-pickup-date'), tempusConfigDefaults);
-    const eta = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
-    const etd = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), tempusConfigDefaults);
 
     function checkForFlight() {
       if ($('#trip-pu-location').data('type') === 'airport' || $('#trip-do-location').data('type') === 'airport') {
@@ -336,7 +284,7 @@
           $('#eta-section').removeClass('d-none');
           if ($('#trip-eta').val() == '') {
             $('#trip-eta').val($('#trip-pickup-date').val());
-            const jsDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A').toDate();
+            const jsDate = moment($('#trip-pickup-date').val()).toDate();
             const parsedDate = eta.dates.parseInput(jsDate);
             eta.dates.setValue(parsedDate, eta.dates.lastPickedIndex);
           }
@@ -347,7 +295,7 @@
           $('#etd-section').removeClass('d-none');
           if ($('#trip-etd').val() == '') {
             $('#trip-etd').val($('#trip-pickup-date').val());
-            const jsDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A').toDate();
+            const jsDate = moment($('#trip-pickup-date').val()).toDate();
             const parsedDate = etd.dates.parseInput(jsDate);
             etd.dates.setValue(parsedDate, etd.dates.lastPickedIndex);
           }
@@ -391,7 +339,7 @@
     $('select').selectpicker();
 
     $('#btn-trip-next').off('click').on('click', async () => {
-      const pickupDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A');
+      const pickupDate = moment($('#trip-pickup-date').val());
       let endDate;
       let startDate;
 
@@ -426,8 +374,8 @@
         if (!answer) return false;
       }
 
-      $('#trip-start-date').val(startDate.format('MM/DD/YYYY h:mm A')); // We'll just keep the format the same as the start-date for simplicity
-      $('#trip-end-date').val(endDate.format('MM/DD/YYYY h:mm A')); // We'll just keep the format the same as the start-date for simplicity
+      $('#trip-start-date').val(startDate.format('YYYY-MM-DD HH:mm:ss')); // We'll just keep the format the same as the start-date for simplicity
+      $('#trip-end-date').val(endDate.format('YYYY-MM-DD HH:mm:ss')); // We'll just keep the format the same as the start-date for simplicity
       $('#trip-head').find('input').attr('disabled', true).attr('readonly', true);
       $('#btn-trip-next').addClass('d-none');
       $('#btn-trip-change').removeClass('d-none');
@@ -616,9 +564,9 @@
       let control;
 
       data.summary = cleanVal('#trip-summary');
-      data.startDate = val('#trip-start-date') ? moment(val('#trip-start-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
-      data.pickupDate = val('#trip-pickup-date') ? moment(val('#trip-pickup-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
-      data.endDate = val('#trip-end-date') ? moment(val('#trip-end-date'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
+      data.startDate = val('#trip-start-date') || null;
+      data.pickupDate = val('#trip-pickup-date') || null;
+      data.endDate = val('#trip-end-date') || null;
 
       control = $('#trip-pu-location');
       if (control.data('value') != control.val() && control.val() != '') {
@@ -656,8 +604,8 @@
       data.driverId = val('#trip-driver-id');
       data.airlineId = val('#trip-airline-id');
       data.flightNumber = cleanUpperVal('#trip-flight-number');
-      data.ETA = val('#trip-eta') ? moment(val('#trip-eta'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
-      data.ETD = val('#trip-etd') ? moment(val('#trip-etd'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
+      data.ETA = val('#trip-eta') || null;
+      data.ETD = val('#trip-etd') || null;
 
       data.vehiclePUOptions = $('#trip-vehicle-pu-options').val();
       data.vehicleDOOptions = $('#trip-vehicle-do-options').val();

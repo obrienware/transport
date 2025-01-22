@@ -77,7 +77,7 @@ $user = new User($_SESSION['user']->id);
       },
       eventDidMount: info => {
         const el = info.el;
-        const title = info.event.title;
+        const title = info.event.title || 'untitled';
         $(el).attr('data-bs-title', title).tooltip();
       }
     });
@@ -120,6 +120,7 @@ $user = new User($_SESSION['user']->id);
     });
 
     $(document).on('tripChange', ec.refetchEvents);
+    $(document).on('eventChange', ec.refetchEvents);
 
     $('#ec').on('click', async e => {
       if (e.target.className == 'ec-bg-events') {

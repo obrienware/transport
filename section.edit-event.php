@@ -32,48 +32,14 @@ $eventId = $event->getId();
       <div class="col-3">
         <div class="mb-3">
           <label for="event-start-date" class="form-label">Starts</label>
-          <div
-            class="input-group log-event"
-            id="datetimepicker1"
-            data-td-target-input="nearest"
-            data-td-target-toggle="nearest">
-            <input
-              id="event-start-date"
-              type="text"
-              class="form-control"
-              data-td-target="#datetimepicker1"
-              value="<?=($event->startDate) ? Date('m/d/Y h:i A', strtotime($event->startDate)) : '' ?>"/>
-            <span
-              class="input-group-text"
-              data-td-target="#datetimepicker1"
-              data-td-toggle="datetimepicker">
-              <i class="fa-duotone fa-calendar"></i>
-            </span>
-          </div>
+          <input type="datetime-local" class="form-control" id="event-start-date" value="<?=$event->startDate?>" min="<?=date('Y-m-d\TH:i')?>">
         </div>
       </div>
 
       <div class="col-3">
         <div class="mb-3">
           <label for="event-end-date" class="form-label">Ends</label>
-          <div
-            class="input-group log-event"
-            id="datetimepicker2"
-            data-td-target-input="nearest"
-            data-td-target-toggle="nearest">
-            <input
-              id="event-end-date"
-              type="text"
-              class="form-control"
-              data-td-target="#datetimepicker2"
-              value="<?=($event->endDate) ? Date('m/d/Y h:i A', strtotime($event->endDate)) : '' ?>"/>
-            <span
-              class="input-group-text"
-              data-td-target="#datetimepicker2"
-              data-td-toggle="datetimepicker">
-              <i class="fa-duotone fa-calendar"></i>
-            </span>
-          </div>
+          <input type="datetime-local" class="form-control" id="event-end-date" value="<?=$event->endDate?>" min="<?=date('Y-m-d\TH:i')?>">
         </div>
       </div>
 
@@ -176,11 +142,8 @@ $eventId = $event->getId();
       let startDate;
       let endDate
 
-      const eventId = <?=$eventId ?: 'null'?>;
+      const eventId = <?=$eventId ?? 'null'?>;
       $('select').selectpicker();
-
-      new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), tempusConfigDefaults);
-      new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
 
       $('#event-requestor').off('blur').on('blur', function () {
         if (cleanVal('#event-requestor') == '') $('#event-requestor').removeData('id');
@@ -247,11 +210,11 @@ $eventId = $event->getId();
       }
 
       $('#event-start-date').on('change', function () {
-        startDate = moment($('#event-start-date').val(), 'MM/DD/YYYY h:mm A');
+        startDate = moment($('#event-start-date').val());
         loadResources();
       });
       $('#event-end-date').on('change', function () {
-        endDate = moment($('#event-end-date').val(), 'MM/DD/YYYY h:mm A');
+        endDate = moment($('#event-end-date').val());
         loadResources();
       });
 
@@ -302,6 +265,8 @@ $eventId = $event->getId();
       }
 
       $('#btn-save-event').off('click').on('click', async function () {
+        if (!startDate || !endDate) return toastr.error('Please select a start and end date.', 'Error');
+
         const buttonSavedText = $('#btn-save-event').text();
         $('#btn-save-event').prop('disabled', true).text('Saving...');
 

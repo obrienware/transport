@@ -12,23 +12,7 @@ use Transport\User;
           
           <div class="mb-3">
             <label for="blockout-from-datetime" class="form-label">Starting</label>
-            <div
-              class="input-group log-event"
-              id="datetimepicker3"
-              data-td-target-input="nearest"
-              data-td-target-toggle="nearest">
-              <input
-                id="blockout-from-datetime"
-                type="text"
-                class="form-control"
-                data-td-target="#datetimepicker3"/>
-              <span
-                class="input-group-text"
-                data-td-target="#datetimepicker3"
-                data-td-toggle="datetimepicker">
-                <i class="fa-duotone fa-calendar"></i>
-              </span>
-            </div>
+            <input type="datetime-local" class="form-control" id="blockout-from-datetime" value="" min="<?=date('Y-m-d\TH:i')?>">
           </div>
 
         </div>
@@ -37,26 +21,8 @@ use Transport\User;
 
           <div class="mb-3">
             <label for="blockout-to-datetime" class="form-label">Ending</label>
-            <div
-              class="input-group log-event"
-              id="datetimepicker2"
-              data-td-target-input="nearest"
-              data-td-target-toggle="nearest">
-              <input
-                id="blockout-to-datetime"
-                type="text"
-                class="form-control"
-                data-td-target="#datetimepicker2"/>
-              <span
-                class="input-group-text"
-                data-td-target="#datetimepicker2"
-                data-td-toggle="datetimepicker">
-                <i class="fa-duotone fa-calendar"></i>
-              </span>
-            </div>
+            <input type="datetime-local" class="form-control" id="blockout-to-datetime" value="" min="<?=date('Y-m-d\TH:i')?>">
           </div>
-
-        </div>
 
       </div>
 
@@ -98,17 +64,14 @@ use Transport\User;
 
     $(async ƒ => {
 
-      const startDate = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
-      const endDate = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), tempusConfigDefaults);
-
       $('#blockout-user').selectpicker();
 
       $('#btn-save-blockout').off('click').on('click', async ƒ => {
         if ($('#blockout-user').val() == '')return toastr.error('You need to select a driver first', 'Attention');
         const resp = await post('/api/post.save-blockout.php', {
           userId: $('#blockout-user').val(),
-          fromDateTime: val('#blockout-from-datetime') ? moment(val('#blockout-from-datetime'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null,
-          toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null,
+          fromDateTime: val('#blockout-from-datetime') ? moment(val('#blockout-from-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
+          toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
           note: cleanVal('#blockout-note')
         });
         if (resp?.result) {

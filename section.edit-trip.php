@@ -65,24 +65,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         <div class="col-3">
           <div class="mb-3">
             <label for="trip-pickup-date" class="form-label" data-bs-toggle="tooltip" data-bs-title="The point at which you'd meet the guest/group">Date / Time</label>
-            <div
-              class="input-group log-event"
-              id="datetimepicker1"
-              data-td-target-input="nearest"
-              data-td-target-toggle="nearest">
-              <input
-                id="trip-pickup-date"
-                type="text"
-                class="form-control"
-                data-td-target="#datetimepicker1"
-                value="<?=($trip->pickupDate) ? Date('m/d/Y h:i A', strtotime($trip->pickupDate)) : '' ?>"/>
-              <span
-                class="input-group-text"
-                data-td-target="#datetimepicker1"
-                data-td-toggle="datetimepicker">
-                <i class="fa-duotone fa-calendar"></i>
-              </span>
-            </div>
+            <input type="datetime-local" class="form-control" id="trip-pickup-date" value="<?=$trip->pickupDate?>" min="<?=date('Y-m-d\TH:i')?>">
           </div>
         </div>
         <div class="col-2">
@@ -300,48 +283,14 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
               <div class="col-6 d-none" id="eta-section">
                 <div class="mb-3">
                   <label for="trip-eta" class="form-label">ETA</label>
-                  <div
-                    class="input-group log-event"
-                    id="datetimepicker2"
-                    data-td-target-input="nearest"
-                    data-td-target-toggle="nearest">
-                    <input
-                      id="trip-eta"
-                      type="text"
-                      class="form-control"
-                      data-td-target="#datetimepicker2"
-                      value="<?=($trip->ETA) ? Date('m/d/Y h:i A', strtotime($trip->ETA)) : '' ?>"/>
-                    <span
-                      class="input-group-text"
-                      data-td-target="#datetimepicker2"
-                      data-td-toggle="datetimepicker">
-                      <i class="fa-duotone fa-calendar"></i>
-                    </span>
-                  </div>
+                  <input type="datetime-local" class="form-control" id="trip-eta" value="<?=$trip->ETA?>" min="<?=date('Y-m-d\TH:i')?>">
                 </div>
               </div>
 
               <div class="col-6 d-none" id="etd-section">
                 <div class="mb-3">
                   <label for="trip-etd" class="form-label">ETD</label>
-                  <div
-                    class="input-group log-event"
-                    id="datetimepicker3"
-                    data-td-target-input="nearest"
-                    data-td-target-toggle="nearest">
-                    <input
-                      id="trip-etd"
-                      type="text"
-                      class="form-control"
-                      data-td-target="#datetimepicker3"
-                      value="<?=($trip->ETD) ? Date('m/d/Y h:i A', strtotime($trip->ETD)) : '' ?>"/>
-                    <span
-                      class="input-group-text"
-                      data-td-target="#datetimepicker3"
-                      data-td-toggle="datetimepicker">
-                      <i class="fa-duotone fa-calendar"></i>
-                    </span>
-                  </div>
+                  <input type="datetime-local" class="form-control" id="trip-etd" value="<?=$trip->ETD?>" min="<?=date('Y-m-d\TH:i')?>">
                 </div>
               </div>
             </div>
@@ -418,9 +367,6 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
       let pickupDate;
       let endDate;
 
-      const pickupDateControl = new tempusDominus.TempusDominus(document.getElementById('datetimepicker1'), tempusConfigDefaults);
-      const eta = new tempusDominus.TempusDominus(document.getElementById('datetimepicker2'), tempusConfigDefaults);
-      const etd = new tempusDominus.TempusDominus(document.getElementById('datetimepicker3'), tempusConfigDefaults);
       const airlines = await get('/api/get.resource-airlines.php');
 
       $('#trip-airline-id').append($('<option>'));
@@ -522,7 +468,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
 
       $('#trip-pickup-date, #trip-duration, #trip-lead-time').on('change', async ƒ => {
         const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);
-        pickupDate = moment($('#trip-pickup-date').val(), 'MM/DD/YYYY h:mm A');
+        pickupDate = moment($('#trip-pickup-date').val());
         startDate = moment(pickupDate).subtract(leadTime, 'm');
         endDate = moment(startDate).add(cleanNumberVal('#trip-duration'), 'h');
 
@@ -727,8 +673,8 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         data.airlineId = val('#trip-airline-id');
 
         data.flightNumber = cleanUpperVal('#trip-flight-number');
-        data.ETA = val('#trip-eta') ? moment(val('#trip-eta'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
-        data.ETD = val('#trip-etd') ? moment(val('#trip-etd'), 'MM/DD/YYYY h:mm A').format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETA = val('#trip-eta') ? moment(val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETD = val('#trip-etd') ? moment(val('#trip-etd')).format('YYYY-MM-DD HH:mm:ss') : null;
 
         data.vehiclePUOptions = $('#trip-vehicle-pu-options').val();
         data.vehicleDOOptions = $('#trip-vehicle-do-options').val();

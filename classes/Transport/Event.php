@@ -69,10 +69,10 @@ class Event extends Base
     if (!empty($row->vehicles)) {
       $this->vehicles = explode(',', $row->vehicles);
     }
-    if (!empty($row->startDate)) {
+    if (!empty($row->start_date)) {
       $this->startDate = (new DateTime($row->start_date, $utc))->setTimezone($this->timezone);
     }
-    if (!empty($row->endDate)) {
+    if (!empty($row->end_date)) {
       $this->endDate = (new DateTime($row->end_date, $utc))->setTimezone($this->timezone);
     }
     if (!empty($row->confirmed)) {
