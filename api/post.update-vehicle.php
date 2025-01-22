@@ -11,18 +11,29 @@ $user = new User($_SESSION['user']->id);
 $json = json_decode(file_get_contents("php://input"));
 
 $vehicle = new Vehicle($json->vehicleId);
-if ($json->locationId) $vehicle->locationId = $json->locationId;
-if ($json->mileage) $vehicle->mileage = $json->mileage;
-if ($json->fuelLevel) $vehicle->fuelLevel = $json->fuelLevel;
-if (isset($json->checkengineOn)) $vehicle->hasCheckEngine = ($json->checkengineOn) ? 1 : 0;
-if (isset($json->isCleanInside)) $vehicle->cleanInterior = ($json->isCleanInside) ? 1 : 0;
-if (isset($json->isCleanOutside)) $vehicle->cleanExterior = ($json->isCleanOutside) ? 1 : 0;
-if (isset($json->needsRestocking)) $vehicle->restock = ($json->needsRestocking) ? 1 : 0;
-$vehicle->lastUpdate = Date('Y-m-d H:i:s');
+$vehicle->locationId = parseValue($json->locationId);
+$vehicle->mileage = parseValue($json->mileage);
+$vehicle->fuelLevel = hasValue($json->fuelLevel) ? (int) $json->fuelLevel : NULL;
+$vehicle->hasCheckEngine = parseValue($json->checkengineOn);
+$vehicle->cleanInterior = parseValue($json->isCleanInside);
+$vehicle->cleanExterior = parseValue($json->isCleanOutside);
+$vehicle->restock = parseValue($json->needsRestocking);
+$vehicle->lastUpdate = 'now';
 $vehicle->lastUpdatedBy = $_SESSION['user']->username;
 
-if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $vehicle->getId();
-  die(json_encode(['result' => $result]));
+function hasValue($value) {
+    return isset($value) && $value !== '';
 }
-die(json_encode(['result' => false]));
+
+function parseValue($value) {
+    return hasValue($value) ? $value : NULL;
+}
+
+if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
+    $result = $vehicle->getId();
+    die(json_encode(['result' => $result]));
+}
+die(json_encode([
+  'result' => false,
+  'message' => $vehicle->getLastError()
+]));

@@ -45,12 +45,12 @@ class Blockout extends Base
 		$this->userId = $row->user_id;
 		$this->note = $row->note;
 
-		if (!empty($row->fromDateTime)) {
-			$this->fromDateTime = (new DateTime($row->fromDateTime, $utc))->setTimezone($this->timezone);
+		if (!empty($row->from_datetime)) {
+			$this->fromDateTime = (new DateTime($row->from_datetime, $utc))->setTimezone($this->timezone);
 		}
 
-		if (!empty($row->toDateTime)) {
-			$this->toDateTime = (new DateTime($row->toDateTime, $utc))->setTimezone($this->timezone);
+		if (!empty($row->to_datetime)) {
+			$this->toDateTime = (new DateTime($row->to_datetime, $utc))->setTimezone($this->timezone);
 		}
 
 		if (!empty($row->archived)) {
@@ -80,7 +80,7 @@ class Blockout extends Base
       switch ($name) {
         case 'fromDateTime':
         case 'toDateTime':
-          return $this->$name->setTimezone($this->timezone)->format('Y-m-d H:i:s');
+          return is_null($this->$name) ? null : $this->$name->setTimezone($this->timezone)->format('Y-m-d H:i:s');
       }
     }
   }

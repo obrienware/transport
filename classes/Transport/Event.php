@@ -112,7 +112,7 @@ class Event extends Base
         case 'endDate':
         case 'confirmed':
         case 'cancelled':
-          return $this->$name->format('Y-m-d H:i:s');
+          return is_null($this->$name) ? null : $this->$name->format('Y-m-d H:i:s');
       }
     }
   }

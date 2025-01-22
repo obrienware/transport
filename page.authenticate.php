@@ -83,6 +83,8 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
   
   <script type="text/javascript">
 
+		const timezoneString = moment.tz.guess(); // e.g. America/Denver
+
     $(async ƒ => {
 
 			$('#username').on('keyup', async ƒ => {
@@ -96,7 +98,7 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 			$('#btnLogin').on('click', async ƒ => {
         const username = cleanVal('#username');
         const password = cleanVal('#password');
-        const resp = await get('/api/get.login.php', {username, password});
+        const resp = await get('/api/get.login.php', {username, password, timezone: timezoneString});
         if (resp?.authenticated) {
 					console . log(resp);
 					// return;

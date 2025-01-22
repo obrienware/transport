@@ -45,7 +45,7 @@ use Transport\Vehicle;
             <td><?=$row->description?></td>
             <td><?=$row->license_plate?></td>
             <td class="text-center fit"><?=$row->passengers?></td>
-            <td class="text-center fit"><?=($row->require_cdl) ? '<i class="bi bi-check-square text-success"></i>' : ''?></td>
+            <td class="text-center fit"><?=($row->require_cdl == 1) ? '<i class="fa-regular fa-square-check fa-lg"></i>' : ''?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

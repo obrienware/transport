@@ -74,7 +74,7 @@ $vehicle = new Vehicle($id);
 
     $(async ƒ => {
 
-      const vehicleId = '<?=$vehicle->getId()?>';
+      const vehicleId = <?=$vehicle->getId()?>;
       $('#btn-save-vehicle').off('click').on('click', async ƒ => {
         const resp = await post('/api/post.save-vehicle.php', {
           vehicleId,

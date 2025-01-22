@@ -16,6 +16,11 @@ if ($id = Authenticate::logIn($username, $password)) {
     'authenticated' => true
   ];
   $user = new User($id);
+
+  if ($_GET['timezone']) {
+    $_SESSION['userTimezone'] = $_GET['timezone'];
+  }
+
   die(json_encode([
     'authenticated' => true,
     'changePassword' => $user->changePassword

@@ -4,6 +4,8 @@ require_once 'autoload.php';
 use Transport\Database;
 use Transport\Flight;
 
+$db = Database::getInstance();
+
 $query = "
 SELECT 
   t.summary, t.guests,
@@ -106,7 +108,7 @@ function showFlightsFor($iata, $type)
 <div class="container-fluid mt-2">
   <h1>Flight Statuses</h1>
 
-  <?php if ($airports = $db->get_rows("SELECT * FROM airports")): ?>
+  <?php if ($airports = $db->get_rows("SELECT * FROM airports WHERE archived IS NULL")): ?>
     <?php foreach ($airports as $airport): ?>
       <div class="row mb-4">
         <div class="col">

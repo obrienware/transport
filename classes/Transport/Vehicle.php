@@ -9,6 +9,8 @@ use DateTimeZone;
 
 class Vehicle extends Base
 {
+	use Log;
+
 	protected $tableName = 'vehicles';
 	protected $tableDescription = 'Vehicles';
 
@@ -103,7 +105,7 @@ class Vehicle extends Base
     if (property_exists($this, $name)) {
       switch ($name) {
         case 'lastUpdate':
-          return $this->$name->format('Y-m-d H:i:s');
+          return is_null($this->$name) ? null : $this->$name->format('Y-m-d H:i:s');
       }
     }
   }

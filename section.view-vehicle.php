@@ -86,9 +86,9 @@ $vehicle = new Vehicle($vehicleId);
         <div class="p-2 d-inline-block text-center" style="width:100px">
           <i class="fa-duotone fa-solid fa-bottle-water fa-3x"></i>
           <div>
-            <?php if ($vehicle->restock === 0): ?>
+            <?php if ($vehicle->restock === false): ?>
               <span class="fw-light badge bg-success w-100">Good</span>
-            <?php elseif ($vehicle->restock === 1) :?>
+            <?php elseif ($vehicle->restock === true) :?>
               <span class="fw-light badge bg-danger w-100">Needs</span>
             <?php else:?>
               <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
@@ -99,9 +99,9 @@ $vehicle = new Vehicle($vehicleId);
         <div class="p-2 d-inline-block text-center" style="width:100px">
           <i class="fa-duotone fa-solid fa-vacuum fa-3x"></i>
           <div>
-            <?php if ($vehicle->cleanInterior === 1): ?>
+            <?php if ($vehicle->cleanInterior === true): ?>
               <span class="fw-light badge bg-success w-100">Good</span>
-            <?php elseif ($vehicle->cleanInterior === 0) :?>
+            <?php elseif ($vehicle->cleanInterior === false) :?>
               <span class="fw-light badge bg-danger w-100">Needs</span>
             <?php else:?>
               <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
@@ -112,9 +112,9 @@ $vehicle = new Vehicle($vehicleId);
         <div class="p-2 d-inline-block text-center" style="width:100px">
           <i class="fa-duotone fa-solid fa-car-wash fa-3x"></i>
           <div>
-            <?php if ($vehicle->cleanExterior === 1): ?>
+            <?php if ($vehicle->cleanExterior === true): ?>
               <span class="fw-light badge bg-success w-100">Good</span>
-            <?php elseif ($vehicle->cleanExterior === 0) :?>
+            <?php elseif ($vehicle->cleanExterior === false) :?>
               <span class="fw-light badge bg-danger w-100">Needs</span>
             <?php else:?>
               <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
@@ -142,9 +142,9 @@ $vehicle = new Vehicle($vehicleId);
         <div class="p-2 d-inline-block text-center" style="width:100px">
           <i class="fa-duotone fa-solid fa-engine-warning fa-3x"></i>
           <div>
-            <?php if ($vehicle->hasCheckEngine === 0): ?>
+            <?php if ($vehicle->hasCheckEngine === false): ?>
               <span class="fw-light badge bg-success w-100">Good</span>
-            <?php elseif ($vehicle->hasCheckEngine === 1) :?>
+            <?php elseif ($vehicle->hasCheckEngine === true) :?>
               <span class="fw-light badge bg-danger w-100">Attention</span>
             <?php else:?>
               <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
@@ -250,7 +250,9 @@ $vehicle = new Vehicle($vehicleId);
       if (resp?.result) {
         $(document).trigger('vehicleChange');
         $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        return;
       }
+      toastr.error(resp.message);
     }    
 
     $('#btn-update-vehicle-status').off('click').on('click', e => {
