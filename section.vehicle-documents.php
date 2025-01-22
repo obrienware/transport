@@ -4,7 +4,7 @@ require_once 'autoload.php';
 use Transport\Database;
 
 $db = Database::getInstance();
-$query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY uploaded";
+$query = "SELECT * FROM vehicle_documents WHERE vehicle_id = :vehicle_id AND archived IS NULL ORDER BY created";
 $params = ['vehicle_id' => $_GET['vehicleId']];
 ?>
 <section id="section-vehicle-documents-list">
@@ -29,7 +29,7 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
                   <?php endif; ?>
                   <a class="text-reset text-decoration-none text-capitalize" href="/documents/<?=$row->filename?>" target="_blank"><?=$row->name?></a>
                 </div>
-                <div><?=Date('m/d/Y', strtotime($row->uploaded))?></div>
+                <div><?=Date('m/d/Y', strtotime($row->created))?></div>
               </div>
             </td>
           </tr>
