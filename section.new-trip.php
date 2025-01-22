@@ -11,7 +11,7 @@
       <div class="col-4">
         <div class="mb-3">
           <label for="trip-pickup-date" class="form-label">When is the pick up?</label>
-          <input type="hidden" id="trip-pickup-date" value="<?=$_GET['dateHint']?>" min="<?=date('Y-m-d\TH:i')?>" />
+          <input type="datetime-local" class="form-control" id="trip-pickup-date" value="<?=$_GET['dateHint']?>" min="<?=date('Y-m-d\TH:i')?>" />
         </div>
       </div>
 
@@ -358,7 +358,8 @@
       console.log('duration:', duration);
       if (duration <= 0) {
         await alertError('You need a specify a valid trip duration before proceeding.', 'Oops!');
-        $('#trip-duration-hours').select().focus(); // FIXME: There seems to be an issue regaring aria-hidden when I do this?
+        await wait(300);
+        $('#trip-duration-hours').select().focus();
         return false;
       }
 
