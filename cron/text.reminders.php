@@ -35,7 +35,7 @@ if ($rows = $db->get_rows($query, $params)) {
 
 
 $query = "SELECT * FROM events WHERE start_date = :start_date AND archived IS NULL";
-$params = ['start_date' => $nextHour];
+$params = ['start_date' => $nextHour->format('Y-m-d H:i:00')];
 if ($rows = $db->get_rows($query, $params)) {
   foreach ($rows as $row) {
     $event = new Event($row->id);
