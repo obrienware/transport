@@ -116,7 +116,7 @@ h4.ec-event-title {
 }
 
 #myTabContent > .tab-pane {
-  height: calc(100vh - 125px);
+  height: calc(100vh - 125px - 40px);
   overflow: auto;
   border-top: 5px solid white;
 }
