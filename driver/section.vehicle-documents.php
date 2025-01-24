@@ -27,26 +27,63 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 <script type="text/javascript">
   function uploadPhoto() {
-    alert('Uploading photo...');
     try {
       var file = document.getElementById('photoFile').files[0];
-      var formData = new FormData();
-      formData.append('file', file);
-      formData.append('vehicleId', <?=$id?>);
-      formData.append('documentName', document.getElementById('documentName').value);
-      fetch('/api/post.vehicle-document.php', {
-        method: 'POST',
-        body: formData
-      }).then(response => {
-        if (response.ok) {
-          return $('#vehicles-content').load('section.vehicles.php');
-          // location.reload();
-        }
-        alert(response.statusText);
-      });
+      var documentName = document.getElementById('documentName').value;
+      var vehicleId = <?=$id?>;
+
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var ctx = canvas.getContext('2d');
+          
+          // Set the desired width and height
+          var maxWidth = 800;
+          var maxHeight = 800;
+          var width = img.width;
+          var height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(function(blob) {
+            var formData = new FormData();
+            formData.append('file', blob, file.name);
+            formData.append('vehicleId', vehicleId);
+            formData.append('documentName', documentName);
+
+            fetch('/api/post.vehicle-document.php', {
+              method: 'POST',
+              body: formData
+            }).then(response => {
+              if (response.ok) {
+                return $('#vehicles-content').load('section.vehicles.php');
+                // location.reload();
+              }
+              alert(response.statusText);
+            });
+          }, file.type);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     } catch (e) {
       alert(e.message);
     }
-    
   }
 </script>
