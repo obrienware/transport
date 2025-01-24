@@ -302,7 +302,7 @@ $user = new User($_SESSION['user']->id);
     $('#till-datetime').val('');
     $('#notes').val('');
     $('#event-detail').val('');
-    setTimeout(ec.refetchEvents, 1000);
+    setTimeout(refreshEvents, 1000);
 
     request = {
       requestorId: <?=$user->getId()?>,
@@ -701,6 +701,11 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
+    function refreshEvents() {
+      $('.ec-event').tooltip('dispose');
+      ec.refetchEvents();
+    }
+
     $('#view-calendar').on('click', () => {
       $('#trip-text').html('');
       ec.setOption('view', 'dayGridMonth');
@@ -726,12 +731,9 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
-    $('#btn-refresh-calendar').on('click', e => {
-      ec.refetchEvents();
-    });
-
-    $(document).on('tripChange', ec.refetchEvents);
-    $(document).on('eventChange', ec.refetchEvents);
+    $('#btn-refresh-calendar').on('click', refreshEvents);
+    $(document).on('tripChange', refreshEvents);
+    $(document).on('eventChange', refreshEvents);
 
 
   });

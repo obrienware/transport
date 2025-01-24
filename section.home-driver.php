@@ -92,6 +92,11 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
+    function refreshEvents() {
+      $('.ec-event').tooltip('dispose');
+      ec.refetchEvents();
+    }
+
     $('#view-vehicles').on('click', () => {
       $('#trip-text').html('');
       ec.setOption('resources', vehicleResources);
@@ -117,20 +122,20 @@ $user = new User($_SESSION['user']->id);
 
     $(document).on('vehicleChange', async function (event, data) {
       vehicleResources = await get('/api/get.resource-vehicles.php');
-      ec.refetchEvents();
+      refreshEvents();
     });
 
     $(document).on('driverChange', async function (event, data) {
       vehicleResources = await get('/api/get.resource-drivers.php');
-      ec.refetchEvents();
+      refreshEvents();
     });
 
-    $(document).on('tripChange', ec.refetchEvents);
-    $(document).on('eventChange', ec.refetchEvents);
+    $(document).on('tripChange', refreshEvents);
+    $(document).on('eventChange', refreshEvents);
 
     // We're just going to have this auto-update every minute as well
     setInterval(() => {
-      ec.refetchEvents();
+      refreshEvents();
       loadJITContent();
     }, 60 * 1000);
 
@@ -157,9 +162,7 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
-    $('#btn-refresh-calendar').on('click', e => {
-      ec.refetchEvents();
-    });
+    $('#btn-refresh-calendar').on('click', refreshEvents);
 
   });
 

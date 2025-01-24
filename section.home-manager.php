@@ -46,7 +46,7 @@ $user = new User($_SESSION['user']->id);
   $(async ƒ => {
 
     let vehicleResources = await get('/api/get.resource-vehicles.php');
-    let driverResources = await get('/api/get.resource-drivers.php');    
+    let driverResources = await get('/api/get.resource-drivers.php');
 
     const ec = new EventCalendar(document.getElementById('ec'), {
       view: 'dayGridMonth',
@@ -82,6 +82,11 @@ $user = new User($_SESSION['user']->id);
       }
     });
 
+    function refreshEvents() {
+      $('.ec-event').tooltip('dispose');
+      ec.refetchEvents();
+    }
+
     async function loadJITContent() {
       <?php if (array_search($_SESSION['view'], ['manager']) !== false):?>
         $('#trips-to-confirm').load('inc.dash-confirm.php');
@@ -107,20 +112,20 @@ $user = new User($_SESSION['user']->id);
       ec.setOption('view', 'listMonth');
     });
 
-    $('#btn-refresh-calendar').on('click', ec.refetchEvents);
+    $('#btn-refresh-calendar').on('click', refreshEvents);
 
     $(document).on('vehicleChange', async function (event, data) {
       vehicleResources = await get('/api/get.resource-vehicles.php');
-      ec.refetchEvents();
+      refreshEvents();
     });
 
     $(document).on('driverChange', async function (event, data) {
       vehicleResources = await get('/api/get.resource-drivers.php');
-      ec.refetchEvents();
+      refreshEvents();
     });
 
-    $(document).on('tripChange', ec.refetchEvents);
-    $(document).on('eventChange', ec.refetchEvents);
+    $(document).on('tripChange', refreshEvents);
+    $(document).on('eventChange', refreshEvents);
 
     $('#ec').on('click', async e => {
       if (e.target.className == 'ec-bg-events') {
@@ -139,7 +144,7 @@ $user = new User($_SESSION['user']->id);
 
     // We're also going to have this auto-update every minute as well
     setInterval(() => {
-      ec.refetchEvents();
+      refreshEvents();
       loadJITContent();
     }, 60 * 1000);
     loadJITContent();

@@ -1,6 +1,10 @@
 <?php
 header('Content-Type: application/json');
 
+if ($_GET['timezone']) {
+  $_SESSION['userTimezone'] = $_GET['timezone'];
+}
+
 require_once '../autoload.php';
 
 use Transport\Authenticate;
@@ -16,10 +20,6 @@ if ($id = Authenticate::logIn($username, $password)) {
     'authenticated' => true
   ];
   $user = new User($id);
-
-  if ($_GET['timezone']) {
-    $_SESSION['userTimezone'] = $_GET['timezone'];
-  }
 
   die(json_encode([
     'authenticated' => true,
