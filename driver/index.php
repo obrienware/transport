@@ -60,17 +60,26 @@
   <div id="app" class="d-none">
 
     <div id="pane-trips" class="pane active">
-      <h5 class="bg-primary text-bg-primary p-3 sticky-top">Trips</h5>
+      <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
+        <div>Trips</div>
+        <button class="btn p-0" onclick="$('#trips-content').load('section.trips.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+      </h5>
       <div id="trips-content"></div>
     </div>
 
     <div id="pane-vehicles" class="pane d-none">
-      <h5 class="bg-primary text-bg-primary p-3 sticky-top">Vehicles</h5>
+      <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
+        <div>Vehicles</div>
+        <button class="btn p-0" onclick="$('#vehicles-content').load('section.vehicles.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+      </h5>
       <div id="vehicles-content"></div>
     </div>
 
     <div id="pane-flights" class="pane d-none">
-      <h5 class="bg-primary text-bg-primary p-3 sticky-top">Flights</h5>
+      <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
+        <div>Flights</div>
+        <button class="btn p-0" onclick="$('#flights-content').load('section.flights.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+      </h5>
       <div id="flights-content"></div>
     </div>
 
@@ -186,14 +195,14 @@
       const standalone = navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
       if (!standalone) return; // not standalone; no pull to refresh needed
 
-      PullToRefresh.init({
-        onRefresh() {
-          // We'll need to re-look at how we want to handle this
-          // location.reload();
-          $('#upcoming-trips').load('section.upcoming-trips.php');
-          $('#flights-content').load('section.flights.php');
-        },
-      });
+      // PullToRefresh.init({
+      //   onRefresh() {
+      //     // We'll need to re-look at how we want to handle this
+      //     // location.reload();
+      //     $('#upcoming-trips').load('section.upcoming-trips.php');
+      //     $('#flights-content').load('section.flights.php');
+      //   },
+      // });
     });
 
 
