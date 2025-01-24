@@ -284,9 +284,9 @@
           $('#eta-section').removeClass('d-none');
           if ($('#trip-eta').val() == '') {
             $('#trip-eta').val($('#trip-pickup-date').val());
-            const jsDate = moment($('#trip-pickup-date').val()).toDate();
-            const parsedDate = eta.dates.parseInput(jsDate);
-            eta.dates.setValue(parsedDate, eta.dates.lastPickedIndex);
+            // const jsDate = moment($('#trip-pickup-date').val()).toDate();
+            // const parsedDate = eta.dates.parseInput(jsDate);
+            // eta.dates.setValue(parsedDate, eta.dates.lastPickedIndex);
           }
         } else {
           $('#eta-section').addClass('d-none');
@@ -295,9 +295,9 @@
           $('#etd-section').removeClass('d-none');
           if ($('#trip-etd').val() == '') {
             $('#trip-etd').val($('#trip-pickup-date').val());
-            const jsDate = moment($('#trip-pickup-date').val()).toDate();
-            const parsedDate = etd.dates.parseInput(jsDate);
-            etd.dates.setValue(parsedDate, etd.dates.lastPickedIndex);
+            // const jsDate = moment($('#trip-pickup-date').val()).toDate();
+            // const parsedDate = etd.dates.parseInput(jsDate);
+            // etd.dates.setValue(parsedDate, etd.dates.lastPickedIndex);
           }
         } else {
           $('#etd-section').addClass('d-none');

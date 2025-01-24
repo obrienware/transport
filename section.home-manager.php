@@ -134,7 +134,8 @@ $user = new User($_SESSION['user']->id);
           // check if the date is in the future
           if (moment().isSameOrBefore(moment(date, 'YYYY-MM-DD'), 'day')) {
             if (await ask('Do you want to create a new trip?')) {
-              const formatted_date = encodeURIComponent(moment(date).format('MM/DD/YYYY h:mm A'))
+              // const formatted_date = encodeURIComponent(moment(date).format('MM/DD/YYYY h:mm A'))
+              const formatted_date = encodeURIComponent(moment(date).format('YYYY-MM-DD HH:mm'));
               app.openTab('new-trip', 'New Trip', `section.new-trip.php?dateHint=${formatted_date}`);
             }
           }
