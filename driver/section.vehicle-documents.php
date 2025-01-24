@@ -27,19 +27,26 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 <script type="text/javascript">
   function uploadPhoto() {
-    var file = document.getElementById('photoFile').files[0];
-    var formData = new FormData();
-    formData.append('file', file);
-    formData.append('vehicleId', <?=$id?>);
-    formData.append('documentName', document.getElementById('documentName').value);
-    fetch('/api/post.vehicle-document.php', {
-      method: 'POST',
-      body: formData
-    }).then(response => {
-      if (response.ok) {
-        $('#vehicles-content').load('section.vehicles.php');
-        // location.reload();
-      }
-    });
+    alert('Uploading photo...');
+    try {
+      var file = document.getElementById('photoFile').files[0];
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('vehicleId', <?=$id?>);
+      formData.append('documentName', document.getElementById('documentName').value);
+      fetch('/api/post.vehicle-document.php', {
+        method: 'POST',
+        body: formData
+      }).then(response => {
+        if (response.ok) {
+          return $('#vehicles-content').load('section.vehicles.php');
+          // location.reload();
+        }
+        alert(response.statusText);
+      });
+    } catch (e) {
+      alert(e.message);
+    }
+    
   }
 </script>
