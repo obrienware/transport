@@ -83,6 +83,14 @@
       <div id="flights-content"></div>
     </div>
 
+    <div id="pane-notes" class="pane d-none">
+      <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
+        <div>Notes</div>
+        <button class="btn p-0" onclick="$('#notes-content').load('section.notes.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+      </h5>
+      <div id="notes-content"></div>
+    </div>
+
     <div id="footer" class="d-flex justify-content-around py-2">
       <div id="tab-trips" class="tab text-center text-light active" data-target="trips">
         <div><i class="fa-solid fa-road fa-xl"></i></div>
@@ -95,6 +103,10 @@
       <div id="tab-flights" class="tab text-center text-light text-opacity-50" data-target="flights">
         <div><i class="fa-solid fa-plane-up fa-xl"></i></div>
         <div style="font-size:x-small">Flights</div>
+      </div>
+      <div id="tab-notes" class="tab text-center text-light text-opacity-50" data-target="notes">
+        <div><i class="fa-solid fa-notes fa-xl"></i></div>
+        <div style="font-size:x-small">Notes</div>
       </div>
     </div>
   </div>
@@ -151,6 +163,7 @@
         $('#trips-content').load('section.trips.php');
         $('#vehicles-content').load('section.vehicles.php');
         $('#flights-content').load('section.flights.php');
+        $('#notes-content').load('section.notes.php');
       }
 
       let user;

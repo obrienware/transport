@@ -66,6 +66,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
               System
             </a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item menu-item" href="#section.list-driver-notes.php" data-target-id="list-driver-notes">Driver Notes</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-users.php" data-target-id="list-users">Users</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-departments.php" data-target-id="list-departments">Departments</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-guests.php" data-target-id="list-guests">Contact List</a></li>
@@ -73,9 +74,7 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
               <li><a class="dropdown-item menu-item" href="#section.list-airlines.php" data-target-id="list-airlines">Airlines</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-airports.php" data-target-id="list-airports">Airports</a></li>
               <li><a class="dropdown-item menu-item" href="#section.list-airport-locations.php" data-target-id="list-airport-locations">Airport Locations</a></li>
-              <li><a class="dropdown-item menu-item" href="#section.list-email-templates.php" data-target-id="list-email-templates">Email Templates</a></li>
-              
-              <?php if ($user->hasRole(['admin','developer','manager'])):?>
+              <li><a class="dropdown-item menu-item" href="#section.list-email-templates.php" data-target-id="list-email-templates">Email Templates</a></li>              
               <li>
                 <div class="nav-item dropdown-submenu">
                   <a href="#" role="button" data-toggle="dropdown" class="dropdown-item dropdown-toggle">Config <i class="fa-duotone fa-solid fa-caret-right"></i></a>
@@ -87,7 +86,6 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
                   </div>
                 </div>
               </li>
-              <?php endif; ?>
 
             </ul>
           </li>
