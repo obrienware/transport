@@ -16,10 +16,13 @@ use Transport\User;
 
 $db = Database::getInstance();
 
-$nextHour = Date('Y-m-d H:i:00', strtotime('now +1 hour'));
+$timezone = new DateTimeZone($_ENV['TZ'] ?? 'UTC');
+$nextHour = new DateTime('now +1 hour', $timezone);
+
+// $nextHour = Date('Y-m-d H:i:00', strtotime('now +1 hour'));
 
 $query = "SELECT id FROM trips WHERE start_date = :start_date AND archived IS NULL";
-$params = ['start_date' => $nextHour];
+$params = ['start_date' => $nextHour->format('Y-m-d H:i:00')];
 if ($rows = $db->get_rows($query, $params)) {
   foreach ($rows as $row) {
     $trip = new Trip($row->id);

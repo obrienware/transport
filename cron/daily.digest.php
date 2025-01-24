@@ -68,12 +68,15 @@ foreach ($drivers as $driver) {
 // - Unconfirmed trips
 // - Unconfirmed events
 $content = [];
+$array_a = [];
+$array_b = [];
 if ($unconfirmedTrips = getUnconfirmedTrips()) {
-  $content += getUnconfirmedTripsText($unconfirmedTrips);
+  $array_a = getUnconfirmedTripsText($unconfirmedTrips);
 }
 if ($unconfirmedEvents = getUnconfirmedEvents()) {
-  $content += getUnconfirmedEventsText($unconfirmedEvents);
+  $array_b = getUnconfirmedEventsText($unconfirmedEvents);
 }
+$content = $array_a + $array_b;
 if (count($content) === 0) {
   $content[] = "There are no unconfirmed trips or events scheduled in the next 7 days!";
 }
@@ -191,6 +194,7 @@ function getUnconfirmedTrips(): array
     SELECT * FROM trips
     WHERE 
       start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY)
+      AND confirmed IS NULL
       AND archived IS NULL
     ORDER BY start_date
   ";
@@ -204,6 +208,7 @@ function getUnconfirmedEvents(): array
     SELECT * FROM events
     WHERE 
       start_date BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 7 DAY)
+      AND confirmed IS NULL
       AND archived IS NULL
     ORDER BY start_date
   ";
@@ -217,7 +222,7 @@ function getUnconfirmedTripsText(array $trips): array
   foreach ($trips as $row) {
     $trip = new Trip($row->id);
     $content[] = Date('m/d g:ia', strtotime($trip->startDate)).': '.$trip->summary;
-    $content[] = str_repeat('-', 72);
+    $content[] = str_repeat('-', 40);
     $content[] = '';
   }
   return $content;
@@ -230,7 +235,7 @@ function getUnconfirmedEventsText(array $events): array
   foreach ($events as $row) {
     $event = new Event($row->id);
     $content[] = Date('m/d g:ia', strtotime($event->startDate)).' - '.Date('m/d g:ia', strtotime($event->endDate)).': '.$event->name;
-    $content[] = str_repeat('-', 72);
+    $content[] = str_repeat('-', 40);
     $content[] = '';
   }
   return $content;

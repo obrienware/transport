@@ -81,7 +81,7 @@ function showFlightsFor($iata, $type)
     <?php foreach ($airports as $airport): ?>
       <div class="row mb-4">
         <div class="col">
-          <div class="card text-bg-primary">
+          <div class="card text-bg-primary overflow-hidden">
             <div class="card-header d-flex justify-content-between">
               <div><?=$airport->iata?>: <?=$airport->name?></div>
               <div><i class="fa-duotone fa-solid fa-plane-arrival"></i> ARRIVALS</div>
@@ -93,7 +93,7 @@ function showFlightsFor($iata, $type)
         </div>
 
         <div class="col">
-          <div class="card text-bg-primary">
+          <div class="card text-bg-primary overflow-hidden">
             <div class="card-header d-flex justify-content-between">
               <div><?=$airport->iata?>: <?=$airport->name?></div>
               <div><i class="fa-duotone fa-solid fa-plane-departure"></i> DEPARTURES</div>
