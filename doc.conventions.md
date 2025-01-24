@@ -18,7 +18,7 @@ PHP variables will use Camel Case. (Note when converting data from MySQL to Obje
 
 File names will be lower case using a period (.) to separate the parts of the filename.
 
-Classes will start with `class.`
+Classes will be in the classes folder and will carry the same naming convension as the path in which it resides (taking into account the namespace of the class). Class names be in PascalCase so will always start with a capital letter. So for example - the `\Transport\Base` class will be in `/classes/Transport/Base.php`.
 
 Primary pages (that include HTML headers and footers) will start with the keyword `page.` with the exception of `index.php` itself.
 
