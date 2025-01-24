@@ -283,7 +283,7 @@ use Transport\Vehicle;
 
       $('#vehicle-documents').load('section.vehicle-documents.php?id='+id);
 
-      const nextTrip = await get('api/get.next-trip.php', {id});
+      const nextTrip = await get('/api/get.next-trip.php', {id});
       // console.log(nextTrip);
       if (nextTrip.starts === null) return $('#vehicle-next-trip').html('none');
       const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');

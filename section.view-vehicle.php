@@ -42,6 +42,10 @@ $vehicle = new Vehicle($vehicleId);
       <th class="fit px-2 bg-body-secondary">Staging Location</th>
       <td colspan="3"><?=$vehicle->stagingLocation->name?></td>
     </tr>
+    <tr>
+      <th class="fit px-2 bg-body-secondary">Next Trip/Event</th>
+      <td colspan="3" id="nextTripEventDetail"></td>
+    </tr>
   </table>
 
 
@@ -262,6 +266,17 @@ $vehicle = new Vehicle($vehicleId);
     $('#pills-document').load('section.vehicle-documents.php?vehicleId='+vehicleId);
 
     reFormat();
+
+    // nextTripEventDetail
+    const nextTrip = await get('/api/get.next-trip.php', {id: vehicleId});
+    if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
+    const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
+    $('#nextTripEventDetail').html(
+      `<div style="font-size: small" class="text-black-50">` +
+      timeago.format(nextTrip.starts).toSentenceCase() + ' (' + starts.format('M/D h:mma') + ') ' 
+      + `</div>`
+      + `<div><i class="fa-solid fa-circle-right text-primary"></i> ${nextTrip.name}</div>`
+    );
 
   });
 </script>

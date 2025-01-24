@@ -244,6 +244,19 @@ String.prototype.toProperCase = function () {
 	);
 }
 
+String.prototype.toSentenceCase = function () {
+	// Split the string into sentences
+  const sentences = this.split(/([.!?]\s*)/);
+
+  // Convert each sentence to sentence case
+  for (let i = 0; i < sentences.length; i += 2) {
+    sentences[i] = sentences[i].charAt(0).toUpperCase() + sentences[i].slice(1).toLowerCase();
+  }
+
+  // Join the sentences back together
+  return sentences.join('');
+}
+
 //pads left
 String.prototype.lpad = function(padString, length) {
   var str = this;
@@ -263,6 +276,7 @@ String.prototype.rpad = function(padString, length) {
   }
   return str;
 }
+
 
 const ago = seconds => {
   let interval = seconds / 31536000;
