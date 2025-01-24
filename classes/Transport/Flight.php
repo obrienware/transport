@@ -10,7 +10,7 @@ use DateTimeZone;
 class Flight
 {
 
-  static function getFlightStatus(string $flightNumber, string $type, string $iata, string $date = NULL): object | false
+  static function getFlightStatus(string $flightNumber, string $type, string $iata, ?string $date = NULL): object | false
   {
     $db = Database::getInstance();
     if (!$date) $date = Date('Y-m-d'); // Default to today
@@ -124,5 +124,37 @@ class Flight
     $time1 = strtotime('now');
     $time2 = strtotime($lastChecked);
     return round(abs($time1 - $time2) / 60, 2);
+  }
+
+  public static function upcomingFlights(): array | false
+  {
+    $db = Database::getInstance();
+    $query = "
+      SELECT 
+        t.summary, t.guests,
+        t.pickup_date,
+        CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,
+        CASE WHEN t.ETA IS NOT NULL THEN 'arrival' ELSE 'departure' END AS `type`,
+        CASE WHEN t.ETA IS NOT NULL THEN a.iata ELSE b.iata END AS iata,
+        CONCAT(l.flight_number_prefix, t.flight_number) AS flight_number,
+        l.name AS airline,
+        l.image_filename,
+        d.first_name AS driver
+      FROM trips t
+      LEFT OUTER JOIN airlines l ON l.id = t.airline_id
+      LEFT OUTER JOIN locations a ON a.id = t.pu_location
+      LEFT OUTER JOIN locations b ON b.id = t.do_location
+      LEFT OUTER JOIN users d ON d.id = t.driver_id
+      WHERE
+        (t.eta IS NOT NULL OR t.etd IS NOT NULL)
+        AND
+        (t.eta IS NULL OR DATE(eta) >= CURDATE())
+        AND
+        (t.etd IS NULL OR DATE(etd) >= CURDATE())	
+        AND t.archived IS NULL
+        AND DATE(t.pickup_date) < DATE_ADD(CURDATE(), INTERVAL 7 DAY) -- Looking 7 days ahead
+      ORDER BY COALESCE(t.eta, t.etd) -- This is brilliant! Orders by either ETA OR ETD where the other is NULL!
+    ";
+    return $db->get_rows($query);
   }
 }
