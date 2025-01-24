@@ -24,15 +24,15 @@ function showFlightsFor($iata, $type)
       echo '</td>';
 
       echo '<td class="border-bottom">';
+      echo '<div>';
       echo '<img src="/images/airlines/'.$row->image_filename.'" class="img-fluid" style="max-height:30px">';
-      echo '</td>';
+      echo '</div>';
 
-      echo '<td class="border-bottom align-middle">';
-      echo $flight->flight_number;
-      echo '</td>';
+      echo '<div>';
+      echo $flight->flight_number.' ';
 
-      echo '<td class="border-bottom align-middle">';
       echo $flight->airport_origin_iata.' <i class="fa-solid fa-circle-arrow-right"></i> '.$flight->airport_destination_iata;
+      echo '</div>';
       echo '</td>';
 
       $colorClass = '';
@@ -55,11 +55,13 @@ function showFlightsFor($iata, $type)
       echo '</tr>';
 
       echo '<tr>';
-      echo '<td colspan="3">';
+      echo '<td>';
+      // echo '<div class="d-flex justify-content-between">';
       echo '<div class="d-flex justify-content-between">';
       echo '<div>'.$row->guests.'</div>';
-      echo '<div class="text-muted">| '.$row->driver.'</div>';
+      echo '<div class="text-end text-muted align-self-center" style="white-space:nowrap">| '.$row->driver.'</div>';
       echo '</div>';
+
       echo '</td>';
       echo '</tr>';
     }
@@ -81,7 +83,7 @@ function showFlightsFor($iata, $type)
     <?php foreach ($airports as $airport): ?>
       <div class="row mb-4">
         <div class="col">
-          <div class="card text-bg-primary">
+          <div class="card text-bg-primary overflow-hidden">
             <div class="card-header d-flex justify-content-between">
               <div><?=$airport->iata?>: <?=$airport->name?></div>
               <div><i class="fa-duotone fa-solid fa-plane-arrival"></i> ARRIVALS</div>
@@ -94,7 +96,7 @@ function showFlightsFor($iata, $type)
       </div>
       <div class="row mb-4">
         <div class="col">
-          <div class="card text-bg-primary">
+          <div class="card text-bg-primary overflow-hidden">
             <div class="card-header d-flex justify-content-between">
               <div><?=$airport->iata?>: <?=$airport->name?></div>
               <div><i class="fa-duotone fa-solid fa-plane-departure"></i> DEPARTURES</div>
