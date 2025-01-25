@@ -18,7 +18,7 @@ use Transport\DriverNote;
   <div id="note-section" class="d-none p-3">
     <section id="note-content" class="parsedown"></section>
     <div class="hstack gap-2">
-      <button id="btn-close-note-view ms-auto" class="btn btn-outline-primary">Done</button>
+      <button id="btn-close-note-view" class="btn btn-outline-primary ms-auto">Done</button>
     </div>
   </div>
 
