@@ -71,21 +71,22 @@ class Utils
   public static function ago($time1, $time2 = 'now', $short = false): string
   {
     if ($short) {
-      $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
+        $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
     } else {
-      $periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+        $periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
     }
     $lengths = array("60","60","24","7","4.35","12","10");
-    $time1 = strtotime($time1);
-    $time2 = strtotime($time2);
-  
-    $difference = $time2 - $time1;
-  
-    for($j = 0; $difference >= $lengths[$j] && $j < count($lengths)-1; $j++) {
-      $difference /= $lengths[$j];
+
+    $datetime1 = new \DateTime($time1);
+    $datetime2 = new \DateTime($time2);
+
+    $difference = $datetime2->getTimestamp() - $datetime1->getTimestamp();
+
+    for ($j = 0; $difference >= $lengths[$j] && $j < count($lengths) - 1; $j++) {
+        $difference /= $lengths[$j];
     }
     $difference = round($difference);
-    if($difference != 1) $periods[$j].= "s";
+    if ($difference != 1) $periods[$j] .= "s";
     return "$difference $periods[$j]";
   }
 
@@ -102,10 +103,16 @@ class Utils
 
   public static function showDate($date): string
   {
-    $baseline = Date('Y-m-d', strtotime($date));
-    if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline))) return 'today';
-    if (Date('Y-m-d') == Date('Y-m-d', strtotime($baseline.' -1 day'))) return 'tomorrow';
-    return 'In '.self::ago('now', $date).' ('.Date('l m/d @ g:ia', strtotime($date)).')';
+    $timezone = new \DateTimeZone($_ENV['TZ'] ?? 'UTC');
+    $givenDate = new \DateTime($date, $timezone);
+
+    $today = new \DateTime('today', $timezone);
+    $tomorrow = new \DateTime('tomorrow', $timezone);
+
+    if ($givenDate->format('Y-m-d') == $today->format('Y-m-d')) return 'today';
+    if ($givenDate->format('Y-m-d') == $tomorrow->format('Y-m-d')) return 'tomorrow';
+
+    return 'In '.self::ago('now', $date).' ('.$givenDate->format('l m/d @ g:ia').')';
   }
 
 
