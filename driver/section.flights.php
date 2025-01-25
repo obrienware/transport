@@ -77,7 +77,6 @@ function showFlightsFor($iata, $type)
 
 ?>
 <div class="container-fluid mt-2">
-  <h1>Flight Statuses</h1>
 
   <?php if ($airports = Airport::getAll()): ?>
     <?php foreach ($airports as $airport): ?>

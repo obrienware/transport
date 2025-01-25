@@ -18,7 +18,7 @@ use Transport\DriverNote;
   <div id="note-section" class="d-none p-3">
     <section id="note-content" class="parsedown"></section>
     <div class="hstack gap-2">
-      <button id="btn-close-note-view" class="btn btn-outline-primary">Done</button>
+      <button id="btn-close-note-view ms-auto" class="btn btn-outline-primary">Done</button>
     </div>
   </div>
 
@@ -39,7 +39,7 @@ use Transport\DriverNote;
       const id = $(this).data('id');
       $('#note-list').addClass('d-none');
       $('#note-section').removeClass('d-none')
-      $('#note-content').load(`section.note-detail.php?id=${id}`);
+      $('#note-content').html('Loading...').load(`section.note-detail.php?id=${id}`);
     });
 
     $('#btn-close-note-view').off('click').on('click', async function (e) {

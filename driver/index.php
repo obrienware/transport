@@ -75,7 +75,7 @@
       <div id="vehicles-content"></div>
     </div>
 
-    <div id="pane-flights" class="pane d-none">
+    <div id="pane-flights" class="pane d-none bg-secondary">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Flights</div>
         <button class="btn p-0" onclick="$('#flights-content').load('section.flights.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
