@@ -117,7 +117,7 @@ $query = "
             <!-- Driver -->
             <td data-order="<?=$row->driver?>" class="p-0 text-center">
               <?php if ($row->driver): ?>
-                <img src="/images/drivers/<?=$row->driver_username?>.jpg" class="rounded-circle" style="width: 50px; height: 50px;" alt="<?=$row->driver?>">  
+                <img src="/images/drivers/<?=$row->driver_username?>.jpg" class="rounded" style="width: 60px; height: 60px;" alt="<?=$row->driver?>">  
               <?php else:?>
                 <div class="p-3">
                   <i class="badge bg-danger">Unassinged</i>
