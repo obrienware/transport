@@ -128,5 +128,22 @@ class Utils
 
     return $ordinals[$number] ?? 'out of range';
   }
+
+  public static function getContrastColor(string $hexColor): string
+  {
+    // Remove the hash at the start if it's there
+    $hexColor = ltrim($hexColor, '#');
+
+    // Convert hex to RGB
+    $r = hexdec(substr($hexColor, 0, 2));
+    $g = hexdec(substr($hexColor, 2, 2));
+    $b = hexdec(substr($hexColor, 4, 2));
+
+    // Calculate brightness (standard luminance formula)
+    $brightness = ($r * 299 + $g * 587 + $b * 114) / 1000;
+
+    // Return black or white depending on brightness
+    return $brightness > 128 ? 'black' : 'white';
+  }
   
 }

@@ -2,6 +2,7 @@
 require_once 'autoload.php';
 
 use Transport\Database;
+use Transport\Utils;
 
 $db = Database::getInstance();
 $query = "
@@ -10,8 +11,9 @@ $query = "
   	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.confirmed,
     t.started, t.completed, t.cancellation_requested,
   	a.name AS airline, a.flight_number_prefix,
+    d.username AS driver_username,
   	CONCAT(d.first_name, ' ', SUBSTRING(d.last_name,1,1), '.') AS driver, d.phone_number,
-  	v.name AS vehicle, v.description,
+  	v.name AS vehicle, v.description, v.color AS vehicle_color,
   	CONCAT(g.first_name, ' ', g.last_name) AS guest,
   	g.phone_number AS guest_contact_number,
     CASE WHEN (pu.short_name IS NOT NULL) THEN pu.short_name ELSE pu.name END AS pickup_location,
@@ -113,9 +115,23 @@ $query = "
               <?php endif;?>
             </td>
             <!-- Driver -->
-            <td><?=$row->driver ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <td data-order="<?=$row->driver?>" class="p-0 text-center">
+              <?php if ($row->driver): ?>
+                <img src="/images/drivers/<?=$row->driver_username?>.jpg" class="rounded-circle" style="width: 50px; height: 50px;" alt="<?=$row->driver?>">  
+              <?php else:?>
+                <div class="p-3">
+                  <i class="badge bg-danger">Unassinged</i>
+                </div>
+              <?php endif; ?>
+            </td>
             <!-- Vehicle -->
-            <td><?=$row->vehicle ?: '<i class="badge bg-danger">Unassinged</i>'?></td>
+            <td data-order="<?=$row->vehicle?>" class="text-center">
+              <?php if ($row->vehicle): ?>
+                <span class="badge" style="background-color:<?=$row->vehicle_color?>; color:<?=Utils::getContrastColor($row->vehicle_color)?>"><?=$row->vehicle?></span>
+              <?php else:?>
+                <i class="badge bg-danger">Unassinged</i>
+              <?php endif; ?>
+            </td>
           </tr>
         <?php endforeach; ?>
       </tbody>

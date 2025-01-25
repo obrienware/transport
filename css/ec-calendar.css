@@ -27,7 +27,15 @@
 .ec-bg-events {
   background-color: rgba(255,255,255, .5);
 } */
-
+.ec {
+  --ec-today-bg-color: lightyellow;
+}
 .ec-header, .ec-list .ec-day-head {
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+.ec-today .ec-day-head {
+  /* background-color: red;
+  color: white; */
+  font-weight: bold;
 }
