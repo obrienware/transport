@@ -30,17 +30,18 @@ use Transport\Vehicle;
         <div style="font-size:small">Next trip/event:</div>
         <div id="vehicle-next-trip">Checking...</div>
       </li>
+
       <li class="list-group-item">
         <div class="hstack mb-3">
-          <div class="p-2 w-25 d-inline-block text-center">
+          <div class="p-2 w-25 d-inline-block text-center item-toggle" data-id="restock">
             <i class="fa-duotone fa-solid fa-bottle-water fa-2x"></i>
             <div id="vehicle-restock"></div>
           </div>
-          <div class="p-2 w-25 d-inline-block text-center">
+          <div class="p-2 w-25 d-inline-block text-center item-toggle" data-id="cleanInterior">
             <i class="fa-duotone fa-solid fa-vacuum fa-2x"></i>
             <div id="vehicle-interior"></div>
           </div>
-          <div class="p-2 w-25 d-inline-block text-center">
+          <div class="p-2 w-25 d-inline-block text-center item-toggle" data-id="cleanExterior">
             <i class="fa-duotone fa-solid fa-car-wash fa-2x"></i>
             <div id="vehicle-exterior"></div>
           </div>
@@ -50,7 +51,7 @@ use Transport\Vehicle;
           </div>
         </div>
         <div class="hstack">
-          <div class="p-2 w-25 d-inline-block text-center">
+          <div class="p-2 w-25 d-inline-block text-center item-toggle" data-id="hasCheckEngine">
             <i class="fa-duotone fa-solid fa-engine-warning fa-2x"></i>
             <div id="vehicle-check-engine"></div>
           </div>
@@ -215,6 +216,72 @@ use Transport\Vehicle;
       return data;
     }
 
+    $('.item-toggle').off('click').on('click', e => {
+      const id = $(e.currentTarget).data('id');
+      const state = $(e.currentTarget).data('state');
+      toggleVehicleItem(id, state);
+    });
+
+    async function toggleVehicleItem(name, state) {
+      const data = {vehicleId, name, state};
+      const res = await post('api/post.vehicle-toggle.php', data);
+      console.log(res);
+      renderVehicleItem(name, res.state);
+    }
+
+    function renderVehicleItem(name, state) {
+      let content;
+      switch (name) {
+        case 'restock':
+          if (state === false) {
+            content = `<span class="fw-light badge bg-success w-100">Good</span>`;
+          } else if (state === true) {
+            content = `<span class="fw-light badge bg-danger w-100">Needs</span>`;
+          } else {
+            content = `<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`;
+          }
+          $('#vehicle-restock').html(content);
+          $('[data-id="restock"]').data('state', state);
+          break;
+
+        case 'cleanInterior':
+          if (state === true) {
+            content = `<span class="fw-light badge bg-success w-100">Good</span>`;
+          } else if (state === false) {
+            content = `<span class="fw-light badge bg-danger w-100">Needs</span>`;
+          } else {
+            content = `<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`;
+          }
+          $('#vehicle-interior').html(content);
+          $('[data-id="cleanInterior"]').data('state', state);
+          break;
+
+        case 'cleanExterior':
+          if (state === true) {
+            content = `<span class="fw-light badge bg-success w-100">Good</span>`;
+          } else if (state === false) {
+            content = `<span class="fw-light badge bg-danger w-100">Needs</span>`;
+          } else {
+            content = `<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`;
+          }
+          $('#vehicle-exterior').html(content);
+          $('[data-id="cleanExterior"]').data('state', state);
+          break;
+
+        case 'hasCheckEngine':
+          if (state === false) {
+            content = `<span class="fw-light badge bg-success w-100">Good</span>`;
+          } else if (state === true) {
+            content = `<span class="fw-light badge bg-danger w-100">Attention</span>`;
+          } else {
+            content = `<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`;
+          }
+          $('#vehicle-check-engine').html(content);
+          $('[data-id="hasCheckEngine"]').data('state', state);
+          break;
+      }
+    }
+
 
     $('.vehicle-item').off('click').on('click', async function (e) {
       const id = $(this).data('id');
@@ -226,29 +293,10 @@ use Transport\Vehicle;
       $('#vehicle-location').html(vehicle.currentLocation?.name);
       $('#vehicle-mileage').html(vehicle?.mileage?.toLocaleString());
 
-      if (vehicle.restock === false) {
-        $('#vehicle-restock').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.restock === true) {
-        $('#vehicle-restock').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
-      } else {
-        $('#vehicle-restock').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
-      }
-
-      if (vehicle.cleanInterior === true) {
-        $('#vehicle-interior').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.cleanInterior === false) {
-        $('#vehicle-interior').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
-      } else {
-        $('#vehicle-interior').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
-      }
-
-      if (vehicle.cleanExterior === true) {
-        $('#vehicle-exterior').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.cleanExterior === false) {
-        $('#vehicle-exterior').html(`<span class="fw-light badge bg-danger w-100">Needs</span>`);
-      } else {
-        $('#vehicle-exterior').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
-      }
+      renderVehicleItem('restock', vehicle.restock);
+      renderVehicleItem('cleanInterior', vehicle.cleanInterior);
+      renderVehicleItem('cleanExterior', vehicle.cleanExterior);
+      renderVehicleItem('hasCheckEngine', vehicle.hasCheckEngine);
 
       if (vehicle.fuelLevel === null) {
         $('#vehicle-fuel-level').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
@@ -260,14 +308,6 @@ use Transport\Vehicle;
         $('#vehicle-fuel-level').html(`<div class="progress mt-1 bg-secondary" role="progressbar" style="height: 20px">
             <div class="progress-bar bg-success overflow-visible" style="width: ${vehicle.fuelLevel}%">&nbsp;${vehicle.fuelLevel}%&nbsp;</div>
         </div>`);
-      }
-
-      if (vehicle.hasCheckEngine === false) {
-        $('#vehicle-check-engine').html(`<span class="fw-light badge bg-success w-100">Good</span>`);
-      } else if (vehicle.hasCheckEngine === true) {
-        $('#vehicle-check-engine').html(`<span class="fw-light badge bg-danger w-100">Attention</span>`);
-      } else {
-        $('#vehicle-check-engine').html(`<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`);
       }
 
       if (vehicle.locationId === null) {
