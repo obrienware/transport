@@ -44,10 +44,6 @@ $trip = $db->get_row($query, $params);
               <div class="fw-bolder">Start</div>
               <div><?=Date('g:ia', strtotime($trip->start_date))?></div>
             </div>
-            <!-- <div class="d-flex justify-content-between align-items-center">
-              <div><?=$trip->summary?></div>
-              <small><?=$trip->driver?></small>
-            </div> -->
           </div>
         </li>
 
@@ -83,6 +79,7 @@ $trip = $db->get_row($query, $params);
           </div>
         </li>
 
+        <!-- Flight Information -->
         <?php if ($trip->flight_number): ?>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <div class="me-4">
@@ -90,47 +87,13 @@ $trip = $db->get_row($query, $params);
             </div>
             <div class="text-end">
               <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
-              <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata, Date('Y-m-d', strtotime($trip->pickup_date))); ?>
-              <?php
-              $backgroundColor = 'gray';
-              switch ($flight->icon) {
-                case 'green':
-                  $backgroundColor = 'green';
-                  break;
-                case 'yellow':
-                  $backgroundColor = 'orange';
-                  break;
-                case 'red':
-                  $backgroundColor = 'red';
-                  break;
-              }
-              ?>
-              <div class="badge w-100" style="background-color: <?=$backgroundColor?>">
-                <?=$flight->status_text ?: 'scheduled'?>
-              </div>
-              <div style="font-size: small">
-                <?php if ($trip->type === 'arrival'): ?>
-                  <?php if ($flight->real_arrival): ?>
-                    ATA: <?=Date('g:ia', strtotime($flight->real_arrival))?> 
-                  <?php elseif ($flight->estimated_arrival): ?>
-                    ETA: <?=Date('g:ia', strtotime($flight->estimated_arrival))?>
-                  <?php else: ?>
-                    STA: <?=Date('g:ia', strtotime($flight->scheduled_arrival ?: $trip->eta))?>
-                  <?php endif; ?>
-                <?php elseif ($trip->type === 'departure'): ?>
-                  <?php if ($flight->real_departure): ?>
-                    ATD: <?=Date('g:ia', strtotime($flight->real_departure))?> 
-                  <?php elseif ($flight->estimated_departure): ?>
-                    ETD: <?=Date('g:ia', strtotime($flight->estimated_departure))?>
-                  <?php else: ?>
-                    STD: <?=Date('g:ia', strtotime($flight->scheduled_departure ?: $trip->etd))?>
-                  <?php endif; ?>
-                <?php endif;?>
-              </div>
+              <div id="status_text" class="badge w-100"></div>
+              <div id="status_time" style="font-size: small"></div>
             </div>
           </li>
         <?php endif; ?>
 
+        <!-- Driver Notes -->
         <?php if ($trip->driver_notes): ?>
           <li class="list-group-item bg-warning">
             <?=nl2br($trip->driver_notes)?>
@@ -171,5 +134,51 @@ $trip = $db->get_row($query, $params);
       $('#weather-at-pickup-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + date);
       $('#weather-at-dropoff-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + date);
     }
+
+    async function checkFlightStatus() {
+      const flight = '<?=$trip->flight_number_prefix.$trip->flight_number?>';
+      const type = '<?=$trip->type?>';
+      const iata = '<?=$trip->_iata?>';
+      const date = '<?=Date('Y-m-d', strtotime($trip->pickup_date))?>';
+      const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      const res = await get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
+      console.log(res);
+      $('#status_text').html(res.status_text);
+      switch (res.status_icon) {
+        case 'green':
+          $('#status_text').css('background-color', 'green');
+          break;
+        case 'yellow':
+          $('#status_text').css('background-color', 'orange');
+          break;
+        case 'red':
+          $('#status_text').css('background-color', 'red');
+          break;
+        default:
+          $('#status_text').css('background-color', 'gray');
+      }
+
+      const real_arrival = res.real_arrival ? moment(res.real_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
+      const estimated_arrival = res.estimated_arrival ? moment(res.estimated_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
+      const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : eta;
+
+      const real_departure = res.real_departure ? moment(res.real_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
+      const estimated_departure = res.estimated_departure ? moment(res.estimated_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
+      const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : etd;
+
+      if (type === 'arrival') {
+        if (res.real_arrival) return $('#status_time').html(`ATA: ${real_arrival}`);
+        if (res.estimated_arrival) return $('#status_time').html(`ETA: ${estimated_arrival}`);
+        return $('#status_time').html(`STA: ${scheduled_arrival}`);
+      }
+      if (res.real_departure) return $('#status_time').html(`ATD: ${real_departure}`);
+      if (res.estimated_departure) return $('#status_time').html(`ETD: ${estimated_departure}`);
+      return $('#status_time').html(`STD: ${scheduled_departure}`);
+    }
+
+    clearTimeout(window.flightCheckTimer);
+    window.flightCheckTimer = setInterval(checkFlightStatus, 60000);
+    checkFlightStatus();
   });
 </script>
