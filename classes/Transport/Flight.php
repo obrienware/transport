@@ -47,7 +47,7 @@ class Flight
    */
   static function updateFlight(string $flightNumber): bool
   {
-    date_default_timezone_set($_ENV['TZ'] ?? 'UTC');
+    date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
     $db = Database::getInstance();
     $keys = Config::get('system')->keys;
     $db->query(
@@ -116,6 +116,7 @@ class Flight
    */
   static function lastChecked(string $flightNumber): int | bool
   {
+    date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
     $db = Database::getInstance();
     $lastChecked = $db->get_var(
       "SELECT last_checked FROM _flight_check WHERE flight_number = :flight_number",

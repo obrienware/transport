@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
