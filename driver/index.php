@@ -143,7 +143,12 @@
     function loadSection(section) {
       const icon = $(`#${section}-content`).prev().find('i');
       icon.addClass('fa-spin');
-      $(`#${section}-content`).html('<div class="text-center fs-1">Loading...</div>').load(`section.${section}.php`, ƒ => {
+      $(`#${section}-content`).html(`
+        <div class="text-center fs-1">
+          <img src="/images/ellipsis.svg" class="me-2" />
+          Loading...
+        </div>
+      `).load(`section.${section}.php`, ƒ => {
         icon.removeClass('fa-spin');
       });
     }

@@ -152,18 +152,24 @@ $trip = $db->get_row($query, $params);
 
 <script>
   $(async ƒ => {
+    const loadingWeatherTemplate = `
+      <div class="bg-body-secondary mt-1 px-2 rounded">
+        <img src="/images/ellipsis.svg" style="width:40px; min-height:40px" class="me-2" />
+        Checking the weather...
+      </div>
+    `;
     const pickupDateTime = moment('<?=$trip->pickup_date?>', 'YYYY-MM-DD HH:mm:ss');
     if (pickupDateTime.isSame(moment(), 'day')) {
       // Trip is today
-      $('#weather-at-pickup-location').load('section.header-weather.php?location_id=<?=$trip->pu_location?>');
-      $('#weather-at-dropoff-location').load('section.header-weather.php?location_id=<?=$trip->do_location?>');
+      $('#weather-at-pickup-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->pu_location?>');
+      $('#weather-at-dropoff-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->do_location?>');
     }
     if (pickupDateTime.isBetween(moment(), moment().add(7, 'day'), 'day')) {
       // Within the next 7 days (forecast period)
       console.log('Forecast requested');
       const date = pickupDateTime.format('YYYY-MM-DD');
-      $('#weather-at-pickup-location').load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + date);
-      $('#weather-at-dropoff-location').load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + date);
+      $('#weather-at-pickup-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + date);
+      $('#weather-at-dropoff-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + date);
     }
   });
 </script>
