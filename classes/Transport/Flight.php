@@ -47,6 +47,7 @@ class Flight
    */
   static function updateFlight(string $flightNumber): bool
   {
+    date_default_timezone_set($_ENV['TZ'] ?? 'UTC');
     $db = Database::getInstance();
     $keys = Config::get('system')->keys;
     $db->query(
