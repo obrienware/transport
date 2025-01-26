@@ -160,6 +160,7 @@ $trip = $db->get_row($query, $params);
     }
     if (pickupDateTime.isBetween(moment(), moment().add(7, 'day'), 'day')) {
       // Within the next 7 days (forecast period)
+      console.log('Forecast requested');
       const date = pickupDateTime.format('YYYY-MM-DD');
       $('#weather-at-pickup-location').load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + date);
       $('#weather-at-dropoff-location').load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + date);
