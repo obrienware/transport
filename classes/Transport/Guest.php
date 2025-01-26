@@ -127,7 +127,7 @@ class Guest extends	Base
 	public function getGuestByPhoneNumber(string $phoneNumber): bool
 	{
 		$db = Database::getInstance();
-		$query = 'SELECT * FROM guests WHERE phone_number = :phone_number';
+		$query = 'SELECT * FROM guests WHERE phone_number = :phone_number AND archived IS NULL';
 		$params = ['phone_number' => $phoneNumber];
 		if ($row = $db->get_row($query, $params)) {
 			$this->mapRowToProperties($row);
