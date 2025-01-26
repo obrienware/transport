@@ -36,6 +36,21 @@ $trip = $db->get_row($query, $params);
       </div>
       <ul class="list-group list-group-flush">
 
+        <!-- Start -->
+        <li class="list-group-item d-flex justify-content-between align-items-center ps-2 bg-success-subtle">
+          <i class="fa-solid fa-circle-arrow-right me-2"></i>
+          <div class="flex-fill">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="fw-bolder">Start</div>
+              <div><?=Date('g:ia', strtotime($trip->start_date))?></div>
+            </div>
+            <!-- <div class="d-flex justify-content-between align-items-center">
+              <div><?=$trip->summary?></div>
+              <small><?=$trip->driver?></small>
+            </div> -->
+          </div>
+        </li>
+
         <!-- Pick up -->
         <li class="list-group-item d-flex justify-content-between align-items-center ps-2">
           <i class="fa-solid fa-arrow-up me-2"></i>
@@ -73,7 +88,7 @@ $trip = $db->get_row($query, $params);
             <div class="me-4">
               <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
             </div>
-            <div>
+            <div class="text-end">
               <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
               <?php $flight = Flight::getFlightStatus($trip->flight_number_prefix.$trip->flight_number, $trip->type, $trip->_iata, Date('Y-m-d', strtotime($trip->pickup_date))); ?>
               <?php
@@ -126,9 +141,12 @@ $trip = $db->get_row($query, $params);
     </div>
   </div>
 </div>
-<div class="row">
+<div class="row mt-4">
   <div class="col text-end">
-    <button class="btn btn-primary" onclick="showTripList()">Back</button>
+    <button class="btn btn-outline-primary px-4" onclick="showTripList()">
+      <i class="fa-solid fa-chevron-left me-2"></i>
+      Back
+    </button>
   </div>
 </div>
 

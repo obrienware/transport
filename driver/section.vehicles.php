@@ -5,7 +5,7 @@ use Transport\Vehicle;
 ?>
 <?php if ($rows = Vehicle::getAll()): ?>
 
-  <ul class="list-group list-group-flush" id="vehicle-list">
+  <ul class="list-group mx-2" id="vehicle-list">
     <?php foreach ($rows as $row): ?>
       <li class="list-group-item list-group-item-action vehicle-item" data-id="<?=$row->id?>">
         <i class="fa-solid fa-square fa-fw" style="color: <?=$row->color?>"></i>

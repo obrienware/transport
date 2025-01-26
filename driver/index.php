@@ -62,7 +62,7 @@
     <div id="pane-trips" class="pane active">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Trips</div>
-        <button class="btn p-0" onclick="$('#trips-content').load('section.trips.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+        <button class="btn p-0" onclick="loadSection('trips');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
       </h5>
       <div id="trips-content"></div>
     </div>
@@ -70,7 +70,7 @@
     <div id="pane-vehicles" class="pane d-none">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Vehicles</div>
-        <button class="btn p-0" onclick="$('#vehicles-content').load('section.vehicles.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+        <button class="btn p-0" onclick="loadSection('vehicles');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
       </h5>
       <div id="vehicles-content"></div>
     </div>
@@ -78,7 +78,7 @@
     <div id="pane-flights" class="pane d-none bg-secondary">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Status: Upcoming Flights</div>
-        <button class="btn p-0" onclick="$('#flights-content').load('section.flights.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+        <button class="btn p-0" onclick="loadSection('flights');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
       </h5>
       <div id="flights-content"></div>
     </div>
@@ -86,7 +86,7 @@
     <div id="pane-notes" class="pane d-none">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Driver Notes</div>
-        <button class="btn p-0" onclick="$('#notes-content').load('section.notes.php');"><i class="fa-solid fa-rotate-reverse fa-lg text-light"></i></button>
+        <button class="btn p-0" onclick="loadSection('notes');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
       </h5>
       <div id="notes-content"></div>
     </div>
@@ -139,6 +139,15 @@
   </div>  
 
   <script>
+
+    function loadSection(section) {
+      const icon = $(`#${section}-content`).prev().find('i');
+      icon.addClass('fa-spin');
+      $(`#${section}-content`).html('<div class="text-center fs-1">Loading...</div>').load(`section.${section}.php`, ƒ => {
+        icon.removeClass('fa-spin');
+      });
+    }
+
     $(async ƒ => {
 
       function selectTab(name) {
