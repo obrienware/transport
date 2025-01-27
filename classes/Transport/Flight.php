@@ -114,7 +114,7 @@ class Flight
   /**
    * Returns the number of minutes since the last check for this flight, or false if never checked
    */
-  static function lastChecked(string $flightNumber): int | bool
+  static function lastChecked(string $flightNumber): float | bool
   {
     date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
     $db = Database::getInstance();
