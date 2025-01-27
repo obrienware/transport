@@ -72,12 +72,33 @@ $query = "
               </li>
             <?php endif; ?>
 
+            <li class="list-group-item next-trip" data-vehicle-id="<?=$row->id?>"></li>
+
           </ul>
         </div>
       </div>
 
     <?php endforeach; ?>
   </div>
+
+
+  <script type="text/javascript">
+
+      $('.next-trip').each(async function(e, a) {
+        const vehicleId = $(a).data('vehicle-id');
+        const nextTrip = await get('/api/get.next-trip.php', {id: vehicleId});
+        if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
+        const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
+
+        $(this).html(
+          `<div style="font-size: small" class="text-black-50">Next trip/event - ` +
+          timeago.format(nextTrip.starts).toSentenceCase() + ' (' + starts.format('M/D h:mma') + ') ' 
+          + `</div>`
+          + `<div style="font-size: small" class="text-black-50"><i class="fa-solid fa-circle-right text-primary"></i> ${nextTrip.name}</div>`
+        );
+      });
+
+  </script>
 
 <?php endif;?>
 
