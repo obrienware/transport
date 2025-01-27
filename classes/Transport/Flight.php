@@ -130,6 +130,7 @@ class Flight
 
   public static function upcomingFlights(): array | false
   {
+    date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
     $db = Database::getInstance();
     $query = "
       SELECT 

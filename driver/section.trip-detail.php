@@ -14,7 +14,8 @@ SELECT
   CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_from,
   CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff,
   v.name AS vehicle,
-  a.flight_number_prefix, a.name as airline, a.image_filename
+  a.flight_number_prefix, a.name as airline, a.image_filename,
+  t.vehicle_pu_options, t.vehicle_do_options
 FROM trips t
 LEFT OUTER JOIN guests g ON g.id = t.guest_id
 LEFT OUTER JOIN locations pu on pu.id = t.pu_location
@@ -42,7 +43,10 @@ $trip = $db->get_row($query, $params);
           <div class="flex-fill">
             <div class="d-flex justify-content-between align-items-center">
               <div class="fw-bolder">Start</div>
-              <div><?=Date('g:ia', strtotime($trip->start_date))?></div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div><?=$trip->vehicle_pu_options?></div>
+              <small><?=Date('g:ia', strtotime($trip->start_date))?></small>
             </div>
           </div>
         </li>
@@ -79,17 +83,43 @@ $trip = $db->get_row($query, $params);
           </div>
         </li>
 
+        <!-- End -->
+        <li class="list-group-item d-flex justify-content-between align-items-center ps-2 bg-primary-subtle">
+          <i class="fa-solid fa-circle-arrow-left me-2"></i>
+          <div class="flex-fill">
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="fw-bolder">End</div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <div><?=$trip->vehicle_do_options?></div>
+              <!-- <small><?=Date('g:ia', strtotime($trip->start_date))?></small> -->
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+
+    <div class="card shadow mt-4">
+      <ul class="list-group list-group-flush">
+
         <!-- Flight Information -->
         <?php if ($trip->flight_number): ?>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div class="me-4">
-              <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
+          <li class="list-group-item">
+            <div class=" d-flex justify-content-between align-items-center">
+              <div class="me-4">
+                <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
+              </div>
+              <div class="text-end">
+                <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
+                <div id="status_text" class="badge w-100"></div>
+                <div id="status_time" style="font-size: small"></div>
+              </div>
             </div>
-            <div class="text-end">
-              <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
-              <div id="status_text" class="badge w-100"></div>
-              <div id="status_time" style="font-size: small"></div>
-            </div>
+          </li>
+          <li class="list-group-item bg-body-secondary d-flex justify-content-between align-items-center py-1">
+            <small id="flight-status-last-checked">?</small>
+            <small id="flight-status-last-updated">?</small>
           </li>
         <?php endif; ?>
 
@@ -144,6 +174,10 @@ $trip = $db->get_row($query, $params);
       const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
       const res = await get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
       console.log(res);
+      $('#flight-status-last-checked').html(`Checked: ${moment().format('h:mma')}`);
+      $('#flight-status-last-updated').html(`Updated: ${moment(res.updated).format('h:mma')} (${moment(res.updated).fromNow()})`);
+
+
       $('#status_text').html(res.status_text);
       switch (res.status_icon) {
         case 'green':
