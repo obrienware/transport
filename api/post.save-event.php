@@ -106,7 +106,7 @@ die(json_encode(['result' => false]));
 
 
 
-function notifyParticipants(Event $event, array $changes, array $driversToNotify): void
+function notifyParticipants(Event $event, array $changes, ?array $driversToNotify): void
 {
 
   $config = Config::get('organization');
