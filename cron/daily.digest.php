@@ -76,7 +76,7 @@ if ($unconfirmedTrips = getUnconfirmedTrips()) {
 if ($unconfirmedEvents = getUnconfirmedEvents()) {
   $array_b = getUnconfirmedEventsText($unconfirmedEvents);
 }
-$content = $array_a + $array_b;
+$content = array_merge($array_a, $array_b);
 if (count($content) === 0) {
   $content[] = "There are no unconfirmed trips or events scheduled in the next 7 days!";
 }
