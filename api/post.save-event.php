@@ -96,7 +96,7 @@ $event->notes = $json->notes ?: NULL;
 
 if ($event->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $event->getId();
-  if ($changes) notifyParticipants($event, $changes);
+  if ($changes) notifyParticipants($event, $changes, $driversToNotify);
   die(json_encode(['result' => $result]));
 }
 die(json_encode(['result' => false]));
@@ -106,7 +106,7 @@ die(json_encode(['result' => false]));
 
 
 
-function notifyParticipants(Event $event, array $changes, ?array $driversToNotify): void
+function notifyParticipants(Event $event, array $changes, ?array $driversToNotify = null): void
 {
 
   $config = Config::get('organization');
@@ -141,6 +141,7 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
 
 
   // Email the driver(s)
+  if (!$driversToNotify) exit;
   $template = new Template(EmailTemplates::get('Email Driver Event Change'));
   foreach ($driversToNotify as $driver) {
     $templateData = [
