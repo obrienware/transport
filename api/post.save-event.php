@@ -141,7 +141,7 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
 
 
   // Email the driver(s)
-  if (!$driversToNotify) exit;
+  if (!$driversToNotify) return;
   $template = new Template(EmailTemplates::get('Email Driver Event Change'));
   foreach ($driversToNotify as $driver) {
     $templateData = [
