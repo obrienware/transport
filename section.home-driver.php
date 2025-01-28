@@ -9,10 +9,7 @@ $user = new User($_SESSION['user']->id);
 
   <h6>Hello, <?=$user->firstName?>!</h6>
 
-  <div id="trips-to-confirm"></div>
-  <div id="vehicle-alerts"></div>
-
-  <div class="row">
+  <div class="row mb-4">
     <div class="d-flex justify-content-between mb-2">
       <div>
         <div class="btn-group me-2" role="group" aria-label="Basic radio toggle button group">
@@ -39,6 +36,11 @@ $user = new User($_SESSION['user']->id);
     <div id="ec" class="col py-2"></div>
     <div id="trip-text"></div>
   </div>
+</div>
+
+<div class="container">
+  <div id="trips-to-confirm"></div>
+  <div id="vehicle-alerts"></div>
 </div>
 
 <script type="text/javascript">
