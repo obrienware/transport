@@ -50,13 +50,13 @@ if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:
     $drivers = [];
     foreach ($event->drivers as $driverId) {
       if (!$driverId) continue;
-      $driver = new User($driverId);
+      $driver = new User((int)$driverId);
       $drivers[] = $driver->getName();
       $driversToNotify[] = $driver;
     }
     $newDrivers = [];
     foreach ($json->drivers as $driverId) {
-      $driver = new User($driverId);
+      $driver = new User((int)$driverId);
       $newDrivers[] = $driver->getName();
       $driversToNotify[] = $driver;
     }
@@ -66,12 +66,12 @@ if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:
   if ($event->vehicles != $json->vehicles) {
     $vehicles = [];
     foreach ($event->vehicles as $vehicleId) {
-      $vehicle = new Vehicle($vehicleId);
+      $vehicle = new Vehicle((int)$vehicleId);
       $vehicles[] = $vehicle->name;
     }
     $newVehicles = [];
     foreach ($json->vehicles as $vehicleId) {
-      $vehicle = new Vehicle($vehicleId);
+      $vehicle = new Vehicle((int)$vehicleId);
       $newVehicles[] = $vehicle->name;
     }
     $changes[] = "The vehicles were changed from \"".implode(', ', $vehicles)."\" to \"".implode(', ', $newVehicles)."\"";
