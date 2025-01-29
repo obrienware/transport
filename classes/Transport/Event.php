@@ -63,11 +63,11 @@ class Event extends Base
     if ($row->location_id) {
       $this->location = new Location($row->location_id);
     }
-    if (!empty($row->drivers)) {
-      $this->drivers = explode(',', $row->drivers);
+    if (!empty($row->driver_ids)) {
+      $this->drivers = array_map('intval', explode(',', $row->driver_ids));
     }
-    if (!empty($row->vehicles)) {
-      $this->vehicles = explode(',', $row->vehicles);
+    if (!empty($row->vehicle_ids)) {
+      $this->vehicles = array_map('intval', explode(',', $row->vehicle_ids));
     }
     if (!empty($row->start_date)) {
       $this->startDate = (new DateTime($row->start_date, $defaultTimezone))->setTimezone($this->timezone);

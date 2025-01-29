@@ -65,14 +65,13 @@ $event = new Event($id);
       </div>
     </div>
 
-
     <div class="row">
       <div class="col">
         <div class="mb-3">
           <label for="event-drivers" class="form-label">Drivers</label>
           <div>
             <?php foreach ($event->drivers as $driverId): ?>
-              <span class="badge bg-primary fs-6 fw-light"><?=$driverId ? (new User($driverId))->getName() : ''?></span>
+              <span class="tag tag-primary fs-6 fw-light"><?=$driverId ? (new User($driverId))->getName() : ''?></span>
             <?php endforeach; ?>
           </div>
         </div>
@@ -83,7 +82,7 @@ $event = new Event($id);
           <label for="event-vehicles" class="form-label">Vehicles</label>
           <div>
             <?php foreach ($event->vehicles as $vehicleId): ?>
-              <span class="badge bg-primary fs-6 fw-light"><?=$vehicleId ? (new Vehicle($vehicleId))->name : ''?></span>
+              <span class="tag tag-primary fs-6 fw-light"><?=$vehicleId ? (new Vehicle($vehicleId))->name : ''?></span>
             <?php endforeach; ?>
           </div>
         </div>

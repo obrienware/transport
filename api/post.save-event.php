@@ -85,14 +85,29 @@ if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:
   }
 }
 
-$event->name = $json->name ?: NULL;
-$event->requestorId = $json->requestorId ?: NULL;
-$event->locationId = $json->locationId ?: NULL;
-$event->startDate = $json->startDate ?: NULL;
-$event->endDate = $json->endDate ?: NULL;
-$event->drivers = $json->drivers ?: [];
-$event->vehicles = $json->vehicles ?: [];
-$event->notes = $json->notes ?: NULL;
+$event->name = $json->name ?? NULL;
+$event->requestorId = $json->requestorId ?? NULL;
+$event->locationId = $json->locationId ?? NULL;
+$event->startDate = $json->startDate ?? NULL;
+$event->endDate = $json->endDate ?? NULL;
+$event->drivers = [];
+$event->vehicles = [];
+$event->notes = $json->notes ?? NULL;
+// The html control we use to select the drivers and vehicles sends an array of strings, so we need to convert them to integers
+if ($json->drivers) {
+  $drivers = [];
+  foreach ($json->drivers as $driver) {
+    $drivers[] = (int)$driver;
+  }
+  $event->drivers = $drivers;
+}
+if ($json->vehicles) {
+  $vehicles = [];
+  foreach ($json->vehicles as $vehicle) {
+    $vehicles[] = (int)$vehicle;
+  }
+  $event->vehicles = $vehicles;
+}
 
 if ($event->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $event->getId();
