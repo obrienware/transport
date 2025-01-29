@@ -97,8 +97,8 @@ class Blockout extends Base
 
 		$params = [
 			'user_id' => $this->userId,
-			'from_datetime' => $this->fromDateTime ? $this->fromDateTime->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s') : null,
-			'to_datetime' => $this->toDateTime ? $this->toDateTime->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s') : null,
+			'from_datetime' => is_null($this->fromDateTime) ? null : $this->fromDateTime->setTimezone($this->timezone)->format('Y-m-d H:i:s'),
+			'to_datetime' => is_null($this->toDateTime) ? null : $this->toDateTime->setTimezone($this->timezone)->format('Y-m-d H:i:s'),
 			'note' => $this->note,
 			'user' => $userResponsibleForOperation
 		];

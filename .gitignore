@@ -3,5 +3,6 @@ test*
 /images/drivers/*
 /images/vehicles/*
 /images/organization/*
+/imgages/library/*
 /tripsheets/*
 /documents/*
