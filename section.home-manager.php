@@ -80,9 +80,17 @@ $user = new User($_SESSION['user']->id);
       },
       eventDidMount: info => {
         const el = info.el;
-        const title = info.event.title || 'untitled';
+        let title = info.event.title || 'untitled';
+
+        if (!info.event?.extendedProps?.confirmed) {
+          const contentEl = $(el).find('h4.ec-event-title');
+          const html = contentEl.html();
+          contentEl.html(`<i class="fa-solid fa-pencil ~fa-lg align-content-center me-1"></i>${html}`);
+          // For some unknown reason - the title on a type = event does not seem to change on screen, even though the html is updated
+          title = 'Unconfirmed: ' + title;
+        }
         $(el).attr('data-bs-title', title).tooltip();
-      }
+      },
     });
 
     function refreshEvents() {
