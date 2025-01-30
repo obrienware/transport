@@ -33,40 +33,44 @@ function notifyParticipants(Trip $trip): void
   $tripDate = Date('m/d/Y', strtotime($trip->pickupDate));
 
   // Email to the requestor
-  $template = new Template(EmailTemplates::get('Email Requestor Trip Deleted'));
-  $templateData = [
-    'name' => $trip->requestor->firstName,
-    'tripSummary' => $trip->summary,
-    'tripDate' => $tripDate,
-  ];
+  if ($trip->requestor) {
+    $template = new Template(EmailTemplates::get('Email Requestor Trip Deleted'));
+    $templateData = [
+      'name' => $trip->requestor->firstName,
+      'tripSummary' => $trip->summary,
+      'tripDate' => $tripDate,
+    ];
 
-  $email = new Email();
-  if ($config->email->sendRequestorMessagesTo == 'requestor') {
-    if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress, $trip->requestor->getName());
-  } else {
-    $email->addRecipient($config->email->sendRequestorMessagesTo);
+    $email = new Email();
+    if ($config->email->sendRequestorMessagesTo == 'requestor') {
+      if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress, $trip->requestor->getName());
+    } else {
+      $email->addRecipient($config->email->sendRequestorMessagesTo);
+    }
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+    $email->addReplyTo($me->emailAddress, $me->getName());
+    $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
+    $email->setContent($template->render($templateData));
+    $email->sendText();
   }
-  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-  $email->addReplyTo($me->emailAddress, $me->getName());
-  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
-  $email->setContent($template->render($templateData));
-  $email->sendText();
 
 
   // Email the driver
-  $template = new Template(EmailTemplates::get('Email Driver Trip Deleted'));
-  $templateData = [
-    'name' => $trip->driver->firstName,
-    'tripDate' => $tripDate,
-    'tripSummary' => $trip->summary,
-  ];
-
-  $email = new Email();
-  $email->addRecipient($trip->driver->emailAddress, $trip->driver->getName());
-  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-  $email->addReplyTo($me->emailAddress, $me->getName());
-  $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
-  $email->setContent($template->render($templateData));
-  $email->sendText();
+  if ($trip->driver) {
+    $template = new Template(EmailTemplates::get('Email Driver Trip Deleted'));
+    $templateData = [
+      'name' => $trip->driver->firstName,
+      'tripDate' => $tripDate,
+      'tripSummary' => $trip->summary,
+    ];
+  
+    $email = new Email();
+    $email->addRecipient($trip->driver->emailAddress, $trip->driver->getName());
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+    $email->addReplyTo($me->emailAddress, $me->getName());
+    $email->setSubject('Confirmation of cancellation/deletion of trip: '.$trip->summary);
+    $email->setContent($template->render($templateData));
+    $email->sendText();
+  }
 
 }

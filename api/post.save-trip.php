@@ -157,65 +157,71 @@ function notifyParticipants(Trip $trip, array $changes, array $driversToNotify):
   $me = new User($_SESSION['user']->id);
   $changesString = '- '.implode("\n\n- ", $changes);
 
-  // Generate the driver sheet
-  include '../inc.trip-driver-sheet.php';
-  $filename1 = sys_get_temp_dir().'/'.$trip->getId().'-trip-driver-sheet.pdf';
-  $pdf->output('F', $filename1);
-
-  // Generate the guest sheet
-  include '../inc.trip-guest-sheet.php';
-  $filename2 = sys_get_temp_dir().'/'.$trip->getId().'-trip-guest-sheet.pdf';
-  $pdf->output('F', $filename2);
-
-  // Generate ics file
-  include '../inc.trip-ics.php';
-
-
   // Email to the requestor (include the guest sheet to pass along)
-  $template = new Template(EmailTemplates::get('Email Requestor Trip Change'));
-  $templateData = [
-    'name' => $trip->requestor->firstName,
-    'tripSummary' => $trip->summary,
-    'changes' => $changesString,
-  ];
+  if ($trip->requestor) {
+    // Generate the guest sheet
+    include '../inc.trip-guest-sheet.php';
+    $filename2 = sys_get_temp_dir().'/'.$trip->getId().'-trip-guest-sheet.pdf';
+    $pdf->output('F', $filename2);
 
-  $email = new Email();
-  if ($config->email->sendRequestorMessagesTo == 'requestor') {
-    if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress);
-  } else {
-    $email->addRecipient($config->email->sendRequestorMessagesTo);
-  }
-  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-  $email->addReplyTo($me->emailAddress, $me->getName());
-  $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
-  $email->setContent($template->render($templateData));
-  $email->addAttachment($filename2);
-  $email->sendText();
-
-
-  // Email the driver(s)
-  $template = new Template(EmailTemplates::get('Email Driver Trip Change'));
-  foreach ($driversToNotify as $driver) {
+    $template = new Template(EmailTemplates::get('Email Requestor Trip Change'));
     $templateData = [
-      'name' => $driver->firstName,
-      'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+      'name' => $trip->requestor->firstName,
       'tripSummary' => $trip->summary,
       'changes' => $changesString,
     ];
-  
+
     $email = new Email();
-    $email->addRecipient($driver->emailAddress, $driver->getName());
+    if ($config->email->sendRequestorMessagesTo == 'requestor') {
+      if ($trip->requestor) $email->addRecipient($trip->requestor->emailAddress);
+    } else {
+      $email->addRecipient($config->email->sendRequestorMessagesTo);
+    }
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
     $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
     $email->setContent($template->render($templateData));
-    $email->addAttachment($filename1);
-    $ical = $ics->to_string();
-    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-    $email->sendText();  
+    $email->addAttachment($filename2);
+    $email->sendText();
+    unlink($filename2);
   }
 
-  unlink($filename1);
-  unlink($filename2);
+
+  // Email the driver(s)
+  if (count($driversToNotify) > 0) {
+
+    // Generate the driver sheet
+    include '../inc.trip-driver-sheet.php';
+    $filename1 = sys_get_temp_dir().'/'.$trip->getId().'-trip-driver-sheet.pdf';
+    $pdf->output('F', $filename1);
+
+    // Generate ics file
+    include '../inc.trip-ics.php';
+
+
+    $template = new Template(EmailTemplates::get('Email Driver Trip Change'));
+    foreach ($driversToNotify as $driver) {
+      $templateData = [
+        'name' => $driver->firstName,
+        'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
+        'tripSummary' => $trip->summary,
+        'changes' => $changesString,
+      ];
+    
+      $email = new Email();
+      $email->addRecipient($driver->emailAddress, $driver->getName());
+      if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+      $email->addReplyTo($me->emailAddress, $me->getName());
+      $email->setSubject('Confirmation of changes regarding trip: '.$trip->summary);
+      $email->setContent($template->render($templateData));
+      $email->addAttachment($filename1);
+      $ical = $ics->to_string();
+      $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
+      $email->sendText();  
+    }
+  
+    unlink($filename1);
+  }
+
 }
 
