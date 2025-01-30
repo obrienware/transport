@@ -97,7 +97,7 @@ $query = "
               </div>
               <?php if ($row->eta): ?>
                 <span class="badge bg-black fs-6" style="color:gold">
-                  <i class="fa-duotone fa-solid fa-plane-arrival"></i>
+                  <i class="~fa-duotone fa-solid fa-plane-arrival"></i>
                   <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
                 <small><?=Date('g:ia', strtotime($row->eta))?></small>
@@ -108,7 +108,7 @@ $query = "
               <div><?=$row->dropoff_location?></div>
               <?php if ($row->etd): ?>
                 <span class="badge bg-black fs-6" style="color:gold">
-                  <i class="fa-duotone fa-solid fa-plane-departure"></i>
+                  <i class="~fa-duotone fa-solid fa-plane-departure"></i>
                   <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
                 <small><?=Date('g:ia', strtotime($row->etd))?></small>

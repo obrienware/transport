@@ -7,4 +7,5 @@ $ics = new ICS([
   'description' => $event->notes,
   'summary' => $event->name,
 ]);
-if ($event->location) $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));
+if ($event->location && $event->location->mapAddress) 
+  $ics->set('location', str_replace("\n", "\\n", $event->location->mapAddress));

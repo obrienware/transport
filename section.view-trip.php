@@ -89,8 +89,10 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
           </div>
           <?php if($trip->driverId):?>
             <div class="w-25">
-              <div><img src="/images/drivers/<?=$trip->driver->username?>.jpg" class="img-fluid"></div>
-              <div class="text-center text-bg-dark fw-light"><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
+              <div class="position-relative">
+                <img src="/images/drivers/<?=$trip->driver->username?>.jpg" class="img-fluid">
+                <div class="text-center fw-light" style="position:absolute; left:0; right: 0; bottom: 0; background-color: rgba(0,0,0,.5); color:white"><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
+              </div>
             </div>
           <?php endif;?>
         </div>
