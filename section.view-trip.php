@@ -25,12 +25,12 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
           <?php endif;?>
           <li><button id="<?=$sectionId?>-btn-duplicate" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-copy"></i> Duplicate</button></li>
           <?php if ($trip->isConfirmed()): ?>
-            <li><a href="print.trip-driver-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Driver Sheet)</a></li>
+            <li><a href="print.trip-driver-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-file-pdf"></i> Print (Driver Sheet)</a></li>
           <?php endif;?>
         <?php endif;?>
         <?php if ($trip->isConfirmed()): ?>
-          <li><a href="print.trip-guest-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-print"></i> Print (Guest Sheet)</a></li>
-          <li><a href="download.trip-ics.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Add Calendar item</a></li>
+          <li><a href="print.trip-guest-sheet.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-print" class="dropdown-item btn btn-secondary"><i class="fa-solid fa-file-pdf"></i> Print (Guest Sheet)</a></li>
+          <li><a href="download.trip-ics.php?id=<?=$trip->getId()?>" target="_blank" id="<?=$sectionId?>-btn-ics" class="dropdown-item btn btn-secondary"><i class="fa-regular fa-calendar-circle-plus"></i> Calendar item (ICS)</a></li>
         <?php endif;?>
         <?php if (array_search($_SESSION['view'], ['requestor']) !== false):?>
           <li><button class="dropdown-item btn btn-secondary text-danger" onclick="cancelTrip(<?=$trip->getId()?>)"><i class="fa-solid fa-ban"></i> Cancel Request</button></li>
@@ -162,7 +162,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
   <div class="row">
     <?php if ($trip->guestNotes || $trip->driverNotes || $trip->generalNotes): ?>
-      <div class="col-auto d-flex flex-column gap-3 px-4">
+      <div class="col-auto d-flex ~flex-column gap-3 px-4">
         <?php if ($trip->guestNotes): ?>
           <div class="align-self-center">
             <div style="transform: rotate(-3deg)" class="w-auto">
