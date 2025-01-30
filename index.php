@@ -5,6 +5,9 @@ include 'inc.menu.php';
 ?>
 <div class="container-fluid mt-3">
 
+<!-- <span class="loader"><span class="loader-inner"></span></span> -->
+<!-- <a id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username" data-mode="inline">superuser</a> -->
+
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
@@ -17,6 +20,8 @@ include 'inc.menu.php';
 </div><!-- .container-fluid -->
 
 <script type="text/javascript">
+  // const usernameEl = document.getElementById('username');
+  // const popover = new DarkEditable(usernameEl);
 
   $(async ƒ => {
 

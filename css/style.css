@@ -6,6 +6,18 @@
   --bs-btn-active-bg: white;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
+.hidden-content {
+  visibility: hidden;
+}
+
+td:hover .hidden-content {
+  visibility: visible;
+}
+
 #request-type-section .btn-check:checked+.btn {
   box-shadow: var(--bs-box-shadow-lg) !important;
 }
@@ -322,4 +334,58 @@ section.chat p {
 }
 .tag.tag-monospace {
   font-family: 'Roboto Mono', monospace;
+}
+
+
+
+/* Our Custom Cube Loader */
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #DDDDDD;
+  top: 50%;
+  animation: loader 4s infinite ease;
+}
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: #DDDDDD;
+  animation: loader-inner 4s infinite ease-in;
+}
+@keyframes loader {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(180deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(360deg);}
+  100% {transform: rotate(360deg);}
+}
+@keyframes loader-inner {
+  0% {height: 0%;}
+  25% {height: 0%;}
+  50% {height: 100%;}
+  75% {height: 100%;}
+  100% {height: 0%;}
+}
+
+/**
+ * Loading Animation Snippet
+ */
+
+ .loading {
+	color: transparent;
+	background: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+	background-size: 400%;
+	animation: loading 1.2s ease-in-out infinite;
+}
+
+@keyframes loading {
+	0% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0 50%;
+	}
 }

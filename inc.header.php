@@ -80,10 +80,14 @@ if (!isset($_SESSION['view'])) {
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.7.0/event-calendar.min.css">
 	<link rel="stylesheet" href="/css/ec-calendar.css">
 	<script src="https://cdn.jsdelivr.net/npm/@event-calendar/build@3.7.0/event-calendar.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="js/dark-editable.css">
+	<script type="text/javascript" src="js/dark-editable.js"></script>
 	
 	<!-- All our custom javascript -->
 	<script type="text/javascript" src="js/common.js?<?=filemtime('js/common.js')?>"></script>
 	<script type="text/javascript" src="js/tab-management.js"></script>
+	<script type="text/javascript" src="js/notifications.js"></script>
 
 	<!-- Stylesheets -->
 	<!-- Our main (custom) Bootstrap theme -->
@@ -93,4 +97,4 @@ if (!isset($_SESSION['view'])) {
 	<link rel="stylesheet" type="text/css" href="css/style.css?<?=filemtime('css/style.css')?>">
 </head>
 
-<body class="bg-body-secondary">
+<body class="bg-body-secondary position-relative">

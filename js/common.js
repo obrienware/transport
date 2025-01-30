@@ -1,8 +1,3 @@
-// This will form the basis of our global references
-const app = {
-	debug: true
-}; 
-
 loader = `<div class="loading text-center mt-4"></div>`;
 report_loader = `
   <div class="form-row mt-4">
@@ -30,24 +25,6 @@ if ('undefined' !== typeof Dropzone) Dropzone.autoDiscover = false;
 Array.prototype.move = function (from, to) {
   this.splice(to, 0, this.splice(from, 1)[0]);
 };
-
-const defaultToastrOptions = {
-	toast: true,
-	position: 'top-end',
-	timer: 3000,
-	showConfirmButton: false,
-}
-const toastr = {
-	warning: (text = '', title = '') => {
-		Swal.fire({...defaultToastrOptions, title, html: text, icon: 'warning'});
-	},
-	error: (text = '', title = '') => {
-		Swal.fire({...defaultToastrOptions, title, html: text, icon: 'error'});
-	},
-	success: (text = '', title = '') => {
-		Swal.fire({...defaultToastrOptions, title, html: text, icon: 'success'});
-	}
-}
 
 
 /**
@@ -109,61 +86,6 @@ String.prototype.toJSON = function () {
 }
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-const ask = async question => {
-	const answer = await Swal.fire({
-		title: 'Please confirm',
-		html: question,
-		icon: 'question',
-		showCancelButton: true,
-		confirmButtonText: 'Yes',
-		cancelButtonText: 'No',
-		customClass: {
-			confirmButton: 'btn btn-primary',
-			cancelButton: 'btn btn-outline-secondary'
-		},
-	});
-	if (answer.value) return true;
-	return false;
-}
-
-const input = async question => {
-	const {value: answer} = await Swal.fire({
-		html: question,
-		input: 'text',
-		icon: 'question',
-		showCancelButton: true,
-		customClass: {
-			confirmButton: 'btn btn-primary',
-			cancelButton: 'btn btn-outline-secondary'
-		},
-	});
-	return answer;
-}
-
-const alertError = async (message, title = '') => {
-	return await Swal.fire({
-		title, html: message, icon: 'error',
-		confirmButtonText: 'Got it',
-		customClass: {
-			confirmButton: 'btn btn-primary',
-			cancelButton: 'btn btn-outline-secondary'
-		},
-	});
-}
-
-const alertSuccess = async (message, title = '', timer) => {
-	const config = {
-		title, text: message, icon: 'success',
-		confirmButtonText: 'Okay, thanks!',
-		customClass: {
-			confirmButton: 'btn btn-primary',
-			cancelButton: 'btn btn-outline-secondary'
-		},
-	}
-	if (timer) config.timer = timer;
-	return await Swal.fire(config);
-}
 
 
 /**

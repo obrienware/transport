@@ -54,7 +54,10 @@ $vehicle = new Vehicle($vehicleId);
       <button class="nav-link active" id="pills-status-tab" data-bs-toggle="pill" data-bs-target="#pills-status" type="button" role="tab" aria-controls="pills-status" aria-selected="true">Status</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="pills-snags-tab" data-bs-toggle="pill" data-bs-target="#pills-snags" type="button" role="tab" aria-controls="pills-snags" aria-selected="false">Snags</button>
+      <button class="nav-link position-relative" id="pills-snags-tab" data-bs-toggle="pill" data-bs-target="#pills-snags" type="button" role="tab" aria-controls="pills-snags" aria-selected="false">
+        Snags
+        <span id="snag-count" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+      </button>
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="pills-maintenance-tab" data-bs-toggle="pill" data-bs-target="#pills-maintenance" type="button" role="tab" aria-controls="pills-maintenance" aria-selected="false">Maintenance</button>
@@ -184,52 +187,7 @@ $vehicle = new Vehicle($vehicleId);
       </div>
     </div>
 
-    <div class="tab-pane fade" id="pills-snags" role="tabpanel" aria-labelledby="pills-snags-tab" tabindex="0">
-      <!-- SNAGLIST -->
-      <?php if ($rows = Snag::getSnags($vehicleId)): ?>
-        <table class="table table-bordered table-sm mb-0">
-          <thead>
-            <tr>
-              <th class="fit">Date</th>
-              <th>Description</th>
-              <th>Acknowledged</th>
-              <th>Resolution</th>
-              <th>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($rows as $row): ?>
-              <tr>
-                <td class="datetime short" style="font-size:small"><?=$row->datetimestamp?></td>
-                <td>
-                  <div><?=$row->description?></div>
-                  <div><div class="badge bg-dark-subtle"><?=$row->created_by?></div></div>
-                </td>
-                <td>
-                  <?php if ($row->acknowledged): ?>
-                    <div><div class="badge bg-dark-subtle"><?=$row->acknowledged_by?></div></div>
-                  <?php endif; ?>
-                </td>
-                <td>
-                  <?php if ($row->resolved): ?>
-                    <div><?=$row->resolution?></div>
-                    <div><div class="badge bg-dark-subtle"><?=$row->resolved_by?></div></div>
-                  <?php endif; ?>
-                </td>
-                <td>
-                  <div><?=$row->comments?></div>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      <?php else: ?>
-        <div class="card-body text-center">
-          There are no snags logged yet for this vehicle
-        </div>
-      <?php endif; ?>
-
-    </div>
+    <div class="tab-pane fade" id="pills-snags" role="tabpanel" aria-labelledby="pills-snags-tab" tabindex="0"></div>
 
     <div class="tab-pane fade" id="pills-maintenance" role="tabpanel" aria-labelledby="pills-maintenance-tab" tabindex="0">...</div>
 
@@ -264,6 +222,7 @@ $vehicle = new Vehicle($vehicleId);
     });
 
     $('#pills-document').load('section.vehicle-documents.php?vehicleId='+vehicleId);
+    $('#pills-snags').load('section.vehicle-snags.php?vehicleId='+vehicleId);
 
     reFormat();
 
