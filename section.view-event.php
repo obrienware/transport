@@ -126,7 +126,7 @@ $event = new Event($id);
     <?php endif;?>
   </div>
 
-  <div class="row">
+  <!-- <div class="row">
     <div class="col ms-auto" style="max-width:800px">
       <div class="bg-body position-relative border rounded" style="padding-bottom: 55px !important;">
         <h3 class="py-2 px-3">Message</h3>
@@ -138,7 +138,7 @@ $event = new Event($id);
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 
 
 
@@ -164,28 +164,28 @@ $event = new Event($id);
     const prefix = '<?=$prefix?>';
     const eventId = <?=$event->getId()?>;
 
-    function loadConversation() {
-      $('#event-chat').load('section.chat.php', {eventId});
-    }
-    clearInterval(window.loadInterval_2);
-    window.loadInterval_2 = setInterval(loadConversation, 5000);
-    loadConversation();
+    // function loadConversation() {
+    //   $('#event-chat').load('section.chat.php', {eventId});
+    // }
+    // clearInterval(window.loadInterval_2);
+    // window.loadInterval_2 = setInterval(loadConversation, 5000);
+    // loadConversation();
 
-    $('#event-message').on('keyup', async ƒ => {
-			if (ƒ.keyCode === 13) {
-        $('#<?=$prefix?>-button-send').click();
-      }
-    });
-    $('#<?=$prefix?>-button-send').on('click', async ƒ => {
-      const message = $('#event-message').val();
-      if (message) {
-        const resp = await post('/api/post.send-message.php', {eventId, message});
-        if (resp?.result) {
-          $('#event-chat').load('section.chat.php', {eventId});
-          $('#event-message').val('').focus();
-        }
-      }
-    });
+    // $('#event-message').on('keyup', async ƒ => {
+		// 	if (ƒ.keyCode === 13) {
+    //     $('#<?=$prefix?>-button-send').click();
+    //   }
+    // });
+    // $('#<?=$prefix?>-button-send').on('click', async ƒ => {
+    //   const message = $('#event-message').val();
+    //   if (message) {
+    //     const resp = await post('/api/post.send-message.php', {eventId, message});
+    //     if (resp?.result) {
+    //       $('#event-chat').load('section.chat.php', {eventId});
+    //       $('#event-message').val('').focus();
+    //     }
+    //   }
+    // });
 
     $(`#${prefix}-btn-edit`).off('click').on('click', async e => {
       app.closeOpenTab();

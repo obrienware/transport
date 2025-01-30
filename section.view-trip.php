@@ -188,7 +188,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       </div>
     <?php endif;?>
 
-    <div class="col ms-auto" style="max-width:800px">
+    <!-- <div class="col ms-auto" style="max-width:800px">
       <div class="bg-body position-relative border rounded" style="padding-bottom: 55px !important;">
         <h3 class="py-2 px-3">Message</h3>
         <section id="trip-chat" class="chat px-5"></section>
@@ -198,7 +198,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
           <button class="btn btn-outline-primary" type="button" id="button-send">Send</button>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 
 
@@ -227,28 +227,28 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
       $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
     }
 
-    function loadConversation() {
-      $('#trip-chat').load('section.chat.php', {tripId});
-    }
-    clearInterval(window.loadInterval_1);
-    window.loadInterval_1 = setInterval(loadConversation, 5000);
-    loadConversation();
+    // function loadConversation() {
+    //   $('#trip-chat').load('section.chat.php', {tripId});
+    // }
+    // clearInterval(window.loadInterval_1);
+    // window.loadInterval_1 = setInterval(loadConversation, 5000);
+    // loadConversation();
 
-    $('#trip-message').on('keyup', async ƒ => {
-			if (ƒ.keyCode === 13) {
-        $('#button-send').click();
-      }
-    });
-    $('#button-send').on('click', async ƒ => {
-      const message = $('#trip-message').val();
-      if (message) {
-        const resp = await post('/api/post.send-message.php', {tripId, message});
-        if (resp?.result) {
-          $('#trip-chat').load('section.chat.php', {tripId});
-          $('#trip-message').val('').focus();
-        }
-      }
-    });
+    // $('#trip-message').on('keyup', async ƒ => {
+		// 	if (ƒ.keyCode === 13) {
+    //     $('#button-send').click();
+    //   }
+    // });
+    // $('#button-send').on('click', async ƒ => {
+    //   const message = $('#trip-message').val();
+    //   if (message) {
+    //     const resp = await post('/api/post.send-message.php', {tripId, message});
+    //     if (resp?.result) {
+    //       $('#trip-chat').load('section.chat.php', {tripId});
+    //       $('#trip-message').val('').focus();
+    //     }
+    //   }
+    // });
 
 
     $(`#${sectionId}-btn-edit`).off('click').on('click', async e => {
