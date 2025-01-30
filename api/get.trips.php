@@ -64,8 +64,8 @@ if ($rows = $db->get_rows($query, $params)) {
         'driver' => $row->driver,
         'confirmed' => $row->confirmed
       ],
-      'backgroundColor' => $bgColor,
-      'textColor' => $textColor
+      'backgroundColor' => ($row->confirmed) ? $bgColor : '#dee2e6',
+      'textColor' => ($row->confirmed) ? $textColor : 'gray'
     ];
     // Format for the requestor's view
     if (isset($_GET['requestorId'])) {
