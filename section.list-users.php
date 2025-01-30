@@ -12,7 +12,7 @@ use Transport\User;
   </div>
   <table id="table-users" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th class="fit">ID</th>
         <th>Username</th>
         <th>Real Name</th>
@@ -34,7 +34,7 @@ use Transport\User;
               <?php if ($row->roles): ?>
                 <?php $roles = explode(',', $row->roles); ?>
                 <?php foreach ($roles as $role): ?>
-                  <span class="badge text-bg-primary"><?=$role?></span>
+                  <span class="badge text-bg-primary fw-light"><?=$role?></span>
                 <?php endforeach; ?>
               <?php endif; ?>
             </td>

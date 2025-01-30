@@ -12,7 +12,7 @@ use Transport\DriverNote;
   </div>
   <table id="tbl-driver-notes" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Title</th>
       </tr>
     </thead>

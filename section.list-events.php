@@ -34,7 +34,7 @@ $query = "
 
     <table id="table-events" class="table align-middle table-hover row-select">
       <thead>
-        <tr>
+        <tr class="table-dark">
           <th class="fit">Confirmed</th>
           <th class="fit">From</th>
           <th class="fit">To</th>
@@ -57,9 +57,9 @@ $query = "
           <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
             <td class="text-center fit" data-order="<?=$row->confirmed?>">
               <?php if ($row->confirmed): ?>
-                <i class="fa-regular fa-square-check fa-xl text-success"></i>
+                <i class="fa-solid fa-circle-check fa-xl text-success"></i>
               <?php else: ?>
-                <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
+                <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
               <?php endif; ?>
             </td>
             <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>

@@ -12,7 +12,7 @@ use Transport\AirportLocation;
   </div>
   <table id="table-airport-locations" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Airport</th>
         <th>Airline</th>
         <th>&nbsp;</th>

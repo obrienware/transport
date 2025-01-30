@@ -12,7 +12,7 @@ use Transport\Airline;
   </div>
   <table id="table-airlines" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th data-dt-order="disable">&nbsp;</th>
         <th>AirLine</th>
         <th data-bs-toggle="tooltip" data-bs-title="Flight Number Prefix.">Prefix</th>
@@ -27,8 +27,8 @@ use Transport\Airline;
                 <img src="/images/airlines/<?=$row->image_filename?>" style="max-height:35px">
               <?php endif; ?>
             </td>
-            <td><?=$row->name?></td>
-            <td><?=$row->flight_number_prefix?></td>
+            <td class="align-middle"><?=$row->name?></td>
+            <td class="fw-bold fs-4 align-middle"><?=$row->flight_number_prefix?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

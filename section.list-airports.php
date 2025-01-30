@@ -12,7 +12,7 @@ use Transport\Airport;
   </div>
   <table id="table-airports" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>IATA</th>
         <th>Airport</th>
         <th data-bs-toggle="tooltip" data-bs-title="Time to arrive at airport before scheduled flight.">Lead Time</th>

@@ -12,10 +12,10 @@ use Transport\Blockout;
   </div>
   <table id="table-blockouts" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Name</th>
-        <th class="fit">FROM</th>
-        <th class="fit">TO</th>
+        <th class="fit">From</th>
+        <th class="fit">To</th>
         <th data-dt-order="disable">Note</th>
       </tr>
     </thead>

@@ -83,6 +83,8 @@ if (!isset($_SESSION['view'])) {
 
 	<link rel="stylesheet" type="text/css" href="js/dark-editable.css">
 	<script type="text/javascript" src="js/dark-editable.js"></script>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/3.0.3/pretty-checkbox.min.css" integrity="sha512-kz4Ae66pquz4nVE5ytJyKfPDkQyHSggaDtT1v8oLfOd8bB+ZgZXNLaxex99MNu4fdCsWmi58mhLtfGk5RgfcOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	
 	<!-- All our custom javascript -->
 	<script type="text/javascript" src="js/common.js?<?=filemtime('js/common.js')?>"></script>

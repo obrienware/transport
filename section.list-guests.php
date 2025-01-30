@@ -12,7 +12,7 @@ use Transport\Guest;
   </div>
   <table id="table-guests" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Contact Name</th>
         <th>Phone</th>
         <th>Email</th>
@@ -29,7 +29,7 @@ use Transport\Guest;
             <td>
               <?php if ($row->opt_in): ?>
                 <?php if (!$row->opt_out): ?>
-                  <span class="badge bg-success">Opted In</span>
+                  <span class="badge bg-success fw-light">Opted In</span>
                 <?php endif; ?>
               <?php endif; ?>
             </td>

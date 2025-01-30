@@ -12,7 +12,7 @@ use Transport\Location;
   </div>
   <table id="table-locations" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Name</th>
         <th>Map Address</th>
       </tr>

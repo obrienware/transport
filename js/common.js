@@ -274,6 +274,12 @@ if ($.fn?.dataTable?.defaults) {
 		},
     stateSave: true,
   	language: {
+      paginate: {
+        next: '<i class="fa-solid fa-circle-chevron-right"></i>',
+        previous: '<i class="fa-solid fa-circle-chevron-left"></i>',
+        first: '<i class="fa-solid fa-circle-arrow-left"></i>',
+        last: '<i class="fa-solid fa-circle-arrow-right"></i>',
+      },
 			search: 'Filter records', 
 			searchPlaceholder: 'Text to filter',
 			lengthMenu:

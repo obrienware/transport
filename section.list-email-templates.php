@@ -9,7 +9,7 @@ use Transport\EmailTemplates;
   </div>
   <table id="table-templates" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Name</th>
       </tr>
     </thead>

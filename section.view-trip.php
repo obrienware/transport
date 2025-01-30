@@ -2,6 +2,7 @@
 require_once 'autoload.php';
 
 use Transport\Trip;
+use Transport\Utils;
 
 $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
 $trip = new Trip($id);
@@ -79,13 +80,17 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
         </div>
         <div class="card-body d-flex justify-content-between">
           <div>
-            <div><?=$trip->vehicleId ? '<i class="fa-solid fa-square" style="color:'.$trip->vehicle->color.'"></i> '.$trip->vehicle->name : '' ?></div>
+            <div>
+              <?php if ($trip->vehicleId): ?>
+                <span class="tag fs-5 px-4" style="background-color:<?=$trip->vehicle->color?>; color:<?=Utils::getContrastColor($trip->vehicle->color)?>"><?=$trip->vehicle->name?></span>
+              <?php endif;?>
+            </div>
             <div><?=$trip->vehiclePUOptions?> - <?=$trip->vehicleDOOptions?></div>
           </div>
           <?php if($trip->driverId):?>
             <div class="w-25">
               <div><img src="/images/drivers/<?=$trip->driver->username?>.jpg" class="img-fluid"></div>
-              <?=$trip->driverId ? $trip->driver->getName() : '' ?>
+              <div class="text-center text-bg-dark fw-light"><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
             </div>
           <?php endif;?>
         </div>

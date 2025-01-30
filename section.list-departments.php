@@ -12,9 +12,9 @@ use Transport\Department;
   </div>
   <table id="table-departments" class="table table-striped table-hover row-select">
     <thead>
-      <tr>
+      <tr class="table-dark">
         <th>Departments</th>
-        <th>May Request</th>
+        <th class="no-sort no-search text-center fit">May Request</th>
       </tr>
     </thead>
     <tbody>
@@ -22,7 +22,13 @@ use Transport\Department;
         <?php foreach ($rows as $row): ?>
           <tr data-id="<?=$row->id?>">
             <td><?=$row->name?></td>
-            <td><?=$row->can_submit_requests?></td>
+            <td class="text-center align-middle fit">
+              <?php if ($row->can_submit_requests === 1): ?>
+                <i class="fa-solid fa-circle-check fa-xl text-success"></i>
+              <?php else: ?>
+                <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
+              <?php endif; ?>
+            </td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>

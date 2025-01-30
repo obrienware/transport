@@ -42,7 +42,7 @@ $query = "
 
     <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
       <thead>
-        <tr>
+        <tr class="table-dark">
           <th class="fit">Confirmed</th>
           <th class="fit">When</th>
           <th data-dt-order="disable">Trip Summary</th>
@@ -68,9 +68,9 @@ $query = "
             <!-- Confirmed -->
             <td class="text-center fit" data-order="<?=$row->confirmed?>">
               <?php if ($row->confirmed): ?>
-                <i class="fa-regular fa-square-check fa-xl text-success"></i>
+                <i class="fa-solid fa-circle-check fa-xl text-success"></i>
               <?php else: ?>
-                <i class="fa-solid fa-ellipsis fa-xl text-black-50"></i>
+                <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
               <?php endif; ?>
             </td>
             <!-- When -->
@@ -96,7 +96,7 @@ $query = "
                 <?=$row->pickup_location?>
               </div>
               <?php if ($row->eta): ?>
-                <span class="badge text-bg-secondary">
+                <span class="badge bg-black fs-6" style="color:gold">
                   <i class="fa-duotone fa-solid fa-plane-arrival"></i>
                   <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
@@ -107,7 +107,7 @@ $query = "
             <td class="text-nowrap">
               <div><?=$row->dropoff_location?></div>
               <?php if ($row->etd): ?>
-                <span class="badge text-bg-secondary">
+                <span class="badge bg-black fs-6" style="color:gold">
                   <i class="fa-duotone fa-solid fa-plane-departure"></i>
                   <?=$row->flight_number_prefix.' '.$row->flight_number?>
                 </span>
