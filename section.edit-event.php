@@ -266,6 +266,7 @@ $eventId = $event->getId();
 
       $('#btn-save-event').off('click').on('click', async function () {
         if (!startDate || !endDate) return toastr.error('Please select a start and end date.', 'Error');
+        if (startDate.isAfter(endDate)) return toastr.error('Start date cannot be after end date.', 'Error');
 
         const buttonSavedText = $('#btn-save-event').text();
         $('#btn-save-event').prop('disabled', true).text('Saving...');
