@@ -286,7 +286,7 @@ use Transport\Vehicle;
     $('.vehicle-item').off('click').on('click', async function (e) {
       const id = $(this).data('id');
       vehicleId = id;
-      const vehicle = await get('api/get.vehicle.php', {id});
+      const vehicle = await get('/api/get.vehicle.php', {id});
       // console.log(vehicle);
       $('.vehicle-name,#vehicle-location,#vehicle-mileage').html('');
       $('.vehicle-name').html(vehicle.name);

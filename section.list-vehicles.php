@@ -26,21 +26,15 @@ use Transport\Vehicle;
     <tbody>
       <?php if ($rows = Vehicle::getAll()): ?>
         <?php foreach ($rows as $row): ?>
-          <?php $rowClass = ($row->check_engine) ? 'table-warning' : '';?>
-          <tr data-id="<?=$row->id?>" class="<?=$rowClass?>">
+          <tr data-id="<?=$row->id?>">
             <td class="fit"><?=$row->id?></td>
-            <?php if ($row->color): ?>
-              <td class="fit">
-                <i class="fa-solid fa-square" style="color:<?=$row->color?>"></i>
-              </td>
-            <?php else: ?>
-              <td class="fit">&nbsp;</td>
-            <?php endif;?>
+            <td class="fit">
+              <?php if ($row->check_engine): ?><i class="fa-solid fa-engine-warning fa-xl me-2" style="color:var(--bs-orange)"></i><?php endif;?>
+              <?php if ($row->clean_interior === 0): ?><i class="fa-duotone fa-solid fa-vacuum fa-xl text-info-emphasis me-2"></i><?php endif;?>
+              <?php if ($row->clean_exterior === 0): ?><i class="fa-duotone fa-solid fa-car-wash fa-xl text-info-emphasis me-2"></i><?php endif;?>
+              <?php if ($row->restock === 1): ?><i class="fa-duotone fa-solid fa-bottle-water fa-xl text-info-emphasis me-2"></i><?php endif;?>
             <td>
-              <?=$row->name?>
-              <?php if ($row->check_engine): ?>
-                <i class="fa-duotone fa-solid fa-engine-warning fa-lg" style="color:var(--bs-orange)"></i>
-              <?php endif; ?>
+              <span class="tag w-100" style="font-size:1rem" data-color="<?=$row->color?>"><?=$row->name?></span>
             </td>
             <td><?=$row->description?></td>
             <td><?=$row->license_plate?></td>
@@ -54,6 +48,12 @@ use Transport\Vehicle;
 </div>
 
 <script type="text/javascript">
+
+  $('.tag').each((index, self) => {
+    const color = $(self).data('color');
+    $(self).css('background-color', color);
+    $(self).css('color', luminanceColor(color));
+  });
 
   $(async ƒ => {
 

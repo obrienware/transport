@@ -80,6 +80,15 @@ $vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
     };
   }
 
+  if (typeof window.addPhotoSnag !== 'function') {
+    window.addPhotoSnag = async function(snagId) {
+      const file = await getFile('Upload Photo:');
+      console.log('File:', file);
+      // const resp = await get('/api/get.snag-photo.php', {snagId});
+      // $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
+    };
+  }
+
   $(async ƒ => {
 
     const vehicleId = '<?=$_GET['vehicleId']?>';
@@ -104,6 +113,7 @@ $vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
         <div id="${myRandomId}" data-snag-id="${snagId}" class="dropdown-menu show" style="position: absolute; left: ${event.pageX}px; top: ${event.pageY}px;">
           <button class="dropdown-item" onclick="acknowledgeSnag(${snagId})">Acknowledge</button>
           <button class="dropdown-item" onclick="commentSnag(${snagId})">Comment</button>
+          <button class="dropdown-item" onclick="addPhotoSnag(${snagId})">Attach Photo</button>
         </div>
       `;
 
