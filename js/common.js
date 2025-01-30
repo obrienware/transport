@@ -443,19 +443,19 @@ function hexToRgba(hex, alpha) {
 }
 
 
-function luminanceColor(hex) {
-  // Remove the hash at the start if it's there
-  hex = hex.replace(/^#/, '');
+function luminanceColor(hexColor) {
+ // Remove the hash at the start if it's there
+ hexColor = hexColor.replace(/^#/, '');
 
-  // Convert the hex color to RGB
-  let r = parseInt(hex.substring(1, 3), 16);
-  let g = parseInt(hex.substring(3, 5), 16);
-  let b = parseInt(hex.substring(5, 7), 16);
+ // Convert hex to RGB
+ const r = parseInt(hexColor.substring(0, 2), 16);
+ const g = parseInt(hexColor.substring(2, 4), 16);
+ const b = parseInt(hexColor.substring(4, 6), 16);
 
-  // Calculate the luminance
-  let lum = luminance(r, g, b);
+ // Calculate brightness (standard luminance formula)
+ const brightness = (r * 299 + g * 587 + b * 114) / 1000;
 
-  // Return black for bright colors and white for dark colors
-  return lum > 0.8 ? '#000' : '#fff';
+ // Return black or white depending on brightness
+ return brightness > 128 ? 'black' : 'white';
 }
 

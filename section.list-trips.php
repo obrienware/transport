@@ -127,9 +127,9 @@ $query = "
             <!-- Vehicle -->
             <td data-order="<?=$row->vehicle?>" class="text-center">
               <?php if ($row->vehicle): ?>
-                <span class="badge" style="background-color:<?=$row->vehicle_color?>; color:<?=Utils::getContrastColor($row->vehicle_color)?>"><?=$row->vehicle?></span>
+                <span class="tag nowrap w-100" style="background-color:<?=$row->vehicle_color?>; color:<?=Utils::getContrastColor($row->vehicle_color)?>"><?=$row->vehicle?></span>
               <?php else:?>
-                <i class="badge bg-danger">Unassinged</i>
+                <i class="tag tag-danger">Unassinged</i>
               <?php endif; ?>
             </td>
           </tr>

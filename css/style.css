@@ -6,6 +6,10 @@
   --bs-btn-active-bg: white;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .pointer {
   cursor: pointer;
 }
