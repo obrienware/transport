@@ -7,7 +7,6 @@ use Transport\Vehicle;
   <div class="d-flex justify-content-between mt-2">
     <h2>Vehicles</h2>
     <button id="btn-add-vehicle" class="btn btn-outline-primary btn-sm my-auto px-3">
-      <i class="fa-duotone fa-solid fa-car"></i>
       Add Vehicle
     </button>
   </div>
@@ -51,6 +50,9 @@ use Transport\Vehicle;
 
   $('.tag').each((index, self) => {
     const color = $(self).data('color');
+    if (!color) return;
+    // $(self).css('border-color', color);
+    // $(self).css('background-color', hexToRgba(color, .7));
     $(self).css('background-color', color);
     $(self).css('color', luminanceColor(color));
   });
