@@ -605,8 +605,15 @@
       data.driverId = val('#trip-driver-id');
       data.airlineId = val('#trip-airline-id');
       data.flightNumber = cleanUpperVal('#trip-flight-number');
-      data.ETA = val('#trip-eta') || null;
-      data.ETD = val('#trip-etd') || null;
+
+      // We cannot have an ETA AND an ETD. This has previously precipitated errors
+      if ($('#trip-pu-location').data('type') === 'airport') {
+        data.ETA = val('#trip-eta') ? moment(val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETD = null;
+      } else {
+        data.ETD = val('#trip-etd') ? moment(val('#trip-etd')).format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETA = null;
+      }
 
       data.vehiclePUOptions = $('#trip-vehicle-pu-options').val();
       data.vehicleDOOptions = $('#trip-vehicle-do-options').val();

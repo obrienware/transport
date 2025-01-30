@@ -41,8 +41,8 @@ $pdf->SetAligns(['L', 'L']);
 $pdf->SetWidths([150, $pageWidth - 150]);
 $pdf->Row(['Date/Time', Date('D M j @ g:ia', strtotime($trip->pickupDate))]);
 $pdf->Row(['Who', $trip->guests]);
-$pdf->Row(['Contact Person', $trip->guest->getName().' '.$trip->guest->phoneNumber]);
-$pdf->Row(['Where', $trip->puLocation->name."\n".$trip->puLocation->mapAddress]);
+if ($trip->guest) $pdf->Row(['Contact Person', $trip->guest->getName().' '.$trip->guest->phoneNumber]);
+if ($trip->puLocation) $pdf->Row(['Where', $trip->puLocation->name."\n".$trip->puLocation->mapAddress]);
 $pdf->ln();
 
 $pdf->SetFont('Helvetica', 'B', 14);
@@ -51,7 +51,7 @@ $pdf->Cell($pageWidth, 30, 'Drop Off', 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->SetAligns(['L', 'L']);
 $pdf->SetWidths([150, $pageWidth - 150]);
-$pdf->Row(['Where', $trip->doLocation->name."\n".$trip->doLocation->mapAddress]);
+if ($trip->doLocation) $pdf->Row(['Where', $trip->doLocation->name."\n".$trip->doLocation->mapAddress]);
 $pdf->ln();
 
 if ($trip->flightNumber) {
