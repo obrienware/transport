@@ -5,7 +5,7 @@ use Transport\User;
 
 $user = new User($_SESSION['user']->id);
 ?>
-<div class="container-fluid">
+<section class="container-fluid">
 
   <h6>Hello, <?=$user->firstName?>!</h6>
 
@@ -36,12 +36,12 @@ $user = new User($_SESSION['user']->id);
     <div id="ec" class="col py-2"></div>
   </div>
 
-</div>
+</section>
 
-<div class="container">
+<section class="container">
   <div id="trips-to-confirm"></div>
   <div id="vehicle-alerts"></div>
-</div>
+</section>
 
 
 <script type="text/javascript">

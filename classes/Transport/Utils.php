@@ -112,7 +112,7 @@ class Utils
     if ($givenDate->format('Y-m-d') == $today->format('Y-m-d')) return 'today';
     if ($givenDate->format('Y-m-d') == $tomorrow->format('Y-m-d')) return 'tomorrow';
 
-    return 'In '.self::ago('now', $date).' ('.$givenDate->format('l m/d @ g:ia').')';
+    return 'In '.self::ago('now', $date).' ('.$givenDate->format('D n M g:ia').')';
   }
 
 

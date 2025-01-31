@@ -43,3 +43,7 @@
 .parsedown li p {
   margin: 0;
 }
+
+.nowrap {
+  white-space: nowrap;
+}

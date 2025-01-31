@@ -11,14 +11,14 @@ $trips = Trip::upcomingTrips();
   <h3>Your Upcoming Trips</h3>
   <?php foreach ($trips as $trip): ?>
     <?php
-    $badgeClass = 'bg-dark-subtle';
+    $accentClass = 'bg-light';
     $showDate = Utils::showDate($trip->start_date);
-    if ($showDate == 'TODAY') $badgeClass = 'bg-success';
-    if ($showDate == 'TOMORROW') $badgeClass = 'bg-danger';
+    if ($showDate == 'today') $accentClass = 'bg-danger';
+    if ($showDate == 'tomorrow') $accentClass = 'bg-warning';
     ?>
-    <div class="card mb-2 shadow">
-      <div class="card-body">
-        <div class="badge <?=$badgeClass?>"><?=$showDate?></div>
+    <div class="card mb-4 shadow">
+      <div class="card-header text-<?=$accentClass?> text-center"><?=$showDate?></div>
+      <div class="card-body pt-2">
         <h5 class="card-title"><?=$trip->summary?></h5>
         
         <small>

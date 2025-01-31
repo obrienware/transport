@@ -59,7 +59,7 @@
   
   <div id="app" class="d-none">
 
-    <div id="pane-trips" class="pane active">
+    <div id="pane-trips" class="pane active bg-body-secondary">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Trips</div>
         <button class="btn p-0" onclick="loadSection('trips');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
@@ -67,7 +67,7 @@
       <div id="trips-content"></div>
     </div>
 
-    <div id="pane-vehicles" class="pane d-none">
+    <div id="pane-vehicles" class="pane d-none bg-body-secondary">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Vehicles</div>
         <button class="btn p-0" onclick="loadSection('vehicles');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>
@@ -83,7 +83,7 @@
       <div id="flights-content"></div>
     </div>
 
-    <div id="pane-notes" class="pane d-none">
+    <div id="pane-notes" class="pane d-none bg-body-secondary">
       <h5 class="bg-primary text-bg-primary p-3 sticky-top d-flex justify-content-between">
         <div>Driver Notes</div>
         <button class="btn p-0" onclick="loadSection('notes');"><i class="fa-solid fa-sync fa-lg text-light"></i></button>

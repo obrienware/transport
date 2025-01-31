@@ -7,7 +7,7 @@
     $('#upcoming-trips').load('section.upcoming-trips.php');
 
     setInterval(() => {
-      $('#upcoming-trips').load('section.upcoming-trips.php');
+      // $('#upcoming-trips').load('section.upcoming-trips.php');
     }, 30*1000); // Every 30seconds
 
     window.showTripDetail = function (tripId)

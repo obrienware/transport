@@ -15,7 +15,9 @@ SELECT
   CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff,
   v.name AS vehicle,
   a.flight_number_prefix, a.name as airline, a.image_filename,
-  t.vehicle_pu_options, t.vehicle_do_options
+  t.vehicle_pu_options, t.vehicle_do_options,
+  pu.lat AS pu_lat, pu.lon AS pu_lon,
+  do.lat AS do_lat, do.lon AS do_lon
 FROM trips t
 LEFT OUTER JOIN guests g ON g.id = t.guest_id
 LEFT OUTER JOIN locations pu on pu.id = t.pu_location
@@ -27,6 +29,14 @@ WHERE
 ";
 $params = ['id' => $_GET['id']];
 $trip = $db->get_row($query, $params);
+
+$isIOS = strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') !== false;
+if ($trip->pu_lat && $trip->pu_lon) {
+  $mapUrlPickup = $isIOS ? "https://maps.apple.com/?daddr={$trip->pu_lat},{$trip->pu_lon}" : "https://www.google.com/maps/dir/?api=1&destination={$trip->pu_lat},{$trip->pu_lon}";
+}
+if ($trip->do_lat && $trip->do_lon) {
+  $mapUrlDropoff = $isIOS ? "https://maps.apple.com/?daddr={$trip->do_lat},{$trip->do_lon}" : "https://www.google.com/maps/dir/?api=1&destination={$trip->do_lat},{$trip->do_lon}";
+}
 ?>
 <div class="row mb-2">
   <div class="col">
@@ -59,7 +69,14 @@ $trip = $db->get_row($query, $params);
               <div class="fw-bolder"><?=$trip->guests?></div>
             </div>            
             <div class="d-flex justify-content-between align-items-center">
-              <div><?=$trip->pickup_from?></div>
+              <div>
+                <?php if ($mapUrlPickup): ?>
+                  <a href="<?=$mapUrlPickup?>" target="_blank" class="text-decoration-none">
+                    <i class="fa-solid fa-location-arrow"></i>
+                  </a>
+                <?php endif; ?>
+                <?=$trip->pickup_from?>
+              </div>
               <small><?=Date('g:ia', strtotime($trip->pickup_date))?></small>
             </div>            
             <div class="d-flex justify-content-between align-items-center">
@@ -76,7 +93,14 @@ $trip = $db->get_row($query, $params);
             <i class="fa-solid fa-arrow-down me-2"></i>
             <div class="flex-fill">
               <div class="d-flex justify-content-between align-items-center">
-                <div><?=$trip->dropoff?></div>
+                <div>
+                  <?php if ($mapUrlDropoff): ?>
+                    <a href="<?=$mapUrlDropoff?>" target="_blank" class="text-decoration-none">
+                      <i class="fa-solid fa-location-arrow"></i>
+                    </a>
+                  <?php endif; ?>
+                  <?=$trip->dropoff?>
+                </div>
               </div>
               <section id="weather-at-dropoff-location"></section>
             </div>
@@ -100,7 +124,10 @@ $trip = $db->get_row($query, $params);
     </div>
 
 
-    <div class="card shadow mt-4">
+    <card class="card shadow mt-4">
+      <div class="card-header">
+        <?=$trip->type == 'arrival' ? 'Arrival' : 'Departure'?> Information
+      </div>
       <ul class="list-group list-group-flush">
 
         <!-- Flight Information -->
@@ -111,9 +138,10 @@ $trip = $db->get_row($query, $params);
                 <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
               </div>
               <div class="text-end">
-                <span style="font-size: large" class="badge bg-info"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
-                <div id="status_text" class="badge w-100"></div>
-                <div id="status_time" style="font-size: small"></div>
+                <span style="font-size: large;color: gold;" class="badge bg-black"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
+                <div id="status_text" class="badge w-100 nowrap"></div>
+                <div id="status_time" style="font-size: small" class="nowrap"></div>
+                <div style="font-size: small" class="nowrap">Scheduled: <?=Date('g:ia', strtotime($trip->pickup_date))?></div>
               </div>
             </div>
           </li>
@@ -122,16 +150,22 @@ $trip = $db->get_row($query, $params);
             <small id="flight-status-last-updated">?</small>
           </li>
         <?php endif; ?>
-
-        <!-- Driver Notes -->
-        <?php if ($trip->driver_notes): ?>
-          <li class="list-group-item bg-warning">
-            <?=nl2br($trip->driver_notes)?>
-          </li>
-        <?php endif; ?>
-
       </ul>
-    </div>
+    </card>
+
+    <!-- Driver Notes -->
+    <?php if ($trip->driver_notes): ?>
+      <card class="card shadow mt-4 text-bg-warning">
+        <div class="card-header">
+          Driver Notes
+        </div>
+        <div class="card-body">
+          <?=nl2br($trip->driver_notes)?>
+        </div>
+      </card>
+    <?php endif; ?>
+
+
   </div>
 </div>
 <div class="row mt-4">
@@ -170,8 +204,8 @@ $trip = $db->get_row($query, $params);
       const type = '<?=$trip->type?>';
       const iata = '<?=$trip->_iata?>';
       const date = '<?=Date('Y-m-d', strtotime($trip->pickup_date))?>';
-      const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
-      const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      // const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      // const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
       const res = await get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
       console.log(res);
       $('#flight-status-last-checked').html(`Checked: ${moment().format('h:mma')}`);
@@ -195,20 +229,20 @@ $trip = $db->get_row($query, $params);
 
       const real_arrival = res.real_arrival ? moment(res.real_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_arrival = res.estimated_arrival ? moment(res.estimated_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : eta;
+      // const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : eta;
 
       const real_departure = res.real_departure ? moment(res.real_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_departure = res.estimated_departure ? moment(res.estimated_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : etd;
+      // const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : etd;
 
       if (type === 'arrival') {
-        if (res.real_arrival) return $('#status_time').html(`ATA: ${real_arrival}`);
-        if (res.estimated_arrival) return $('#status_time').html(`ETA: ${estimated_arrival}`);
-        return $('#status_time').html(`STA: ${scheduled_arrival}`);
+        if (res.real_arrival) return $('#status_time').html(`Actual: ${real_arrival}`);
+        if (res.estimated_arrival) return $('#status_time').html(`Estimated: ${estimated_arrival}`);
+        // return $('#status_time').html(`STA: ${scheduled_arrival}`);
       }
-      if (res.real_departure) return $('#status_time').html(`ATD: ${real_departure}`);
-      if (res.estimated_departure) return $('#status_time').html(`ETD: ${estimated_departure}`);
-      return $('#status_time').html(`STD: ${scheduled_departure}`);
+      if (res.real_departure) return $('#status_time').html(`Actual: ${real_departure}`);
+      if (res.estimated_departure) return $('#status_time').html(`Estimated: ${estimated_departure}`);
+      // return $('#status_time').html(`STD: ${scheduled_departure}`);
     }
 
     clearTimeout(window.flightCheckTimer);
