@@ -26,6 +26,9 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
           <li class="nav-item">
             <a class="nav-link menu-item" href="#section.list-events.php" data-target-id="list-events">Events</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link menu-item" href="#section.list-reservations.php" data-target-id="list-reservations">Reservations</a>
+          </li>
         <?php endif;?>
         <?php if (array_search($_SESSION['view'], ['developer','manager','driver']) !== false):?>
           <li class="nav-item">

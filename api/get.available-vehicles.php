@@ -29,29 +29,43 @@ WHERE
 	AND NOT FIND_IN_SET(v.id, (
 		SELECT CASE WHEN GROUP_CONCAT(vehicle_ids) IS NULL THEN 0 ELSE GROUP_CONCAT(vehicle_ids) END FROM events  
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date OR end_date BETWEEN :from_date AND :to_date) 
+			(start_date BETWEEN :from_date AND :to_date 
+			OR end_date BETWEEN :from_date AND :to_date) 
 			AND archived IS NULL 
 			AND id <> :event_id
 	))
+
+	-- Look in reservations
+	AND v.id NOT IN (
+		SELECT vehicle_id FROM vehicle_reservations
+		WHERE 
+			(start_datetime BETWEEN :from_date AND :to_date
+			OR end_datetime BETWEEN :from_date AND :to_date)
+			AND archived IS NULL
+			AND id <> :reservation_id
+			AND vehicle_id IS NOT NULL
+	)
 ";
 $current_tripId = $_GET['tripId'] ?? 0;
 $current_eventId = $_GET['eventId'] ?? 0;
+$current_reservationId = $_GET['reservationId'] ?? 0;
 $params = [
   'from_date' => $_GET['startDate'],
   'to_date' => $_GET['endDate'],
 	'trip_id' => $current_tripId,
-	'event_id' => $current_eventId
+	'event_id' => $current_eventId,
+	'reservation_id' => $current_reservationId
 ];
 $ids = $db->get_var($query, $params);
 $arrayIds = $ids ? explode(',',$ids) : [];
 
 $query = "
-SELECT
-  id, name, require_cdl, color
-FROM vehicles v
-WHERE
-	v.archived IS NULL
-ORDER BY name
+	SELECT
+		id, name, require_cdl, color
+	FROM vehicles v
+	WHERE
+		v.archived IS NULL
+	ORDER BY name
 ";
 $rows = $db->get_rows($query);
 foreach ($rows as $key => $row) {
