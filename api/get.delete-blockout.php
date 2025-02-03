@@ -9,6 +9,8 @@ use Transport\Blockout;
 use Transport\User;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $blockout = new Blockout($id);
 if (!$blockout->getId()) {
   die(json_encode([

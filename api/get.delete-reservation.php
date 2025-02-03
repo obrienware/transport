@@ -13,6 +13,8 @@ use Transport\User;
 use Transport\VehicleReservation;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $reservation = new VehicleReservation($id);
 if (!$reservation->getId()) {
   die(json_encode([

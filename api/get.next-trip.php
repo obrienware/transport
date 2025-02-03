@@ -10,6 +10,8 @@ use Transport\Trip;
 use Transport\Vehicle;
 
 $vehicleId = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($vehicleId) $vehicleId = (int)$vehicleId;
+
 $vehicle = new Vehicle($vehicleId);
 if (!$vehicle->getId()) {
   die(json_encode([

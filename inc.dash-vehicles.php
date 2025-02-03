@@ -22,13 +22,22 @@ $query = "
   ORDER BY v.name
 ";
 ?>
+
+<style>
+  #vehicle-alerts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+  }
+</style>
+
 <?php if ($rows = $db->get_rows($query)): ?>
 
-  <div class="row row-cols-2 rows-cols-md-3 row-cols-xl-4 row-cols-xxl-5 g-4 mb-4">
+  <div id="vehicle-alerts-container" class="mb-3 bg-warning rounded">
     <?php foreach ($rows as $row): ?>
 
-      <div class="col">
-        <div class="card h-100">
+        <div class="card">
           <div class="card-header" style="background-color:<?=$row->color?>">
             <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="app.openTab('view-vehicle', 'Vehicle', 'section.view-vehicle.php?id=<?=$row->id?>');">
             <?=$row->name?>
@@ -76,7 +85,6 @@ $query = "
 
           </ul>
         </div>
-      </div>
 
     <?php endforeach; ?>
   </div>

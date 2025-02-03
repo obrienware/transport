@@ -9,6 +9,8 @@ use Transport\DriverNote;
 use Transport\User;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $note = new DriverNote($id);
 if (!$note->getId()) {
   die(json_encode([

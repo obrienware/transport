@@ -67,7 +67,7 @@ use Transport\Vehicle;
 
     const tableId = 'table-vehicles';
     const loadOnClick = {
-      page: 'section.edit-vehicle.php',
+      page: 'section.view-vehicle.php',
       tab: 'view-vehicle',
       title: 'Vehicle (view)',
     }

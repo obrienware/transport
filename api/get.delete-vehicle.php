@@ -9,6 +9,8 @@ use Transport\User;
 use Transport\Vehicle;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $vehicle = new Vehicle($id);
 if (!$vehicle->getId()) {
   die(json_encode([

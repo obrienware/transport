@@ -9,6 +9,8 @@ use Transport\Snag;
 use Transport\User;
 
 $snagId = filter_input(INPUT_GET, 'snagId', FILTER_SANITIZE_NUMBER_INT);
+if ($snagId) $snagId = (int)$snagId;
+
 $snag = new Snag($snagId);
 if (!$snag->getId()) {
   die(json_encode([

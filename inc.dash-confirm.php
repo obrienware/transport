@@ -55,29 +55,30 @@ $reservationRows = $db->get_rows($query);
     /* grid-template-columns: repeat(3, 1fr); */
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     gap: 1rem;
+    padding: 1rem;
   }
 </style>
 
 <?php if ($tripRows || $eventRows || $reservationRows): ?>
 
-  <div id="unconfirmed-items-container" class="mb-3">
+  <div id="unconfirmed-items-container" class="mb-3 bg-warning rounded">
 
-    <div class="card text-bg-danger">
+    <!-- <div class="card text-bg-danger overflow-hidden">
       <h5 class="card-header"><i class="fa-solid fa-circle-exclamation"></i> Unconfirmed Items</h5>
       <div class="card-body text-bg-warning">
         <p>There are upcoming items that have not yet been confirmed. Please review and confirm these items as soon as possible.</p>
         <p class="mb-0">Only once trips, events, or vehicle reservations are confirmed do all relavent parties start receiving notifications.</p>
       </div>
-    </div>
+    </div> -->
 
     <?php if ($tripRows): ?>
       <div class="card">
-          <h5 class="card-header">Trips</h5>
+          <h5 class="card-header">Unconfirmed Trips</h5>
           <ul class="list-group list-group-flush">
             <?php foreach ($tripRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0" onclick="app.openTab('edit-trip', 'Trip (edit)', 'section.edit-trip.php?id=<?=$row->id?>');"><?=$row->summary?></button>
+                  <button class="btn p-0 text-start" onclick="app.openTab('edit-trip', 'Trip (edit)', 'section.edit-trip.php?id=<?=$row->id?>');"><?=$row->summary?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_date))?></div>
               </li>
@@ -88,12 +89,12 @@ $reservationRows = $db->get_rows($query);
 
     <?php if ($eventRows): ?>
       <div class="card">
-          <h5 class="card-header">Events</h5>
+          <h5 class="card-header">Unconfirmed Events</h5>
           <ul class="list-group list-group-flush">
             <?php foreach ($eventRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0" onclick="app.openTab('edit-event', 'Event (edit)', 'section.edit-event.php?id=<?=$row->id?>');"><?=$row->name?></button>
+                  <button class="btn p-0 text-start" onclick="app.openTab('edit-event', 'Event (edit)', 'section.edit-event.php?id=<?=$row->id?>');"><?=$row->name?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_date))?></div>
               </li>
@@ -104,12 +105,12 @@ $reservationRows = $db->get_rows($query);
 
     <?php if ($reservationRows): ?>
       <div class="card">
-          <h5 class="card-header">Vehicle Reservations</h5>
+          <h5 class="card-header">Unconfirmed Vehicle Reservations</h5>
           <ul class="list-group list-group-flush">
             <?php foreach ($reservationRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0" onclick="app.openTab('edit-reservation', 'Reservation (edit)', 'section.edit-reservation.php?id=<?=$row->id?>');"><?=$row->guest?></button>
+                  <button class="btn p-0 text-start" onclick="app.openTab('edit-reservation', 'Reservation (edit)', 'section.edit-reservation.php?id=<?=$row->id?>');"><?=$row->guest?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_datetime))?></div>
               </li>

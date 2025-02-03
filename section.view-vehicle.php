@@ -93,6 +93,7 @@ $vehicle = new Vehicle($vehicleId);
   import * as input from '/js/formatters.js';
   import * as ui from '/js/notifications.js';
   import * as net from '/js/network.js';
+  import { reFormat } from '/js/main.js';
 
   $(async ƒ => {
 

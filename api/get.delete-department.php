@@ -9,6 +9,8 @@ use Transport\Department;
 use Transport\User;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $department = new Department($id);
 if (!$department->getId()) {
   die(json_encode([

@@ -9,6 +9,8 @@ use Transport\Airline;
 use Transport\User;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+if ($id) $id = (int)$id;
+
 $airline = new Airline($id);
 if (!$airline->getId()) {
   die(json_encode([
