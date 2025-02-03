@@ -38,7 +38,7 @@ $user = new User($_SESSION['user']->id);
   </div>
 </div>
 
-<div class="container">
+<div>
   <div id="trips-to-confirm"></div>
   <div id="vehicle-alerts"></div>
 </div>
