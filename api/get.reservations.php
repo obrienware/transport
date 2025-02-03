@@ -12,30 +12,26 @@ $end = filter_input(INPUT_GET, 'end', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $requestorId = filter_input(INPUT_GET, 'requestorId', FILTER_SANITIZE_NUMBER_INT);
 
 if ($requestorId) {
-  $criteria = "AND e.requestor_id = {$requestorId}";
+  $criteria = "AND r.requestor_id = {$requestorId}";
 }
 
 $db = Database::getInstance();
 $query = "
   SELECT 
-    t.*, v.color, v.name as vehicle,
-    CASE WHEN pu.short_name IS NULL THEN pu.name ELSE pu.short_name END AS pickup_location,
-    CASE WHEN do.short_name IS NULL THEN do.name ELSE do.short_name END AS dropoff_location,
-    CONCAT(g.first_name,' ',g.last_name) AS guest,
-    CONCAT(d.first_name,' ',d.last_name) AS driver
-  FROM trips t
-  LEFT OUTER JOIN vehicles v ON v.id = t.vehicle_id
-  LEFT OUTER JOIN locations pu ON pu.id = t.pu_location
-  LEFT OUTER JOIN locations do ON do.id = t.do_location
-  LEFT OUTER JOIN guests g ON g.id = t.guest_id
-  LEFT OUTER JOIN users d ON d.id = t.driver_id
+
+    r.*, v.color, v.name as vehicle,
+    CONCAT(g.first_name,' ',g.last_name) AS guest
+
+  FROM vehicle_reservations r
+  LEFT OUTER JOIN vehicles v ON v.id = r.vehicle_id
+  LEFT OUTER JOIN guests g ON g.id = r.guest_id
+
   WHERE
     (
-      (start_date BETWEEN :start AND :end) OR
-      (end_date BETWEEN :start AND :end)
+      (r.start_datetime BETWEEN :start AND :end) OR
+      (r.end_datetime BETWEEN :start AND :end)
     )
-    AND t.archived IS NULL
-    AND t.cancellation_requested IS NULL
+    AND r.archived IS NULL
     {$criteria}
 ";
 $params = ['start' => $start, 'end' => $end];
@@ -48,18 +44,15 @@ if ($rows = $db->get_rows($query, $params)) {
     $textColor = '#'.readableColor($bgColor);
     $event = (object) [
       'id' => $row->id,
-      'title' => $row->summary.' @'.Date('g:ia', strtotime($row->pickup_date)),
-      'resourceIds' => ["vehicle-{$row->vehicle_id}", "driver-{$row->driver_id}"],
+      'title' => $row->guest.' use of vehicle: '.$row->vehicle,
+      'resourceIds' => ["vehicle-{$row->vehicle_id}"],
       'allDay' => false,
-      'start' => $row->start_date,
-      'end' => $row->end_date ?: Date('Y-m-d 23:59:59', strtotime($row->start_date)),
+      'start' => $row->start_datetime,
+      'end' => $row->end_datetime,
       'extendedProps' => [
-        'type' => 'trip',
+        'type' => 'reservation',
         'guest' => $row->guest,
-        'pickup' => $row->pickup_location,
-        'dropoff' => $row->dropoff_location,
         'vehicle' => $row->vehicle,
-        'driver' => $row->driver,
         'confirmed' => $row->confirmed
       ],
       'backgroundColor' => ($row->confirmed) ? $bgColor : '#dee2e6',
@@ -68,10 +61,10 @@ if ($rows = $db->get_rows($query, $params)) {
     // Format for the requestor's view
     if (isset($_GET['requestorId'])) {
       if ($row->confirmed) {
-        $event->backgroundColor = '#03fc30';
+        $event->backgroundColor = '#03fc30'; // green
         $event->textColor = '#000000';
       } else {
-        $event->backgroundColor = '#cccccc';
+        $event->backgroundColor = '#cccccc'; // gray
         $event->textColor = '#000000';
       }
     }

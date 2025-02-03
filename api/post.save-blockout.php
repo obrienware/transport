@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -17,15 +19,14 @@ $blockout->toDateTime = parseValue($json->toDateTime);
 $blockout->note = parseValue($json->note);
 
 function hasValue($value) {
-    return isset($value) && $value !== '';
+  return isset($value) && $value !== '';
 }
 
 function parseValue($value) {
-    return hasValue($value) ? $value : NULL;
+  return hasValue($value) ? $value : NULL;
 }
 
 if ($blockout->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $blockout->getId();
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $blockout->getId()]));
 }
-die(json_encode(['result' => false]));
+exit(json_encode(['result' => false, 'error' => $blockout->getLastError()]));

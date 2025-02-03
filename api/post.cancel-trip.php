@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -34,4 +36,4 @@ foreach ($managers as $manager) {
 
 
 
-die(json_encode(['result' => true]));
+exit(json_encode(['result' => true]));

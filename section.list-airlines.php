@@ -36,38 +36,29 @@ use Transport\Airline;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-airlines';
+    const loadOnClick = {
+      page: 'section.edit-airline.php',
+      tab: 'edit-airline',
+      title: 'Airline (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'airlineChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-airlines')) {
-      dataTable = $('#table-airlines').DataTable();
-    } else {
-      dataTable = $('#table-airlines').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-airlines tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-airline', 'Airline (edit)', `section.edit-airline.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-airline').off('click').on('click', ƒ => {
       app.openTab('edit-airline', 'Airline (add)', `section.edit-airline.php`);
     });
-
-    $(document).off('airlineChange.ns').on('airlineChange.ns', reloadSection);
 
   });
 

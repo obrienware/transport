@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -12,7 +14,6 @@ $user->preferences = $json;
 
 
 if ($user->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $user->getId();
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $user->getId()]));
 }
-die(json_encode(['result' => false]));
+exit(json_encode(['result' => false, 'error' => $user->getLastError()]));

@@ -177,7 +177,11 @@ if ($trip->do_lat && $trip->do_lon) {
   </div>
 </div>
 
-<script>
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
+
   $(async ƒ => {
     const loadingWeatherTemplate = `
       <div class="bg-body-secondary mt-1 px-2 rounded">
@@ -206,7 +210,7 @@ if ($trip->do_lat && $trip->do_lon) {
       const date = '<?=Date('Y-m-d', strtotime($trip->pickup_date))?>';
       // const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
       // const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
-      const res = await get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
+      const res = await net.get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
       console.log(res);
       $('#flight-status-last-checked').html(`Checked: ${moment().format('h:mma')}`);
       $('#flight-status-last-updated').html(`Updated: ${moment(res.updated).format('h:mma')} (${moment(res.updated).fromNow()})`);

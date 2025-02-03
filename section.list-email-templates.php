@@ -25,34 +25,26 @@ use Transport\EmailTemplates;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    if ($.fn.dataTable.isDataTable('#table-templates')) {
-      dataTable = $('#table-templates').DataTable();
-    } else {
-      dataTable = $('#table-templates').DataTable({
-        responsive: true,
-        // paging: true,
-      });
+    const tableId = 'table-templates';
+    const loadOnClick = {
+      page: 'section.edit-email-template.php',
+      tab: 'edit-template',
+      title: 'Email Template (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'emailTemplateChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    function bindRowClick () {
-      $('#table-templates tbody tr').off('click').on('click', ƒ => {
-        ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-        const self = ƒ.currentTarget;
-        const id = $(self).data('id');
-        targetId = id;
-        app.openTab('edit-template', 'Email Template (edit)', `section.edit-email-template.php?id=${id}`);
-      });
-    }
-    bindRowClick()
-    dataTable.on('draw.dt', bindRowClick);
-
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
+    
   });
 
 </script>

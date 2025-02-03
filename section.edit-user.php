@@ -108,47 +108,50 @@ $user = new User($id);
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const userId = <?=$user->getId() ?: 'null'?>;
       $('#btn-save-user').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-user.php', {
+        const resp = await net.post('/api/post.save-user.php', {
           id: userId,
-          username: cleanVal('#user-username'),
-          firstName: cleanVal('#user-first-name'),
-          lastName:cleanVal('#user-last-name'),
-          emailAddress: cleanVal('#user-email-address'),
-          phoneNumber: cleanVal('#user-phone-number'),
-          position: cleanVal('#user-position'),
-          departmentId: cleanVal('#user-department-id'),
-          cdl: checked('#user-cdl'),
+          username: input.cleanVal('#user-username'),
+          firstName: input.cleanVal('#user-first-name'),
+          lastName: input.cleanVal('#user-last-name'),
+          emailAddress: input.cleanVal('#user-email-address'),
+          phoneNumber: input.cleanVal('#user-phone-number'),
+          position: input.cleanVal('#user-position'),
+          departmentId: input.cleanVal('#user-department-id'),
+          cdl: input.checked('#user-cdl'),
           roles: $('.user-roles:checked').map((idx, el) => $(el).val()).get().join(','),
-          resetPassword: checked('#reset-user')
+          resetPassword: input.checked('#reset-user')
         });
         if (resp?.result) {
           $(document).trigger('userChange', {userId});
           app.closeOpenTab();
-          if (userId) return toastr.success('User saved.', 'Success');
-          return toastr.success('User added.', 'Success')
+          if (userId) return ui.toastr.success('User saved.', 'Success');
+          return ui.toastr.success('User added.', 'Success')
         }
-        toastr.error(resp . result . errors[2], 'Error');
+        ui.toastr.error(resp . result . errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-user').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this user?')) {
-          const resp = await get('/api/get.delete-user.php', {
+        if (await ui.ask('Are you sure you want to delete this user?')) {
+          const resp = await net.get('/api/get.delete-user.php', {
             id: '<?=$user->getId()?>'
           });
           if (resp?.result) {
             $(document).trigger('userChange', {userId});
             app.closeOpenTab();
-            return toastr.success('User deleted.', 'Success')
+            return ui.toastr.success('User deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting user.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting user.', 'Error');
         }
       });
 

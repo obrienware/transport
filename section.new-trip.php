@@ -269,13 +269,16 @@
   </section>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   $(async ƒ => {
 
     let drivers;
     let vehicles;
-    const airlines = await get('/api/get.resource-airlines.php');
+    const airlines = await net.get('/api/get.resource-airlines.php');
 
     function checkForFlight() {
       if ($('#trip-pu-location').data('type') === 'airport' || $('#trip-do-location').data('type') === 'airport') {
@@ -311,7 +314,7 @@
     const contactForm = new ContactClass('#contactModal');
 
     contactForm.onUpdate = async function (e, formData) {
-      const resp = await post('/api/post.save-guest.php', formData);
+      const resp = await net.post('/api/post.save-guest.php', formData);
       if (resp?.result) {
         $(document).trigger('guestChange');
         if (resp?.result) {
@@ -371,7 +374,7 @@
       }
 
       if (moment().isAfter(pickupDate)) {
-        const answer = await ask('This trip is already in progress. Do you wish to continue?');
+        const answer = await ui.ask('This trip is already in progress. Do you wish to continue?');
         if (!answer) return false;
       }
 
@@ -386,11 +389,11 @@
       const saveVehicleId = val('#trip-vehicle-id');
 
       // Load the resources!
-      drivers = await get('/api/get.available-drivers.php', {
+      drivers = await net.get('/api/get.available-drivers.php', {
         startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
         endDate: endDate.format('YYYY-MM-DD HH:mm:59')
       });
-      vehicles = await get('/api/get.available-vehicles.php', {
+      vehicles = await net.get('/api/get.available-vehicles.php', {
         startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
         endDate: endDate.format('YYYY-MM-DD HH:mm:59')
       });
@@ -436,7 +439,7 @@
     });
 
     $('#btn-trip-change').off('click').on('click', async () => {
-      if (await ask('Changing the date and/or duration could affect the availability of your resources (vehicles and drivers) and will therefore need to be reset. Are you sure you want to do this?')) {
+      if (await ui.ask('Changing the date and/or duration could affect the availability of your resources (vehicles and drivers) and will therefore need to be reset. Are you sure you want to do this?')) {
         $('#trip-head').find('input').attr('disabled', false).attr('readonly', false);
         $('#btn-trip-next').removeClass('d-none');
         $('#btn-trip-change').addClass('d-none');
@@ -522,16 +525,21 @@
 
     $('#btn-save-trip').off('click').on('click', async ƒ => {
       const data = await getData();
+      if (data.vehicleDOOptions === 'leave vehicle with guest' && data.guestId) {
+        if (await ui.ask('Do you want to create a linked vehicle reservation for this guest?')) {
+          data.createVehicleReservation = true;
+        }
+      }
       if (data) {
-        const resp = await post('/api/post.save-trip.php', data);
+        const resp = await net.post('/api/post.save-trip.php', data);
         if (resp?.result) {
           $(document).trigger('tripChange');
-          toastr.success('Trip added.', 'Success');
+          ui.toastr.success('Trip added.', 'Success');
           app.closeOpenTab();
           app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
           return;
         }
-        toastr.error(resp.result.errors[2], 'Error');
+        ui.toastr.error(resp.result.errors[2], 'Error');
         console.log(resp);
       }
     });
@@ -540,39 +548,42 @@
       const saveButtonText = $('#btn-save-confirm-trip').text();
       $('#btn-save-confirm-trip').prop('disabled', true).text('Saving...');
       const data = await getData();
-      if (data) {
-        const resp = await post('/api/post.save-trip.php', data);
-        if (resp?.result) {
-          const id = resp?.result;
-          const newResp = await post('/api/post.confirm-trip.php', {id});
-          if (newResp?.result) {
-            $(document).trigger('tripChange');
-            app.closeOpenTab();
-            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
-            return toastr.success('Trip added.', 'Success');
-          }
-          $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
-          return toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      if (data.vehicleDOOptions === 'leave vehicle with guest' && data.guestId) {
+        if (await ui.ask('Do you want to create a linked vehicle reservation for this guest?')) {
+          data.createVehicleReservation = true;
         }
-        toastr.error(resp.result.errors[2], 'Error');
-        console.error(resp);
-        $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
       }
+      const resp = await net.post('/api/post.save-trip.php', data);
+      if (resp?.result) {
+        const id = resp?.result;
+        const newResp = await net.post('/api/post.confirm-trip.php', {id});
+        if (newResp?.result) {
+          $(document).trigger('tripChange');
+          app.closeOpenTab();
+          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
+          return ui.toastr.success('Trip added.', 'Success');
+        }
+        $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
+        return ui.toastr.error('Seems to be a problem finalizing this trip!', 'Error');
+      }
+      ui.toastr.error(resp.result.errors[2], 'Error');
+      console.error(resp);
+      $('#btn-save-confirm-trip').prop('disabled', false).text(saveButtonText);
     });
 
     async function getData() {
       const data = {};
       let control;
 
-      data.summary = cleanVal('#trip-summary');
-      data.startDate = val('#trip-start-date') || null;
-      data.pickupDate = val('#trip-pickup-date') || null;
-      data.endDate = val('#trip-end-date') || null;
+      data.summary = input.cleanVal('#trip-summary');
+      data.startDate = $('#trip-start-date').val() || null;
+      data.pickupDate = $('#trip-pickup-date').val() || null;
+      data.endDate = $('#trip-end-date').val() || null;
 
       control = $('#trip-pu-location');
       if (control.data('value') != control.val() && control.val() != '') {
         control.addClass('is-invalid');
-        if (await ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
+        if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
           app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
         }
         return false;
@@ -582,29 +593,29 @@
       control = $('#trip-guest');
       if (control.data('value') != control.val() && control.val() != '') {
         control.addClass('is-invalid');
-        if (await ask(`"${control.val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
+        if (await ui.ask(`"${control.val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
           app.openTab('edit-guest', 'Guests/Groups (add)', `section.edit-guest.php`);
         }
         return false
       }
       data.guestId = control.data('id');
-      data.guests = cleanVal('#trip-guests');
-      data.passengers = cleanDigitsVal('#trip-passengers');
+      data.guests = input.cleanVal('#trip-guests');
+      data.passengers = input.cleanDigitsVal('#trip-passengers');
 
       control = $('#trip-do-location');
       if (control.data('value') != control.val() && control.val() != '') {
         control.addClass('is-invalid');
-        if (await ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
+        if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
           app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
         }
         return false;
       }
       data.doLocationId = control.data('id');
 
-      data.vehicleId = val('#trip-vehicle-id');
-      data.driverId = val('#trip-driver-id');
-      data.airlineId = val('#trip-airline-id');
-      data.flightNumber = cleanUpperVal('#trip-flight-number');
+      data.vehicleId = $('#trip-vehicle-id').val();
+      data.driverId = $('#trip-driver-id').val();
+      data.airlineId = $('#trip-airline-id').val();
+      data.flightNumber = input.cleanUpperVal('#trip-flight-number');
 
       // We cannot have an ETA AND an ETD. This has previously precipitated errors
       if ($('#trip-pu-location').data('type') === 'airport') {
@@ -621,16 +632,16 @@
       control = $('#trip-requestor');
       if (control.data('value') != control.val() && control.val() != '') {
         control.addClass('is-invalid');
-        if (await ask(`"${control.val()}" is not a recognized user. Would you like to add a new user?`)) {
+        if (await ui.ask(`"${control.val()}" is not a recognized user. Would you like to add a new user?`)) {
           app.openTab('edit-user', 'User (add)', `section.edit-user.php`);
         }
         return false;
       }
       data.requestorId = control.data('id');
 
-      data.guestNotes = cleanVal('#trip-guest-notes');
-      data.driverNotes = cleanVal('#trip-driver-notes');
-      data.generalNotes = cleanVal('#trip-general-notes');
+      data.guestNotes = input.cleanVal('#trip-guest-notes');
+      data.driverNotes = input.cleanVal('#trip-driver-notes');
+      data.generalNotes = input.cleanVal('#trip-general-notes');
 
       return data;
     }

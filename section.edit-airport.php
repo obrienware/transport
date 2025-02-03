@@ -96,7 +96,10 @@ $airport = new Airport($id);
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -106,13 +109,13 @@ $airport = new Airport($id);
       {
         const data = {
           id: airportId,
-          iata: cleanUpperVal('#_iata'),
-          name: cleanProperVal('#_airport-name'),
+          iata: input.cleanUpperVal('#_iata'),
+          name: input.cleanProperVal('#_airport-name'),
           stagingLocationId: $('#_airport-staging-location').data('id'),
-          leadTime: cleanDigitsVal('#_airport-leadtime'),
-          travelTime: cleanDigitsVal('#_airport-traveltime'),
-          arrivalInstructions: cleanVal('#_airport-arrival-instructions-small'),
-          arrivalInstructionsGroup: cleanVal('#_airport-arrival-instructions-group'),
+          leadTime: input.cleanDigitsVal('#_airport-leadtime'),
+          travelTime: input.cleanDigitsVal('#_airport-traveltime'),
+          arrivalInstructions: input.cleanVal('#_airport-arrival-instructions-small'),
+          arrivalInstructionsGroup: input.cleanVal('#_airport-arrival-instructions-group'),
         };
         return data;
       }
@@ -132,32 +135,29 @@ $airport = new Airport($id);
       });
 
 
-      $('#btn-save-airport').off('click').on('click', async ƒ => {
+      $('#btn-save-airport').on('click', async ƒ => {
         const data = getData();
-        console.log(data);
-        const resp = await post('/api/post.save-airport.php', data);
+        const resp = await net.post('/api/post.save-airport.php', data);
         if (resp?.result) {
           $(document).trigger('airportChange', {airportId});
           app.closeOpenTab();
-          if (airportId) return toastr.success('Airport saved.', 'Success');
-          return toastr.success('Airport added.', 'Success')
+          if (airportId) return ui.toastr.success('Airport saved.', 'Success');
+          return ui.toastr.success('Airport added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
-        console.log(resp);
+        ui.toastr.error(resp .result.errors[2], 'Error');
       });
 
-      $('#btn-delete-airport').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this airport?')) {
-          const resp = await get('/api/get.delete-airport.php', {
+      $('#btn-delete-airport').on('click', async ƒ => {
+        if (await ui.ask('Are you sure you want to delete this airport?')) {
+          const resp = await net.get('/api/get.delete-airport.php', {
             id: airportId
           });
           if (resp?.result) {
             $(document).trigger('airportChange', {airportId});
             app.closeOpenTab();
-            return toastr.success('Airport deleted.', 'Success')
+            return ui.toastr.success('Airport deleted.', 'Success')
           }
-          console.log(resp);
-          toastr.error('There seems to be a problem deleting airport.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting airport.', 'Error');
         }
       });
 

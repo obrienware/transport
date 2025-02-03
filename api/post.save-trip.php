@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -12,6 +14,7 @@ use Transport\Template;
 use Transport\Trip;
 use Transport\User;
 use Transport\Vehicle;
+use Transport\VehicleReservation;
 
 $user = new User($_SESSION['user']->id);
 
@@ -143,9 +146,41 @@ if ($trip->ETD) {
   $trip->IATA = $location->IATA;
 }
 
+
+// Check for and update any linked vehicle reservations
+if ($reservation = VehicleReservation::getReservationByTripId($trip->getId())) {
+  if ($trip->getId() == $reservation->startTripId) {
+    $reservation->startDateTime = $trip->endDate;
+  } else {
+    $reservation->endDateTime = $trip->startDate;
+  }
+  $reservation->save(userResponsibleForOperation: $user->getUsername());
+}
+
+
+
 if ($trip->save(userResponsibleForOperation: $user->getUsername())) {
   $result = $trip->getId();
   if ($changes) notifyParticipants($trip, $changes, $driversToNotify);
+
+  if ($json->vehiclePUOptions === 'guest will have vehicle') {
+    // There may be a open-ended vehicle reservation for this guest. If there is, we need to link this trip to it.
+    if ($reservation = VehicleReservation::getOpenEndedReservation($trip->guestId)) {
+      $reservation->endTripId = $trip->getId();
+      $reservation->endDateTime = $trip->startDate;
+      $reservation->save(userResponsibleForOperation: $user->getUsername());
+    }
+    die(json_encode(['result' => $result]));
+  }
+
+  if ($json->createVehicleReservation) {
+    $reservation = new VehicleReservation();
+    $reservation->guestId = $trip->guestId;
+    $reservation->vehicleId = $trip->vehicleId;
+    $reservation->startTripId = $trip->getId();
+    $reservation->startDateTime = $trip->endDate;
+    $reservation->save(userResponsibleForOperation: $user->getUsername());
+  }
   die(json_encode(['result' => $result]));
 }
 die(json_encode(['result' => false]));

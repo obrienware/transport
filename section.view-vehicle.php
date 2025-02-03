@@ -89,7 +89,11 @@ $vehicle = new Vehicle($vehicleId);
 
 
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
+
   $(async ƒ => {
 
     const vehicleId = <?=$vehicleId?>;
@@ -101,7 +105,7 @@ $vehicle = new Vehicle($vehicleId);
     reFormat();
 
     // nextTripEventDetail
-    const nextTrip = await get('/api/get.next-trip.php', {id: vehicleId});
+    const nextTrip = await net.get('/api/get.next-trip.php', {id: vehicleId});
     if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
     const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
     $('#nextTripEventDetail').html(

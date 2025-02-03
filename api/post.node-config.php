@@ -1,38 +1,19 @@
 <?php
-//TODO: This should have its own class
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Database;
+use Transport\Config;
 
-$db = Database::getInstance();
 $json = json_decode(file_get_contents("php://input"));
 $json->nodeConfig->updated = (object) [
   'date' => date('Y-m-d H:i:s'),
   'by' => $_SESSION['user']->username
 ];
 
-$query = "UPDATE config SET config = :config, json5 = :json5 WHERE node = :node";
-$params = [
-  'config' => json_encode($json->nodeConfig, JSON_PRETTY_PRINT),
-  'json5' => $json->configString,
-  'node' => $json->node
-];
-$db->query($query, $params);
+$config = new Config($json->node);
+$config->config = $json->nodeConfig;
+$config->configString = $json->configString;
+$config->save($_SESSION['user']->username);
 
-echo json_encode(['result' => true, 'meta' => $db->errorInfo]);
-
-$query = "
-  INSERT INTO config_log SET
-    datetimestamp = NOW(),
-    node = :node,
-    config = :config,
-    user = :user
-";
-$params = [
-  'node' => $json->node,
-  'config' => $json->configString,
-  'user' => $_SESSION['user']->username
-];
-$db->query($query, $params);
+echo json_encode(['result' => true]);

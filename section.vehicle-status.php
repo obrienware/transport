@@ -70,23 +70,26 @@ $vehicle = new Vehicle($vehicleId);
   <button id="btn-update-vehicle-status" class="btn btn-outline-primary btn-sm">Update</button>
 </div> -->
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   $(async ƒ => {
 
     const vehicleId = <?=$vehicleId?>;
     const vehicleUpdateForm = new VehicleUpdateClass('#vehicleUpdateModal');
-    const vehicle = await get('/api/get.vehicle.php', {id: vehicleId});
+    const vehicle = await net.get('/api/get.vehicle.php', {id: vehicleId});
 
     vehicleUpdateForm.onUpdate = async function (e, formData) {
       formData.vehicleId = vehicleId;
-      const resp = await post('/api/post.update-vehicle.php', formData);
+      const resp = await net.post('/api/post.update-vehicle.php', formData);
       if (resp?.result) {
         $(document).trigger('vehicleChange');
         $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
         return;
       }
-      toastr.error(resp.message);
+      ui.toastr.error(resp.message);
     }    
 
     $('#btn-update-vehicle-status').off('click').on('click', e => {
@@ -195,7 +198,7 @@ $vehicle = new Vehicle($vehicleId);
 
     async function toggleVehicleItem(name, state) {
       const data = {vehicleId, name, state};
-      const res = await post('api/post.vehicle-toggle.php', data);
+      const res = await net.post('api/post.vehicle-toggle.php', data);
       console.log(res);
       renderVehicleItem(name, res.state);
     }
@@ -214,7 +217,7 @@ $vehicle = new Vehicle($vehicleId);
       const percentage = getHorizontalClickPercentage(e, e.currentTarget);
       console.log(`Clicked at ${percentage}%`);
       const data = {vehicleId, name: 'fuel', value: percentage};
-      const res = await post('api/post.vehicle-update.php', data);
+      const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('fuelLevel', percentage);
     });
@@ -229,7 +232,7 @@ $vehicle = new Vehicle($vehicleId);
 
     $('#vehicle-fuel-icon').off('click').on('click', async e => {
       const data = {vehicleId, name: 'fuel', value: null};
-      const res = await post('api/post.vehicle-update.php', data);
+      const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('fuelLevel', null);
     });
@@ -239,17 +242,17 @@ $vehicle = new Vehicle($vehicleId);
       let mileage = await getNumber('Enter mileage');
       if (mileage === undefined) return;
       if (mileage === '') {
-        const ans = await ask('Are you sure you want to clear the mileage?');
+        const ans = await ui.ask('Are you sure you want to clear the mileage?');
         if (!ans) return;
         mileage = null;
       }
       mileage = parseInt(mileage);
       if (mileage < previousMileage) {
-        toastr.error('Mileage cannot be less than previous mileage', 'Error');
+        ui.toastr.error('Mileage cannot be less than previous mileage', 'Error');
         return;
       }
       const data = {vehicleId, name: 'mileage', value: parseInt(mileage)};
-      const res = await post('api/post.vehicle-update.php', data);
+      const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('mileage', mileage);
     });

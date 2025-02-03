@@ -53,39 +53,42 @@ $note = new DriverNote($id);
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const noteId = <?=$note->getId() ?: 'null'?>;
       $('#btn-save-driver-note').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-driver-note.php', {
+        const resp = await net.post('/api/post.save-driver-note.php', {
           id: noteId,
-          title: cleanProperVal('#note-title'),
-          note: cleanVal('#note-content'),
+          title: input.cleanProperVal('#note-title'),
+          note: input.cleanVal('#note-content'),
         });
         if (resp?.result) {
           $(document).trigger('driverNoteChange', {noteId});
           app.closeOpenTab();
-          if (noteId) return toastr.success('Note saved.', 'Success');
-          return toastr.success('Note added.', 'Success')
+          if (noteId) return ui.toastr.success('Note saved.', 'Success');
+          return ui.toastr.success('Note added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
+        ui.toastr.error(resp .result.errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-driver-note').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this note?')) {
-          const resp = await get('/api/get.delete-driver-note.php', {
+        if (await ui.ask('Are you sure you want to delete this note?')) {
+          const resp = await net.get('/api/get.delete-driver-note.php', {
             id: noteId
           });
           if (resp?.result) {
             $(document).trigger('driverNoteChange', {noteId});
             app.closeOpenTab();
-            return toastr.success('Note deleted.', 'Success')
+            return ui.toastr.success('Note deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting note.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting note.', 'Error');
         }
       });
 

@@ -34,38 +34,29 @@ use Transport\Blockout;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-blockouts';
+    const loadOnClick = {
+      page: 'section.edit-blockout.php',
+      tab: 'edit-blockout',
+      title: 'Blockout (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'blockoutChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-blockouts')) {
-      dataTable = $('#table-blockouts').DataTable();
-    } else {
-      dataTable = $('#table-blockouts').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-blockouts tbody tr').off('click').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-blockout', 'Blockout (edit)', `section.edit-blockout.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-blockout').off('click').on('click', ƒ => {
       app.openTab('new-blockout', 'Blockout (new)', `section.new-blockout.php`);
     });
-
-    $(document).off('blockoutChange.ns').on('blockoutChange.ns', reloadSection);
   });
 
 </script>

@@ -152,7 +152,6 @@ if (!isset($user)) $user = new User($_SESSION['user']->id);
 
     $('.menu-item').on('click', function(e) {
       e.preventDefault();
-      // e.stopPropagation();
       const targetTab = $(this).data('target-id');
       const tabLabel = $(this).data('target-label') || $(this).html();
       const sectionToLoad = $(this).attr('href').slice(1); // Remove the '#'

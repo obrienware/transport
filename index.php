@@ -19,7 +19,8 @@ include 'inc.menu.php';
 
 </div><!-- .container-fluid -->
 
-<script type="text/javascript">
+<script type="module">
+  import { get } from '/js/network.js';
   // const usernameEl = document.getElementById('username');
   // const popover = new DarkEditable(usernameEl);
 
@@ -42,5 +43,4 @@ include 'inc.menu.php';
   });
 
 </script>
-
 <?php include 'inc.footer.php';

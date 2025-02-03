@@ -1,12 +1,13 @@
 <?php
 declare(strict_types=1);
+
 namespace Transport;
 
 require_once __DIR__.'/../../autoload.php';
 
 class Authenticate
 {
-  public static function logIn ($username, $password)
+  public static function logIn (string $username, string $password): int | false
   {
     $db = Database::getInstance();
     $query = 'SELECT * FROM users WHERE (username = :username OR email_address = :username) AND password = :password';

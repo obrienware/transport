@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -17,15 +19,14 @@ $airportLocation->locationId = parseValue($json->locationId);
 $airportLocation->type = parseValue($json->type);
 
 function hasValue($value) {
-    return isset($value) && $value !== '';
+  return isset($value) && $value !== '';
 }
 
 function parseValue($value) {
-    return hasValue($value) ? $value : NULL;
+  return hasValue($value) ? $value : NULL;
 }
 
 if ($airportLocation->save(userResponsibleForOperation: $user->getUsername())) {
-    $result = $airportLocation->getId();
-    die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $airportLocation->getId()]));
 }
-die(json_encode(['result' => false]));
+exit(json_encode(['result' => false, 'error' => $airportLocation->getLastError()]));

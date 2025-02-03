@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Transport;
 
 require_once __DIR__.'/../../autoload.php';
@@ -22,7 +23,7 @@ class AirportLocation extends Base
 
   public function getName(): string
   {
-    return ''; // <- weird that we don't have a name for this
+    return ''; // <- weird that we don't actually have a name for this, never-the-less, we need to return a string
   }
   
   public function load(int $id): bool

@@ -113,3 +113,6 @@ const alertWarning = async (message, title = '', timer) => {
 	if (timer) config.timer = timer;
 	return await Notice.fire(config);
 }
+
+
+export { toastr, ask, input, getText, getFile, getNumber, alertError, alertSuccess, alertWarning };

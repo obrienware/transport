@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -13,9 +15,14 @@ if (!empty($_FILES)) {
   $targetFolder = dirname( __FILE__ ).'/../documents/';
   
   if ( !file_exists( $targetFolder ) || !is_dir( $targetFolder) ) {
-    mkdir("$targetFolder");
+    if (!mkdir($targetFolder) && !is_dir($targetFolder)) {
+      if (!chmod($targetFolder, 0755)) {
+        exit(json_encode(['error' => 'Failed to set permissions on target folder']));
+      }
+    }
     chmod("$targetFolder", 0755);
   }
+
   if (move_uploaded_file($_FILES['file']['tmp_name'], $targetFolder.$targetFilename)) {
     $doc = new VehicleDocument();
     $doc->vehicleId = $_POST['vehicleId'];
@@ -23,10 +30,10 @@ if (!empty($_FILES)) {
     $doc->filename = $targetFilename;
     $doc->fileType = $_FILES['file']['type'];
     if ($doc->save(userResponsibleForOperation: $user->getUsername())) {
-      $result = $doc->getId();
-      die(json_encode(['result' => $result]));
+      exit(json_encode(['result' => $doc->getId()]));
     }
+    exit(json_encode(['result' => false, 'error' => $doc->getLastError()]));
   }
-  die(json_encode(['error' => 'Failed to save document']));
+  exit(json_encode(['error' => 'Failed to save document']));
 }
-die(json_encode(['error' => 'No file uploaded']));
+exit(json_encode(['error' => 'No file uploaded']));

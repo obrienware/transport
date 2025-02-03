@@ -40,43 +40,29 @@ use Transport\Guest;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-guests';
+    const loadOnClick = {
+      page: 'section.edit-guest.php',
+      tab: 'edit-guest',
+      title: 'Guest (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'guestChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ( $.fn.dataTable.isDataTable( '#table-guests' ) ) {
-      dataTable = $('#table-guests').DataTable();
-    } else {
-      dataTable = $('#table-guests').DataTable({
-        responsive: true,
-        paging: true,
-      });
-    }
-
-    function bindRowClick () {
-      $('#table-guests tbody tr').on('click', ƒ => {
-        ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-        const self = ƒ.currentTarget;
-        const id = $(self).data('id');
-        targetId = id;
-        app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php?id=${id}`);
-      });
-    }
-    bindRowClick()
-    dataTable.on('draw.dt', bindRowClick);
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-guest').off('click').on('click', ƒ => {
       app.openTab('edit-guest', 'Contact (edit)', `section.edit-guest.php`);
     });
-
-    $(document).off('guestChange.ns').on('guestChange.ns', reloadSection);
 
   });
 

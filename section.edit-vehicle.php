@@ -80,44 +80,47 @@ $vehicle = new Vehicle($id);
 
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const vehicleId = <?=$vehicle->getId() ?? 'null'?>;
       $('#btn-save-vehicle').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-vehicle.php', {
+        const resp = await net.post('/api/post.save-vehicle.php', {
           vehicleId,
           color: val('#vehicle-color'),
-          name: cleanVal('#vehicle-name'),
-          description: cleanVal('#vehicle-description'),
-          passengers: int(val('#vehicle-passengers'), null),
-          licensePlate: cleanUpperVal('#vehicle-license-plate'),
+          name: input.cleanVal('#vehicle-name'),
+          description: input.cleanVal('#vehicle-description'),
+          passengers: input.int(val('#vehicle-passengers'), null),
+          licensePlate: input.cleanUpperVal('#vehicle-license-plate'),
           // mileage: int(val('#vehicle-mileage'), null),
           requireCDL: $('#vehicle-requireCDL').is(':checked'),
         });
         if (resp?.result) {
           $(document).trigger('vehicleChange', {vehicleId});
           app.closeOpenTab();
-          if (vehicleId) return toastr.success('Vehicle saved.', 'Success');
-          return toastr.success('Vehicle added.', 'Success');
+          if (vehicleId) return ui.toastr.success('Vehicle saved.', 'Success');
+          return ui.toastr.success('Vehicle added.', 'Success');
         }
-        toastr.error(resp.result.errors[2], 'Error');
+        ui.toastr.error(resp.result.errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-vehicle').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this user?')) {
-          const resp = await get('/api/get.delete-vehicle.php', {
+        if (await ui.ask('Are you sure you want to delete this user?')) {
+          const resp = await net.get('/api/get.delete-vehicle.php', {
             id: vehicleId
           });
           if (resp?.result) {
             app.closeOpenTab();
             $(document).trigger('vehicleChange', {vehicleId});
-            return toastr.success('Vehicle deleted.', 'Success')
+            return ui.toastr.success('Vehicle deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting vehicle.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting vehicle.', 'Error');
         }
       });
 

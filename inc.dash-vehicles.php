@@ -82,21 +82,22 @@ $query = "
   </div>
 
 
-  <script type="text/javascript">
+  <script type="module">
+    import { get } from '/js/network.js';
 
-      $('.next-trip').each(async function(e, a) {
-        const vehicleId = $(a).data('vehicle-id');
-        const nextTrip = await get('/api/get.next-trip.php', {id: vehicleId});
-        if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
-        const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
+    $('.next-trip').each(async function(e, a) {
+      const vehicleId = $(a).data('vehicle-id');
+      const nextTrip = await get('/api/get.next-trip.php', {id: vehicleId});
+      if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
+      const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
 
-        $(this).html(
-          `<div style="font-size: small" class="text-black-50">Next trip/event - ` +
-          timeago.format(nextTrip.starts).toSentenceCase() + ' (' + starts.format('M/D h:mma') + ') ' 
-          + `</div>`
-          + `<div style="font-size: small" class="text-black-50"><i class="fa-solid fa-circle-right text-primary"></i> ${nextTrip.name}</div>`
-        );
-      });
+      $(this).html(
+        `<div style="font-size: small" class="text-black-50">Next trip/event - ` +
+        timeago.format(nextTrip.starts).toSentenceCase() + ' (' + starts.format('M/D h:mma') + ') ' 
+        + `</div>`
+        + `<div style="font-size: small" class="text-black-50"><i class="fa-solid fa-circle-right text-primary"></i> ${nextTrip.name}</div>`
+      );
+    });
 
   </script>
 
@@ -116,28 +117,17 @@ function readableColor($bg)
     $b * $b * .114
   );
 
-  if ($squared_contrast > pow(170, 2)) {
-    return '000000';
-  } else {
-    return 'FFFFFF';
-  }
+  if ($squared_contrast > pow(170, 2)) return '000000';
+  return 'FFFFFF';
 }
 
 function fuelLevelAsFractions($fuel_level)
 {
-  if ($fuel_level <= 10) {
-    return 'Empty';
-  } elseif ($fuel_level <= 20) {
-    return '⅛';
-  } elseif ($fuel_level <= 30) {
-    return '¼';
-  } elseif ($fuel_level <= 40) {
-    return '⅜';
-  } elseif ($fuel_level <= 60) {
-    return '½';
-  } elseif ($fuel_level <= 80) {
-    return '¾';
-  } else {
-    return 'Full';
-  }
+  if ($fuel_level <= 10) return 'Empty';
+  if ($fuel_level <= 20) return '⅛';
+  if ($fuel_level <= 30) return '¼';
+  if ($fuel_level <= 40) return '⅜';
+  if ($fuel_level <= 60) return '½';
+  if ($fuel_level <= 80) return '¾';
+  return 'Full';
 }

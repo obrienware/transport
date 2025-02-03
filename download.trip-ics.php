@@ -6,7 +6,7 @@ require_once 'autoload.php';
 
 use Transport\Trip;
 
-$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $trip = new Trip($id);
 
 $description = "";

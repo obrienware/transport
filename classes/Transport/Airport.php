@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Transport;
 
 require_once __DIR__.'/../../autoload.php';
@@ -138,13 +139,6 @@ class Airport extends Base
 		}
 	}
 
-	public static function getAll(): array
-	{
-		$db = Database::getInstance();
-		$query = 'SELECT * FROM airports WHERE archived IS NULL ORDER BY name';
-		return $db->get_rows($query);
-	}
-
 	protected function reset(): void
 	{
 		parent::reset();
@@ -158,4 +152,12 @@ class Airport extends Base
 		$this->arrivalInstructions = null;
 		$this->arrivalInstructionsGroup = null;
 	}
+
+	public static function getAll(): array
+	{
+		$db = Database::getInstance();
+		$query = 'SELECT * FROM airports WHERE archived IS NULL ORDER BY name';
+		return $db->get_rows($query);
+	}
+
 }

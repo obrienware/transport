@@ -44,21 +44,24 @@ $template = new EmailTemplates($id);
       
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       $('#save-template').off('click').on('click', async ƒ => {
         const content = $('#template-content').val();
-        const resp = await post('/api/post.save-email-template.php', {
+        const resp = await net.post('/api/post.save-email-template.php', {
           id: <?=$template->getId()?>,
           content: content
         });
         if (resp?.result) {
           app.closeOpenTab();
-          toastr.success('Template saved.', 'Success');
+          ui.toastr.success('Template saved.', 'Success');
         }
-        toastr.error(resp.result.errors[2], 'Error');
+        ui.toastr.error(resp.result.errors[2], 'Error');
         console.log(resp);
       });
 

@@ -73,7 +73,10 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
   </div>
 
   
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -82,8 +85,8 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 			});
 
 			$('#btn-reset-password').on('click', async ƒ => {
-        const username = cleanVal('#username');
-        const resp = await post('/api/post.forgot-password.php', {username});
+        const username = input.cleanVal('#username');
+        const resp = await net.post('/api/post.forgot-password.php', {username});
         if (resp.result) {
           await alertSuccess('A reset link has been sent. Please check your email.');
           return location.href = 'page.authenticate.php';

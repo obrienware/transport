@@ -21,6 +21,7 @@ $query = "
     AND e.archived IS NULL
   ORDER BY start_date ASC
 ";
+$rows = $db->get_rows($query)
 ?>
 <div class="container-fluid">
   <div class="d-flex justify-content-between mt-2">
@@ -30,108 +31,76 @@ $query = "
     </button>
   </div>
 
-  <?php if ($rows = $db->get_rows($query)): ?>
-
-    <table id="table-events" class="table align-middle table-hover row-select">
-      <thead>
-        <tr class="table-dark">
-          <th class="fit">Confirmed</th>
-          <th class="fit">From</th>
-          <th class="fit">To</th>
-          <th>Description</th>
-          <th>Where</th>
+  <table id="table-events" class="table align-middle table-hover row-select">
+    <thead>
+      <tr class="table-dark">
+        <th class="fit">Confirmed</th>
+        <th class="fit">From</th>
+        <th class="fit">To</th>
+        <th>Description</th>
+        <th>Where</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($rows as $row): ?>
+        <?php 
+          $tdClass = '';
+          if ($row->cancellation_requested) {
+            $tdClass = 'table-secondary';
+          } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
+            $tdClass = 'table-secondary';
+          } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
+            $tdClass = 'table-success';
+          }
+        ?>
+        <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
+          <td class="text-center fit" data-order="<?=$row->confirmed?>">
+            <?php if ($row->confirmed): ?>
+              <i class="fa-solid fa-circle-check fa-xl text-success"></i>
+            <?php else: ?>
+              <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
+            <?php endif; ?>
+          </td>
+          <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
+          <td class="fit datetime short" data-order="<?=$row->end_date?>"><?=$row->end_date?></td>
+          <td>
+            <?php if ($row->cancellation_requested): ?>
+              <i class="badge bg-danger">Cancelled</i>
+            <?php endif;?>
+            <?=$row->name?>
+          </td>
+          <td><?=$row->location?></td>
         </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($rows as $row): ?>
-          <?php 
-            $tdClass = '';
-            if ($row->cancellation_requested) {
-              $tdClass = 'table-secondary';
-            } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
-              $tdClass = 'table-secondary';
-            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
-              $tdClass = 'table-success';
-            }
-          ?>
-          <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
-            <td class="text-center fit" data-order="<?=$row->confirmed?>">
-              <?php if ($row->confirmed): ?>
-                <i class="fa-solid fa-circle-check fa-xl text-success"></i>
-              <?php else: ?>
-                <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
-              <?php endif; ?>
-            </td>
-            <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
-            <td class="fit datetime short" data-order="<?=$row->end_date?>"><?=$row->end_date?></td>
-            <td>
-              <?php if ($row->cancellation_requested): ?>
-                <i class="badge bg-danger">Cancelled</i>
-              <?php endif;?>
-              <?=$row->name?>
-            </td>
-            <td><?=$row->location?></td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-
-    <script type="text/javascript">
-
-      $(async ƒ => {
-
-        let dataTable;
-        let targetId;
-
-        function reloadSection () {
-          $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-        }
-
-        if ($.fn.dataTable.isDataTable('#table-events') ) {
-          dataTable = $('#table-events').DataTable();
-        } else {
-          dataTable = $('#table-events').DataTable({
-            responsive: true,
-            paging: true
-          });
-        }
-
-        function bindRowClick () {
-          $('#table-events tbody tr').off('click').on('click', ƒ => {
-            ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-            const self = ƒ.currentTarget;
-            const id = $(self).data('id');
-            targetId = id;
-            app.openTab('view-event', 'Event (view)', `section.view-event.php?id=${id}`);
-          });
-        }
-        bindRowClick()
-
-        dataTable.on('draw.dt', bindRowClick);
-
-        $(document).off('eventChange.ns').on('eventChange.ns', reloadSection);
-      });
-
-    </script>
-
-  <?php else: ?>
-
-    <div class="container-fluid text-center">
-      <div class="alert alert-info mt-5 w-50 mx-auto">
-        <h1 class="fw-bold">All clear!</h1>
-        <p class="lead">There are no upcoming events at this time.</p>
-      </div>
-    </div>
-
-  <?php endif; ?>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
 
 </div>
-<script type="text/javascript">
+
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
+
+    const tableId = 'table-events';
+    const loadOnClick = {
+      page: 'section.view-event.php',
+      tab: 'view-event',
+      title: 'Event (view)',
+    }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'eventChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
+
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
+
     $('#btn-add-event').off('click').on('click', ƒ => {
       app.openTab('new-event', 'New Event', `section.edit-event.php`);
     });
+
   });
 
 </script>

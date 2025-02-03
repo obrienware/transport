@@ -256,4 +256,46 @@ class VehicleReservation extends Base
     return $db->get_rows($query);
   }
 
+  public static function getOpenEndedReservation(int $guestId): ?VehicleReservation
+  {
+    $db = Database::getInstance();
+    $query = "
+      SELECT * FROM vehicle_reservations
+      WHERE 
+        guest_id = :guest_id
+        AND start_trip_id IS NOT NULL AND end_trip_id IS NULL
+        AND archived IS NULL
+      ORDER BY start_datetime DESC
+      LIMIT 1
+    ";
+    $params = ['guest_id' => $guestId];
+    if ($row = $db->get_row($query, $params)) {
+      $reservation = new VehicleReservation();
+      $reservation->mapRowToProperties($row);
+      return $reservation;
+    }
+    return null;
+  }
+
+  public static function getReservationByTripId(int $tripId): ?VehicleReservation
+  {
+    $db = Database::getInstance();
+    $query = "
+      SELECT * FROM vehicle_reservations
+      WHERE 
+        (start_trip_id = :trip_id
+        OR end_trip_id = :trip_id)
+        AND archived IS NULL
+      ORDER BY start_datetime DESC
+      LIMIT 1
+    ";
+    $params = ['trip_id' => $tripId];
+    if ($row = $db->get_row($query, $params)) {
+      $reservation = new VehicleReservation();
+      $reservation->mapRowToProperties($row);
+      return $reservation;
+    }
+    return null;
+  }
+
 }

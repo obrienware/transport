@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
 use Transport\Vehicle;
 
-$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $vehicle = new Vehicle($id);
 echo json_encode($vehicle);

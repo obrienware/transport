@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
-if ($_GET['timezone']) {
-  $_SESSION['userTimezone'] = $_GET['timezone'];
-}
+$timezone = filter_input(INPUT_GET, 'timezone', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+if ($timezone) $_SESSION['userTimezone'] = $timezone;
 
 require_once '../autoload.php';
 

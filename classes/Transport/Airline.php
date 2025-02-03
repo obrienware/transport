@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Transport;
 
 require_once __DIR__.'/../../autoload.php';
@@ -101,20 +102,10 @@ class Airline extends Base
 		}
 	}
 
-
-	public static function getAll(): array
-	{
-		$db = Database::getInstance();
-		$query = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
-		return $db->get_rows($query);
-	}
-
-
 	public function isArchived(): bool
 	{
 		return isset($this->archived);
 	}
-
 
 	protected function reset(): void
 	{
@@ -124,4 +115,12 @@ class Airline extends Base
 		$this->flightNumberPrefix = null;
 		$this->imageFilename = null;
 	}
+
+	public static function getAll(): array
+	{
+		$db = Database::getInstance();
+		$query = 'SELECT * FROM airlines WHERE archived IS NULL ORDER BY name';
+		return $db->get_rows($query);
+	}
+
 }

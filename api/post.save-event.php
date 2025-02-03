@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -110,11 +112,10 @@ if ($json->vehicles) {
 }
 
 if ($event->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $event->getId();
   if ($changes) notifyParticipants($event, $changes, $driversToNotify);
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $event->getId()]));
 }
-die(json_encode(['result' => false]));
+exit(json_encode(['result' => false, 'error' => $event->getLastError()]));
 
 
 
@@ -128,35 +129,38 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
   $me = new User($_SESSION['user']->id);
   $changesString = '- '.implode("\n\n- ", $changes);
 
-  // Generate ics file
-  include '../inc.event-ics.php';
- 
   
   // Email to the requestor
-  $template = new Template(EmailTemplates::get('Email Requestor Event Change'));
-  $templateData = [
-    'name' => $event->requestor->firstName,
-    'eventName' => $event->name,
-    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
-    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
-    'changes' => $changesString,
-  ];
-
-  $email = new Email();
-  if ($config->email->sendRequestorMessagesTo == 'requestor') {
-    if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
-  } else {
-    $email->addRecipient($config->email->sendRequestorMessagesTo);
+  if ($event->requestor) {
+    $template = new Template(EmailTemplates::get('Email Requestor Event Change'));
+    $templateData = [
+      'name' => $event->requestor->firstName,
+      'eventName' => $event->name,
+      'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+      'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+      'changes' => $changesString,
+    ];
+  
+    $email = new Email();
+    if ($config->email->sendRequestorMessagesTo == 'requestor') {
+      if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
+    } else {
+      $email->addRecipient($config->email->sendRequestorMessagesTo);
+    }
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+    $email->addReplyTo($me->emailAddress, $me->getName());
+    $email->setSubject('Confirmation of changes regarding event: '.$event->name);
+    $email->setContent($template->render($templateData));
+    $email->sendText();
   }
-  if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-  $email->addReplyTo($me->emailAddress, $me->getName());
-  $email->setSubject('Confirmation of changes regarding event: '.$event->name);
-  $email->setContent($template->render($templateData));
-  $email->sendText();
 
 
   // Email the driver(s)
   if (!$driversToNotify) return;
+
+  // Generate ics file
+  include '../inc.event-ics.php';
+ 
   $template = new Template(EmailTemplates::get('Email Driver Event Change'));
   foreach ($driversToNotify as $driver) {
     $templateData = [

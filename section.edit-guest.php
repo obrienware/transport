@@ -59,42 +59,45 @@ $guest = new Guest($id);
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const guestId = <?=$guest->getId() ?: 'null'?>;
       $('#btn-save-guest').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-guest.php', {
+        const resp = await net.post('/api/post.save-guest.php', {
           id: guestId,
-          firstName: cleanVal('#guest-first-name'),
-          lastName:cleanVal('#guest-last-name'),
-          emailAddress: cleanVal('#guest-email-address'),
-          phoneNumber: cleanVal('#guest-phone-number'),
+          firstName: input.cleanVal('#guest-first-name'),
+          lastName: input.cleanVal('#guest-last-name'),
+          emailAddress: input.cleanVal('#guest-email-address'),
+          phoneNumber: input.cleanVal('#guest-phone-number'),
         });
         if (resp?.result) {
           // setTimeout(ƒ => {location.href = 'page.guests.list.php'}, 3000);
           $(document).trigger('guestChange', {guestId});
           app.closeOpenTab();
-          if (guestId) return toastr.success('Guest saved.', 'Success');
-          return toastr.success('Guest added.', 'Success')
+          if (guestId) return ui.toastr.success('Guest saved.', 'Success');
+          return ui.toastr.success('Guest added.', 'Success')
         }
-        toastr.error(resp . result . errors[2], 'Error');
+        ui.toastr.error(resp . result . errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-guest').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this guest?')) {
-          const resp = await get('/api/get.delete-guest.php', {
+        if (await ui.ask('Are you sure you want to delete this guest?')) {
+          const resp = await net.get('/api/get.delete-guest.php', {
             id: '<?=$guest->getId()?>'
           });
           if (resp?.result) {
             $(document).trigger('guestChange', {guestId});
             app.closeOpenTab();
-            return toastr.success('Guest deleted.', 'Success')
+            return ui.toastr.success('Guest deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting guest.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting guest.', 'Error');
         }
       });
 

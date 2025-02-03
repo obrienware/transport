@@ -44,7 +44,8 @@ $user = new User($_SESSION['user']->id);
 </section>
 
 
-<script type="text/javascript">
+<script type="module">
+  import { get } from '/js/network.js';
 
   $(async ƒ => {
 
@@ -65,6 +66,10 @@ $user = new User($_SESSION['user']->id);
           url: '/api/get.events.php',
           method: 'GET'
         },
+        {
+          url: '/api/get.reservations.php',
+          method: 'GET'
+        },
       ],
       eventClick: data => {
         const start = moment(data.event.start).format('ddd Do h:mma');
@@ -77,20 +82,29 @@ $user = new User($_SESSION['user']->id);
         if (data?.event?.extendedProps?.type == 'event') {
           app.openTab('view-event', 'Event (view)', `section.view-event.php?id=${data.event.id}`);
         }
+
+        if (data?.event?.extendedProps?.type == 'reservation') {
+          app.openTab('edit-reservation', 'Reservation (edit)', `section.edit-reservation.php?id=${data.event.id}`);
+        }
       },
       eventDidMount: info => {
         const el = info.el;
         let title = info.event.title || 'untitled';
 
         if (!info.event?.extendedProps?.confirmed) {
-          const contentEl = $(el).find('h4.ec-event-title');
-          const html = contentEl.html();
-          contentEl.html(`<i class="fa-solid fa-pencil ~fa-lg align-content-center me-1"></i>${html}`);
-          // For some unknown reason - the title on a type = event does not seem to change on screen, even though the html is updated
           title = 'Unconfirmed: ' + title;
         }
+        $(el).attr('data-confirmed', `${info.event?.extendedProps?.confirmed}`);
         $(el).attr('data-bs-title', title).tooltip();
       },
+      eventAllUpdated: ƒ => {
+        $('.ec-event').filter((i, el) => $(el).attr('data-confirmed') == 'null').each((i, el) => {
+          $(el).find('h4.ec-event-title').prepend('<i class="fa-solid fa-pencil ~fa-lg align-content-center me-1"></i>');
+        });
+        $('.ec-event').tooltip('dispose');
+        $('.ec-event').tooltip();
+        // console.log($('.ec-event').filter((i, el) => $(el).attr('data-confirmed') !== 'null'));
+      }
     });
 
     function refreshEvents() {
@@ -137,6 +151,7 @@ $user = new User($_SESSION['user']->id);
 
     $(document).on('tripChange', refreshEvents);
     $(document).on('eventChange', refreshEvents);
+    $(document).on('reservationChange', refreshEvents);
 
     $('#ec').on('click', async e => {
       if (e.target.className == 'ec-bg-events') {
@@ -144,7 +159,7 @@ $user = new User($_SESSION['user']->id);
         if (date) {
           // check if the date is in the future
           if (moment().isSameOrBefore(moment(date, 'YYYY-MM-DD'), 'day')) {
-            if (await ask('Do you want to create a new trip?')) {
+            if (await ui.ask('Do you want to create a new trip?')) {
               // const formatted_date = encodeURIComponent(moment(date).format('MM/DD/YYYY h:mm A'))
               const formatted_date = encodeURIComponent(moment(date).format('YYYY-MM-DD HH:mm'));
               app.openTab('new-trip', 'New Trip', `section.new-trip.php?dateHint=${formatted_date}`);

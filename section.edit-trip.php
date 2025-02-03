@@ -355,7 +355,10 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -367,7 +370,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
       let pickupDate;
       let endDate;
 
-      const airlines = await get('/api/get.resource-airlines.php');
+      const airlines = await net.get('/api/get.resource-airlines.php');
 
       $('#trip-airline-id').append($('<option>'));
       $.each(airlines, function (i, item) {
@@ -380,7 +383,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
       $('select').selectpicker();
 
       async function loadResources () {
-        drivers = await get('/api/get.available-drivers.php', {
+        drivers = await net.get('/api/get.available-drivers.php', {
           startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
           endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
           tripId
@@ -402,7 +405,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         });
         $('#trip-driver-id').selectpicker()
 
-        vehicles = await get('/api/get.available-vehicles.php', {
+        vehicles = await net.get('/api/get.available-vehicles.php', {
           startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
           endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
           tripId
@@ -450,38 +453,19 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
       });
 
 
-
-      
-
-
-
-
-
-
-
-      // $('#btn-duplicate-trip').off('click').on('click', async function () {
-      //   const resp = await get('/api/get.duplicate-trip.php', {id: tripId});
-      //   const newId = resp.result;
-      //   app.closeOpenTab()
-      //   app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
-      // });
-
       $('#trip-pickup-date, #trip-duration, #trip-lead-time').on('change', async ƒ => {
-        const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);
+        const leadTime = isNaN(parseFloat(input.cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(input.cleanNumberVal('#trip-lead-time') * 60);
         pickupDate = moment($('#trip-pickup-date').val());
         startDate = moment(pickupDate).subtract(leadTime, 'm');
-        endDate = moment(startDate).add(cleanNumberVal('#trip-duration'), 'h');
+        endDate = moment(startDate).add(input.cleanNumberVal('#trip-duration'), 'h');
 
         // The vehicle and/or driver may not be available in the new period, but if they are they will remain "selected".
-        const saveDriverId = val('#trip-driver-id');
-        const saveVehicleId = val('#trip-vehicle-id');
+        const saveDriverId = input.val('#trip-driver-id');
+        const saveVehicleId = input.val('#trip-vehicle-id');
         await loadResources();
         $('#trip-driver-id').selectpicker('val', saveDriverId);
         $('#trip-vehicle-id').selectpicker('val', saveVehicleId);
       });
-
-
-
 
 
       new Autocomplete(document.getElementById('trip-pu-location'), {
@@ -583,40 +567,40 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
 
         const data = await getData();
         if (data) {
-          const resp = await post('/api/post.save-trip.php', data);
+          const resp = await net.post('/api/post.save-trip.php', data);
           if (resp?.result) {
             $(document).trigger('tripChange', {tripId});
             app.closeOpenTab();
             if (tripId) {
               app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${tripId}`);
               $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
-              return toastr.success('Trip saved.', 'Success');
+              return ui.toastr.success('Trip saved.', 'Success');
             }
             app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
             $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
-            return toastr.success('Trip added.', 'Success');
+            return ui.toastr.success('Trip added.', 'Success');
           }
-          toastr.error(resp.result.errors[2], 'Error');
+          ui.toastr.error(resp.result.errors[2], 'Error');
           console.error(resp);
           $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
         }
       });
 
       $('#btn-delete-trip').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this trip?')) {
+        if (await ui.ask('Are you sure you want to delete this trip?')) {
           const buttonSavedText = $('#btn-delete-trip').text();
           $('#btn-delete-trip').prop('disabled', true).text('Deleting...');
 
-          const resp = await get('/api/get.delete-trip.php', {
+          const resp = await net.get('/api/get.delete-trip.php', {
             id: tripId
           });
           if (resp?.result) {
             $(document).trigger('tripChange', {tripId});
             app.closeOpenTab();
-            return toastr.success('Trip deleted.', 'Success')
+            return ui.toastr.success('Trip deleted.', 'Success')
           }
           console.error(resp);
-          toastr.error('There seems to be a problem deleting this trip.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting this trip.', 'Error');
           $('#btn-delete-trip').prop('disabled', false).text(buttonSavedText);
         }
       });
@@ -631,7 +615,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         let control;
 
         data.id = tripId;
-        data.summary = cleanVal('#trip-summary');
+        data.summary = input.cleanVal('#trip-summary');
         data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
         data.pickupDate = pickupDate.format('YYYY-MM-DD HH:mm:ss');
         data.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
@@ -639,7 +623,7 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         control = $('#trip-pu-location');
         if (control.data('value') != control.val()) {
           control.addClass('is-invalid');
-          if (await ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
+          if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
             app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
           }
           return false;
@@ -649,37 +633,37 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         control = $('#trip-guest');
         if ($('#trip-guest').data('value') != $('#trip-guest').val()) {
           $('#trip-guest').addClass('is-invalid');
-          if (await ask(`"${$('#trip-guest').val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
+          if (await ui.ask(`"${$('#trip-guest').val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
             app.openTab('edit-guest', 'Guests/Groups (add)', `section.edit-guest.php`);
           }
           return false
         }
         data.guestId = control.data('id'); data.guestId = (data.guestId == '') ? null : parseInt(data.guestId);
-        data.guests = cleanVal('#trip-guests');
-        data.passengers = cleanNumberVal('#trip-passengers');
+        data.guests = input.cleanVal('#trip-guests');
+        data.passengers = input.cleanNumberVal('#trip-passengers');
 
         control = $('#trip-do-location');
         if (control.data('value') != control.val()) {
           control.addClass('is-invalid');
-          if (await ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
+          if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
             app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
           }
           return false;
         }
         data.doLocationId = control.data('id'); data.doLocationId = (data.doLocationId == '') ? null : parseInt(data.doLocationId);
 
-        data.vehicleId = val('#trip-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
-        data.driverId = val('#trip-driver-id'); data.driverId = (data.driverId == '') ? null : parseInt(data.driverId);
-        data.airlineId = val('#trip-airline-id'); data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
+        data.vehicleId = input.val('#trip-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
+        data.driverId = input.val('#trip-driver-id'); data.driverId = (data.driverId == '') ? null : parseInt(data.driverId);
+        data.airlineId = input.val('#trip-airline-id'); data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
 
-        data.flightNumber = cleanUpperVal('#trip-flight-number');
+        data.flightNumber = input.cleanUpperVal('#trip-flight-number');
 
         // We cannot have an ETA AND an ETD. This has previously precipitated errors
         if ($('#trip-pu-location').data('type') === 'airport') {
-          data.ETA = val('#trip-eta') ? moment(val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
+          data.ETA = input.val('#trip-eta') ? moment(input.val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
           data.ETD = null;
         } else {
-          data.ETD = val('#trip-etd') ? moment(val('#trip-etd')).format('YYYY-MM-DD HH:mm:ss') : null;
+          data.ETD = input.val('#trip-etd') ? moment(input.val('#trip-etd')).format('YYYY-MM-DD HH:mm:ss') : null;
           data.ETA = null;
         }
 
@@ -689,16 +673,16 @@ if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalReque
         control = $('#trip-requestor');
         if (control.data('value') != control.val()) {
           control.addClass('is-invalid');
-          if (await ask(`"${control.val()}" is not a recognized user. Would you like to add a new user?`)) {
+          if (await ui.ask(`"${control.val()}" is not a recognized user. Would you like to add a new user?`)) {
             app.openTab('edit-user', 'User (add)', `section.edit-user.php`);
           }
           return false;
         }
         data.requestorId = control.data('id'); data.requestorId = (data.requestorId == '') ? null : parseInt(data.requestorId);
 
-        data.guestNotes = cleanVal('#trip-guest-notes');
-        data.driverNotes = cleanVal('#trip-driver-notes');
-        data.generalNotes = cleanVal('#trip-general-notes');
+        data.guestNotes = input.cleanVal('#trip-guest-notes');
+        data.driverNotes = input.cleanVal('#trip-driver-notes');
+        data.generalNotes = input.cleanVal('#trip-general-notes');
         return data;
       }
 

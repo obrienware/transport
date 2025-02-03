@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -14,7 +16,6 @@ $template = new EmailTemplates($json->id);
 $template->content = $json->content;
 
 if ($template->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $template->getId();
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $template->getId()]));
 }
-die(json_encode(['result' => false]));
+exit(json_encode(['result' => false, 'error' => $template->getLastError()]));

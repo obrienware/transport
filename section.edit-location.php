@@ -111,47 +111,50 @@ $locationId = $location->getId();
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const locationId = <?=$locationId ?: 'null'?>;
       $('#btn-save-location').off('click').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-location.php', {
+        const resp = await net.post('/api/post.save-location.php', {
           id: locationId,
-          name: cleanVal('#location-name'),
-          shortName: cleanVal('#location-short-name'),
-          type: val('#location-type'),
-          IATA: cleanUpperVal('#location-iata'),
-          mapAddress: cleanVal('#location-map-address'),
-          description: cleanVal('#location-description'),
-          lat: cleanNumberVal('#location-lat'),
-          lon: cleanNumberVal('#location-lon'),
-          placeId: val('#location-place-id'),
+          name: input.cleanVal('#location-name'),
+          shortName: input.cleanVal('#location-short-name'),
+          type: input.val('#location-type'),
+          IATA: input.cleanUpperVal('#location-iata'),
+          mapAddress: input.cleanVal('#location-map-address'),
+          description: input.cleanVal('#location-description'),
+          lat: input.cleanNumberVal('#location-lat'),
+          lon: input.cleanNumberVal('#location-lon'),
+          placeId: input.val('#location-place-id'),
           meta: $('#location-map-address').data('meta')
         });
         if (resp?.result) {
           $(document).trigger('locationChange', {locationId});
           app.closeOpenTab();
-          if (locationId) return toastr.success('Location saved.', 'Success');
-          return toastr.success('Location added.', 'Success')
+          if (locationId) return ui.toastr.success('Location saved.', 'Success');
+          return ui.toastr.success('Location added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
+        ui.toastr.error(resp .result.errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-location').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this location?')) {
-          const resp = await get('/api/get.delete-location.php', {
+        if (await ui.ask('Are you sure you want to delete this location?')) {
+          const resp = await net.get('/api/get.delete-location.php', {
             id: locationId
           });
           if (resp?.result) {
             $(document).trigger('locationChange', {locationId});
             app.closeOpenTab();
-            return toastr.success('Location deleted.', 'Success')
+            return ui.toastr.success('Location deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting the location.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting the location.', 'Error');
         }
       });
 
@@ -161,17 +164,17 @@ $locationId = $location->getId();
       });
 
       $('#btn-location-verify').off('click').on('click', async function () {
-        let lat = cleanNumberVal('#location-lat');
-        let lon = cleanNumberVal('#location-lon');
-        const address = cleanVal('#location-map-address');
-        const placeId = val('#location-place-id');
+        let lat = input.cleanNumberVal('#location-lat');
+        let lon = input.cleanNumberVal('#location-lon');
+        const address = input.cleanVal('#location-map-address');
+        const placeId = input.val('#location-place-id');
 
         // If we have a place ID we should use that first.
         // Failing which if we have co-ordinates we should use that second
         // If we only have an address (lastly) we should use that.
 
         if (placeId) {
-          const resp = await get('/api/get.geodata.php', {placeId});
+          const resp = await net.get('/api/get.geodata.php', {placeId});
           $('#location-lat').val(resp?.location?.latitude);
           $('#location-lon').val(resp?.location?.longitude);
           $('#location-place-id').val(resp.id);
@@ -181,7 +184,7 @@ $locationId = $location->getId();
 
         if (lat && lon) {
           const latlng = `${lat},${lon}`;
-          const resp = await get('/api/get.geodata.php', {latlng});
+          const resp = await net.get('/api/get.geodata.php', {latlng});
           $('#location-lat').val(resp?.results[0]?.geometry?.location?.lat);
           $('#location-lon').val(resp?.results[0]?.geometry?.location?.lng);
           $('#location-place-id').val(resp?.results[0]?.place_id);
@@ -189,7 +192,7 @@ $locationId = $location->getId();
           return mapVerified(true);
         }
         {
-          const resp = await get('/api/get.geodata.php', {address});
+          const resp = await net.get('/api/get.geodata.php', {address});
           $('#location-lat').val(resp?.results[0]?.geometry?.location?.lat);
           $('#location-lon').val(resp?.results[0]?.geometry?.location?.lng);
           $('#location-place-id').val(resp?.results[0]?.place_id);
@@ -202,8 +205,8 @@ $locationId = $location->getId();
 
       $('#btn-navigate').off('click').on('click', function () {
         const iframe = document.getElementById('iframe-map');
-        let lat = cleanNumberVal('#location-lat');
-        let lon = cleanNumberVal('#location-lon');
+        let lat = input.cleanNumberVal('#location-lat');
+        let lon = input.cleanNumberVal('#location-lon');
         iframe.src = `https://www.google.com/maps?output=embed&z=15&q=${lat},${lon}`;
       });
 

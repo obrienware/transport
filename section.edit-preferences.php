@@ -24,7 +24,10 @@ $prefs = $user->getPreferences();
 
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   $(async ƒ => {
     <?php if ($prefs->dailyDigestEmails):?> $('#dailyDigestEmails').prop('checked', true);<?php endif; ?>
@@ -37,7 +40,7 @@ $prefs = $user->getPreferences();
 
     $('#btn-save-preferences').off('click').on('click', async e => {
       const data = getData();
-      const resp = await post('/api/post.save-user-preferences.php', data);
+      const resp = await net.post('/api/post.save-user-preferences.php', data);
       console.log(resp);
       app.closeOpenTab();
     });

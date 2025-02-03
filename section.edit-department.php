@@ -52,39 +52,42 @@ $department = new Department($id);
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const departmentId = <?=$department->getId() ?: 'null'?>;
       $('#btn-save-department').off('click').on('click', async ƒ => {
-        const resp = await post('/api/post.save-department.php', {
+        const resp = await net.post('/api/post.save-department.php', {
           id: departmentId,
-          name: cleanVal('#department-name'),
-          mayRequest: checked('#department-may-request'),
+          name: input.cleanVal('#department-name'),
+          mayRequest: input.checked('#department-may-request'),
         });
         if (resp?.result) {
           $(document).trigger('departmentChange', {departmentId});
           app.closeOpenTab();
-          if (departmentId) return toastr.success('Department saved.', 'Success');
-          return toastr.success('Department added.', 'Success')
+          if (departmentId) return ui.toastr.success('Department saved.', 'Success');
+          return ui.toastr.success('Department added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
+        ui.toastr.error(resp .result.errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-department').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this department?')) {
-          const resp = await get('/api/get.delete-department.php', {
+        if (await ui.ask('Are you sure you want to delete this department?')) {
+          const resp = await net.get('/api/get.delete-department.php', {
             id: departmentId
           });
           if (resp?.result) {
             $(document).trigger('departmentChange', {departmentId});
             app.closeOpenTab();
-            return toastr.success('Department deleted.', 'Success')
+            return ui.toastr.success('Department deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting department.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting department.', 'Error');
         }
       });
 

@@ -43,11 +43,14 @@ $user = new User($_SESSION['user']->id);
   <div id="vehicle-alerts"></div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   $(async ƒ => {
-    let vehicleResources = await get('/api/get.resource-vehicles.php');
-    let driverResources = await get('/api/get.resource-drivers.php');
+    let vehicleResources = await net.get('/api/get.resource-vehicles.php');
+    let driverResources = await net.get('/api/get.resource-drivers.php');
 
     <?php if (array_search($_SESSION['view'], ['manager']) !== false):?>
       async function loadJITContent() {
@@ -123,12 +126,12 @@ $user = new User($_SESSION['user']->id);
 
 
     $(document).on('vehicleChange', async function (event, data) {
-      vehicleResources = await get('/api/get.resource-vehicles.php');
+      vehicleResources = await net.get('/api/get.resource-vehicles.php');
       refreshEvents();
     });
 
     $(document).on('driverChange', async function (event, data) {
-      vehicleResources = await get('/api/get.resource-drivers.php');
+      vehicleResources = await net.get('/api/get.resource-drivers.php');
       refreshEvents();
     });
 
@@ -155,7 +158,7 @@ $user = new User($_SESSION['user']->id);
         if (date) {
           // check if the date is in the future
           if (moment().isSameOrBefore(moment(date, 'YYYY-MM-DD'), 'day')) {
-            if (await ask('Do you want to create a new trip?')) {
+            if (await ui.ask('Do you want to create a new trip?')) {
               const formatted_date = encodeURIComponent(moment(date).format('YYYY-MM-DD HH:mm'));
               app.openTab('new-trip', 'New Trip', `section.new-trip.php?dateHint=${formatted_date}`);
             }

@@ -50,7 +50,9 @@ use Transport\Vehicle;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
+  import { hexToRgba, luminanceColor } from '/js/helpers.js';
 
   $('.tag').each((index, self) => {
     const color = $(self).data('color');
@@ -63,36 +65,25 @@ use Transport\Vehicle;
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-vehicles';
+    const loadOnClick = {
+      page: 'section.edit-vehicle.php',
+      tab: 'view-vehicle',
+      title: 'Vehicle (view)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'vehicleChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-vehicles')) {
-      dataTable = $('#table-vehicles').DataTable();
-    } else {
-      dataTable = $('#table-vehicles').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-vehicles tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('view-vehicle', 'Vehicle', `section.view-vehicle.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-vehicle').on('click', ƒ => {
       ƒ.preventDefault();
       app.openTab('edit-vehicle', 'New Vehicle', `section.edit-vehicle.php`);
     });
-
-    $(document).off('vehicleChange.ns').on('vehicleChange.ns', reloadSection);
-
 
   });
 

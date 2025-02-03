@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -10,10 +12,16 @@ use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\User;
 
-$user = new User($_SESSION['user']->id);
-
-$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $event = new Event($id);
+if (!$event->getId()) {
+  die(json_encode([
+    'result' => false,
+    'error' => 'Event not found'
+  ]));
+}
+
+$user = new User($_SESSION['user']->id);
 $result = $event->delete(userResponsibleForOperation: $user->getUsername());
 
 $event = new Event($id);

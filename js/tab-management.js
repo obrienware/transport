@@ -1,4 +1,4 @@
-// This file should come after our common.js so that we already have our global app variable defined
+window.app = {};
 
 $(async ƒ => {
   app.tabsReference = $('#myTab'); // We need the page to load before we can reference our tabs!

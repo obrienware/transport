@@ -212,17 +212,20 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   window.cancelTrip = async function (tripId) {
-    if (await ask('Are you sure you want to cancel this trip?')) {
-      const resp = await post('/api/post.cancel-trip.php', {tripId});
+    if (await ui.ask('Are you sure you want to cancel this trip?')) {
+      const resp = await net.post('/api/post.cancel-trip.php', {tripId});
       if (resp?.result) {
         $(document).trigger('tripChange', {tripId});
         app.closeOpenTab();
-        return toastr.success('Trip cancellation request submitted.', 'Success');
+        return ui.toastr.success('Trip cancellation request submitted.', 'Success');
       }
-      return toastr.error('Seems to be a problem cancelling this trip!', 'Error');
+      return ui.toastr.error('Seems to be a problem cancelling this trip!', 'Error');
     }
   }
 
@@ -249,7 +252,7 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     // $('#button-send').on('click', async ƒ => {
     //   const message = $('#trip-message').val();
     //   if (message) {
-    //     const resp = await post('/api/post.send-message.php', {tripId, message});
+    //     const resp = await net.post('/api/post.send-message.php', {tripId, message});
     //     if (resp?.result) {
     //       $('#trip-chat').load('section.chat.php', {tripId});
     //       $('#trip-message').val('').focus();
@@ -264,20 +267,20 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     });
 
     $(`#${sectionId}-btn-duplicate`).off('click').on('click', async e => {
-      const resp = await get('/api/get.duplicate-trip.php', {id: tripId});
+      const resp = await net.get('/api/get.duplicate-trip.php', {id: tripId});
       const newId = resp.result;
       app.closeOpenTab();
       app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
     });
 
     $(`#${sectionId}-btn-confirm`).off('click').on('click', async e => {
-      const resp = await post('/api/post.confirm-trip.php', {id: tripId});
+      const resp = await net.post('/api/post.confirm-trip.php', {id: tripId});
       if (resp?.result) {
         $(document).trigger('tripChange', {tripId});
         reloadSection();
-        return toastr.success('Trip confirmed.', 'Success');
+        return ui.toastr.success('Trip confirmed.', 'Success');
       }
-      return toastr.error('Seems to be a problem confirming this trip!', 'Error');
+      return ui.toastr.error('Seems to be a problem confirming this trip!', 'Error');
     });
 
 });

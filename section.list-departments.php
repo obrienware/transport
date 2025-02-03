@@ -36,38 +36,29 @@ use Transport\Department;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-departments';
+    const loadOnClick = {
+      page: 'section.edit-department.php',
+      tab: 'edit-department',
+      title: 'Department (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'departmentChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-departments')) {
-      dataTable = $('#table-departments').DataTable();
-    } else {
-      dataTable = $('#table-departments').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-departments tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-department', 'Department (edit)', `section.edit-department.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-department').off('click').on('click', ƒ => {
       app.openTab('edit-department', 'Department (add)', `section.edit-department.php`);
     });
-
-    $(document).off('departmentChange.ns').on('departmentChange.ns', reloadSection);
 
   });
 

@@ -30,6 +30,7 @@ $query = "
     AND t.archived IS NULL
   ORDER BY start_date ASC
 ";
+$rows = $db->get_rows($query)
 ?>
 <div class="container-fluid">
   <div class="d-flex justify-content-between mt-2">
@@ -38,154 +39,130 @@ $query = "
       New Trip
     </button>
   </div>
-  <?php if ($rows = $db->get_rows($query)): ?>
 
-    <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
-      <thead>
-        <tr class="table-dark">
-          <th class="fit">Confirmed</th>
-          <th class="fit">When</th>
-          <th data-dt-order="disable">Trip Summary</th>
-          <th class="text-start">Pick Up</th>
-          <th data-dt-order="disable">Drop Off</th>
-          <th>Driver</th>
-          <th>Vehicle</th>
+  <table id="table-trips" class="table align-middle table-hover row-select table-bordered">
+    <thead>
+      <tr class="table-dark">
+        <th class="fit">Confirmed</th>
+        <th class="fit">When</th>
+        <th data-dt-order="disable">Trip Summary</th>
+        <th class="text-start">Pick Up</th>
+        <th data-dt-order="disable">Drop Off</th>
+        <th>Driver</th>
+        <th>Vehicle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php foreach ($rows as $row): ?>
+        <?php 
+          $tdClass = '';
+          if ($row->cancellation_requested) {
+            $tdClass = 'table-secondary';
+          } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
+            $tdClass = 'table-secondary';
+          } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
+            $tdClass = 'table-success';
+          }
+        ?>
+        <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
+          <!-- Confirmed -->
+          <td class="text-center fit" data-order="<?=$row->confirmed?>">
+            <?php if ($row->confirmed): ?>
+              <i class="fa-solid fa-circle-check fa-xl text-success"></i>
+            <?php else: ?>
+              <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
+            <?php endif; ?>
+          </td>
+          <!-- When -->
+          <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
+          <!-- Trip Summary -->
+          <td>
+            <div class="d-flex justify-content-between">
+              <?php if ($row->completed) :?>
+                <i class="fa-duotone fa-regular fa-circle-check text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
+              <?php elseif ($row->started): ?>
+                <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
+              <?php endif;?>
+              <?php if ($row->cancellation_requested): ?>
+                <i class="badge bg-danger align-self-center me-2">Cancelled</i>
+              <?php endif;?>
+              <div><?=$row->summary?></div>
+            </div>
+          </td>
+          <!-- Pick Up -->
+          <td class="text-nowrap text-start" data-order="<?=$row->start_date?>">
+            <div>
+              <span class="time"><?=($row->start_date) ? Date('g:ia', strtotime($row->start_date)) : ''?></span>: 
+              <?=$row->pickup_location?>
+            </div>
+            <?php if ($row->eta): ?>
+              <span class="badge bg-black fs-6" style="color:gold">
+                <i class="~fa-duotone fa-solid fa-plane-arrival"></i>
+                <?=$row->flight_number_prefix.' '.$row->flight_number?>
+              </span>
+              <small><?=Date('g:ia', strtotime($row->eta))?></small>
+            <?php endif;?>
+          </td>
+          <!-- Drop Off -->
+          <td class="text-nowrap">
+            <div><?=$row->dropoff_location?></div>
+            <?php if ($row->etd): ?>
+              <span class="badge bg-black fs-6" style="color:gold">
+                <i class="~fa-duotone fa-solid fa-plane-departure"></i>
+                <?=$row->flight_number_prefix.' '.$row->flight_number?>
+              </span>
+              <small><?=Date('g:ia', strtotime($row->etd))?></small>
+            <?php endif;?>
+          </td>
+          <!-- Driver -->
+          <td data-order="<?=$row->driver?>" class="p-0 text-center">
+            <?php if ($row->driver): ?>
+              <img src="/images/drivers/<?=$row->driver_username?>.jpg" class="rounded" style="width: 60px; height: 60px;" alt="<?=$row->driver?>">  
+            <?php else:?>
+              <div class="p-3">
+                <i class="badge bg-danger">Unassinged</i>
+              </div>
+            <?php endif; ?>
+          </td>
+          <!-- Vehicle -->
+          <td data-order="<?=$row->vehicle?>" class="text-center">
+            <?php if ($row->vehicle): ?>
+              <span class="tag nowrap w-100" style="background-color:<?=$row->vehicle_color?>; color:<?=Utils::getContrastColor($row->vehicle_color)?>"><?=$row->vehicle?></span>
+            <?php else:?>
+              <i class="tag tag-danger">Unassinged</i>
+            <?php endif; ?>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($rows as $row): ?>
-          <?php 
-            $tdClass = '';
-            if ($row->cancellation_requested) {
-              $tdClass = 'table-secondary';
-            } elseif (!$row->end_date OR strtotime($row->end_date) <= strtotime('now') OR $row->completed) {
-              $tdClass = 'table-secondary';
-            } elseif (Date('Y-m-d') <= Date('Y-m-d', strtotime($row->end_date)) && Date('Y-m-d') >= Date('Y-m-d', strtotime($row->start_date))) {
-              $tdClass = 'table-success';
-            }
-          ?>
-          <tr data-id="<?=$row->id?>" class="<?=$tdClass?>">
-            <!-- Confirmed -->
-            <td class="text-center fit" data-order="<?=$row->confirmed?>">
-              <?php if ($row->confirmed): ?>
-                <i class="fa-solid fa-circle-check fa-xl text-success"></i>
-              <?php else: ?>
-                <i class="fa-solid fa-circle-xmark fa-xl text-black text-opacity-25"></i>
-              <?php endif; ?>
-            </td>
-            <!-- When -->
-            <td class="fit datetime short" data-order="<?=$row->start_date?>"><?=$row->start_date?></td>
-            <!-- Trip Summary -->
-            <td>
-              <div class="d-flex justify-content-between">
-                <?php if ($row->completed) :?>
-                  <i class="fa-duotone fa-regular fa-circle-check text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Trip complete."></i>
-                <?php elseif ($row->started): ?>
-                  <i class="fa-duotone fa-solid fa-spinner-third fa-spin text-success align-self-center me-2" data-bs-toggle="tooltip" data-bs-title="Currently in progress..."></i>
-                <?php endif;?>
-                <?php if ($row->cancellation_requested): ?>
-                  <i class="badge bg-danger align-self-center me-2">Cancelled</i>
-                <?php endif;?>
-                <div><?=$row->summary?></div>
-              </div>
-            </td>
-            <!-- Pick Up -->
-            <td class="text-nowrap text-start" data-order="<?=$row->start_date?>">
-              <div>
-                <span class="time"><?=($row->start_date) ? Date('g:ia', strtotime($row->start_date)) : ''?></span>: 
-                <?=$row->pickup_location?>
-              </div>
-              <?php if ($row->eta): ?>
-                <span class="badge bg-black fs-6" style="color:gold">
-                  <i class="~fa-duotone fa-solid fa-plane-arrival"></i>
-                  <?=$row->flight_number_prefix.' '.$row->flight_number?>
-                </span>
-                <small><?=Date('g:ia', strtotime($row->eta))?></small>
-              <?php endif;?>
-            </td>
-            <!-- Drop Off -->
-            <td class="text-nowrap">
-              <div><?=$row->dropoff_location?></div>
-              <?php if ($row->etd): ?>
-                <span class="badge bg-black fs-6" style="color:gold">
-                  <i class="~fa-duotone fa-solid fa-plane-departure"></i>
-                  <?=$row->flight_number_prefix.' '.$row->flight_number?>
-                </span>
-                <small><?=Date('g:ia', strtotime($row->etd))?></small>
-              <?php endif;?>
-            </td>
-            <!-- Driver -->
-            <td data-order="<?=$row->driver?>" class="p-0 text-center">
-              <?php if ($row->driver): ?>
-                <img src="/images/drivers/<?=$row->driver_username?>.jpg" class="rounded" style="width: 60px; height: 60px;" alt="<?=$row->driver?>">  
-              <?php else:?>
-                <div class="p-3">
-                  <i class="badge bg-danger">Unassinged</i>
-                </div>
-              <?php endif; ?>
-            </td>
-            <!-- Vehicle -->
-            <td data-order="<?=$row->vehicle?>" class="text-center">
-              <?php if ($row->vehicle): ?>
-                <span class="tag nowrap w-100" style="background-color:<?=$row->vehicle_color?>; color:<?=Utils::getContrastColor($row->vehicle_color)?>"><?=$row->vehicle?></span>
-              <?php else:?>
-                <i class="tag tag-danger">Unassinged</i>
-              <?php endif; ?>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
+      <?php endforeach; ?>
+    </tbody>
+  </table>
 
-
-    <script type="text/javascript">
-
-      $(async ƒ => {
-
-        let dataTable;
-        let targetId;
-
-        function reloadSection () {
-          $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-        }
-
-        if ($.fn.dataTable.isDataTable('#table-trips') ) {
-          dataTable = $('#table-trips').DataTable();
-        } else {
-          dataTable = $('#table-trips').DataTable({
-            responsive: true,
-            paging: true,
-            order: [[1, 'asc']],
-          });
-        }
-
-        function bindRowClick () {
-          $('#table-trips tbody tr').off('click').on('click', ƒ => {
-            ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-            const self = ƒ.currentTarget;
-            const id = $(self).data('id');
-            targetId = id;
-            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${id}`);
-          });
-        }
-        bindRowClick();
-        dataTable.on('draw.dt', bindRowClick);
-
-        $(document).off('tripChange.ns').on('tripChange.ns', reloadSection);
-
-      });
-
-    </script>
-
-
-  <?php else: ?>
-
-    <div class="container-fluid text-center">
-      <div class="alert alert-info mt-5 w-50 mx-auto">
-        <h1 class="fw-bold">All clear!</h1>
-        <p class="lead">There are no upcoming trips at this time.</p>
-      </div>
-    </div>
-
-  <?php endif; ?>
 </div>
+
+
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
+
+  $(async ƒ => {
+
+    const tableId = 'table-trips';
+    const loadOnClick = {
+      page: 'section.view-trip.php',
+      tab: 'view-trip',
+      title: 'Trip (view)',
+    }
+    const dataTableOptions = {
+      responsive: true,
+      paging: true,
+      order: [[1, 'asc']],
+    };
+    const reloadOnEventName = 'tripChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
+
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
+
+  });
+
+</script>
+

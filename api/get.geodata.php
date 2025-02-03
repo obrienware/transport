@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -11,9 +13,9 @@ $keys = $config->keys;
 
 // address | latlng
 
-$placeId = $_GET['placeId'];
-$latlng = $_GET['latlng'];
-$address = $_GET['address'];
+$placeId = filter_input(INPUT_GET, 'placeId', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$latlng = filter_input(INPUT_GET, 'lanlng', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$address = filter_input(INPUT_GET, 'address', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 
 if ($placeId) {
@@ -21,19 +23,23 @@ if ($placeId) {
     'key' => $keys->GOOGLE_API_KEY,
     'fields' => 'id,formattedAddress,location'
   ]);
-} else if($latlng) {
+  die(json_encode(json_decode($result)));
+}
+
+if($latlng) {
   $result = Utils::callApi('GET', 'https://maps.googleapis.com/maps/api/geocode/json', [
     'key' => $keys->GOOGLE_API_KEY,
     'latlng' => $latlng
   ]);
-} else {
+  die(json_encode(json_decode($result)));
+} 
+
+if ($address) {
   $result = Utils::callApi('GET', 'https://maps.googleapis.com/maps/api/geocode/json', [
     'key' => $keys->GOOGLE_API_KEY,
     'address' => $address
   ]);  
+  die(json_encode(json_decode($result)));
 }
 
-
-
-
-die(json_encode(json_decode($result)));
+die('false');

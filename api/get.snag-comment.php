@@ -1,19 +1,23 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
+
 require_once '../autoload.php';
 
 use Transport\Snag;
 use Transport\User;
 
-$snagId = isset($_GET['snagId']) ? (int)$_GET['snagId'] : null;
+$snagId = filter_input(INPUT_GET, 'snagId', FILTER_SANITIZE_NUMBER_INT);
 $snag = new Snag($snagId);
+if (!$snag->getId()) {
+  die(json_encode([
+    'result' => false,
+    'error' => 'Snag not found'
+  ]));
+}
 
 $user = new User($_SESSION['user']->id);
-
-$snag->comments = $_GET['text'];
-
-if ($snag->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $snag->getId();
-  die(json_encode(['result' => $result]));
-}
-die(json_encode(['result' => false]));
+$snag->comments = filter_input(INPUT_GET, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$result = $snag->save(userResponsibleForOperation: $user->getUsername());
+die(json_encode(['result' => $result]));

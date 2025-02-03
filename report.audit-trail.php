@@ -56,7 +56,11 @@ $db = Database::getInstance();
 </div>
 <div class="container d-none" id="detail"></div>
 
-<script type="text/javascript">
+<script type="module">
+	import * as input from '/js/formatters.js';
+	import * as ui from '/js/notifications.js';
+	import * as net from '/js/network.js';
+
 	$(async ƒ => {
 
 		// To facilitate scroll-to-top (recommended on all reports)
@@ -80,8 +84,8 @@ $db = Database::getInstance();
 			const to_date = val('#to_date');
 			const table = val('#table');
 			const user = val('#user');
-			if (from_date.length === 0) return toastr.error(`From Date is required`, 'ATTENTION');
-			if (to_date.length === 0) return toastr.error(`To Date is required`, 'ATTENTION');
+			if (from_date.length === 0) return ui.toastr.error(`From Date is required`, 'ATTENTION');
+			if (to_date.length === 0) return ui.toastr.error(`To Date is required`, 'ATTENTION');
 			$('#report').prop('disabled', true);
 			$('#output').html(report_loader).load(`report-data.audit-trail.php` + queryParams({
         from_date, to_date, table, user

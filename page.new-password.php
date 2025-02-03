@@ -73,7 +73,10 @@
   </div>
 
   
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -87,8 +90,8 @@
 
 			$('#btnContinue').on('click', async ƒ => {
         const userId = <?=$_SESSION['user']->id?>;
-        const password = cleanVal('#password');
-        const confirmPassword = cleanVal('#confirm-password');
+        const password = input.cleanVal('#password');
+        const confirmPassword = input.cleanVal('#confirm-password');
 
         if (password.length < 8) {
           return alertError('Your password should be at least 8 characters long.', 'Try Again.');

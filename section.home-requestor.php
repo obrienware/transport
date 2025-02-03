@@ -270,7 +270,10 @@ $user = new User($_SESSION['user']->id);
 </div>
 
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   let request = {
     requestorId: <?=$user->getId()?>,
@@ -454,9 +457,9 @@ $user = new User($_SESSION['user']->id);
 
     if (stage == 'whom') {
       const whom = {
-        name: cleanProperVal('#whom-name'),
+        name: input.cleanProperVal('#whom-name'),
         pax: $('#whom-pax').val(),
-        contactPerson: cleanProperVal('#whom-contact-person'),
+        contactPerson: input.cleanProperVal('#whom-contact-person'),
         contactPhoneNumber: $('#whom-contact-phone').val(),
       };
       if (!whom.name || !whom.contactPerson || !whom.contactPhoneNumber) {
@@ -559,12 +562,12 @@ $user = new User($_SESSION['user']->id);
   async function submitRequest()
   {
     console.log('submitting request:', request);
-    const result = await post('/api/post.save-request.php', request);
+    const result = await net.post('/api/post.save-request.php', request);
     if (result?.result) {
-      toastr.success('Request submitted successfully', 'Success');
+      ui.toastr.success('Request submitted successfully', 'Success');
       cancelWizard();
     } else {
-      toastr.error('There was an error submitting the request', 'Error');
+      ui.toastr.error('There was an error submitting the request', 'Error');
     }
   }
 
@@ -722,7 +725,7 @@ $user = new User($_SESSION['user']->id);
         if (date) {
           // check if the date is in the future
           if (moment().isSameOrBefore(moment(date, 'YYYY-MM-DD'), 'day')) {
-            // if (await ask('Do you want to create a new trip?')) {
+            // if (await ui.ask('Do you want to create a new trip?')) {
             //   const formatted_date = encodeURIComponent(moment(date).format('YYYY-MM-DD HH:mm'));
             //   app.openTab('new-trip', 'New Trip', `section.new-trip.php?dateHint=${formatted_date}`);
             // }

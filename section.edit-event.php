@@ -133,7 +133,10 @@ $eventId = $event->getId();
   </div>
 
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -165,12 +168,12 @@ $eventId = $event->getId();
       {
         if (startDate && endDate) {
           // Load the resources!
-          drivers = await get('/api/get.available-drivers.php', {
+          drivers = await net.get('/api/get.available-drivers.php', {
             startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
             endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
             eventId
           });
-          vehicles = await get('/api/get.available-vehicles.php', {
+          vehicles = await net.get('/api/get.available-vehicles.php', {
             startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
             endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
             eventId
@@ -255,32 +258,32 @@ $eventId = $event->getId();
         }
         data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
         data.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
-        data.name = cleanVal('#event-name');
-        data.drivers = val('#event-drivers');
-        data.vehicles = val('#event-vehicles');
-        data.notes = cleanVal('#event-notes');
+        data.name = input.cleanVal('#event-name');
+        data.drivers = input.val('#event-drivers');
+        data.vehicles = input.val('#event-vehicles');
+        data.notes = input.cleanVal('#event-notes');
         if ($('#event-location').val()) data.locationId = $('#event-location').data('id');
         if ($('#event-requestor').val()) data.requestorId = $('#event-requestor').data('id');
         return data;
       }
 
       $('#btn-save-event').off('click').on('click', async function () {
-        if (!startDate || !endDate) return toastr.error('Please select a start and end date.', 'Error');
-        if (startDate.isAfter(endDate)) return toastr.error('Start date cannot be after end date.', 'Error');
+        if (!startDate || !endDate) return ui.toastr.error('Please select a start and end date.', 'Error');
+        if (startDate.isAfter(endDate)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
 
         const buttonSavedText = $('#btn-save-event').text();
         $('#btn-save-event').prop('disabled', true).text('Saving...');
 
         const data = getData();
-        const resp = await post('/api/post.save-event.php', data);
+        const resp = await net.post('/api/post.save-event.php', data);
         if (resp?.result) {
           $(document).trigger('eventChange', {eventId});
           app.closeOpenTab();
-          if (eventId) return toastr.success('Event saved.', 'Success');
+          if (eventId) return ui.toastr.success('Event saved.', 'Success');
           $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
-          return toastr.success('Event added.', 'Success')
+          return ui.toastr.success('Event added.', 'Success')
         }
-        toastr.error(resp . result . errors[2], 'Error');
+        ui.toastr.error(resp . result . errors[2], 'Error');
         console.log(resp);
         $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
       });
@@ -291,41 +294,41 @@ $eventId = $event->getId();
 
         const data = await getData();
         if (data) {
-          const resp = await post('/api/post.save-event.php', data);
+          const resp = await net.post('/api/post.save-event.php', data);
           if (resp?.result) {
             const id = eventId || resp?.result;
-            const newResp = await post('/api/post.confirm-event.php', {id});
+            const newResp = await net.post('/api/post.confirm-event.php', {id});
             if (newResp?.result) {
               $(document).trigger('eventChange');
               app.closeOpenTab();
               $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
-              return toastr.success('Event added.', 'Success');
+              return ui.toastr.success('Event added.', 'Success');
             }
             $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
-            return toastr.error('Seems to be a problem confirming this event!', 'Error');
+            return ui.toastr.error('Seems to be a problem confirming this event!', 'Error');
           }
-          toastr.error(resp.result.errors[2], 'Error');
+          ui.toastr.error(resp.result.errors[2], 'Error');
           console.error(resp);
           $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
         }
       });
 
       $('#btn-delete-event').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this event?')) {
+        if (await ui.ask('Are you sure you want to delete this event?')) {
           const buttonSavedText = $('#btn-delete-event').text();
           $('#btn-delete-event').prop('disabled', true).text('Deleting...');
 
-          const resp = await get('/api/get.delete-event.php', {
+          const resp = await net.get('/api/get.delete-event.php', {
             id: '<?=$eventId?>'
           });
           if (resp?.result) {
             $(document).trigger('eventChange', {eventId});
             $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
             app.closeOpenTab();
-            return toastr.success('Event deleted.', 'Success')
+            return ui.toastr.success('Event deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting event.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting event.', 'Error');
           $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
         }
       });

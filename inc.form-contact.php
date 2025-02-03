@@ -54,7 +54,10 @@
   </div>
 </div>
 
-<script>
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   if (typeof ContactClass === 'undefined') {
 
@@ -85,10 +88,10 @@
       
       getValues () {
         const data = {
-          firstName: cleanVal('#contact-first-name'),
-          lastName: cleanVal('#contact-last-name'),
-          emailAddress: cleanVal('#contact-email-address'),
-          phoneNumber: cleanVal('#contact-phone-number'),
+          firstName: input.cleanVal('#contact-first-name'),
+          lastName: input.cleanVal('#contact-last-name'),
+          emailAddress: input.cleanVal('#contact-email-address'),
+          phoneNumber: input.cleanVal('#contact-phone-number'),
         };
         return data;
       }

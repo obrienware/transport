@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -42,9 +44,7 @@ switch ($json->type) {
     break;
 }
 
-echo json_encode([
-  'result' => true, 
-]);
+echo json_encode(['result' => true]);
 
 function addAirportDropoff($json)
 {

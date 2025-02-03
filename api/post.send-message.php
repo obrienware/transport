@@ -1,4 +1,5 @@
 <?php
+// We are not using this at the moment
 //TODO: This should have its own class
 header('Content-Type: application/json');
 

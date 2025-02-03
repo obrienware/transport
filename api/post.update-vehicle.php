@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -22,18 +24,17 @@ $vehicle->lastUpdate = 'now';
 $vehicle->lastUpdatedBy = $_SESSION['user']->username;
 
 function hasValue($value) {
-    return isset($value) && $value !== '';
+  return isset($value) && $value !== '';
 }
 
 function parseValue($value) {
-    return hasValue($value) ? $value : NULL;
+  return hasValue($value) ? $value : NULL;
 }
 
 if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
-    $result = $vehicle->getId();
-    die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $vehicle->getId()]));
 }
-die(json_encode([
+exit(json_encode([
   'result' => false,
   'message' => $vehicle->getLastError()
 ]));

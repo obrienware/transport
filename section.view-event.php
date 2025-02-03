@@ -146,17 +146,20 @@ $event = new Event($id);
 
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   window.cancelEvent = async function (eventId) {
-    if (await ask('Are you sure you want to cancel this event?')) {
-      const resp = await post('/api/post.cancel-event.php', {eventId});
+    if (await ui.ask('Are you sure you want to cancel this event?')) {
+      const resp = await net.post('/api/post.cancel-event.php', {eventId});
       if (resp?.result) {
         $(document).trigger('eventChange', {eventId});
         app.closeOpenTab();
-        return toastr.success('Event cancellation request submitted.', 'Success');
+        returnui.success('Event cancellation request submitted.', 'Success');
       }
-      return toastr.error('Seems to be a problem cancelling this event!', 'Error');
+      return ui.toastr.error('Seems to be a problem cancelling this event!', 'Error');
     }
   }
 
@@ -179,7 +182,7 @@ $event = new Event($id);
     // $('#<?=$prefix?>-button-send').on('click', async ƒ => {
     //   const message = $('#event-message').val();
     //   if (message) {
-    //     const resp = await post('/api/post.send-message.php', {eventId, message});
+    //     const resp = await net.post('/api/post.send-message.php', {eventId, message});
     //     if (resp?.result) {
     //       $('#event-chat').load('section.chat.php', {eventId});
     //       $('#event-message').val('').focus();
@@ -193,12 +196,12 @@ $event = new Event($id);
     });
 
     $(`#${prefix}-btn-confirm`).off('click').on('click', async e => {
-      const resp = await post('/api/post.confirm-event.php', {id: eventId});
+      const resp = await net.post('/api/post.confirm-event.php', {id: eventId});
       if (resp?.result) {
         $(document).trigger('eventChange', {eventId});
-        return toastr.success('Event confirmed.', 'Success');
+        return ui.toastr.success('Event confirmed.', 'Success');
       }
-      return toastr.error('Seems to be a problem confirming this event!', 'Error');
+      return ui.toastr.error('Seems to be a problem confirming this event!', 'Error');
     });
 
 

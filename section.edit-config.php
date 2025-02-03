@@ -25,11 +25,15 @@ allowRoles(['admin','manager','developer']);
   </div>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
+
   $(async ƒ => {
 
     const node = '<?=$_GET['node']?>';
-    const data = await get(`/api/get.node-config.php?node=${node}`);
+    const data = await net.get(`/api/get.node-config.php?node=${node}`);
     let masterConfig;
 
     try {
@@ -71,11 +75,11 @@ allowRoles(['admin','manager','developer']);
         return;
       }
 
-      const resp = await post(`/api/post.node-config.php`, {configString, nodeConfig, node});
+      const resp = await net.post(`/api/post.node-config.php`, {configString, nodeConfig, node});
       if (resp.result) {
-        return toastr.success(`Config updated.`, 'Success');
+        return ui.toastr.success(`Config updated.`, 'Success');
       }
-      toastr.error(`Config not updated`, 'ERROR');
+      ui.toastr.error(`Config not updated`, 'ERROR');
     });
 
   });

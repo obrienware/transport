@@ -28,38 +28,29 @@ use Transport\DriverNote;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'tbl-driver-notes';
+    const loadOnClick = {
+      page: 'section.edit-driver-note.php',
+      tab: 'edit-driver-note',
+      title: 'Note (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'driverNoteChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#tbl-driver-notes')) {
-      dataTable = $('#tbl-driver-notes').DataTable();
-    } else {
-      dataTable = $('#tbl-driver-notes').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#tbl-driver-notes tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-driver-note', 'Note (edit)', `section.edit-driver-note.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-driver-note').off('click').on('click', ƒ => {
       app.openTab('edit-driver-note', 'Note (add)', `section.edit-driver-note.php`);
     });
-
-    $(document).off('driverNoteChange.ns').on('driverNoteChange.ns', reloadSection);
 
   });
 

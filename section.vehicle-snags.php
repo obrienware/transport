@@ -60,21 +60,24 @@ $vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
 <?php endif; ?>
 
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   if (typeof window.acknowledgeSnag !== 'function') {
     window.acknowledgeSnag = async function(snagId) {
-      const resp = await get('/api/get.snag-acknowledge.php', {snagId});
+      const resp = await net.get('/api/get.snag-acknowledge.php', {snagId});
       $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
     };
   }
 
   if (typeof window.commentSnag !== 'function') {
     window.commentSnag = async function(snagId) {
-      const text = await getText('Snag Comment:');
+      const text = await ui.getText('Snag Comment:');
       if (text == undefined) return;
       console.log('Comment:', text);
-      const resp = await get('/api/get.snag-comment.php', {snagId, text});
+      const resp = await net.get('/api/get.snag-comment.php', {snagId, text});
       $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
       // console.log('Action B', snagId);
     };
@@ -82,9 +85,9 @@ $vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
 
   if (typeof window.addPhotoSnag !== 'function') {
     window.addPhotoSnag = async function(snagId) {
-      const file = await getFile('Upload Photo:');
+      const file = await ui.getFile('Upload Photo:');
       console.log('File:', file);
-      // const resp = await get('/api/get.snag-photo.php', {snagId});
+      // const resp = await net.get('/api/get.snag-photo.php', {snagId});
       // $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
     };
   }

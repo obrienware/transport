@@ -62,52 +62,55 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
     </div>
 </section>
 
-<script type="text/javascript">
+<script type="module">
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
-$(async ƒ => {
+  $(async ƒ => {
 
-  const vehicleId = '<?=$_GET['vehicleId']?>';
-  let documentName = '';
-  <?php $count = count($rows); ?>
-  <?php if ($count > 0): ?>
-    $('#document-count').html('<?=$count?>').removeClass('d-none');
-  <?php endif; ?>
+    const vehicleId = '<?=$_GET['vehicleId']?>';
+    let documentName = '';
+    <?php $count = count($rows); ?>
+    <?php if ($count > 0): ?>
+      $('#document-count').html('<?=$count?>').removeClass('d-none');
+    <?php endif; ?>
 
-  const myDropzone = new Dropzone('#vehicle-document-dropzone', {
-    url: '/api/post.vehicle-document.php',
-    autoProcessQueue: false,
-    createImageThumbnails: false,
-    acceptedFiles: 'image/*,application/pdf',
-    disablePreviews: true,
-    maxFilesize: (10 * 1024 * 1024), // in bytes, so 10MB
+    const myDropzone = new Dropzone('#vehicle-document-dropzone', {
+      url: '/api/post.vehicle-document.php',
+      autoProcessQueue: false,
+      createImageThumbnails: false,
+      acceptedFiles: 'image/*,application/pdf',
+      disablePreviews: true,
+      maxFilesize: (10 * 1024 * 1024), // in bytes, so 10MB
+    });
+
+    function reloadSection () {
+      $('#section-vehicle-documents-list').parent('.tab-pane.active').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    }
+
+    myDropzone.on("sending", function(file, xhr, formData) {
+      formData.append("vehicleId", vehicleId);
+      formData.append("documentName", documentName);
+    });
+
+    myDropzone.on("addedfile", async file => {
+      console.log("A file has been added");
+      documentName = await ui.input('Please enter a name/description for this document');
+      if (!documentName) return myDropzone.removeAllFiles(true);
+      myDropzone.processQueue();
+    });
+
+    myDropzone.on('success', async function(file) {
+      myDropzone.removeAllFiles(true);
+      await alertSuccess(documentName + ' has been uploaded.', 'Success');
+      reloadSection();
+    });
+
+    myDropzone.on('error', async function (file, message) {
+      myDropzone.removeAllFiles(true);
+      await alertError(message, 'Error');
+    });
   });
-
-  function reloadSection () {
-    $('#section-vehicle-documents-list').parent('.tab-pane.active').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
-  }
-
-  myDropzone.on("sending", function(file, xhr, formData) {
-    formData.append("vehicleId", vehicleId);
-    formData.append("documentName", documentName);
-  });
-
-  myDropzone.on("addedfile", async file => {
-    console.log("A file has been added");
-    documentName = await input('Please enter a name/description for this document');
-    if (!documentName) return myDropzone.removeAllFiles(true);
-    myDropzone.processQueue();
-  });
-
-  myDropzone.on('success', async function(file) {
-    myDropzone.removeAllFiles(true);
-    await alertSuccess(documentName + ' has been uploaded.', 'Success');
-    reloadSection();
-  });
-
-  myDropzone.on('error', async function (file, message) {
-    myDropzone.removeAllFiles(true);
-    await alertError(message, 'Error');
-  });
-});
 
 </script>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once 'autoload.php';
 
 use Transport\Airport;
@@ -22,11 +22,11 @@ use Transport\Airport;
     <tbody>
       <?php if ($rows = Airport::getAll()): ?>
         <?php foreach ($rows as $row): ?>
-          <tr data-id="<?=$row->id?>">
-            <td><?=$row->iata?></td>
-            <td><?=$row->name?></td>
-            <td data-order="<?=$row->lead_time?>"><?=intdiv($row->lead_time, 60).':'.sprintf('%02s', ($row->lead_time % 60))?></td>
-            <td data-order="<?=$row->travel_time?>"><?=intdiv($row->travel_time, 60).':'.sprintf('%02s', ($row->travel_time % 60))?></td>
+          <tr data-id="<?= $row->id ?>">
+            <td><?= $row->iata ?></td>
+            <td><?= $row->name ?></td>
+            <td data-order="<?= $row->lead_time ?>"><?= intdiv($row->lead_time, 60) . ':' . sprintf('%02s', ($row->lead_time % 60)) ?></td>
+            <td data-order="<?= $row->travel_time ?>"><?= intdiv($row->travel_time, 60) . ':' . sprintf('%02s', ($row->travel_time % 60)) ?></td>
           </tr>
         <?php endforeach; ?>
       <?php endif; ?>
@@ -34,39 +34,29 @@ use Transport\Airport;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-airports';
+    const loadOnClick = {
+      page: 'section.edit-airport.php',
+      tab: 'edit-airport',
+      title: 'Airport (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'airportChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-airports')) {
-      dataTable = $('#table-airports').DataTable();
-    } else {
-      dataTable = $('#table-airports').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-airports tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-airport', 'Airport (edit)', `section.edit-airport.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-airport').off('click').on('click', ƒ => {
       app.openTab('edit-airport', 'Airport (add)', `section.edit-airport.php`);
     });
 
-    $(document).off('airportChange.ns').on('airportChange.ns', reloadSection);
-
   });
-
 </script>

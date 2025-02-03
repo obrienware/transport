@@ -1,13 +1,15 @@
 <?php
-
-use Transport\Database;
+declare(strict_types=1);
 
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
+use Transport\Database;
+
 $db = Database::getInstance();
-$q = '%' . $_GET['query'] . '%';
+
+$q = '%'.filter_input(INPUT_GET, 'query', FILTER_SANITIZE_FULL_SPECIAL_CHARS).'%';
 $query = "
   SELECT 
     id AS value,

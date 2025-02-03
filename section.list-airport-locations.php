@@ -34,38 +34,29 @@ use Transport\AirportLocation;
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="module">
+  import { initListPage } from '/js/listpage-helper.js';
 
   $(async ƒ => {
 
-    let dataTable;
-    let targetId;
-
-    function reloadSection () {
-      $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    const tableId = 'table-airport-locations';
+    const loadOnClick = {
+      page: 'section.edit-airport-location.php',
+      tab: 'edit-airport-location',
+      title: 'Airport Location (edit)',
     }
+    const dataTableOptions = {
+      responsive: true
+    };
+    const reloadOnEventName = 'airportLocationChange';
+    const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
+    const thisURI = `<?=$_SERVER['REQUEST_URI']?>`;
 
-    if ($.fn.dataTable.isDataTable('#table-airport-locations')) {
-      dataTable = $('#table-airport-locations').DataTable();
-    } else {
-      dataTable = $('#table-airport-locations').DataTable({
-        responsive: true
-      });
-    }
-
-    $('#table-airport-locations tbody tr').on('click', ƒ => {
-      ƒ.preventDefault(); // in the case of an anchor tag. (we don't want to navigating anywhere)
-      const self = ƒ.currentTarget;
-      const id = $(self).data('id');
-      targetId = id;
-      app.openTab('edit-airport-location', 'Airport Location (edit)', `section.edit-airport-location.php?id=${id}`);
-    });
+    initListPage({tableId, loadOnClick, dataTableOptions, reloadOnEventName, parentSectionId, thisURI});
 
     $('#btn-add-airport-location').off('click').on('click', ƒ => {
       app.openTab('edit-airport-location', 'Airport Location (add)', `section.edit-airport-location.php`);
     });
-
-    $(document).off('airportLocationChange.ns').on('airportLocationChange.ns', reloadSection);
 
   });
 

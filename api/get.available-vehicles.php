@@ -1,10 +1,11 @@
 <?php
-
-use Transport\Database;
+declare(strict_types=1);
 
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
+
+use Transport\Database;
 
 $db = Database::getInstance();
 
@@ -45,16 +46,31 @@ WHERE
 			AND id <> :reservation_id
 			AND vehicle_id IS NOT NULL
 	)
+
+	-- Look in maintenance
+	AND v.id NOT IN (
+		SELECT vehicle_id FROM vehicle_maintenance
+		WHERE 
+			(start_date BETWEEN :from_date AND :to_date
+			OR end_date BETWEEN :from_date AND :to_date)
+			AND archived IS NULL
+			AND id <> :maintenance_id
+			AND vehicle_id IS NOT NULL
+	)	
 ";
-$current_tripId = $_GET['tripId'] ?? 0;
-$current_eventId = $_GET['eventId'] ?? 0;
-$current_reservationId = $_GET['reservationId'] ?? 0;
+
+$current_tripId = (int) filter_input(INPUT_GET, 'tripId', FILTER_SANITIZE_NUMBER_INT);
+$current_eventId = (int) filter_input(INPUT_GET, 'eventId', FILTER_SANITIZE_NUMBER_INT);
+$current_reservationId = (int) filter_input(INPUT_GET, 'reservationId', FILTER_SANITIZE_NUMBER_INT);
+$current_maintenanceId = (int) filter_input(INPUT_GET, 'maintenanceId', FILTER_SANITIZE_NUMBER_INT);
+
 $params = [
-  'from_date' => $_GET['startDate'],
-  'to_date' => $_GET['endDate'],
+	'from_date' => filter_input(INPUT_GET, 'startDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+	'to_date' => filter_input(INPUT_GET, 'endDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
 	'trip_id' => $current_tripId,
 	'event_id' => $current_eventId,
-	'reservation_id' => $current_reservationId
+	'reservation_id' => $current_reservationId,
+	'maintenance_id' => $current_maintenanceId,
 ];
 $ids = $db->get_var($query, $params);
 $arrayIds = $ids ? explode(',',$ids) : [];
@@ -73,4 +89,3 @@ foreach ($rows as $key => $row) {
 }
 
 die(json_encode($rows));
-// TODO: Check whether the vehicle will be in the shop for maintenance at this time

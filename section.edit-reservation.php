@@ -103,7 +103,10 @@ $reservationId = $reservation->getId();
 
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
@@ -121,8 +124,8 @@ $reservationId = $reservation->getId();
         data.startDateTime = startDateTime.format('YYYY-MM-DD HH:mm:ss');
         data.endDateTime = endDateTime.format('YYYY-MM-DD HH:mm:ss');
         if ($('#reservation-guest').val()) data.guestId = $('#reservation-guest').data('id');
-        data.vehicleId = val('#reservation-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
-        data.reason = cleanVal('#reservation-reason');
+        data.vehicleId = input.val('#reservation-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
+        data.reason = input.cleanVal('#reservation-reason');
         if ($('#event-requestor').val()) data.requestorId = $('#event-requestor').data('id');
         return data;
       }
@@ -202,25 +205,25 @@ $reservationId = $reservation->getId();
         const data = getData();
 
         // Validation
-        if (!startDateTime || !endDateTime) return toastr.error('Please select a start and end date.', 'Error');
-        if (startDateTime.isAfter(endDateTime)) return toastr.error('Start date cannot be after end date.', 'Error');
-        if (startDateTime.isBefore(moment())) return toastr.error('Start date cannot be in the past.', 'Error');
-        if (!data.guestId) return toastr.error('Please select a guest.', 'Error');
-        if (!data.vehicleId) return toastr.error('Please select a vehicle.', 'Error');
-        if (data?.reason?.length <= 0) return toastr.error('Please enter a reason/purpose.', 'Error');
+        if (!startDateTime || !endDateTime) return ui.toastr.error('Please select a start and end date.', 'Error');
+        if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+        if (startDateTime.isBefore(moment())) return ui.toastr.error('Start date cannot be in the past.', 'Error');
+        if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
+        if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
+        if (data?.reason?.length <= 0) return ui.toastr.error('Please enter a reason/purpose.', 'Error');
 
         const buttonSavedText = $('#btn-save-reservation').text();
         $('#btn-save-reservation').prop('disabled', true).text('Saving...');
 
-        const resp = await post('/api/post.save-reservation.php', data);
+        const resp = await net.post('/api/post.save-reservation.php', data);
         if (resp?.result) {
           app.closeOpenTab();
           $(document).trigger('reservationChange', {reservationId});
-          if (reservationId) return toastr.success('Vehicle reservation saved.', 'Success');
+          if (reservationId) return ui.toastr.success('Vehicle reservation saved.', 'Success');
           $('#btn-save-reservation').prop('disabled', false).text(buttonSavedText);
-          return toastr.success('Reservation added.', 'Success')
+          return ui.toastr.success('Reservation added.', 'Success')
         }
-        toastr.error(resp.error, 'Error');
+        ui.toastr.error(resp.error, 'Error');
         console.log(resp);
         $('#btn-save-reservation').prop('disabled', false).text(buttonSavedText);
       });
@@ -230,37 +233,37 @@ $reservationId = $reservation->getId();
         const data = getData();
 
         // Validation
-        if (!startDateTime || !endDateTime) return toastr.error('Please select a start and end date.', 'Error');
-        if (startDateTime.isAfter(endDateTime)) return toastr.error('Start date cannot be after end date.', 'Error');
-        if (startDateTime.isBefore(moment())) return toastr.error('Start date cannot be in the past.', 'Error');
-        if (!data.guestId) return toastr.error('Please select a guest.', 'Error');
-        if (!data.vehicleId) return toastr.error('Please select a vehicle.', 'Error');
-        if (data?.reason?.length <= 0) return toastr.error('Please enter a reason/purpose.', 'Error');
+        if (!startDateTime || !endDateTime) return ui.toastr.error('Please select a start and end date.', 'Error');
+        if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+        if (startDateTime.isBefore(moment())) return ui.toastr.error('Start date cannot be in the past.', 'Error');
+        if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
+        if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
+        if (data?.reason?.length <= 0) return ui.toastr.error('Please enter a reason/purpose.', 'Error');
 
         const buttonSavedText = $('#btn-save-confirm-reservation').text();
         $('#btn-save-confirm-reservation').prop('disabled', true).text('Saving...');
 
-        const resp = await post('/api/post.save-reservation.php', data);
+        const resp = await net.post('/api/post.save-reservation.php', data);
         if (resp?.result) {
           // If we have successfully saved the reservation, we can now go ahead and confirm it
           const id = reservationId || resp?.result;
-          const newResp = await post('/api/post.confirm-reservation.php', {id});
+          const newResp = await net.post('/api/post.confirm-reservation.php', {id});
           if (newResp?.result) {
             $(document).trigger('reservationChange');
             app.closeOpenTab();
-            return toastr.success('Reservation updated and confirmed.', 'Success');
+            return ui.toastr.success('Reservation updated and confirmed.', 'Success');
           }
           $('#btn-save-confirm-reservation').prop('disabled', false).text(buttonSavedText);
-          return toastr.error('Seems to be a problem confirming this reservation!', 'Error');
+          return ui.toastr.error('Seems to be a problem confirming this reservation!', 'Error');
         }
-        toastr.error(resp.error, 'Error');
+        ui.toastr.error(resp.error, 'Error');
         console.error(resp);
         $('#btn-save-confirm-reservation').prop('disabled', false).text(buttonSavedText);
       });
 
 
       $('#btn-delete-reservation').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete this reservation?')) {
+        if (await ui.ask('Are you sure you want to delete this reservation?')) {
           const buttonSavedText = $('#btn-delete-reservation').text();
           $('#btn-delete-reservation').prop('disabled', true).text('Deleting...');
 
@@ -269,10 +272,10 @@ $reservationId = $reservation->getId();
             $(document).trigger('reservationChange', {reservationId});
             $('#btn-delete-reservation').prop('disabled', false).text(buttonSavedText);
             app.closeOpenTab();
-            return toastr.success('Reservation deleted.', 'Success')
+            return ui.toastr.success('Reservation deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting this reservation.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting this reservation.', 'Error');
           $('#btn-delete-reservation').prop('disabled', false).text(buttonSavedText);
         }
       });

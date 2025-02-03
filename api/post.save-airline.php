@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -14,23 +16,21 @@ if (!empty($_FILES)) {
   $targetFolder = dirname( __FILE__ ).'/../images/airlines/';
   
   if ( !file_exists( $targetFolder ) || !is_dir( $targetFolder) ) {
-    mkdir("$targetFolder");
+    mkdir($targetFolder, 0755, true);
     chmod("$targetFolder", 0755);
   }
-  move_uploaded_file($_FILES['image']['tmp_name'], $targetFolder.$targetFilename);
+  if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetFolder.$targetFilename)) {
+    exit(json_encode(['result' => false, 'error' => 'Failed to move uploaded file.']));
+  }
 }
 
-if ($_POST['id']) {
-  $airline = new Airline($_POST['id']);
-} else {
-  $airline = new Airline();
-}
+$airline = new Airline($_POST['id']);
 $airline->name = $_POST['name'];
 $airline->flightNumberPrefix = $_POST['flightNumberPrefix'];
 if (isset($targetFilename)) $airline->imageFilename = $targetFilename;
 
 if ($airline->save(userResponsibleForOperation: $user->getUsername())) {
-  $result = $airline->getId();
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $airline->getId()]));
 }
-die(json_encode(['result' => false]));
+
+exit(json_encode(['result' => false, 'error' => $airline->getLastError()]));

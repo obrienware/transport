@@ -60,26 +60,29 @@ use Transport\User;
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       $('#blockout-user').selectpicker();
 
       $('#btn-save-blockout').off('click').on('click', async ƒ => {
-        if ($('#blockout-user').val() == '')return toastr.error('You need to select a driver first', 'Attention');
-        const resp = await post('/api/post.save-blockout.php', {
+        if ($('#blockout-user').val() == '')return ui.toastr.error('You need to select a driver first', 'Attention');
+        const resp = await net.post('/api/post.save-blockout.php', {
           userId: $('#blockout-user').val(),
-          fromDateTime: val('#blockout-from-datetime') ? moment(val('#blockout-from-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
-          toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
-          note: cleanVal('#blockout-note')
+          fromDateTime: $('#blockout-from-datetime').val() ? moment($('#blockout-from-datetime').val()).format('YYYY-MM-DD HH:mm:ss') : null,
+          toDateTime: $('#blockout-to-datetime').val() ? moment($('#blockout-to-datetime').val()).format('YYYY-MM-DD HH:mm:ss') : null,
+          note: input.cleanVal('#blockout-note')
         });
         if (resp?.result) {
           $(document).trigger('blockoutChange');
           app.closeOpenTab();
-          return toastr.success('Blockout dates added.', 'Success')
+          return ui.toastr.success('Blockout dates added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
+        ui.toastr.error(resp .result.errors[2], 'Error');
         console.log(resp);
       });
 

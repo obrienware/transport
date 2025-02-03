@@ -65,43 +65,46 @@ $blockoutId = $blockout->getId();
     </div>
   </div>
 
-  <script type="text/javascript">
+  <script type="module">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
       const blockoutId = <?=$blockoutId ?: 'null'?>;
 
       $('#btn-save-blockout').off('click').on('click', async ƒ => {
-        if (!val('#blockout-from-datetime') || !val('#blockout-to-datetime')) return toastr.error('Please select both start and end dates.', 'Error');
-        const resp = await post('/api/post.save-blockout.php', {
+        if (!val('#blockout-from-datetime') || !val('#blockout-to-datetime')) return ui.toastr.error('Please select both start and end dates.', 'Error');
+        const resp = await net.post('/api/post.save-blockout.php', {
           id: blockoutId,
           userId: `<?=$_SESSION['user']->id?>`,
-          fromDateTime: val('#blockout-from-datetime') ? moment(val('#blockout-from-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
-          toDateTime: val('#blockout-to-datetime') ? moment(val('#blockout-to-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
-          note: cleanVal('#blockout-note')
+          fromDateTime: input.val('#blockout-from-datetime') ? moment(input.val('#blockout-from-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
+          toDateTime: input.val('#blockout-to-datetime') ? moment(input.val('#blockout-to-datetime')).format('YYYY-MM-DD HH:mm:ss') : null,
+          note: input.cleanVal('#blockout-note')
         });
         if (resp?.result) {
           $(document).trigger('blockoutChange', {blockoutId});
           app.closeOpenTab();
-          if (blockoutId) return toastr.success('Blockout dates saved.', 'Success');
-          return toastr.success('Blockout dates added.', 'Success')
+          if (blockoutId) return ui.toastr.success('Blockout dates saved.', 'Success');
+          return ui.toastr.success('Blockout dates added.', 'Success')
         }
-        toastr.error(resp .result.errors[2], 'Error');
+        ui.toastr.error(resp .result.errors[2], 'Error');
         console.log(resp);
       });
 
       $('#btn-delete-blockout').off('click').on('click', async ƒ => {
-        if (await ask('Are you sure you want to delete these blockout dates?')) {
-          const resp = await get('/api/get.delete-blockout.php', {
+        if (await ui.ask('Are you sure you want to delete these blockout dates?')) {
+          const resp = await net.get('/api/get.delete-blockout.php', {
             id: blockoutId
           });
           if (resp?.result) {
             $(document).trigger('blockoutChange', {blockoutId});
             app.closeOpenTab();
-            return toastr.success('Blockout dates deleted.', 'Success')
+            return ui.toastr.success('Blockout dates deleted.', 'Success')
           }
           console.log(resp);
-          toastr.error('There seems to be a problem deleting blockout dates.', 'Error');
+          ui.toastr.error('There seems to be a problem deleting blockout dates.', 'Error');
         }
       });
 

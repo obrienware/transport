@@ -1,31 +1,34 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
 use Transport\Database;
 
-$start = $_GET['start'];
-$end = $_GET['end'];
+$start = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$end = filter_input(INPUT_GET, 'end', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$requestorId = filter_input(INPUT_GET, 'requestorId', FILTER_SANITIZE_NUMBER_INT);
 
-if (isset($_GET['requestorId'])) {
-  $criteria = "AND e.requestor_id = {$_GET['requestorId']}";
+if ($requestorId) {
+  $criteria = "AND e.requestor_id = {$requestorId}";
 }
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database
 $db = Database::getInstance();
 $query = "
-SELECT 
-  e.* 
-FROM events e
-WHERE
-  (
-    (e.start_date BETWEEN :start AND :end) OR
-    (e.end_date BETWEEN :start AND :end)
-  )
-  AND e.archived IS NULL
-  AND e.cancellation_requested IS NULL
-  {$criteria}
+  SELECT 
+    e.* 
+  FROM events e
+  WHERE
+    (
+      (e.start_date BETWEEN :start AND :end) OR
+      (e.end_date BETWEEN :start AND :end)
+    )
+    AND e.archived IS NULL
+    AND e.cancellation_requested IS NULL
+    {$criteria}
 ";
 $params = ['start' => $start, 'end' => $end];
 
@@ -60,10 +63,10 @@ if ($rows = $db->get_rows($query, $params)) {
     // Format for the requestor's view
     if (isset($_GET['requestorId'])) {
       if ($row->confirmed) {
-        $event->backgroundColor = '#03fc30';
+        $event->backgroundColor = '#03fc30'; // green
         $event->textColor = '#000000';
       } else {
-        $event->backgroundColor = '#cccccc';
+        $event->backgroundColor = '#cccccc'; // gray
         $event->textColor = '#000000';
       }
     }

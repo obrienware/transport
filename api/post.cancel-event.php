@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -21,7 +23,7 @@ foreach ($managers as $manager) {
   $templateData = [
     'name' => $manager->first_name,
     'summary' => $event->name,
-    'startDate' => Date('m/d/Y', strtotime($event->endDate)),
+    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
     'endDate' => Date('m/d/Y', strtotime($event->endDate)),
     'requestorEmail' => $user->emailAddress,
   ];
@@ -34,4 +36,4 @@ foreach ($managers as $manager) {
 }
 
 
-die(json_encode(['result' => true]));
+exit(json_encode(['result' => true]));

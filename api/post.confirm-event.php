@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 header('Content-Type: application/json');
 
 require_once '../autoload.php';
@@ -17,7 +19,7 @@ $json = json_decode(file_get_contents("php://input"));
 $result = true;
 $event = new Event($json->id);
 
-if (!$event->confirmed) {
+if (!$event->isConfirmed()) {
   
   $results[] = $event->confirm(userResponsibleForOperation: $me->getUsername());
 
@@ -50,27 +52,26 @@ if (!$event->confirmed) {
 
 
   // Email the drivers
-  if ($event->drivers) {
-    $template = new Template(EmailTemplates::get('Email Driver New Event'));
-    foreach ($event->drivers as $driverId) {
-      $driver = new User($driverId);
-      $templateData = [
-        'name' => $driver->firstName,
-        'eventName' => $event->name,
-        'startDate' => Date('m/d/Y', strtotime($event->startDate)),
-        'endDate' => Date('m/d/Y', strtotime($event->endDate)),
-      ];
+  if (!$event->drivers) return;
+  $template = new Template(EmailTemplates::get('Email Driver New Event'));
+  foreach ($event->drivers as $driverId) {
+    $driver = new User($driverId);
+    $templateData = [
+      'name' => $driver->firstName,
+      'eventName' => $event->name,
+      'startDate' => Date('m/d/Y', strtotime($event->startDate)),
+      'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+    ];
 
-      $email = new Email();
-      $email->addRecipient($driver->emailAddress, $driver->getName());
-      if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
-      $email->addReplyTo($me->emailAddress, $me->getName());
-      $email->setSubject('An event has been assigned to you: '.$event->name);
-      $email->setContent($template->render($templateData));
-      $ical = $ics->to_string();
-      $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
-      $email->sendText();
-    }
+    $email = new Email();
+    $email->addRecipient($driver->emailAddress, $driver->getName());
+    if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
+    $email->addReplyTo($me->emailAddress, $me->getName());
+    $email->setSubject('An event has been assigned to you: '.$event->name);
+    $email->setContent($template->render($templateData));
+    $ical = $ics->to_string();
+    $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
+    $email->sendText();
   }
 }
 
