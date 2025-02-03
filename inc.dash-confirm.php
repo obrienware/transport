@@ -60,7 +60,7 @@ $reservationRows = $db->get_rows($query);
 
 <?php if ($tripRows || $eventRows || $reservationRows): ?>
 
-  <div id="unconfirmed-items-container mb-3">
+  <div id="unconfirmed-items-container" class="mb-3">
 
     <div class="card text-bg-danger">
       <h5 class="card-header"><i class="fa-solid fa-circle-exclamation"></i> Unconfirmed Items</h5>
