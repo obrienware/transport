@@ -53,7 +53,7 @@
 			if (from_date.length === 0) return ui.toastr.error(`From Date is required`, 'ATTENTION');
 			if (to_date.length === 0) return ui.toastr.error(`To Date is required`, 'ATTENTION');
 			$('#report').prop('disabled', true);
-			$('#output').html(report_loader).load(`report-data.auth-log.php` + queryParams({
+			$('#output').html(report_loader).load(`report-data.auth-log.php` + net.queryParams({
         from_date, to_date
       }), ƒ => {
         $('#report').prop('disabled', false);

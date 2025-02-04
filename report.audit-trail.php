@@ -88,7 +88,7 @@ $db = Database::getInstance();
 			if (from_date.length === 0) return ui.toastr.error(`From Date is required`, 'ATTENTION');
 			if (to_date.length === 0) return ui.toastr.error(`To Date is required`, 'ATTENTION');
 			$('#report').prop('disabled', true);
-			$('#output').html(report_loader).load(`report-data.audit-trail.php` + queryParams({
+			$('#output').html(report_loader).load(`report-data.audit-trail.php` + net.queryParams({
         from_date, to_date, table, user
       }), ƒ => {
         $('#report').prop('disabled', false);

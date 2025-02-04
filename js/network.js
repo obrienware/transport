@@ -24,4 +24,4 @@ const queryParams = paramsObj => {
   return (queryString.length > 0) ? `?${queryString}` : '';
 };
 
-export { post, get };
+export { post, get, queryParams };
