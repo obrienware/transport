@@ -352,12 +352,12 @@
         return false;
       }
 
-      const leadTime = isNaN(parseFloat(cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(cleanNumberVal('#trip-lead-time') * 60);
+      const leadTime = isNaN(parseFloat(input.cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(input.cleanNumberVal('#trip-lead-time') * 60);
       console.log('leadTime:', leadTime);
       startDate = moment(pickupDate).subtract(leadTime, 'm');
       console.log('startDate:', startDate.format());
       
-      const duration = Math.abs(cleanNumberVal('#trip-duration-hours'));
+      const duration = Math.abs(input.cleanNumberVal('#trip-duration-hours'));
       console.log('duration:', duration);
       if (duration <= 0) {
         await alertError('You need a specify a valid trip duration before proceeding.', 'Oops!');
