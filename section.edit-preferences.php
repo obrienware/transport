@@ -41,8 +41,9 @@ $prefs = $user->getPreferences();
     $('#btn-save-preferences').off('click').on('click', async e => {
       const data = getData();
       const resp = await net.post('/api/post.save-user-preferences.php', data);
-      console.log(resp);
       app.closeOpenTab();
+      if (resp.result) return ui.toastr('Preferences saved', 'success');
+      ui.toastr('Error saving preferences', 'error');
     });
   });
 
