@@ -148,15 +148,16 @@ if ($trip->ETD) {
 
 
 // Check for and update any linked vehicle reservations
-if ($reservation = VehicleReservation::getReservationByTripId($trip->getId())) {
-  if ($trip->getId() == $reservation->startTripId) {
-    $reservation->startDateTime = $trip->endDate;
-  } else {
-    $reservation->endDateTime = $trip->startDate;
-  }
-  $reservation->save(userResponsibleForOperation: $user->getUsername());
+if ($trip->getId()) {
+  if ($reservation = VehicleReservation::getReservationByTripId($trip->getId())) {
+    if ($trip->getId() == $reservation->startTripId) {
+      $reservation->startDateTime = $trip->endDate;
+    } else {
+      $reservation->endDateTime = $trip->startDate;
+    }
+    $reservation->save(userResponsibleForOperation: $user->getUsername());
+  }  
 }
-
 
 
 if ($trip->save(userResponsibleForOperation: $user->getUsername())) {
