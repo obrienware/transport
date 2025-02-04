@@ -94,17 +94,17 @@
         const confirmPassword = input.cleanVal('#confirm-password');
 
         if (password.length < 8) {
-          return alertError('Your password should be at least 8 characters long.', 'Try Again.');
+          return ui.alertError('Your password should be at least 8 characters long.', 'Try Again.');
         }
         if (password !== confirmPassword) {
-          return alertError('Your password confirmation doesn\'t match your new password.', 'Try Again.');
+          return ui.alertError('Your password confirmation doesn\'t match your new password.', 'Try Again.');
         }
 
         const resp = await post('/api/post.reset-password.php', {id: userId, password});
         if (resp?.result) {
 					return location.href=`<?=$return?>`;
 				}
-        await alertError('There seems to be a problem resetting your password.', 'Hmm..');
+        await ui.alertError('There seems to be a problem resetting your password.', 'Hmm..');
 				$('#username').select().focus();
       });
 
