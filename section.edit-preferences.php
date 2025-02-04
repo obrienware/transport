@@ -42,8 +42,8 @@ $prefs = $user->getPreferences();
       const data = getData();
       const resp = await net.post('/api/post.save-user-preferences.php', data);
       app.closeOpenTab();
-      if (resp.result) return ui.toastr('Preferences saved', 'success');
-      ui.toastr('Error saving preferences', 'error');
+      if (resp.result) return ui.toastr.success('Preferences saved');
+      ui.toastr.error('Error saving preferences', 'Error');
     });
   });
 
