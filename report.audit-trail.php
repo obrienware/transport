@@ -80,10 +80,10 @@ $db = Database::getInstance();
 
 		$('#btn-report').off('click').on('click', ƒ => {
       console.log('report button clicked.')
-			const from_date = val('#from_date');
-			const to_date = val('#to_date');
-			const table = val('#table');
-			const user = val('#user');
+			const from_date = $('#from_date').val();
+			const to_date = $('#to_date').val();
+			const table = $('#table').val();
+			const user = $('#user').val();
 			if (from_date.length === 0) return ui.toastr.error(`From Date is required`, 'ATTENTION');
 			if (to_date.length === 0) return ui.toastr.error(`To Date is required`, 'ATTENTION');
 			$('#report').prop('disabled', true);
