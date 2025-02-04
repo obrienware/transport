@@ -85,10 +85,10 @@ if (!is_null($id) && !$vehicle->getId()) {
     $('#btn-save-vehicle').off('click').on('click', async ƒ => {
       const resp = await net.post('/api/post.save-vehicle.php', {
         vehicleId,
-        color: val('#vehicle-color'),
+        color: $('#vehicle-color').val(),
         name: input.cleanVal('#vehicle-name'),
         description: input.cleanVal('#vehicle-description'),
-        passengers: input.int(val('#vehicle-passengers'), null),
+        passengers: input.int($('#vehicle-passengers').val(), null),
         licensePlate: input.cleanUpperVal('#vehicle-license-plate'),
         // mileage: int(val('#vehicle-mileage'), null),
         requireCDL: $('#vehicle-requireCDL').is(':checked'),

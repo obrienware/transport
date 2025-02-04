@@ -190,7 +190,7 @@ $vehicle = new Vehicle($vehicleId);
           break;
 
         case 'mileage':
-          content = `<span class="fw-light badge bg-primary w-100">${state ? decimal(state, 0) : 'unknown'}</span>`;
+          content = `<span class="fw-light badge bg-primary w-100">${state ? input.decimal(state, 0) : 'unknown'}</span>`;
           $('#vehicle-mileage').html(content);
           break;
       }
