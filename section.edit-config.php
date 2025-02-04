@@ -16,7 +16,7 @@ allowRoles(['admin','manager','developer']);
 <div class="container-fluid mt-3">
   <h1 id="node-title" class="mb-0 fw-bold"></h1>
   <div class="mb-4 text-danger text-opacity-75">Please edit with caution</div>
-	<div id="editor" class="border" style="height:calc(100vh - 350px) !important; min-height: 300px; font-size:max(10px, min(1.2vw, 14px)); resize: vertical">loading...</div>
+	<div id="editor" class="border" style="height:calc(100vh - 360px) !important; min-height: 300px; font-size:max(10px, min(1.2vw, 14px)); resize: vertical">loading...</div>
 
 
   <div id="node-last-updated" class="text-muted text-end fs-6"></div>
