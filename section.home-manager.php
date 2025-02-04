@@ -45,12 +45,14 @@ $user = new User($_SESSION['user']->id);
 
 
 <script type="module">
-  import { get } from '/js/network.js';
+  import * as input from '/js/formatters.js';
+  import * as ui from '/js/notifications.js';
+  import * as net from '/js/network.js';
 
   $(async ƒ => {
 
-    let vehicleResources = await get('/api/get.resource-vehicles.php');
-    let driverResources = await get('/api/get.resource-drivers.php');
+    let vehicleResources = await net.get('/api/get.resource-vehicles.php');
+    let driverResources = await net.get('/api/get.resource-drivers.php');
 
     const ec = new EventCalendar(document.getElementById('ec'), {
       view: 'dayGridMonth',
@@ -140,12 +142,12 @@ $user = new User($_SESSION['user']->id);
     $('#btn-refresh-calendar').on('click', refreshEvents);
 
     $(document).on('vehicleChange', async function (event, data) {
-      vehicleResources = await get('/api/get.resource-vehicles.php');
+      vehicleResources = await net.get('/api/get.resource-vehicles.php');
       refreshEvents();
     });
 
     $(document).on('driverChange', async function (event, data) {
-      vehicleResources = await get('/api/get.resource-drivers.php');
+      vehicleResources = await net.get('/api/get.resource-drivers.php');
       refreshEvents();
     });
 

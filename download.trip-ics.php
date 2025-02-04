@@ -17,9 +17,11 @@ $description .= "DO ".$trip->doLocation->name."\\n\\n";
 if ($trip->flightNumber) {
   $description .= "Flight ".$trip->airline->name." ".$trip->airline->flightNumberPrefix.$trip->flightNumber." ";
   if ($trip->ETA) {
-    $description .= "ETA ".Date('g:ia', strtotime($trip->ETA))."\\n\\n";
+    // $description .= "ETA ".Date('g:ia', strtotime($trip->ETA))."\\n\\n";
+    $description .= "ETA ".(new DateTime($trip->ETA))->format('g:ia')."\\n\\n";
   } else {
-    $description .= "ETD ".Date('g:ia', strtotime($trip->ETD))."\\n\\n";
+    // $description .= "ETD ".Date('g:ia', strtotime($trip->ETD))."\\n\\n";
+    $description .= "ETD ".(new DateTime($trip->ETD))->format('g:ia')."\\n\\n";
   }
 }
 $description .= "Contact: ".$trip->guest->getName()." ".$trip->guest->phoneNumber."\\n\\n";
