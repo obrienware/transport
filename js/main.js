@@ -68,7 +68,6 @@ const reFormat = () => {
   });
 };
 
-export { bindPopovers, reFormat };
 $(async ƒ => {
   $('td.date').toArray().forEach(item => {
     const value = moment($(item).html(), 'YYYY-MM-DD');
@@ -114,3 +113,5 @@ $(async ƒ => {
 
   $(document).ajaxStop(reFormat);
 });
+
+export { bindPopovers, reFormat, loader, report_loader, offset, duration };
