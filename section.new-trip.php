@@ -385,8 +385,8 @@
       $('#btn-trip-change').removeClass('d-none');
       $('#trip-body').removeClass('d-none');
 
-      const saveDriverId = val('#trip-driver-id');
-      const saveVehicleId = val('#trip-vehicle-id');
+      const saveDriverId = $('#trip-driver-id').val();
+      const saveVehicleId = $('#trip-vehicle-id').val();
 
       // Load the resources!
       drivers = await net.get('/api/get.available-drivers.php', {
