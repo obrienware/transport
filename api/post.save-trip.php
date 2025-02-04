@@ -115,27 +115,27 @@ if ($trip->getId() && $trip->isConfirmed() && $trip->endDate > Date('Y-m-d H:i:s
 }
 
 
-$trip->requestorId = $json->requestorId ?: NULL;
-$trip->summary = $json->summary ?: NULL;
-$trip->startDate = $json->startDate ?: NULL;
-$trip->pickupDate = $json->pickupDate ?: NULL;
-$trip->endDate = $json->endDate ?: NULL;
-$trip->guests = $json->guests ?: NULL;
-$trip->guestId = $json->guestId ?: NULL;
-$trip->passengers = $json->passengers ?: NULL;
-$trip->puLocationId = $json->puLocationId ?: NULL;
-$trip->doLocationId = $json->doLocationId ?: NULL;
-$trip->driverId = $json->driverId ?: NULL;
-$trip->vehicleId = $json->vehicleId ?: NULL;
-$trip->airlineId = $json->airlineId ?: NULL;
-$trip->flightNumber = $json->flightNumber ?: NULL;
-$trip->vehiclePUOptions = $json->vehiclePUOptions ?: NULL;
-$trip->vehicleDOOptions = $json->vehicleDOOptions ?: NULL;
-$trip->ETA = $json->ETA ?: NULL;
-$trip->ETD = $json->ETD ?: NULL;
-$trip->guestNotes = $json->guestNotes ?: NULL;
-$trip->driverNotes = $json->driverNotes ?: NULL;
-$trip->generalNotes = $json->generalNotes ?: NULL;
+$trip->requestorId = parseValue($json->requestorId);
+$trip->summary = parseValue($json->summary);
+$trip->startDate = parseValue($json->startDate);
+$trip->pickupDate = parseValue($json->pickupDate);
+$trip->endDate = parseValue($json->endDate);
+$trip->guests = parseValue($json->guests);
+$trip->guestId = parseValue($json->guestId);
+$trip->passengers = parseValue($json->passengers);
+$trip->puLocationId = parseValue($json->puLocationId);
+$trip->doLocationId = parseValue($json->doLocationId);
+$trip->driverId = parseValue($json->driverId);
+$trip->vehicleId = parseValue($json->vehicleId);
+$trip->airlineId = parseValue($json->airlineId);
+$trip->flightNumber = parseValue($json->flightNumber);
+$trip->vehiclePUOptions = parseValue($json->vehiclePUOptions);
+$trip->vehicleDOOptions = parseValue($json->vehicleDOOptions);
+$trip->ETA = parseValue($json->ETA);
+$trip->ETD = parseValue($json->ETD);
+$trip->guestNotes = parseValue($json->guestNotes);
+$trip->driverNotes = parseValue($json->driverNotes);
+$trip->generalNotes = parseValue($json->generalNotes);
 
 if ($trip->ETA) {
   $location = new Location($trip->puLocationId);
@@ -260,3 +260,10 @@ function notifyParticipants(Trip $trip, array $changes, array $driversToNotify):
 
 }
 
+function hasValue($value) {
+  return isset($value) && $value !== '';
+}
+
+function parseValue($value) {
+  return hasValue($value) ? $value : NULL;
+}
