@@ -7,7 +7,8 @@ require_once '../autoload.php';
 
 use Transport\User;
 
-$json = json_decode(file_get_contents("php://input"));
+// $json = json_decode(file_get_contents("php://input"));
+$json = file_get_contents("php://input");
 
 $user = new User($_SESSION['user']->id);
 $user->preferences = $json;
