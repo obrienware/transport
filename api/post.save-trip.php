@@ -115,19 +115,19 @@ if ($trip->getId() && $trip->isConfirmed() && $trip->endDate > Date('Y-m-d H:i:s
 }
 
 
-$trip->requestorId = parseValue($json->requestorId);
+$trip->requestorId = parseValueInt($json->requestorId);
 $trip->summary = parseValue($json->summary);
 $trip->startDate = parseValue($json->startDate);
 $trip->pickupDate = parseValue($json->pickupDate);
 $trip->endDate = parseValue($json->endDate);
 $trip->guests = parseValue($json->guests);
-$trip->guestId = parseValue($json->guestId);
-$trip->passengers = parseValue($json->passengers);
-$trip->puLocationId = parseValue($json->puLocationId);
-$trip->doLocationId = parseValue($json->doLocationId);
-$trip->driverId = parseValue($json->driverId);
-$trip->vehicleId = parseValue($json->vehicleId);
-$trip->airlineId = parseValue($json->airlineId);
+$trip->guestId = parseValueInt($json->guestId);
+$trip->passengers = parseValueInt($json->passengers);
+$trip->puLocationId = parseValueInt($json->puLocationId);
+$trip->doLocationId = parseValueInt($json->doLocationId);
+$trip->driverId = parseValueInt($json->driverId);
+$trip->vehicleId = parseValueInt($json->vehicleId);
+$trip->airlineId = parseValueInt($json->airlineId);
 $trip->flightNumber = parseValue($json->flightNumber);
 $trip->vehiclePUOptions = parseValue($json->vehiclePUOptions);
 $trip->vehicleDOOptions = parseValue($json->vehicleDOOptions);
@@ -266,4 +266,8 @@ function hasValue($value) {
 
 function parseValue($value) {
   return hasValue($value) ? $value : NULL;
+}
+
+function parseValueInt($value) {
+  return hasValue($value) ? (int)$value : NULL;
 }
