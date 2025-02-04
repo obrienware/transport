@@ -51,8 +51,8 @@ WHERE
 	AND v.id NOT IN (
 		SELECT vehicle_id FROM vehicle_maintenance
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date
-			OR end_date BETWEEN :from_date AND :to_date)
+			(start_datetime BETWEEN :from_date AND :to_date
+			OR end_datetime BETWEEN :from_date AND :to_date)
 			AND archived IS NULL
 			AND id <> :maintenance_id
 			AND vehicle_id IS NOT NULL
