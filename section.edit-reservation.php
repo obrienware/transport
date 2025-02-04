@@ -203,7 +203,7 @@ if (!is_null($id) && !$reservation->getId()) {
       // Validation
       if (!startDateTime || !endDateTime) return ui.toastr.error('Please select a start and end date.', 'Error');
       if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
-      if (startDateTime.isBefore(moment())) return ui.toastr.error('Start date cannot be in the past.', 'Error');
+      if (endDateTime.isBefore(moment())) return ui.toastr.error('End date cannot be in the past.', 'Error');
       if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
       if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
       if (data?.reason?.length <= 0) return ui.toastr.error('Please enter a reason/purpose.', 'Error');
