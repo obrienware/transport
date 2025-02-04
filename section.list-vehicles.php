@@ -72,7 +72,8 @@ use Transport\Vehicle;
       title: 'Vehicle (view)',
     }
     const dataTableOptions = {
-      responsive: true
+      responsive: true,
+      paging: false,
     };
     const reloadOnEventName = 'vehicleChange';
     const parentSectionId = `#<?=$_GET["loadedToId"]?>`;
