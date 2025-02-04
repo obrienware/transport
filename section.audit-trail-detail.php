@@ -9,6 +9,7 @@ $treewalker = new TreeWalker([
 ]);
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 
 $db = Database::getInstance();
 $query = "SELECT * FROM audit_trail WHERE id = :id";

@@ -9,6 +9,7 @@ use Transport\User;
 use Transport\Vehicle;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 
 $vehicle = new Vehicle($id);
 if (!$vehicle->getId()) {

@@ -5,6 +5,7 @@ use Transport\EmailTemplates;
 use Transport\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $template = new EmailTemplates($id);
 
 if (!is_null($id) && !$template->getId()) {

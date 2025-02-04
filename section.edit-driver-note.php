@@ -5,6 +5,7 @@ use Transport\DriverNote;
 use Transport\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $note = new DriverNote($id);
 
 if (!is_null($id) && !$note->getId()) {

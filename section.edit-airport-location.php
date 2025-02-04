@@ -7,6 +7,7 @@ use Transport\AirportLocation;
 use Transport\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $airportLocation = new AirportLocation($id);
 
 if (!is_null($id) && !$airportLocation->getId()) {

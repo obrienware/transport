@@ -9,6 +9,7 @@ use Transport\Trip;
 use Transport\User;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 
 $sourceTrip = new Trip($id);
 if (!$sourceTrip->getId()) {

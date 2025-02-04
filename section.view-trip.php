@@ -5,6 +5,7 @@ use Transport\Trip;
 use Transport\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $trip = new Trip($id);
 $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 ?>

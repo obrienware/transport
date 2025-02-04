@@ -5,6 +5,7 @@ use Transport\Location;
 use Transport\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $location = new Location($id);
 $locationId = $location->getId();
 

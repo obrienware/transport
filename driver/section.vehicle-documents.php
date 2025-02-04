@@ -3,6 +3,7 @@ require_once '../autoload.php';
 
 use Transport\VehicleDocument;
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 ?>
 <h4>Documents</h4>
 <?php if ($documents = VehicleDocument::getDocuments($id)): ?>

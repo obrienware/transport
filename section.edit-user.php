@@ -8,6 +8,7 @@ use Transport\Utils;
 
 $config = Config::get('system');
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = $id === false ? null : $id;
 $user = new User($id);
 
 if (!is_null($id) && !$user->getId()) {
