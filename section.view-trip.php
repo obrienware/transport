@@ -4,7 +4,7 @@ require_once 'autoload.php';
 use Transport\Trip;
 use Transport\Utils;
 
-$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $trip = new Trip($id);
 $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 ?>

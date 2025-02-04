@@ -6,7 +6,7 @@ use Transport\User;
 use Transport\Vehicle;
 
 $prefix = bin2hex(random_bytes(10 / 2));
-$id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $event = new Event($id);
 ?>
 <div class="container-fluid mt-3">

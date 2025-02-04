@@ -1,8 +1,12 @@
 <?php
 require_once '../autoload.php';
+
 use Transport\DriverNote;
-$id = (int)$_GET['id'];
+
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+
 $note = new DriverNote($id);
+
 $parsedown = new Parsedown();
 echo '<div class="">';
 echo $parsedown->text(

@@ -5,7 +5,7 @@ use Transport\Snag;
 use Transport\Utils;
 use Transport\Vehicle;
 
-$vehicleId = isset($_GET['id']) ? (int)$_GET['id'] : null;
+$vehicleId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $vehicle = new Vehicle($vehicleId);
 ?>
 <div class="container">

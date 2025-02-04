@@ -145,5 +145,17 @@ class Utils
     // Return black or white depending on brightness
     return $brightness > 128 ? 'black' : 'white';
   }
+
+  public static function showResourceNotFound(): void
+  {
+    echo "
+      <div class=\"container-fluid text-center\">
+        <div class=\"alert alert-danger mt-5 w-50 mx-auto\">
+          <h1 class=\"fw-bold\">Sorry!</h1>
+          <p class=\"lead\">The resource you're referencing cannot be located.</i></p>
+        </div>
+      </div>
+    ";
+  }
   
 }

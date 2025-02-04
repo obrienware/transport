@@ -4,6 +4,7 @@ require_once '../autoload.php';
 use Transport\Database;
 use Transport\Flight;
 
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $db = Database::getInstance();
 $query = "
 SELECT 
@@ -27,7 +28,7 @@ LEFT OUTER JOIN airlines a ON a.id = t.airline_id
 WHERE 
   t.id = :id
 ";
-$params = ['id' => $_GET['id']];
+$params = ['id' => $id];
 $trip = $db->get_row($query, $params);
 
 $isIOS = strpos($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'iPad') !== false;

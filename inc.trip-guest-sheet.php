@@ -5,7 +5,7 @@ use Transport\Config;
 use Transport\Trip;
 
 if (!isset($trip)) {
-  $id = !empty($_GET['id']) ? (int)$_GET['id'] : null;
+  $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
   $trip = new Trip($id);
 }
 

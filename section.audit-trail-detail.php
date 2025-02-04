@@ -7,9 +7,12 @@ $treewalker = new TreeWalker([
   "debug" => false,          //true => return the execution time, false => not
   "returntype" => "array"   //Returntype = ["obj","jsonstring","array"]
 ]);
+
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+
 $db = Database::getInstance();
 $query = "SELECT * FROM audit_trail WHERE id = :id";
-$params = ['id' => $_GET['id']];
+$params = ['id' => $id];
 $row = $db->get_row($query, $params);
 if ($row->before && $row->after) {
 	$before = json_decode($row->before);

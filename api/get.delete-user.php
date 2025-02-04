@@ -7,8 +7,7 @@ require_once '../autoload.php';
 
 use Transport\User;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-if ($id) $id = (int)$id;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
 $user = new User($id);
 if (!$user->getId()) {

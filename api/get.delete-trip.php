@@ -12,8 +12,7 @@ use Transport\Template;
 use Transport\Trip;
 use Transport\User;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-if ($id) $id = (int)$id;
+$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
 $trip = new Trip($id);
 if (!$trip->getId()) {

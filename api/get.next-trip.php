@@ -9,8 +9,7 @@ use Transport\Event;
 use Transport\Trip;
 use Transport\Vehicle;
 
-$vehicleId = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-if ($vehicleId) $vehicleId = (int)$vehicleId;
+$vehicleId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
 $vehicle = new Vehicle($vehicleId);
 if (!$vehicle->getId()) {
