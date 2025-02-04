@@ -208,8 +208,8 @@ if ($trip->do_lat && $trip->do_lon) {
       const type = '<?=$trip->type?>';
       const iata = '<?=$trip->_iata?>';
       const date = '<?=Date('Y-m-d', strtotime($trip->pickup_date))?>';
-      // const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
-      // const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      const eta = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
+      const etd = '<?=Date('g:ia', strtotime($trip->pickup_date))?>';
       const res = await net.get(`api/get.flight-status.php?flight=${flight}&type=${type}&iata=${iata}&date=${date}`);
       console.log(res);
       $('#flight-status-last-checked').html(`Checked: ${moment().format('h:mma')}`);
@@ -233,20 +233,20 @@ if ($trip->do_lat && $trip->do_lon) {
 
       const real_arrival = res.real_arrival ? moment(res.real_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_arrival = res.estimated_arrival ? moment(res.estimated_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      // const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : eta;
+      const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma *') : eta;
 
       const real_departure = res.real_departure ? moment(res.real_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_departure = res.estimated_departure ? moment(res.estimated_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      // const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : etd;
+      const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma *') : etd;
 
       if (type === 'arrival') {
         if (res.real_arrival) return $('#status_time').html(`Actual: ${real_arrival}`);
         if (res.estimated_arrival) return $('#status_time').html(`Estimated: ${estimated_arrival}`);
-        // return $('#status_time').html(`STA: ${scheduled_arrival}`);
+        return $('#status_time').html(`Scheduled: ${scheduled_arrival}`);
       }
       if (res.real_departure) return $('#status_time').html(`Actual: ${real_departure}`);
       if (res.estimated_departure) return $('#status_time').html(`Estimated: ${estimated_departure}`);
-      // return $('#status_time').html(`STD: ${scheduled_departure}`);
+      return $('#status_time').html(`Scheduled: ${scheduled_departure}`);
     }
 
     clearTimeout(window.flightCheckTimer);
