@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,32 +8,32 @@ require_once '../autoload.php';
 
 use Transport\User;
 use Transport\Utils;
+use Generic\JsonInput;
 
-$json = json_decode(file_get_contents("php://input"));
+$input = new JsonInput();
 
 $sessionUser = new User($_SESSION['user']->id);
 
-$user = new User($json->id);
-$user->username = parseValue($json->username);
-$user->firstName = parseValue($json->firstName);
-$user->lastName = parseValue($json->lastName);
-$user->emailAddress = parseValue($json->emailAddress);
-$user->phoneNumber = hasValue($json->phoneNumber) ? Utils::formattedPhoneNumber($json->phoneNumber) : NULL;
-$user->roles = hasValue($json->roles) ? explode(',', $json->roles) : [];
-$user->position = parseValue($json->position);
-$user->departmentId = hasValue($json->departmentId) ? (int)$json->departmentId : NULL;
-$user->CDL = hasValue($json->cdl) ? (bool)$json->cdl : false;
-
-function hasValue($value) {
-  return isset($value) && $value !== '';
+$user = new User($input->getInt('id'));
+$user->username = $input->getString('username');
+$user->firstName = $input->getString('firstName');
+$user->lastName = $input->getString('lastName');
+$user->emailAddress = $input->getString('emailAddress');
+$phoneNumber = $input->getString('phoneNumber');
+if ($phoneNumber)
+{
+  $user->phoneNumber = Utils::formattedPhoneNumber($phoneNumber);
 }
+$roles = $input->getString('roles');
+$user->roles = $roles ? explode(',', $roles) : [];
 
-function parseValue($value) {
-  return hasValue($value) ? $value : NULL;
-}
+$user->position = $input->getString('position');
+$user->departmentId = $input->getInt('departmentId');
+$user->CDL = $input->getBool('cdl');
 
-if ($user->save(userResponsibleForOperation: $sessionUser->getUsername())) {
-  if ($json->resetPassword) $user->resetPassword();
+if ($user->save(userResponsibleForOperation: $sessionUser->getUsername()))
+{
+  if ($input->getBool('resetPassword')) $user->resetPassword();
   exit(json_encode(['result' => $user->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $user->getLastError()]));

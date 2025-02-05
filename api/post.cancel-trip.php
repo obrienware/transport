@@ -10,11 +10,13 @@ use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\Trip;
 use Transport\User;
+use Generic\JsonInput;
 
-$json = json_decode(file_get_contents("php://input"));
+$input = new JsonInput();
+
 $user = new User($_SESSION['user']->id);
 
-$trip = new Trip($json->tripId);
+$trip = new Trip($input->getInt('tripId'));
 $trip->cancel($user->getUsername());
 
 $template = new Template(EmailTemplates::get('Email Manager Trip Request Cancellation'));

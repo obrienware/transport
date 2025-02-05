@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -10,16 +11,19 @@ use Transport\EmailTemplates;
 use Transport\Event;
 use Transport\Template;
 use Transport\User;
+use Generic\JsonInput;
 
-$json = json_decode(file_get_contents("php://input"));
+$input = new JsonInput();
+
 $user = new User($_SESSION['user']->id);
 
-$event = new Event($json->eventId);
+$event = new Event($input->getInt('eventId'));
 $event->cancel($user->getUsername());
 
 $template = new Template(EmailTemplates::get('Email Manager Event Request Cancellation'));
 $managers = User::getManagers();
-foreach ($managers as $manager) {
+foreach ($managers as $manager)
+{
   $templateData = [
     'name' => $manager->first_name,
     'summary' => $event->name,
@@ -29,8 +33,8 @@ foreach ($managers as $manager) {
   ];
 
   $email = new Email();
-  $email->addRecipient($manager->email_address, $manager->first_name.' '.$manager->last_name);
-  $email->setSubject('Event Request Cancellation: '.$event->name);
+  $email->addRecipient($manager->email_address, $manager->first_name . ' ' . $manager->last_name);
+  $email->setSubject('Event Request Cancellation: ' . $event->name);
   $email->setContent($template->render($templateData));
   $email->sendText();
 }

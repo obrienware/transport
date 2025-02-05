@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,32 +8,26 @@ require_once '../autoload.php';
 
 use Transport\Location;
 use Transport\User;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$location = new Location($input->getInt('id'));
+$location->name = $input->getString('name');
+$location->shortName = $input->getString('shortName');
+$location->description = $input->getString('description');
+$location->type = $input->getString('type');
+$location->IATA = $input->getString('IATA');
+$location->mapAddress = $input->getString('mapAddress');
+$location->lat = $input->getFloat('lat');
+$location->lon = $input->getFloat('lon');
+$location->placeId = $input->getString('placeId');
+$location->meta = $input->getRawString('meta');
 
-$location = new Location($json->id);
-$location->name = parseValue($json->name);
-$location->shortName = parseValue($json->shortName);
-$location->description = parseValue($json->description);
-$location->type = parseValue($json->type);
-$location->IATA = parseValue($json->IATA);
-$location->mapAddress = parseValue($json->mapAddress);
-$location->lat = parseValue($json->lat);
-$location->lon = parseValue($json->lon);
-$location->placeId = parseValue($json->placeId);
-$location->meta = json_encode($json->meta);
-
-function hasValue($value) {
-  return isset($value) && $value !== '';
-}
-
-function parseValue($value) {
-  return hasValue($value) ? $value : NULL;
-}
-
-if ($location->save(userResponsibleForOperation: $user->getUsername())) {
+if ($location->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $location->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $location->getLastError()]));

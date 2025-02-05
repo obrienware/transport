@@ -1,4 +1,6 @@
 <?php
+// TODO: Think about how we might sanitize the input
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -14,7 +16,8 @@ $user = new User($_SESSION['user']->id);
 $user->preferences = $json;
 
 
-if ($user->save(userResponsibleForOperation: $user->getUsername())) {
+if ($user->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $user->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $user->getLastError()]));

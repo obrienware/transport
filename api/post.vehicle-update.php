@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,19 +8,21 @@ require_once '../autoload.php';
 
 use Transport\User;
 use Transport\Vehicle;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$vehicle = new Vehicle($input->getInt('vehicleId'));
 
-$vehicle = new Vehicle($json->vehicleId);
-
-switch ($json->name) {
+switch ($input->getString('name'))
+{
   case 'fuel':
-    $vehicle->fuelLevel = $json->value;
+    $vehicle->fuelLevel = $input->getInt('value');
     break;
   case 'mileage':
-    $vehicle->mileage = $json->value;
+    $vehicle->mileage = $input->getInt('value');
     break;
   default:
     echo json_encode(['result' => false, 'error' => 'Invalid name']);

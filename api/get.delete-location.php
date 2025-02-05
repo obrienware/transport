@@ -7,9 +7,9 @@ require_once '../autoload.php';
 
 use Transport\Location;
 use Transport\User;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 
 $location = new Location($id);
 if (!$location->getId()) {

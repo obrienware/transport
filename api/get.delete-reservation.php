@@ -11,9 +11,9 @@ use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\User;
 use Transport\VehicleReservation;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 
 $reservation = new VehicleReservation($id);
 if (!$reservation->getId()) {

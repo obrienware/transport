@@ -11,13 +11,15 @@ use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\User;
 use Transport\VehicleReservation;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');
-$json = json_decode(file_get_contents("php://input"));
 
 $result = true;
-$reservation = new VehicleReservation($json->id);
+$reservation = new VehicleReservation($input->getInt('id'));
 
 if (!$reservation->isConfirmed()) {
   

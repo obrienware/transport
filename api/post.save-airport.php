@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,29 +8,23 @@ require_once '../autoload.php';
 
 use Transport\Airport;
 use Transport\User;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$airport = new Airport($input->getInt('id'));
+$airport->IATA = $input->getString('iata');
+$airport->name = $input->getString('name');
+$airport->stagingLocationId = $input->getInt('stagingLocationId');
+$airport->leadTime = $input->getInt('leadTime');
+$airport->travelTime = $input->getInt('travelTime');
+$airport->arrivalInstructions = $input->getString('arrivalInstructions');
+$airport->arrivalInstructionsGroup = $input->getString('arrivalInstructionsGroup');
 
-$airport = new Airport($json->id);
-$airport->IATA = parseValue($json->iata);
-$airport->name = parseValue($json->name);
-$airport->stagingLocationId = parseValue($json->stagingLocationId);
-$airport->leadTime = parseValue($json->leadTime);
-$airport->travelTime = parseValue($json->travelTime);
-$airport->arrivalInstructions = parseValue($json->arrivalInstructions);
-$airport->arrivalInstructionsGroup = parseValue($json->arrivalInstructionsGroup);
-
-function hasValue($value) {
-  return isset($value) && $value !== '';
-}
-
-function parseValue($value) {
-  return hasValue($value) ? $value : NULL;
-}
-
-if ($airport->save(userResponsibleForOperation: $user->getUsername())) {
+if ($airport->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $airport->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $airport->getLastError()]));

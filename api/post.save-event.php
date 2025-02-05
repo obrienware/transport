@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -13,105 +14,132 @@ use Transport\Location;
 use Transport\Template;
 use Transport\User;
 use Transport\Vehicle;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
-
-$json = json_decode(file_get_contents("php://input"));
 
 $changes = [];
 $driversToNotify = [];
 
-$event = new Event($json->eventId);
+$event = new Event($input->getInt('id'));
 
-if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:i:s')) {
+if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:i:s'))
+{
   // We are only interested in tracking changes to existing events AND if the event is confirmed
-  if ($event->name != $json->name) $changes[] = "The event name was changed from \"{$event->name}\" to \"{$json->name}\"";
-  if ($event->requestorId != $json->requestorId) {
-    if (!$event->requestorId) {
-      $newRequestor = new User($json->requestorId);
+  if ($event->name != $input->getString('name')) $changes[] = "The event name was changed from \"{$event->name}\" to \"{$input->getString('name')}\"";
+  if ($event->requestorId != $input->getInt('requestorId'))
+  {
+    if (!$event->requestorId)
+    {
+      $newRequestor = new User($input->getInt('requestorId'));
       $changes[] = "Requestor was assigned: \"{$newRequestor->getName()}\"";
-    } else {
+    }
+    else
+    {
       $requestor = new User($event->requestorId);
-      $newRequestor = new User($json->requestorId);
+      $newRequestor = new User($input->getInt('requestorId'));
       $changes[] = "The requestor was changed from \"{$requestor->getName()}\" to \"{$newRequestor->getName()}\"";
     }
   }
-  if ($event->locationId != $json->locationId) {
-    if (!$event->locationId) {
-      $newLocation = new Location($json->locationId);
+  if ($event->locationId != $input->getInt('locationId'))
+  {
+    if (!$event->locationId)
+    {
+      $newLocation = new Location($input->getInt('locationId'));
       $changes[] = "Location was assigned to \"{$newLocation->name}\"";
-    } else {
+    }
+    else
+    {
       $location = new Location($event->locationId);
-      $newLocation = new Location($json->locationId);
+      $newLocation = new Location($input->getInt('locationId'));
       $changes[] = "The location was changed from \"{$location->name}\" to \"{$newLocation->name}\"";
     }
   }
-  if ($event->startDate != $json->startDate) $changes[] = "The start date was changed from \"{$event->startDate}\" to \"{$json->startDate}\"";
-  if ($event->endDate != $json->endDate) $changes[] = "The end date was changed from \"{$event->endDate}\" to \"{$json->endDate}\"";
-  if ($event->drivers != $json->drivers) {
+  if ($event->startDate != $input->getString('startDate')) $changes[] = "The start date was changed from \"{$event->startDate}\" to \"{$input->getString('startDate')}\"";
+  if ($event->endDate != $input->getString('endDate')) $changes[] = "The end date was changed from \"{$event->endDate}\" to \"{$input->getString('endDate')}\"";
+  if ($event->drivers != $input->getArray('drivers'))
+  {
     $drivers = [];
-    foreach ($event->drivers as $driverId) {
+    foreach ($event->drivers as $driverId)
+    {
       if (!$driverId) continue;
       $driver = new User((int)$driverId);
       $drivers[] = $driver->getName();
       $driversToNotify[] = $driver;
     }
     $newDrivers = [];
-    foreach ($json->drivers as $driverId) {
+    foreach ($input->getArray('drivers') as $driverId)
+    {
       $driver = new User((int)$driverId);
       $newDrivers[] = $driver->getName();
       $driversToNotify[] = $driver;
     }
-    $changes[] = "The drivers were changed from \"".implode(', ', $drivers)."\" to \"".implode(', ', $newDrivers)."\"";
+    $changes[] = "The drivers were changed from \"" . implode(', ', $drivers) . "\" to \"" . implode(', ', $newDrivers) . "\"";
     $driversToNotify = getUniqueDrivers($driversToNotify);
   }
-  if ($event->vehicles != $json->vehicles) {
+  if ($event->vehicles != $input->getArray('vehicles'))
+  {
     $vehicles = [];
-    foreach ($event->vehicles as $vehicleId) {
+    foreach ($event->vehicles as $vehicleId)
+    {
       $vehicle = new Vehicle((int)$vehicleId);
       $vehicles[] = $vehicle->name;
     }
     $newVehicles = [];
-    foreach ($json->vehicles as $vehicleId) {
+    foreach ($input->getArray('vehicles') as $vehicleId)
+    {
       $vehicle = new Vehicle((int)$vehicleId);
       $newVehicles[] = $vehicle->name;
     }
-    $changes[] = "The vehicles were changed from \"".implode(', ', $vehicles)."\" to \"".implode(', ', $newVehicles)."\"";
+    $changes[] = "The vehicles were changed from \"" . implode(', ', $vehicles) . "\" to \"" . implode(', ', $newVehicles) . "\"";
   }
-  if ($event->notes != $json->notes) {
-    if (!$event->notes) {
-      $changes[] = "Notes were added: \n".$json->notes;
-    } else {
-      $changes[] = "Notes were changed: \n".$json->notes;
+  if ($event->notes != $input->getString('notes'))
+  {
+    if (!$event->notes)
+    {
+      $changes[] = "Notes were added: \n" . $input->getString('notes');
+    }
+    else
+    {
+      $changes[] = "Notes were changed: \n" . $input->getString('notes');
     }
   }
 }
 
-$event->name = $json->name ?? NULL;
-$event->requestorId = $json->requestorId ?? NULL;
-$event->locationId = $json->locationId ?? NULL;
-$event->startDate = $json->startDate ?? NULL;
-$event->endDate = $json->endDate ?? NULL;
+$event->name = $input->getString('name');
+$event->requestorId = $input->getInt('requestorId');
+$event->locationId = $input->getInt('locationId');
+$event->startDate = $input->getString('startDate');
+$event->endDate = $input->getString('endDate');
+
 $event->drivers = [];
 $event->vehicles = [];
-$event->notes = $json->notes ?? NULL;
+
+$event->notes = $input->getString('notes');
 // The html control we use to select the drivers and vehicles sends an array of strings, so we need to convert them to integers
-if ($json->drivers) {
+if ($input->getArray('drivers'))
+{
   $drivers = [];
-  foreach ($json->drivers as $driver) {
+  foreach ($input->getArray('drivers') as $driver)
+  {
     $drivers[] = (int)$driver;
   }
   $event->drivers = $drivers;
 }
-if ($json->vehicles) {
+if ($input->getArray('vehicles'))
+{
   $vehicles = [];
-  foreach ($json->vehicles as $vehicle) {
+  foreach ($input->getArray('vehicles') as $vehicle)
+  {
     $vehicles[] = (int)$vehicle;
   }
   $event->vehicles = $vehicles;
 }
 
-if ($event->save(userResponsibleForOperation: $user->getUsername())) {
+if ($event->save(userResponsibleForOperation: $user->getUsername()))
+{
   if ($changes) notifyParticipants($event, $changes, $driversToNotify);
   exit(json_encode(['result' => $event->getId()]));
 }
@@ -127,11 +155,12 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
 
   $config = Config::get('organization');
   $me = new User($_SESSION['user']->id);
-  $changesString = '- '.implode("\n\n- ", $changes);
+  $changesString = '- ' . implode("\n\n- ", $changes);
 
-  
+
   // Email to the requestor
-  if ($event->requestor) {
+  if ($event->requestor)
+  {
     $template = new Template(EmailTemplates::get('Email Requestor Event Change'));
     $templateData = [
       'name' => $event->requestor->firstName,
@@ -140,16 +169,19 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
       'endDate' => Date('m/d/Y', strtotime($event->endDate)),
       'changes' => $changesString,
     ];
-  
+
     $email = new Email();
-    if ($config->email->sendRequestorMessagesTo == 'requestor') {
+    if ($config->email->sendRequestorMessagesTo == 'requestor')
+    {
       if ($event->requestor) $email->addRecipient($event->requestor->emailAddress);
-    } else {
+    }
+    else
+    {
       $email->addRecipient($config->email->sendRequestorMessagesTo);
     }
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $email->setSubject('Confirmation of changes regarding event: '.$event->name);
+    $email->setSubject('Confirmation of changes regarding event: ' . $event->name);
     $email->setContent($template->render($templateData));
     $email->sendText();
   }
@@ -160,9 +192,10 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
 
   // Generate ics file
   include '../inc.event-ics.php';
- 
+
   $template = new Template(EmailTemplates::get('Email Driver Event Change'));
-  foreach ($driversToNotify as $driver) {
+  foreach ($driversToNotify as $driver)
+  {
     $templateData = [
       'name' => $driver->firstName,
       'eventName' => $event->name,
@@ -175,13 +208,12 @@ function notifyParticipants(Event $event, array $changes, ?array $driversToNotif
     $email->addRecipient($driver->emailAddress, $driver->getName());
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $email->setSubject('Confirmation of changes regarding event: '.$event->name);
+    $email->setSubject('Confirmation of changes regarding event: ' . $event->name);
     $email->setContent($template->render($templateData));
     $ical = $ics->to_string();
     $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
     $email->sendText();
   }
-  
 }
 
 
@@ -190,9 +222,11 @@ function getUniqueDrivers(array $drivers): array
   $uniqueDrivers = [];
   $seenIds = [];
 
-  foreach ($drivers as $driver) {
+  foreach ($drivers as $driver)
+  {
     $driverId = $driver->getId();
-    if (!in_array($driverId, $seenIds)) {
+    if (!in_array($driverId, $seenIds))
+    {
       $uniqueDrivers[] = $driver;
       $seenIds[] = $driverId;
     }

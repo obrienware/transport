@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -6,12 +7,14 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\InputHandler;
 
-$start = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$end = filter_input(INPUT_GET, 'end', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$requestorId = filter_input(INPUT_GET, 'requestorId', FILTER_SANITIZE_NUMBER_INT);
+$start = InputHandler::getString(INPUT_GET, 'start');
+$end = InputHandler::getString(INPUT_GET, 'end');
+$requestorId = InputHandler::getInt(INPUT_GET, 'requestorId');
 
-if ($requestorId) {
+if ($requestorId)
+{
   $criteria = "AND e.requestor_id = {$requestorId}";
 }
 
@@ -34,18 +37,22 @@ $params = ['start' => $start, 'end' => $end];
 
 
 $result = [];
-if ($rows = $db->get_rows($query, $params)) {
-  foreach ($rows as $row) {
+if ($rows = $db->get_rows($query, $params))
+{
+  foreach ($rows as $row)
+  {
     $resourceIds = [];
-    if ($row->driver_ids) {
+    if ($row->driver_ids)
+    {
       $drivers = explode(',', $row->driver_ids);
-      foreach($drivers as $driverId) $resourceIds[] = 'driver-'.$driverId;
+      foreach ($drivers as $driverId) $resourceIds[] = 'driver-' . $driverId;
     }
-    if ($row->vehicle_ids) {
+    if ($row->vehicle_ids)
+    {
       $vehicles = explode(',', $row->vehicle_ids);
-      foreach($vehicles as $vehicleId) $resourceIds[] = 'vehicle-'.$vehicleId;
+      foreach ($vehicles as $vehicleId) $resourceIds[] = 'vehicle-' . $vehicleId;
     }
-  
+
     $event = (object) [
       'id' => $row->id,
       'title' => $row->name,
@@ -61,11 +68,15 @@ if ($rows = $db->get_rows($query, $params)) {
       'textColor' => ($row->confirmed) ? 'black' : 'gray'
     ];
     // Format for the requestor's view
-    if (isset($_GET['requestorId'])) {
-      if ($row->confirmed) {
+    if (isset($_GET['requestorId']))
+    {
+      if ($row->confirmed)
+      {
         $event->backgroundColor = '#03fc30'; // green
         $event->textColor = '#000000';
-      } else {
+      }
+      else
+      {
         $event->backgroundColor = '#cccccc'; // gray
         $event->textColor = '#000000';
       }

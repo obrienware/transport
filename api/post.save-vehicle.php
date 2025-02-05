@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,28 +8,22 @@ require_once '../autoload.php';
 
 use Transport\User;
 use Transport\Vehicle;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$vehicle = new Vehicle($input->getInt('id'));
+$vehicle->color = $input->getString('color');
+$vehicle->name = $input->getString('name');
+$vehicle->description = $input->getString('description');
+$vehicle->licensePlate = $input->getString('licensePlate');
+$vehicle->passengers = $input->getInt('passengers');
+$vehicle->requireCDL = $input->getBool('requireCDL');
 
-$vehicle = new Vehicle($json->vehicleId);
-$vehicle->color = parseValue($json->color);
-$vehicle->name = parseValue($json->name);
-$vehicle->description = parseValue($json->description);
-$vehicle->licensePlate = parseValue($json->licensePlate);
-$vehicle->passengers = parseValue($json->passengers);
-$vehicle->requireCDL = parseValue($json->requireCDL);
-
-function hasValue($value) {
-  return isset($value) && $value !== '';
-}
-
-function parseValue($value) {
-  return hasValue($value) ? $value : NULL;
-}
-
-if ($vehicle->save(userResponsibleForOperation: $user->getUsername())) {
+if ($vehicle->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $vehicle->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $vehicle->getLastError()]));

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -11,16 +12,19 @@ use Transport\EmailTemplates;
 use Transport\Event;
 use Transport\Template;
 use Transport\User;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');
-$json = json_decode(file_get_contents("php://input"));
 
 $result = true;
-$event = new Event($json->id);
+$event = new Event($input->getInt('eventId'));
 
-if (!$event->isConfirmed()) {
-  
+if (!$event->isConfirmed())
+{
+
   $results[] = $event->confirm(userResponsibleForOperation: $me->getUsername());
 
   // Generate ics file
@@ -28,7 +32,8 @@ if (!$event->isConfirmed()) {
 
 
   // Email to the requestor
-  if ($event->requestor) {    
+  if ($event->requestor)
+  {
     $template = new Template(EmailTemplates::get('Email Requestor New Event'));
     $templateData = [
       'name' => $event->requestor->firstName,
@@ -38,14 +43,17 @@ if (!$event->isConfirmed()) {
     ];
 
     $email = new Email();
-    if ($config->email->sendRequestorMessagesTo == 'requestor') {
+    if ($config->email->sendRequestorMessagesTo == 'requestor')
+    {
       if ($event->requestor) $email->addRecipient($event->requestor->emailAddress, $event->requestor->getName());
-    } else {
+    }
+    else
+    {
       $email->addRecipient($config->email->sendRequestorMessagesTo);
     }
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $email->setSubject('Information regarding event: '.$event->name);
+    $email->setSubject('Information regarding event: ' . $event->name);
     $email->setContent($template->render($templateData));
     $email->sendText();
   }
@@ -54,7 +62,8 @@ if (!$event->isConfirmed()) {
   // Email the drivers
   if (!$event->drivers) return;
   $template = new Template(EmailTemplates::get('Email Driver New Event'));
-  foreach ($event->drivers as $driverId) {
+  foreach ($event->drivers as $driverId)
+  {
     $driver = new User($driverId);
     $templateData = [
       'name' => $driver->firstName,
@@ -67,7 +76,7 @@ if (!$event->isConfirmed()) {
     $email->addRecipient($driver->emailAddress, $driver->getName());
     if ($config->email->copyAllEmail) $email->addBCC($config->email->copyAllEmail);
     $email->addReplyTo($me->emailAddress, $me->getName());
-    $email->setSubject('An event has been assigned to you: '.$event->name);
+    $email->setSubject('An event has been assigned to you: ' . $event->name);
     $email->setContent($template->render($templateData));
     $ical = $ics->to_string();
     $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");

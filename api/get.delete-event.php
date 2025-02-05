@@ -11,9 +11,9 @@ use Transport\Email;
 use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\User;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 
 $event = new Event($id);
 if (!$event->getId()) {

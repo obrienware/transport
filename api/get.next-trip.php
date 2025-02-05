@@ -8,8 +8,9 @@ require_once '../autoload.php';
 use Transport\Event;
 use Transport\Trip;
 use Transport\Vehicle;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+$id = InputHandler::getInt(INPUT_GET, 'id');
 $vehicleId = $id === false ? null : $id;
 
 $vehicle = new Vehicle($vehicleId);

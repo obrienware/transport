@@ -6,10 +6,11 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\InputHandler;
 
-$start = filter_input(INPUT_GET, 'start', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$end = filter_input(INPUT_GET, 'end', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$requestorId = filter_input(INPUT_GET, 'requestorId', FILTER_SANITIZE_NUMBER_INT);
+$start = InputHandler::getString(INPUT_GET, 'start');
+$end = InputHandler::getString(INPUT_GET, 'end');
+$requestorId = InputHandler::getInt(INPUT_GET, 'requestorId');
 
 if ($requestorId) {
   $criteria = "AND e.requestor_id = {$requestorId}";

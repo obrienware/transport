@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,26 +8,21 @@ require_once '../autoload.php';
 
 use Transport\Blockout;
 use Transport\User;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$userId = $input->getInt('userId');
+$blockout = new Blockout($input->getInt('id'));
+if ($userId) $blockout->userId = $userId;
+$blockout->fromDateTime = $input->getString('fromDateTime');
+$blockout->toDateTime = $input->getString('toDateTime');
+$blockout->note = $input->getString('note');
 
-$blockout = new Blockout($json->id);
-if (hasValue($json->userId)) $blockout->userId = $json->userId;
-$blockout->fromDateTime = parseValue($json->fromDateTime);
-$blockout->toDateTime = parseValue($json->toDateTime);
-$blockout->note = parseValue($json->note);
-
-function hasValue($value) {
-  return isset($value) && $value !== '';
-}
-
-function parseValue($value) {
-  return hasValue($value) ? $value : NULL;
-}
-
-if ($blockout->save(userResponsibleForOperation: $user->getUsername())) {
+if ($blockout->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $blockout->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $blockout->getLastError()]));

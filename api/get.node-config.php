@@ -6,10 +6,13 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\InputHandler;
+
+$node = InputHandler::getString(INPUT_GET, 'node');
 
 $db = Database::getInstance();
 $query = "SELECT config, json5 FROM config WHERE node = :node";
-$params = ['node' => filter_input(INPUT_GET, 'node', FILTER_SANITIZE_FULL_SPECIAL_CHARS)];
+$params = ['node' => $node];
 if ($row = $db->get_row($query, $params)) {
   die(json_encode([
     'json' => $row->config ?? '{}',

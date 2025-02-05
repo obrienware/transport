@@ -11,13 +11,15 @@ use Transport\EmailTemplates;
 use Transport\Template;
 use Transport\Trip;
 use Transport\User;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');
-$json = json_decode(file_get_contents("php://input"));
 
 $result = true;
-$trip = new Trip($json->id);
+$trip = new Trip($input->getInt('id'));
 
 if (!$trip->isConfirmed()) {
   

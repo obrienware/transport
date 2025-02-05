@@ -6,9 +6,9 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Vehicle;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 
 $vehicle = new Vehicle($id);
 echo json_encode($vehicle);

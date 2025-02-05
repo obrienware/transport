@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -9,7 +10,7 @@ use Transport\Database;
 
 $db = Database::getInstance();
 
-$q = '%'.filter_input(INPUT_GET, 'query', FILTER_SANITIZE_FULL_SPECIAL_CHARS).'%';
+$q = '%' . filter_input(INPUT_GET, 'query', FILTER_SANITIZE_FULL_SPECIAL_CHARS) . '%';
 $query = "
   SELECT 
     id AS value,
@@ -21,7 +22,8 @@ $query = "
   ORDER BY first_name, last_name
 ";
 $params = ['query' => $q];
-if ($rows = $db->get_rows($query, $params)) {
+if ($rows = $db->get_rows($query, $params))
+{
   die(json_encode($rows));
 }
 echo '[]';

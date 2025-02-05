@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -7,12 +8,13 @@ require_once '../autoload.php';
 
 use Transport\Blockout;
 use Transport\User;
+use Generic\InputHandler;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 
 $blockout = new Blockout($id);
-if (!$blockout->getId()) {
+if (!$blockout->getId())
+{
   die(json_encode([
     'result' => false,
     'error' => 'Blockout not found'

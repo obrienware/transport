@@ -7,9 +7,9 @@ require_once '../autoload.php';
 
 use Transport\Snag;
 use Transport\User;
+use Generic\InputHandler;
 
-$snagId = filter_input(INPUT_GET, 'snagId', FILTER_SANITIZE_NUMBER_INT);
-if ($snagId) $snagId = (int)$snagId;
+$snagId = InputHandler::getInt(INPUT_GET, 'snagId');
 
 $snag = new Snag($snagId);
 if (!$snag->getId()) {

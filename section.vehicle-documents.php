@@ -103,13 +103,13 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
 
     myDropzone.on('success', async function(file) {
       myDropzone.removeAllFiles(true);
-      await alertSuccess(documentName + ' has been uploaded.', 'Success');
+      await ui.alertSuccess(documentName + ' has been uploaded.', 'Success');
       reloadSection();
     });
 
     myDropzone.on('error', async function (file, message) {
       myDropzone.removeAllFiles(true);
-      await alertError(message, 'Error');
+      await ui.alertError(message, 'Error');
     });
   });
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -8,31 +9,26 @@ require_once '../autoload.php';
 use Transport\Guest;
 use Transport\User;
 use Transport\Utils;
+use Generic\JsonInput;
+
+$input = new JsonInput();
 
 $user = new User($_SESSION['user']->id);
 
-$json = json_decode(file_get_contents("php://input"));
+$phoneNumber = Utils::formattedPhoneNumber($input->getString('phoneNumber'));
 
-$phoneNumber = hasValue($json->phoneNumber) ? Utils::formattedPhoneNumber($json->phoneNumber) : null;
-
-$guest = new Guest($json->id);
-if (!isset($json->id)) {
-  $guest->getGuestByPhoneNumber($phoneNumber); // This will ensure that we don't create duplicate guests with the same phone number
+$guest = new Guest($input->getInt('id'));
+if (!$input->getInt('id'))
+{
+  $guest->getGuestByPhoneNumber($phoneNumber);
 }
-$guest->firstName = parseValue($json->firstName);
-$guest->lastName = parseValue($json->lastName);
-$guest->emailAddress = parseValue($json->emailAddress);
+$guest->firstName = $input->getString('firstName');
+$guest->lastName = $input->getString('lastName');
+$guest->emailAddress = $input->getString('emailAddress');
 $guest->phoneNumber = $phoneNumber;
 
-function hasValue($value) {
-  return isset($value) && $value !== '';
-}
-
-function parseValue($value) {
-  return hasValue($value) ? $value : null;
-}
-
-if ($guest->save(userResponsibleForOperation: $user->getUsername())) {
+if ($guest->save(userResponsibleForOperation: $user->getUsername()))
+{
   exit(json_encode(['result' => $guest->getId()]));
 }
 exit(json_encode(['result' => false, 'error' => $guest->getLastError()]));

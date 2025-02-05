@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -6,6 +7,7 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\InputHandler;
 
 $db = Database::getInstance();
 
@@ -47,8 +49,8 @@ WHERE
 	)
 ";
 
-$current_tripId = (int) filter_input(INPUT_GET, 'tripId', FILTER_SANITIZE_NUMBER_INT);
-$current_eventId = (int) filter_input(INPUT_GET, 'eventId', FILTER_SANITIZE_NUMBER_INT);
+$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId');
+$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId');
 
 $params = [
 	'from_date' => filter_input(INPUT_GET, 'startDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
@@ -69,7 +71,8 @@ $query = "
 	ORDER BY first_name, last_name
 ";
 $rows = $db->get_rows($query);
-foreach ($rows as $key => $row) {
+foreach ($rows as $key => $row)
+{
 	$rows[$key]->available = (array_search($row->id, $arrayIds) !== false);
 }
 

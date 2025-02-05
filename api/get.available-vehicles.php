@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -6,6 +7,7 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\InputHandler;
 
 $db = Database::getInstance();
 
@@ -59,21 +61,24 @@ WHERE
 	)	
 ";
 
-$current_tripId = (int) filter_input(INPUT_GET, 'tripId', FILTER_SANITIZE_NUMBER_INT);
-$current_eventId = (int) filter_input(INPUT_GET, 'eventId', FILTER_SANITIZE_NUMBER_INT);
-$current_reservationId = (int) filter_input(INPUT_GET, 'reservationId', FILTER_SANITIZE_NUMBER_INT);
-$current_maintenanceId = (int) filter_input(INPUT_GET, 'maintenanceId', FILTER_SANITIZE_NUMBER_INT);
+$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId');
+$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId');
+$current_reservationId = InputHandler::getInt(INPUT_GET, 'reservationId');
+$current_maintenanceId = InputHandler::getInt(INPUT_GET, 'maintenanceId');
+
+$startDate = InputHandler::getString(INPUT_GET, 'startDate');
+$endDate = InputHandler::getString(INPUT_GET, 'endDate');
 
 $params = [
-	'from_date' => filter_input(INPUT_GET, 'startDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
-	'to_date' => filter_input(INPUT_GET, 'endDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+	'from_date' => $startDate,
+	'to_date' => $endDate,
 	'trip_id' => $current_tripId,
 	'event_id' => $current_eventId,
 	'reservation_id' => $current_reservationId,
 	'maintenance_id' => $current_maintenanceId,
 ];
 $ids = $db->get_var($query, $params);
-$arrayIds = $ids ? explode(',',$ids) : [];
+$arrayIds = $ids ? explode(',', $ids) : [];
 
 $query = "
 	SELECT
@@ -84,7 +89,8 @@ $query = "
 	ORDER BY name
 ";
 $rows = $db->get_rows($query);
-foreach ($rows as $key => $row) {
+foreach ($rows as $key => $row)
+{
 	$rows[$key]->available = (array_search($row->id, $arrayIds) !== false);
 }
 

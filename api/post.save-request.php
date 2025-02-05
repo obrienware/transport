@@ -1,4 +1,6 @@
 <?php
+// TODO: Figure out how to sanitize this properly using our new input class
+
 declare(strict_types=1);
 
 header('Content-Type: application/json');
@@ -22,7 +24,8 @@ $json = json_decode(file_get_contents("php://input"));
 $user = new User($_SESSION['user']->id);
 
 
-switch ($json->type) {
+switch ($json->type)
+{
   case 'airport-dropoff':
     addAirportDropoff($json);
     break;
@@ -52,20 +55,23 @@ function addAirportDropoff($json)
   $airport = new Airport();
   $airport->loadAirportByIATA($json->airport);
   $turnAroundTime = 30;
-  $summary = $json->airport.' Drop Off - '.$json->whom->name;
+  $summary = $json->airport . ' Drop Off - ' . $json->whom->name;
 
   $trip = new Trip();
   $trip->requestorId = $json->requestorId;
   $trip->summary = $summary;
   $trip->startDate = Date('Y-m-d H:i:s', strtotime($json->datetime));
-  $trip->endDate = Date('Y-m-d H:i:s', strtotime($json->datetime) + (($json->flight->travelTime *2) + $turnAroundTime) * 60);
+  $trip->endDate = Date('Y-m-d H:i:s', strtotime($json->datetime) + (($json->flight->travelTime * 2) + $turnAroundTime) * 60);
   $trip->pickupDate = Date('Y-m-d H:i:s', strtotime($json->datetime));
   $trip->guests = $json->whom->name;
 
   $guest = new Guest();
-  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber))) {
+  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber)))
+  {
     $trip->guestId = $guest->getId();
-  } else {
+  }
+  else
+  {
     $parts = explode(' ', $json->whom->name);
     $guest = new Guest(null);
     $guest->lastName = array_pop($parts);
@@ -84,7 +90,7 @@ function addAirportDropoff($json)
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+  notifyManagers('trip', 'New Trip Request: ' . $trip->summary, [
     'summary' => $trip->summary,
     'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
     'notes' => $json->notes,
@@ -99,19 +105,22 @@ function addAirportPickup($json)
   $airport = new Airport();
   $airport->loadAirportByIATA($json->airport);
   $waitTimeAtAirport = 30;
-  $summary = $json->airport.' Pick Up - '.$json->whom->name;
+  $summary = $json->airport . ' Pick Up - ' . $json->whom->name;
   $trip = new trip();
   $trip->requestorId = $json->requestorId;
   $trip->summary = $summary;
-  $trip->startDate = Date('Y-m-d H:i:s', strtotime($json->flight->flightTime) - ($json->flight->travelTime *60));
+  $trip->startDate = Date('Y-m-d H:i:s', strtotime($json->flight->flightTime) - ($json->flight->travelTime * 60));
   $trip->pickupDate = Date('Y-m-d H:i:s', strtotime($json->flight->flightTime));
   $trip->endDate = Date('Y-m-d H:i:s', strtotime($json->flight->flightTime) + ($json->flight->travelTime + $waitTimeAtAirport) * 60);
   $trip->guests = $json->whom->name;
 
   $guest = new Guest();
-  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber))) {
+  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber)))
+  {
     $trip->guestId = $guest->getId();
-  } else {
+  }
+  else
+  {
     $parts = explode(' ', $json->whom->name);
     $guest = new Guest(null);
     $guest->lastName = array_pop($parts);
@@ -130,7 +139,7 @@ function addAirportPickup($json)
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+  notifyManagers('trip', 'New Trip Request: ' . $trip->summary, [
     'summary' => $trip->summary,
     'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
     'notes' => $json->notes,
@@ -142,11 +151,11 @@ function addAirportPickup($json)
 function addPointToPoint($json)
 {
   global $user;
-  $summary = 'Transport - '.$json->whom->name;
+  $summary = 'Transport - ' . $json->whom->name;
   $trip = new trip();
   $trip->requestorId = $json->requestorId;
   $trip->summary = $summary;
-  $roundTripDuration = 5*60; // 5 hours - just an arbitrary time. When we update the trip with actual locations we can adjust this.
+  $roundTripDuration = 5 * 60; // 5 hours - just an arbitrary time. When we update the trip with actual locations we can adjust this.
 
   $trip->startDate = Date('Y-m-d H:i:s', strtotime($json->datetime));
   $trip->pickupDate = Date('Y-m-d H:i:s', strtotime($json->datetime));
@@ -154,9 +163,12 @@ function addPointToPoint($json)
   $trip->guests = $json->whom->name;
 
   $guest = new Guest();
-  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber))) {
+  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber)))
+  {
     $trip->guestId = $guest->getId();
-  } else {
+  }
+  else
+  {
     $parts = explode(' ', $json->whom->name);
     $guest = new Guest(null);
     $guest->lastName = array_pop($parts);
@@ -171,7 +183,7 @@ function addPointToPoint($json)
   $trip->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $trip->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('trip', 'New Trip Request: '.$trip->summary, [
+  notifyManagers('trip', 'New Trip Request: ' . $trip->summary, [
     'summary' => $trip->summary,
     'tripDate' => Date('m/d/Y', strtotime($trip->pickupDate)),
     'notes' => $json->notes,
@@ -182,7 +194,7 @@ function addPointToPoint($json)
 function addVehicleReservation($json)
 {
   global $user;
-  $name = 'Vehicle Reservation - '.$json->whom->name;
+  $name = 'Vehicle Reservation - ' . $json->whom->name;
   $event = new Event();
   $event->name = $name;
   $event->requestorId = $json->requestorId;
@@ -192,7 +204,7 @@ function addVehicleReservation($json)
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $event->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('event', 'New Event Request: '.$event->name, [
+  notifyManagers('event', 'New Event Request: ' . $event->name, [
     'summary' => $event->name,
     'startDate' => Date('m/d/Y', strtotime($event->startDate)),
     'endDate' => Date('m/d/Y', strtotime($event->endDate)),
@@ -214,7 +226,7 @@ function addEvent($json)
   $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
   $event->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('event', 'New Event Request: '.$event->name, [
+  notifyManagers('event', 'New Event Request: ' . $event->name, [
     'summary' => $event->name,
     'startDate' => Date('m/d/Y', strtotime($event->startDate)),
     'endDate' => Date('m/d/Y', strtotime($event->endDate)),
@@ -229,10 +241,11 @@ function notifyManagers($type, $subject, $variables)
   $template = ($type == 'trip') ? new Template(EmailTemplates::get('Email Manager New Trip Request')) : new Template(EmailTemplates::get('Email Manager New Event Request'));
   $templateData = $variables;
   $managers = User::getManagers();
-  foreach ($managers as $manager) {
+  foreach ($managers as $manager)
+  {
     $templateData['name'] = $manager->first_name;
     $email = new Email();
-    $email->addRecipient($manager->email_address, $manager->first_name.' '.$manager->last_name);
+    $email->addRecipient($manager->email_address, $manager->first_name . ' ' . $manager->last_name);
     $email->setSubject($subject);
     $email->setContent($template->render($templateData));
     $email->sendText();
