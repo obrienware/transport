@@ -67,9 +67,10 @@ class Flight
     );
     $obj = json_decode($result);
     if ($obj->result->response->data) {
+      $db->query("DELETE FROM flight_data WHERE flight_number = :flight_number", ['flight_number' => $flightNumber]);
       foreach ($obj->result->response->data as $flight) {
         $query = "
-          REPLACE INTO flight_data SET
+          INSERT INTO flight_data SET
             row = :row,
             flight_number = :flight_number,
             status_live = :status_live,
