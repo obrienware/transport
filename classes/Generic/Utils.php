@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Transport;
+namespace Generic;
 
 require_once __DIR__ . '/../../autoload.php';
 
@@ -140,7 +140,7 @@ class Utils
     // Define full and shorthand unit names
     $units = [
       'y'   => ['full' => 'year', 'short' => 'yr'],
-      'm'  => ['full' => 'month', 'short' => 'mnth'],
+      'm'  => ['full' => 'month', 'short' => 'mth'],
       'd'    => ['full' => 'day', 'short' => 'day'],
       'h'   => ['full' => 'hour', 'short' => 'hr'],
       'i' => ['full' => 'minute', 'short' => 'min'],

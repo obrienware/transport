@@ -7,7 +7,18 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\{ Airport, AirportLocation, Email, EmailTemplates, Event, Guest, Template, Trip, User, Utils };
+use Transport\{ 
+  Airport, 
+  AirportLocation, 
+  Email, 
+  EmailTemplates, 
+  Event, 
+  Guest, 
+  Template, 
+  Trip, 
+  User 
+};
+use Generic\Utils;
 
 $json = json_decode(file_get_contents("php://input"));
 

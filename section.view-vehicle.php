@@ -1,12 +1,10 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Snag;
-use Transport\Utils;
+use Generic\InputHandler;
 use Transport\Vehicle;
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$vehicleId = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 $vehicle = new Vehicle($vehicleId);
 ?>
 <div class="container">

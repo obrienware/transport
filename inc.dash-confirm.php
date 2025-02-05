@@ -1,8 +1,7 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Config;
-use Transport\Database;
+use Transport\{ Config, Database };
 
 $config = Config::get('organization');
 if ($config->alertUnconfirmedTrips === false) exit();

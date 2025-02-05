@@ -8,11 +8,7 @@
 
 require_once '../autoload.php';
 
-use Transport\Database;
-use Transport\Event;
-use Transport\SMS;
-use Transport\Trip;
-use Transport\User;
+use Transport\{ Database, Event, SMS, Trip, User };
 
 $db = Database::getInstance();
 

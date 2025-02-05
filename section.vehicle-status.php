@@ -1,10 +1,10 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Utils;
+use Generic\{ InputHandler, Utils };
 use Transport\Vehicle;
 
-$vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
+$vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 $vehicle = new Vehicle($vehicleId);
 ?>
 <?php include 'inc.form-vehicle-update.php'; ?>
@@ -13,7 +13,7 @@ $vehicle = new Vehicle($vehicleId);
   Last updated:
   <?php if ($vehicle->lastUpdate):?>
     <?=Date('m/d h:ia', strtotime($vehicle->lastUpdate))?>
-    (<?=Utils::ago($vehicle->lastUpdate)?> ago)
+    (<?=Utils::timeAgo($vehicle->lastUpdate)?>)
   <?php else:?>
     Never
   <?php endif; ?>

@@ -5,8 +5,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Guest;
-use Transport\User;
+use Transport\{ Guest, User };
 use Generic\InputHandler;
 
 $id = InputHandler::getInt(INPUT_GET, 'id');

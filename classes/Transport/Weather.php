@@ -1,10 +1,14 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Transport;
 
 header('Content-Type: application/json');
 
 require_once __DIR__.'/../../autoload.php';
+
+use Generic\Utils;
 
 class Weather
 {

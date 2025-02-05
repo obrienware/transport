@@ -1,15 +1,8 @@
 <?php
 require_once '../autoload.php';
 
-use Transport\Config;
-use Transport\Database;
-use Transport\Email;
-use Transport\EmailTemplates;
-use Transport\Event;
-use Transport\Template;
-use Transport\Trip;
-use Transport\User;
-use Transport\Utils;
+use Transport\{ Config, Database, Email, EmailTemplates, Event, Template, Trip, User };
+use Generic\Utils;
 
 
 $config = Config::get('organization');

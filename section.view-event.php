@@ -1,13 +1,11 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Event;
-use Transport\User;
-use Transport\Vehicle;
+use Transport\{ Event, User, Vehicle };
+use Generic\InputHandler;
 
 $prefix = bin2hex(random_bytes(10 / 2));
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 $event = new Event($id);
 ?>
 <div class="container-fluid mt-3">

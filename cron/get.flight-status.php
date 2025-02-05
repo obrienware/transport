@@ -9,8 +9,7 @@
 date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
 require_once '../autoload.php';
 
-use Transport\Database;
-use Transport\Flight;
+use Transport\{ Database, Flight };
 
 $db = Database::getInstance();
 

@@ -6,8 +6,8 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\{ User, Utils };
-use Generic\JsonInput;
+use Transport\{ User };
+use Generic\{ JsonInput, Utils };
 
 $input = new JsonInput();
 

@@ -1,7 +1,7 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Utils;
+use Generic\Utils;
 use Transport\VehicleReservation;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);

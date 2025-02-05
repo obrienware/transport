@@ -2,7 +2,7 @@
 require_once '../autoload.php';
 
 use Transport\Trip;
-use Transport\Utils;
+use Generic\Utils;
 
 $trips = Trip::upcomingTrips();
 ?>

@@ -8,8 +8,7 @@ if ($timezone) $_SESSION['userTimezone'] = $timezone;
 
 require_once '../autoload.php';
 
-use Transport\Authenticate;
-use Transport\User;
+use Transport\{ Authenticate, User };
 
 $username = $_GET['username'];
 $password = $_GET['password'];

@@ -1,8 +1,7 @@
 <?php
 require_once '../autoload.php';
 
-use Transport\Location;
-use Transport\Weather;
+use Transport\{ Location, Weather };
 
 $id = (int) $_GET['location_id'];
 $location = new Location($id);

@@ -1,8 +1,7 @@
 <?php
 require_once '../autoload.php';
 
-use Transport\Airport;
-use Transport\Flight;
+use Transport\{ Airport, Flight };
 
 function showFlightsFor($iata, $type)
 {

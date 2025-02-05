@@ -2,10 +2,9 @@
 require_once 'autoload.php';
 
 use Transport\Trip;
-use Transport\Utils;
+use Generic\{ InputHandler, Utils };
 
-$id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-$id = $id === false ? null : $id;
+$id = InputHandler::getInt(INPUT_GET, 'id');
 $trip = new Trip($id);
 $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 ?>

@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\User;
-use Transport\Utils;
+use Generic\Utils;
 
 $json = json_decode(file_get_contents("php://input"));
 

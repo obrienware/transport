@@ -1,9 +1,7 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Airline;
-use Transport\Airport;
-use Transport\User;
+use Transport\{ Airline, Airport, User };
 
 $user = new User($_SESSION['user']->id);
 ?>

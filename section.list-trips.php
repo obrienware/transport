@@ -2,7 +2,7 @@
 require_once 'autoload.php';
 
 use Transport\Database;
-use Transport\Utils;
+use Generic\Utils;
 
 $db = Database::getInstance();
 $query = "

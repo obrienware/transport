@@ -3,8 +3,7 @@ header('Content-Type: application/json');
 
 require_once '../../autoload.php';
 
-use Transport\User;
-use Transport\Vehicle;
+use Transport\{ User, Vehicle };
 
 $user = new User($_SESSION['user']->id);
 

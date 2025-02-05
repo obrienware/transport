@@ -1,10 +1,10 @@
 <?php
+// TODO: Sanitize input
 header('Content-Type: application/json');
 
 require_once 'autoload.php';
 
-use Transport\SMS;
-use Transport\Database;
+use Transport\{ Database, SMS };
 
 $db = Database::getInstance();
 $query = "

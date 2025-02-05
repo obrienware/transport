@@ -1,10 +1,8 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Airline;
-use Transport\Airport;
-use Transport\AirportLocation;
-use Transport\Utils;
+use Transport\{ Airline, Airport, AirportLocation };
+use Generic\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $id = $id === false ? null : $id;

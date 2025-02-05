@@ -7,8 +7,7 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Config;
-use Transport\Utils;
-use Generic\InputHandler;
+use Generic\{ InputHandler, Utils };
 
 $config = Config::get('system');
 $keys = $config->keys;

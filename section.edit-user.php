@@ -1,10 +1,8 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Config;
-use Transport\Department;
-use Transport\User;
-use Transport\Utils;
+use Transport\{ Config, Department, User };
+use Generic\Utils;
 
 $config = Config::get('system');
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);

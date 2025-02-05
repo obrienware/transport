@@ -1,12 +1,10 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\Snag;
-use Transport\Utils;
-use Transport\Vehicle;
+use Transport\{ Snag };
+use Generic\InputHandler;
 
-$vehicleId = isset($_GET['vehicleId']) ? (int)$_GET['vehicleId'] : null;
-// $vehicle = new Vehicle($vehicleId);
+$vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 ?>
 <!-- SNAGLIST -->
 <?php if ($rows = Snag::getSnags($vehicleId)): ?>

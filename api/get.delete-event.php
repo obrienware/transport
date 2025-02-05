@@ -5,12 +5,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Config;
-use Transport\Event;
-use Transport\Email;
-use Transport\EmailTemplates;
-use Transport\Template;
-use Transport\User;
+use Transport\{ Config, Event, Email, EmailTemplates, Template, User };
 use Generic\InputHandler;
 
 $id = InputHandler::getInt(INPUT_GET, 'id');
