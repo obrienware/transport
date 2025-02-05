@@ -126,7 +126,7 @@ class Utils
     if ($givenDate->format('Y-m-d') == $today->format('Y-m-d')) return 'today';
     if ($givenDate->format('Y-m-d') == $tomorrow->format('Y-m-d')) return 'tomorrow';
 
-    return 'In ' . self::timeAgo($date) . ' (' . $givenDate->format('D j M g:ia') . ')';
+    return self::timeAgo($date) . ' (' . $givenDate->format('D j M g:ia') . ')';
   }
 
   public static function timeAgo($datetime, $shorthand = false)
