@@ -131,19 +131,20 @@ class Utils
 
   public static function timeAgo($datetime, $shorthand = false)
   {
-    $now = new \DateTime();
-    $target = new \DateTime($datetime);
+    $timezone = new \DateTimeZone($_ENV['TZ'] ?? 'UTC');
+    $now = new \DateTime('now', $timezone);
+    $target = new \DateTime($datetime, $timezone);
     $diff = $now->diff($target);
     $isFuture = $target > $now;
 
     // Define full and shorthand unit names
     $units = [
-      'year'   => ['full' => 'year', 'short' => 'yr'],
-      'month'  => ['full' => 'month', 'short' => 'mnth'],
-      'day'    => ['full' => 'day', 'short' => 'day'],
-      'hour'   => ['full' => 'hour', 'short' => 'hr'],
-      'minute' => ['full' => 'minute', 'short' => 'min'],
-      'second' => ['full' => 'second', 'short' => 'sec'],
+      'y'   => ['full' => 'year', 'short' => 'yr'],
+      'm'  => ['full' => 'month', 'short' => 'mnth'],
+      'd'    => ['full' => 'day', 'short' => 'day'],
+      'h'   => ['full' => 'hour', 'short' => 'hr'],
+      'i' => ['full' => 'minute', 'short' => 'min'],
+      's' => ['full' => 'second', 'short' => 'sec'],
     ];
 
     foreach ($units as $unit => $names)
@@ -152,11 +153,11 @@ class Utils
       if ($value > 0)
       {
         $unitName = $shorthand ? $names['short'] : $names['full'];
-        return ($isFuture ? "in " : "") . $value . ' ' . $unitName . ($value > 1 ? 's' : '') . ($isFuture ? "" : " ago");
+        return ($isFuture ? "In " : "") . $value . ' ' . $unitName . ($value > 1 ? 's' : '') . ($isFuture ? "" : " ago");
       }
     }
 
-    return 'just now';
+    return 'Just now';
   }
 
 
