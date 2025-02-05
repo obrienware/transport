@@ -41,7 +41,8 @@ if ($rows = $db->get_rows($query)) {
   echo "Found ".count($rows)." flights for today.\n";
 
   foreach ($rows as $row) {
-    echo "\n> {$row->target_datetime}: {$row->type} {$row->iata} {$row->flight_number};\n";
+    // echo "\n> {$row->target_datetime}: {$row->type} {$row->iata} {$row->flight_number};\n";
+    echo "\n> {$row->flight_number} {$row->type} {$row->iata}: ".Date('Y-m-d H:i', strtotime($row->target_datetime)).";\n";
 
     $lastChecked = Flight::lastChecked($row->flight_number);
     echo "Last checked: {$lastChecked} min(s) ago\n";
