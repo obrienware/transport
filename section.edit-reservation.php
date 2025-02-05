@@ -76,8 +76,8 @@ if (!is_null($id) && !$reservation->getId()) {
         class="form-control" 
         id="reservation-requestor" 
         placeholder="Requestor" 
-        value="<?=($reservation->requestor) ? $reservation->requestor : ''?>" 
-        data-value="<?=($reservation->requestor) ? $reservation->requestor : ''?>" 
+        value="<?=($reservation->requestor) ? $reservation->requestor->getName() : ''?>" 
+        data-value="<?=($reservation->requestor) ? $reservation->requestor->getName() : ''?>" 
         data-id="<?=$reservation->requestorId?>">
       <div class="invalid-feedback">Please make a valid selection</div>
     </div>
