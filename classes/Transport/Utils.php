@@ -1,40 +1,45 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Transport;
 
-require_once __DIR__.'/../../autoload.php';
+require_once __DIR__ . '/../../autoload.php';
 
 
 // TODO: Much of this should be refactored as traits
 class Utils
 {
-  
-  public static function GUID() 
+
+  public static function GUID()
   {
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
   }
 
 
-  public static function randomPassword($length = 8) 
+  public static function randomPassword($length = 8)
   {
     $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
     $pass = [];
     $alphaLength = strlen($alphabet) - 1;
-    for ($i = 0; $i < $length; $i++) {
-        $n = rand(0, $alphaLength);
-        $pass[] = $alphabet[$n];
+    for ($i = 0; $i < $length; $i++)
+    {
+      $n = rand(0, $alphaLength);
+      $pass[] = $alphabet[$n];
     }
     return implode($pass);
   }
 
 
-  public static function callApi ($method, $url, $data = [], $auth = null, $headers = []) 
+  public static function callApi($method, $url, $data = [], $auth = null, $headers = [])
   {
     $curl = curl_init();
-    switch ($method) {
+    switch ($method)
+    {
       case "POST":
         curl_setopt($curl, CURLOPT_POST, 1);
-        if ($data) {
+        if ($data)
+        {
           curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         }
         break;
@@ -42,48 +47,54 @@ class Utils
         curl_setopt($curl, CURLOPT_PUT, 1);
         break;
       default:
-        if (count($data) > 0) {
+        if (count($data) > 0)
+        {
           $url = sprintf("%s?%s", $url, http_build_query($data));
         }
     }
-  
+
     // Optional Authentication:
-    if (is_array($auth)) {
+    if (is_array($auth))
+    {
       curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-      curl_setopt($curl, CURLOPT_USERPWD, $auth['username'].':'.$auth['password']);
+      curl_setopt($curl, CURLOPT_USERPWD, $auth['username'] . ':' . $auth['password']);
     }
-  
+
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array_merge(['Accept: application/json'], $headers));
-  
+
     // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     // curl_setopt($ch, CURLOPT_TIMEOUT, 20); //timeout in seconds
     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-    
+
     $result = curl_exec($curl);
-    if(curl_errno($curl)) return 'Curl error: '.curl_error($curl);
+    if (curl_errno($curl)) return 'Curl error: ' . curl_error($curl);
     return $result;
   }
 
 
   public static function ago($time1, $time2 = 'now', $short = false): string
   {
-    if ($short) {
-        $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
-    } else {
-        $periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+    if ($short)
+    {
+      $periods = array("sec", "min", "hr", "day", "wk", "mth", "yr", "dec");
     }
-    $lengths = array("60","60","24","7","4.35","12","10");
+    else
+    {
+      $periods = array("second", "minute", "hour", "day", "week", "month", "year", "decade");
+    }
+    $lengths = array("60", "60", "24", "7", "4.35", "12", "10");
 
     $datetime1 = new \DateTime($time1);
     $datetime2 = new \DateTime($time2);
 
     $difference = $datetime2->getTimestamp() - $datetime1->getTimestamp();
 
-    for ($j = 0; $difference >= $lengths[$j] && $j < count($lengths) - 1; $j++) {
-        $difference /= $lengths[$j];
+    for ($j = 0; $difference >= $lengths[$j] && $j < count($lengths) - 1; $j++)
+    {
+      $difference /= $lengths[$j];
     }
     $difference = round($difference);
     if ($difference != 1) $periods[$j] .= "s";
@@ -92,13 +103,16 @@ class Utils
 
 
   public static function formattedPhoneNumber(string $number): string
-	{
-		if (str_contains($number, '+')) {
-			return preg_replace('/(?<!^)\D/', '', $number); // Remove all non-numeric characters except the leading +
-		} else {
-			return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
-		}	
-	}
+  {
+    if (str_contains($number, '+'))
+    {
+      return preg_replace('/(?<!^)\D/', '', $number); // Remove all non-numeric characters except the leading +
+    }
+    else
+    {
+      return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', '($1) $2-$3', $number);
+    }
+  }
 
 
   public static function showDate($date): string
@@ -112,8 +126,39 @@ class Utils
     if ($givenDate->format('Y-m-d') == $today->format('Y-m-d')) return 'today';
     if ($givenDate->format('Y-m-d') == $tomorrow->format('Y-m-d')) return 'tomorrow';
 
-    return 'In '.self::ago('now', $date).' ('.$givenDate->format('D j M g:ia').')';
+    return 'In ' . self::timeAgo($date) . ' (' . $givenDate->format('D j M g:ia') . ')';
   }
+
+  public static function timeAgo($datetime, $shorthand = false)
+  {
+    $now = new \DateTime();
+    $target = new \DateTime($datetime);
+    $diff = $now->diff($target);
+    $isFuture = $target > $now;
+
+    // Define full and shorthand unit names
+    $units = [
+      'year'   => ['full' => 'year', 'short' => 'yr'],
+      'month'  => ['full' => 'month', 'short' => 'mnth'],
+      'day'    => ['full' => 'day', 'short' => 'day'],
+      'hour'   => ['full' => 'hour', 'short' => 'hr'],
+      'minute' => ['full' => 'minute', 'short' => 'min'],
+      'second' => ['full' => 'second', 'short' => 'sec'],
+    ];
+
+    foreach ($units as $unit => $names)
+    {
+      $value = $diff->$unit;
+      if ($value > 0)
+      {
+        $unitName = $shorthand ? $names['short'] : $names['full'];
+        return ($isFuture ? "in " : "") . $value . ' ' . $unitName . ($value > 1 ? 's' : '') . ($isFuture ? "" : " ago");
+      }
+    }
+
+    return 'just now';
+  }
+
 
 
   public static function numberToOrdinalWord(int $number): string
@@ -157,5 +202,4 @@ class Utils
       </div>
     ";
   }
-  
 }
