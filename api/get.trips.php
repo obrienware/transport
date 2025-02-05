@@ -80,7 +80,7 @@ if ($rows = $db->get_rows($query, $params)) {
   }
 }
 
-die(json_encode($result));
+exit(json_encode($result));
 
 function readableColor($bg)
 {

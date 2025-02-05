@@ -204,7 +204,7 @@ if ($trip->save(userResponsibleForOperation: $user->getUsername()))
       $reservation->endDateTime = $trip->startDate;
       $reservation->save(userResponsibleForOperation: $user->getUsername());
     }
-    die(json_encode(['result' => $result]));
+    exit(json_encode(['result' => $result]));
   }
 
   if ($input->getBool('createVehicleReservation'))
@@ -216,9 +216,9 @@ if ($trip->save(userResponsibleForOperation: $user->getUsername()))
     $reservation->startDateTime = $trip->endDate;
     $reservation->save(userResponsibleForOperation: $user->getUsername());
   }
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $result]));
 }
-die(json_encode(['result' => false, 'error' => $trip->getLastError()]));
+exit(json_encode(['result' => false, 'error' => $trip->getLastError()]));
 
 
 function notifyParticipants(Trip $trip, array $changes, array $driversToNotify): void

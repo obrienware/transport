@@ -13,7 +13,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $note = new DriverNote($id);
 if (!$note->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Note not found'
   ]));
@@ -21,4 +21,4 @@ if (!$note->getId()) {
 
 $user = new User($_SESSION['user']->id);
 $result = $note->delete(userResponsibleForOperation: $user->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

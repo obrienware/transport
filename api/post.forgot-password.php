@@ -13,4 +13,4 @@ $input = new JsonInput();
 
 $result = User::sendResetLink($input->getString('username'));
 
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

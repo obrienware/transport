@@ -17,7 +17,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $reservation = new VehicleReservation($id);
 if (!$reservation->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Reservation not found'
   ]));
@@ -31,7 +31,7 @@ if ($reservation->getId() && $reservation->isConfirmed() && $reservation->endDat
   notifyParticipants($reservation);
 }
 
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));
 
 
 

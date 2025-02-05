@@ -15,7 +15,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 $department = new Department($id);
 if (!$department->getId())
 {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Department not found'
   ]));
@@ -23,4 +23,4 @@ if (!$department->getId())
 
 $user = new User($_SESSION['user']->id);
 $result = $department->delete(userResponsibleForOperation: $user->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

@@ -22,12 +22,12 @@ if ($id = Authenticate::logIn($username, $password)) {
   ];
   $user = new User($id);
 
-  die(json_encode([
+  exit(json_encode([
     'authenticated' => true,
     'changePassword' => $user->changePassword
   ]));
 }
 
-die(json_encode([
+exit(json_encode([
   'authenticated' => false
 ]));

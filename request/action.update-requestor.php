@@ -18,4 +18,4 @@ $user->phoneNumber = Utils::formattedPhoneNumber($json->phoneNumber);
 $user->save();
 
 $result = true;
-die(json_encode(['result' => true]));
+exit(json_encode(['result' => true]));

@@ -26,7 +26,7 @@ if ($placeId)
     'key' => $keys->GOOGLE_API_KEY,
     'fields' => 'id,formattedAddress,location'
   ]);
-  die(json_encode(json_decode($result)));
+  exit(json_encode(json_decode($result)));
 }
 
 if ($latlng)
@@ -35,7 +35,7 @@ if ($latlng)
     'key' => $keys->GOOGLE_API_KEY,
     'latlng' => $latlng
   ]);
-  die(json_encode(json_decode($result)));
+  exit(json_encode(json_decode($result)));
 }
 
 if ($address)
@@ -44,7 +44,7 @@ if ($address)
     'key' => $keys->GOOGLE_API_KEY,
     'address' => $address
   ]);
-  die(json_encode(json_decode($result)));
+  exit(json_encode(json_decode($result)));
 }
 
-die('false');
+exit('false');

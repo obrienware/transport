@@ -8,7 +8,7 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user']->authenticated) || !is
 	// Redirect to a login page
 	$request_uri = base64_encode($_SERVER['REQUEST_URI']);
 	header('location: page.authenticate.php?return=' . $request_uri);
-	die();
+	exit();
 }
 
 $user = new User($_SESSION['user']->id);
@@ -22,7 +22,7 @@ function allowRoles(array $roles)
 {
 	if (!allowedRoles($roles)) {
 		http_response_code(403);
-		die('Sorry! You do not have permission to access this page. Please talk to your admin if you have questions.');
+		exit('Sorry! You do not have permission to access this page. Please talk to your admin if you have questions.');
 	}
 }
 

@@ -17,4 +17,4 @@ foreach ($rows as $row) {
   ];
 }
 
-die(json_encode($response));
+exit(json_encode($response));

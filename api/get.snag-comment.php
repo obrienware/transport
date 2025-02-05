@@ -12,7 +12,7 @@ $snagId = InputHandler::getInt(INPUT_GET, 'snagId');
 
 $snag = new Snag($snagId);
 if (!$snag->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Snag not found'
   ]));
@@ -21,4 +21,4 @@ if (!$snag->getId()) {
 $user = new User($_SESSION['user']->id);
 $snag->comments = filter_input(INPUT_GET, 'text', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 $result = $snag->save(userResponsibleForOperation: $user->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

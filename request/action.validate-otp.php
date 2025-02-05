@@ -12,7 +12,7 @@ if (User::validateOTP($_GET['email'], $_GET['otp'])) {
     'id' => $user->getId(),
     'authenticated' => true,
   ];
-  die(json_encode([
+  exit(json_encode([
     'result' => true,
     'name' => $user->firstName
   ]));

@@ -13,7 +13,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $location = new Location($id);
 if (!$location->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Location not found'
   ]));
@@ -21,4 +21,4 @@ if (!$location->getId()) {
 
 $user = new User($_SESSION['user']->id);
 $result = $location->delete(userResponsibleForOperation: $user->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

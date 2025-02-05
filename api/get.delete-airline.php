@@ -15,7 +15,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 $airline = new Airline($id);
 if (!$airline->getId())
 {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Airline not found'
   ]));
@@ -23,4 +23,4 @@ if (!$airline->getId())
 
 $user = new User($_SESSION['user']->id);
 $result = $airline->delete(userResponsibleForOperation: $user->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

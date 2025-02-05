@@ -5,7 +5,7 @@ use Transport\Config;
 use Transport\Database;
 
 $config = Config::get('organization');
-if ($config->alertUnconfirmedTrips === false) die();
+if ($config->alertUnconfirmedTrips === false) exit();
 
 $db = Database::getInstance();
 

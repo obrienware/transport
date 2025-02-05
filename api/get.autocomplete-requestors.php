@@ -25,6 +25,6 @@ $query = "
 $params = ['query' => $q];
 if ($rows = $db->get_rows($query, $params))
 {
-  die(json_encode($rows));
+  exit(json_encode($rows));
 }
 echo '[]';

@@ -17,7 +17,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $event = new Event($id);
 if (!$event->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Event not found'
   ]));
@@ -31,7 +31,7 @@ if ($event->getId() && $event->isConfirmed() && $event->endDate > Date('Y-m-d H:
   notifyParticipants($event);
 }
 
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));
 
 
 

@@ -14,7 +14,7 @@ $db = Database::getInstance();
 $query = "SELECT config, json5 FROM config WHERE node = :node";
 $params = ['node' => $node];
 if ($row = $db->get_row($query, $params)) {
-  die(json_encode([
+  exit(json_encode([
     'json' => $row->config ?? '{}',
     'json5' => $row->json5 ?? '{}'
   ]));

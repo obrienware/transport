@@ -17,7 +17,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $trip = new Trip($id);
 if (!$trip->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'Trip not found'
   ]));
@@ -32,7 +32,7 @@ if ($trip->getId() && $trip->isConfirmed() && $trip->endDate > Date('Y-m-d H:i:s
 }
 
 
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));
 
 
 

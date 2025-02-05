@@ -80,9 +80,9 @@ if ($reservation->save(userResponsibleForOperation: $user->getUsername()))
 {
   $result = $reservation->getId();
   if ($changes) notifyParticipants($reservation, $changes);
-  die(json_encode(['result' => $result]));
+  exit(json_encode(['result' => $result]));
 }
-die(json_encode([
+exit(json_encode([
   'result' => false,
   'error' => $reservation->getLastError()
 ]));

@@ -10,7 +10,7 @@ allowRoles(['admin','manager','developer']);
       <p class="lead">Sorry, your role does not permit you to edit this node. If you have any questions about this, please contact an admin.</p>
     </div>
   </div>
-  <?php include 'inc.footer.php'; die();?>
+  <?php include 'inc.footer.php'; exit();?>
 <?php endif; ?>
 
 <div class="container-fluid mt-3">

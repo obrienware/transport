@@ -12,7 +12,7 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 
 $user = new User($id);
 if (!$user->getId()) {
-  die(json_encode([
+  exit(json_encode([
     'result' => false,
     'error' => 'User not found'
   ]));
@@ -20,4 +20,4 @@ if (!$user->getId()) {
 
 $sessionUser = new User($_SESSION['user']->id);
 $result = $user->delete(userResponsibleForOperation: $sessionUser->getUsername());
-die(json_encode(['result' => $result]));
+exit(json_encode(['result' => $result]));

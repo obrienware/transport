@@ -94,4 +94,4 @@ foreach ($rows as $key => $row)
 	$rows[$key]->available = (array_search($row->id, $arrayIds) !== false);
 }
 
-die(json_encode($rows));
+exit(json_encode($rows));

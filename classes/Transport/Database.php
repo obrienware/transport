@@ -46,7 +46,7 @@ class Database
 				$dbpassword
 			);
 		} catch (PDOException $e) {
-			die('Failed: ' . $e->getMessage());
+			exit('Failed: ' . $e->getMessage());
 		}
 	}
 
