@@ -41,10 +41,10 @@ if ($rows = $db->get_rows($query)) {
   echo "Found ".count($rows)." flights for today.\n";
 
   foreach ($rows as $row) {
-    echo "> {$row->target_datetime}: {$row->type} {$row->iata} {$row->flight_number};\n";
+    echo "\n> {$row->target_datetime}: {$row->type} {$row->iata} {$row->flight_number};\n";
 
     $lastChecked = Flight::lastChecked($row->flight_number);
-    echo "Last checked: {$lastChecked}\n";
+    echo "Last checked: {$lastChecked} min(s) ago\n";
     if ($lastChecked === false) {
       // If we haven't checked this flight before, we can check it rn and be done.
       echo "Making an immediate API call to get the latest data on this flight.\n";
