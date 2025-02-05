@@ -250,7 +250,7 @@ class VehicleReservation extends Base
       LEFT OUTER JOIN users u ON u.id = r.requestor_id
       WHERE 
         r.archived IS NULL
-        AND r.start_datetime > DATE_SUB(CURDATE(), INTERVAL 7 DAY) -- Going back 7 days
+        AND r.end_datetime > DATE_SUB(CURDATE(), INTERVAL 7 DAY) -- Going back 7 days
       ORDER BY r.start_datetime ASC
     ";
     return $db->get_rows($query);

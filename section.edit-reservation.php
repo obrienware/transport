@@ -122,7 +122,7 @@ if (!is_null($id) && !$reservation->getId()) {
       if ($('#reservation-guest').val()) data.guestId = $('#reservation-guest').data('id');
       data.vehicleId = input.val('#reservation-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
       data.reason = input.cleanVal('#reservation-reason');
-      if ($('#event-requestor').val()) data.requestorId = $('#event-requestor').data('id');
+      if ($('#reservation-requestor').val()) data.requestorId = $('#reservation-requestor').data('id');
       return data;
     }
 
