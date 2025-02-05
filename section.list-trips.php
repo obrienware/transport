@@ -92,7 +92,6 @@ $rows = $db->get_rows($query)
           <!-- Pick Up -->
           <td class="text-nowrap text-start" data-order="<?=$row->start_date?>">
             <div>
-              <span class="time"><?=($row->start_date) ? Date('g:ia', strtotime($row->start_date)) : ''?></span>: 
               <?=$row->pickup_location?>
             </div>
             <?php if ($row->eta): ?>
