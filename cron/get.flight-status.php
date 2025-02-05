@@ -110,7 +110,7 @@ if ($rows = $db->get_rows($query)) {
     }
 
   }
-  echo "Done.\n";
+  echo "\nDone.\n";
   exit;
 }
-echo "No flights found for today.\n";
+echo "\nNo flights found for today.\n";
