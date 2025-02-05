@@ -5,8 +5,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Snag;
-use Transport\User;
+use Transport\{ Snag, User };
 use Generic\InputHandler;
 
 $snagId = InputHandler::getInt(INPUT_GET, 'snagId');

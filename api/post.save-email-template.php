@@ -6,8 +6,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\EmailTemplates;
-use Transport\User;
+use Transport\{ EmailTemplates, User };
 use Generic\JsonInput;
 
 $input = new JsonInput();

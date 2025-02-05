@@ -6,8 +6,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Airline;
-use Transport\User;
+use Transport\{ Airline, User };
 use Generic\InputHandler;
 
 $user = new User($_SESSION['user']->id);

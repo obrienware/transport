@@ -6,8 +6,7 @@ header('Content-Type: application/json');
 
 require_once '../autoload.php';
 
-use Transport\Airport;
-use Transport\User;
+use Transport\{ Airport, User };
 use Generic\JsonInput;
 
 $input = new JsonInput();
