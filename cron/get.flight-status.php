@@ -1,14 +1,22 @@
+<pre>
 <?php
-date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
-header('Content-Type: application/json');
+/**
+ * The purpose of this script is to make an API call to fetch flight data for upcoming flights
+ * Since we want to minimize the number of API calls we make, we'll re-check on a schedule - the
+ * closer the flight is to arriving/departing, the more frequently we'll check.
+ */
 
+date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
 require_once '../autoload.php';
 
 use Transport\Database;
 use Transport\Flight;
 
-// We want to know about flights happening today
 $db = Database::getInstance();
+
+// What this query does is get all the flights that are either arriving or departing today.
+// e.g. 2025-02-05 12:05:00, arrival, DEN, UA1234
+// Note that the datetimes here represent *local* time
 $query = "
 SELECT 
   CASE WHEN t.ETA IS NOT NULL THEN t.ETA ELSE t.ETD END AS target_datetime,
@@ -25,11 +33,21 @@ WHERE
 	(t.ETD IS NOT NULL AND DATE(t.ETD) = CURDATE()))
   AND t.archived IS NULL
 ";
+
+echo Date('Y-m-d H:i:s').": Checking on today's flights:...\n";
+
 if ($rows = $db->get_rows($query)) {
+
+  echo "Found ".count($rows)." flights for today.\n";
+
   foreach ($rows as $row) {
+    echo "> {$row->target_datetime}: {$row->type} {$row->iata} {$row->flight_number};\n";
+
     $lastChecked = Flight::lastChecked($row->flight_number);
+    echo "Last checked: {$lastChecked}\n";
     if ($lastChecked === false) {
       // If we haven't checked this flight before, we can check it rn and be done.
+      echo "Making an immediate API call to get the latest data on this flight.\n";
       Flight::updateFlight($row->flight_number);
       continue;
     }
@@ -39,19 +57,32 @@ if ($rows = $db->get_rows($query)) {
     $now = strtotime('now');
     
     if ($row->type == 'arrival') {
-      if ($flight->real_arrival) continue; // Flight has already arrived
+      if ($flight->real_arrival) {
+        echo "No further calls will be made for this flight since it has already arrived.\n";
+        continue; // Flight has already arrived
+      }
       $arrival_time = ($flight->estimated_arrival) ? strtotime($flight->estimated_arrival) : strtotime($flight->scheduled_arrival);
       $arrive_in = round(($arrival_time - $now) / 60, 2);
 
       // If our ETA is less than 15mins then we're re-checking every minute
       if ($arrive_in <= 15) {
+        echo "ETA is less than 15mins, re-checking every minute.\n";
+        echo "Checking now...\n";
         Flight::updateFlight($row->flight_number);
       } elseif ($arrive_in <= 60) { 
         // If our ETA is less than an hour, then we're re-checking every 10mins
-        if ($lastChecked >= 10) Flight::updateFlight($row->flight_number);
+        echo "ETA is less than 60mins, re-checking every 10mins.\n";
+        if ($lastChecked >= 10) {
+          echo "Checking now...\n";
+          Flight::updateFlight($row->flight_number);
+        }
       } else {
         // If our ETA is today, then we're re-checking every 60mins
-        if ($lastChecked >= 60) Flight::updateFlight($row->flight_number);
+        echo "ETA is today (but not within the next hour), re-checking every 60mins.\n";
+        if ($lastChecked >= 60) {
+          echo "Checking now...\n";
+          Flight::updateFlight($row->flight_number);
+        }
       }
     }
 
@@ -60,15 +91,25 @@ if ($rows = $db->get_rows($query)) {
      * the ETD has already passed.
      */
     if ($row->type == 'departure') {
-      if ($flight->real_departure) continue; // Flight has already departed
+      if ($flight->real_departure) {
+        echo "No further calls will be made for this flight since it has already departed.\n";
+        continue; // Flight has already departed
+      }
       $departure_time = ($flight->estimated_departure) ? strtotime($flight->estimated_departure) : strtotime($flight->scheduled_departure);
       $departs_in = round(($departure_time - $now) / 60, 2);
 
       if ($departs_in > 0) {
+        echo "ETD is in the future, re-checking every 30mins.\n";
         // We havn't passed our ETD yet
-        if ($lastChecked >= 30) Flight::updateFlight($row->flight_number);
+        if ($lastChecked >= 30) {
+          echo "Checking now...\n";
+          Flight::updateFlight($row->flight_number);
+        }
       }
     }
 
   }
+  echo "Done.\n";
+  exit;
 }
+echo "No flights found for today.\n";
