@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
+
 namespace Transport;
 
 require_once __DIR__.'/../../autoload.php';
 
 use DateTime;
 use DateTimeZone;
+use Generic\Utils;
 
 class Guest extends	Base
 {

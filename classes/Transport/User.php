@@ -6,6 +6,7 @@ require_once __DIR__.'/../../autoload.php';
 
 use DateTime;
 use DateTimeZone;
+use Generic\Utils;
 
 class User extends Base
 {
