@@ -86,7 +86,7 @@
 						// Send an otp to the email address provided
 						const resp = await get('action.send-otp.php', {email});
 						if (resp?.result) {
-							const otp = await input(`Great! We've sent a one-time-passcode (OTP) to your email address. Please enter it here to continue:`);
+							const otp = await ui.input(`Great! We've sent a one-time-passcode (OTP) to your email address. Please enter it here to continue:`);
 							const resp = await get('action.validate-otp.php', {email, otp});
 							console.log(resp);
 							if (resp?.result) {
