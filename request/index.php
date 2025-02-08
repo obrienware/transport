@@ -80,7 +80,7 @@
 				if (ƒ.keyCode === 13) {
 					$('#email').attr('disabled', true);
 					// Check is email address is acceptable
-					email = cleanLowerVal('#email');
+					const email = cleanLowerVal('#email');
 					const emailDomain = email.split('@')[1];
 					if (acceptedDomains.includes(emailDomain)) {
 						// Send an otp to the email address provided
