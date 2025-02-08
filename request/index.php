@@ -68,6 +68,9 @@
 
   
   <script type="text/javascript">
+    import * as input from '/js/formatters.js';
+    import * as ui from '/js/notifications.js';
+    import * as net from '/js/network.js';
 
     $(async ƒ => {
 
