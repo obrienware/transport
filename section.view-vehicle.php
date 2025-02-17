@@ -6,6 +6,7 @@ use Transport\Vehicle;
 
 $id = InputHandler::getInt(INPUT_GET, 'id');
 $vehicle = new Vehicle($id);
+$vehicleId = $vehicle->getId();
 ?>
 <!-- Back button -->
 <div class="d-flex justify-content-between top-page-buttons mb-2">
