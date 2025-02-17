@@ -58,10 +58,7 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 <?php endif; ?>
 
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<script>
 
   if (typeof window.acknowledgeSnag !== 'function') {
     window.acknowledgeSnag = async function(snagId) {
@@ -98,7 +95,7 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       $('#snag-count').html('<?=$count?>').removeClass('d-none');
     <?php endif; ?>
 
-    $('.action-icon').on('click', function(event) {
+    $('.action-icon').on('~click', function(event) {
       event.preventDefault();
       event.stopPropagation();
       const snagId = $(this).data('id');
