@@ -651,7 +651,7 @@ if (!is_null($id) && !$trip->getId())
       data.airlineId = $('#trip-airline-id').val();
       data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
 
-      data.flightNumber = $('#trip-flight-number').intVal();
+      data.flightNumber = $('#trip-flight-number').intVal().toString();
 
       // We cannot have an ETA AND an ETD. This has previously precipitated errors
       if ($('#trip-pu-location').data('type') === 'airport') {
