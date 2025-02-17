@@ -117,6 +117,12 @@ if (!is_null($id) && !$eventId)
 <div class="d-flex justify-content-between mt-3">
   <?php if ($event->getId()): ?>
     <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:event', <?= $event->getId() ?>)">Delete</button>
+    <div class="mx-auto" style="color:lightslategray; font-size:small">
+      <div>Created: <?= (new DateTime($event->created))->format('m/d/Y H:ia') ?> (<?=ucwords($event->createdBy)?>)</div>
+      <?php if ($event->modified): ?>
+        <div>Modified: <?= (new DateTime($event->modified))->format('m/d/Y H:ia') ?> (<?=ucwords($event->modifiedBy)?>)</div>
+      <?php endif; ?>
+    </div>
   <?php endif; ?>
 
   <?php if (!$event->isConfirmed()): ?>

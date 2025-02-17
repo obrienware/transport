@@ -341,6 +341,12 @@ if (!is_null($id) && !$trip->getId())
 <div class="d-flex justify-content-between mt-3">
   <?php if ($trip->getId()): ?>
     <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:trip', <?= $trip->getId() ?>)">Delete</button>
+    <div class="mx-auto" style="color:lightslategray; font-size:small">
+      <div>Created: <?= (new DateTime($trip->created))->format('m/d/Y H:ia') ?> (<?=ucwords($trip->createdBy)?>)</div>
+      <?php if ($trip->modified): ?>
+        <div>Modified: <?= (new DateTime($trip->modified))->format('m/d/Y H:ia') ?> (<?=ucwords($trip->modifiedBy)?>)</div>
+      <?php endif; ?>
+    </div>
   <?php endif; ?>
 
   <?php if (!$trip->isConfirmed()): ?>

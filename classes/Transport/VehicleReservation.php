@@ -28,6 +28,11 @@ class VehicleReservation extends Base
 	public ?string $reason = null;
   private ?DateTime $confirmed = null;
 
+	public ?string $created = null;
+	public ?string $createdBy = null;
+	public ?string $modified = null;
+	public ?string $modifiedBy = null;
+
 	public function getName(): string
 	{
 		return is_null($this->reason) ? 'no-name' : $this->reason;
@@ -58,6 +63,11 @@ class VehicleReservation extends Base
     $this->startTripId = $row->start_trip_id;
     $this->endTripId = $row->end_trip_id;
     $this->reason = $row->reason;
+
+    $this->created = $row->created;
+    $this->createdBy = $row->created_by;
+    $this->modified = $row->modified;
+    $this->modifiedBy = $row->modified_by;
 
     if (!empty($row->guest_id)) $this->guest = new Guest($row->guest_id);
     if (!empty($row->vehicle_id)) $this->vehicle = new Vehicle($row->vehicle_id);

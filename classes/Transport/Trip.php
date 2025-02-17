@@ -48,6 +48,11 @@ class Trip extends Base
 	public ?string $originalRequest = null;
 	private ?DateTime $cancelled = null;
 
+	public ?string $created = null;
+	public ?string $createdBy = null;
+	public ?string $modified = null;
+	public ?string $modifiedBy = null;
+
 	
 	public function getName(): string
 	{
@@ -139,6 +144,10 @@ class Trip extends Base
     if (!empty($row->archived)) {
       $this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
     }
+		$this->created = $row->created;
+		$this->createdBy = $row->created_by;
+		$this->modified = $row->modified;
+		$this->modifiedBy = $row->modified_by;
 	}
 
   public function __set($name, $value)

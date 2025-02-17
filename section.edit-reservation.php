@@ -92,6 +92,12 @@ if (!is_null($id) && !$reservation->getId())
   <div class="d-flex justify-content-between mt-3">
     <?php if ($reservation->getId()): ?>
       <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:reservation', <?= $reservation->getId() ?>)">Delete</button>
+      <div class="mx-auto" style="color:lightslategray; font-size:small">
+        <div>Created: <?= (new DateTime($reservation->created))->format('m/d/Y H:ia') ?> (<?= ucwords($reservation->createdBy) ?>)</div>
+        <?php if ($reservation->modified): ?>
+          <div>Modified: <?= (new DateTime($reservation->modified))->format('m/d/Y H:ia') ?> (<?= ucwords($reservation->modifiedBy) ?>)</div>
+        <?php endif; ?>
+      </div>
     <?php endif; ?>
 
     <?php if (!$reservation->isConfirmed()): ?>
@@ -176,7 +182,7 @@ if (!is_null($id) && !$reservation->getId())
       selector: 'reservation-guest',
       apiUrl: '/api/get.autocomplete-guests.php'
     });
-    
+
     buildAutoComplete({
       selector: 'reservation-requestor',
       apiUrl: '/api/get.autocomplete-requestors.php'
@@ -213,7 +219,9 @@ if (!is_null($id) && !$reservation->getId())
 
         const resp = await net.post('/api/post.save-reservation.php', data);
         if (resp?.result) {
-          $(document).trigger('reservationChange', { id });
+          $(document).trigger('reservationChange', {
+            id
+          });
           if (data.reservationId) return ui.toastr.success('Vehicle reservation saved.', 'Success');
           ui.toastr.success('Reservation added.', 'Success');
           return backToList();
