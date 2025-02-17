@@ -155,6 +155,32 @@
       });
     }
 
+    function buildAutoComplete(data) {
+      const {
+        selector,
+        apiUrl,
+        searchFields
+      } = data;
+      const options = {
+        fullWidth: false,
+        liveServer: true,
+        server: apiUrl,
+        onSelectItem: data => {
+          $(`#${selector}`)
+            .data('id', data.value)
+            .data('value', data.label)
+            .removeClass('is-invalid');
+          if (data.type) $(`#${selector}`).data('type', data.type);
+          $(`#${selector}`).trigger('change');
+        },
+        fixed: true,
+      };
+      if (searchFields) options.searchFields = searchFields;
+      const ac = new Autocomplete(document.getElementById(selector), options);
+      return ac;
+    }
+
+
     $(async ƒ => {
 
       function selectTab(name) {
