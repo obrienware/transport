@@ -139,8 +139,8 @@
           <i class="fa-solid fa-chevron-down chevron"></i>
         </a>
         <div class="collapse submenu" id="submenu1">
-          <a href="#" class="submenu-item">Audit Trail</a>
-          <a href="#" class="submenu-item">Authentication Log</a>
+          <button class="submenu-item" data-rel="auditTrail" onclick="$(document).trigger('menuSelect', 'auditTrail')">Audit Trail</button>
+          <button class="submenu-item" data-rel="authenticationLog" onclick="$(document).trigger('menuSelect', 'authenticationLog')">Authentication Log</button>
         </div>
 
         <!-- Settings -->
@@ -381,6 +381,22 @@
             forceReload: true
           });
           break;
+
+        case 'auditTrail':
+          $(document).trigger('loadMainSection', {
+            sectionId: 'auditTrail',
+            url: 'report.audit-trail.php',
+            forceReload: true
+          });
+          break;
+        case 'authenticationLog':
+          $(document).trigger('loadMainSection', {
+            sectionId: 'authenticationLog',
+            url: 'report.auth-log.php',
+            forceReload: true
+          });
+          break;
+          
         default:
           break;
       }
