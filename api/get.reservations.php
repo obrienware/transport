@@ -11,9 +11,16 @@ use Generic\InputHandler;
 $start = InputHandler::getString(INPUT_GET, 'start');
 $end = InputHandler::getString(INPUT_GET, 'end');
 $requestorId = InputHandler::getInt(INPUT_GET, 'requestorId');
+$history = InputHandler::getBool(INPUT_GET, 'history');
+$onlyMe = InputHandler::getBool(INPUT_GET, 'onlyMe');
+
+if ($onlyMe) exit('[]');
 
 if ($requestorId) {
-  $criteria = "AND r.requestor_id = {$requestorId}";
+  $criteria = " AND r.requestor_id = {$requestorId}";
+}
+if (!$history) {
+  $criteria .= " AND r.end_datetime >= CURDATE() -- Only show future trips (cleaner UI)";
 }
 
 $db = Database::getInstance();

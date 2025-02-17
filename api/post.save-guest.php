@@ -24,6 +24,7 @@ $guest->firstName = $input->getString('firstName');
 $guest->lastName = $input->getString('lastName');
 $guest->emailAddress = $input->getString('emailAddress');
 $guest->phoneNumber = $phoneNumber;
+$guest->type = $input->getString('type');
 
 if ($guest->save(userResponsibleForOperation: $user->getUsername()))
 {

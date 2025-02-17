@@ -25,10 +25,7 @@ allowRoles(['admin','manager','developer']);
   </div>
 </div>
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<script>
 
   $(async ƒ => {
 

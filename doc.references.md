@@ -19,3 +19,5 @@
 [Tiny MCE](https://www.tiny.cloud/solutions/wysiwyg-bootstrap-rich-text-editor/)
 
 [Weather icons](https://erikflowers.github.io/weather-icons/)
+
+[Pretty Checkbox](https://lokesh-coder.github.io/pretty-checkbox/)

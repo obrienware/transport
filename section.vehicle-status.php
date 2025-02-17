@@ -1,7 +1,7 @@
 <?php
 require_once 'autoload.php';
 
-use Generic\{ InputHandler, Utils };
+use Generic\{InputHandler, Utils};
 use Transport\Vehicle;
 
 $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
@@ -9,28 +9,43 @@ $vehicle = new Vehicle($vehicleId);
 ?>
 <?php include 'inc.form-vehicle-update.php'; ?>
 
-<div class="text-muted mb-3">
-  Last updated:
-  <?php if ($vehicle->lastUpdate):?>
-    <?=Date('m/d h:ia', strtotime($vehicle->lastUpdate))?>
-    (<?=Utils::timeAgo($vehicle->lastUpdate)?>)
-  <?php else:?>
-    Never
-  <?php endif; ?>
+<div class="d-flex my-3">
+  <div class="alert alert-info mx-auto" role="alert">
+    <i class="fa-solid fa-info-circle"></i>
+    Last updated:
+    <?php if ($vehicle->lastUpdate): ?>
+      <?= Date('m/d h:ia', strtotime($vehicle->lastUpdate)) ?>
+      (<?= Utils::timeAgo($vehicle->lastUpdate) ?>)
+    <?php else: ?>
+      Never
+    <?php endif; ?>
+  </div>
 </div>
-<div class="hstack gap-4 mb-3 justify-content-center">
 
-  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="restock" data-state="<?=$vehicle->restock?>">
+<style>
+  .guage-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 13%));
+  }
+  .guage-container > * {
+    justify-self: center;
+  }
+</style>
+
+<div class="guage-container">
+
+  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="restock" data-state="<?= $vehicle->restock ?>">
     <i class="fa-duotone fa-solid fa-bottle-water fa-3x"></i>
     <div id="vehicle-restock"></div>
   </div>
 
-  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="cleanInterior" data-state="<?=$vehicle->cleanInterior?>">
+  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="cleanInterior" data-state="<?= $vehicle->cleanInterior ?>">
     <i class="fa-duotone fa-solid fa-vacuum fa-3x"></i>
     <div id="vehicle-interior"></div>
   </div>
 
-  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="cleanExterior" data-state="<?=$vehicle->cleanExterior?>">
+  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="cleanExterior" data-state="<?= $vehicle->cleanExterior ?>">
     <i class="fa-duotone fa-solid fa-car-wash fa-3x"></i>
     <div id="vehicle-exterior"></div>
   </div>
@@ -40,7 +55,7 @@ $vehicle = new Vehicle($vehicleId);
     <div id="vehicle-fuel-level" class="pointer"></div>
   </div>
 
-  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="hasCheckEngine" data-state="<?=$vehicle->hasCheckEngine?>">
+  <div class="p-2 d-inline-block text-center pointer item-toggle" style="width:100px" data-id="hasCheckEngine" data-state="<?= $vehicle->hasCheckEngine ?>">
     <i class="fa-duotone fa-solid fa-engine-warning fa-3x"></i>
     <div id="vehicle-check-engine"></div>
   </div>
@@ -50,11 +65,11 @@ $vehicle = new Vehicle($vehicleId);
     <div>
       <?php if ($vehicle->locationId === null): ?>
         <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
-      <?php elseif ($vehicle->locationId !== $vehicle->stagingLocationId) :?>
-        <span class="fw-light badge bg-danger w-100" data-bs-toggle="tooltip" data-bs-title="<?=$vehicle->currentLocation->name?>">Relocate</span>
-      <?php else:?>
+      <?php elseif ($vehicle->locationId !== $vehicle->stagingLocationId) : ?>
+        <span class="fw-light badge bg-danger w-100" data-bs-toggle="tooltip" data-bs-title="<?= $vehicle->currentLocation->name ?>">Relocate</span>
+      <?php else: ?>
         <span class="fw-light badge bg-success w-100">Good</span>
-      <?php endif;?>
+      <?php endif; ?>
     </div>
   </div>
 
@@ -70,27 +85,26 @@ $vehicle = new Vehicle($vehicleId);
   <button id="btn-update-vehicle-status" class="btn btn-outline-primary btn-sm">Update</button>
 </div> -->
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<script>
 
   $(async ƒ => {
 
-    const vehicleId = <?=$vehicleId?>;
+    const vehicleId = <?= $vehicleId ?>;
     const vehicleUpdateForm = new VehicleUpdateClass('#vehicleUpdateModal');
-    const vehicle = await net.get('/api/get.vehicle.php', {id: vehicleId});
+    const vehicle = await net.get('/api/get.vehicle.php', {
+      id: vehicleId
+    });
 
-    vehicleUpdateForm.onUpdate = async function (e, formData) {
+    vehicleUpdateForm.onUpdate = async function(e, formData) {
       formData.vehicleId = vehicleId;
       const resp = await net.post('/api/post.update-vehicle.php', formData);
       if (resp?.result) {
         $(document).trigger('vehicleChange');
-        $('#<?=$_GET["loadedToId"]?>').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+        $('#pills-status').load(`<?= $_SERVER['REQUEST_URI'] ?>`); // Refresh this page
         return;
       }
       ui.toastr.error(resp.message);
-    }    
+    }
 
     $('#btn-update-vehicle-status').off('click').on('click', e => {
       vehicleUpdateForm.show();
@@ -197,7 +211,11 @@ $vehicle = new Vehicle($vehicleId);
     }
 
     async function toggleVehicleItem(name, state) {
-      const data = {vehicleId, name, state};
+      const data = {
+        vehicleId,
+        name,
+        state
+      };
       const res = await net.post('api/post.vehicle-toggle.php', data);
       console.log(res);
       renderVehicleItem(name, res.state);
@@ -216,7 +234,11 @@ $vehicle = new Vehicle($vehicleId);
     $('#vehicle-fuel-level').off('click').on('click', async e => {
       const percentage = getHorizontalClickPercentage(e, e.currentTarget);
       console.log(`Clicked at ${percentage}%`);
-      const data = {vehicleId, name: 'fuel', value: percentage};
+      const data = {
+        vehicleId,
+        name: 'fuel',
+        value: percentage
+      };
       const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('fuelLevel', percentage);
@@ -231,7 +253,11 @@ $vehicle = new Vehicle($vehicleId);
     }
 
     $('#vehicle-fuel-icon').off('click').on('click', async e => {
-      const data = {vehicleId, name: 'fuel', value: null};
+      const data = {
+        vehicleId,
+        name: 'fuel',
+        value: null
+      };
       const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('fuelLevel', null);
@@ -239,7 +265,7 @@ $vehicle = new Vehicle($vehicleId);
 
     $('#vehicle-mileage-icon').off('click').on('click', async e => {
       const previousMileage = parseInt($('#vehicle-mileage').text());
-      let mileage = await getNumber('Enter mileage');
+      let mileage = await ui.getNumber('Enter mileage');
       if (mileage === undefined) return;
       if (mileage === '') {
         const ans = await ui.ask('Are you sure you want to clear the mileage?');
@@ -251,12 +277,15 @@ $vehicle = new Vehicle($vehicleId);
         ui.toastr.error('Mileage cannot be less than previous mileage', 'Error');
         return;
       }
-      const data = {vehicleId, name: 'mileage', value: parseInt(mileage)};
+      const data = {
+        vehicleId,
+        name: 'mileage',
+        value: parseInt(mileage)
+      };
       const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('mileage', mileage);
     });
 
   });
-
 </script>

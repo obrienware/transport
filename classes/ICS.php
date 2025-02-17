@@ -67,7 +67,8 @@
  */
 
 class ICS {
-  const DT_FORMAT = 'Ymd\THis\Z';
+  // const DT_FORMAT = 'Ymd\THis\Z';
+  const DT_FORMAT = 'Ymd\THis';
 
   protected $properties = [];
   public $timezone;

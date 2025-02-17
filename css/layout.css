@@ -1,0 +1,253 @@
+
+body {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  color: #333;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.body {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  color: #333;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+button.menu-item, button.submenu-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  color: #fff;
+  padding: 12px 15px;
+  transition: all 0.3s;
+}
+
+.sidebar {
+  width: 250px;
+  min-width: 250px;
+  transition: width 0.3s ease-in-out;
+  /* background-color: #343a40; */
+  background: linear-gradient(238.26deg, #ED5050 0%, #871E8D 43.52%, #478AD9 100%);
+  /* background: linear-gradient(240deg, #0a3d62, #0e6655, #1b4f72); */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 4rem;
+  min-width: 4rem;
+}
+
+.sidebar a {
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.3s;
+}
+
+.sidebar button:hover,
+.sidebar a:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar i {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.sidebar .menu-item {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar .menu-icon {
+  margin-right: 8px;
+}
+
+.sidebar.collapsed i {
+  margin-right: 0;
+}
+
+.sidebar .menu-text {
+  flex-grow: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.collapsed .menu-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.sidebar .menu-icon {
+  color: rgba(255, 255, 255, 0.4);
+}
+.sidebar .menu-text, 
+.sidebar .submenu-item {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 200;
+}
+.sidebar .menu-item:hover .menu-icon {
+  color: rgba(255, 255, 255, 0.7);
+}
+.sidebar .submenu-item:hover,
+.sidebar .menu-item:hover .menu-text {
+  color: rgba(255, 255, 255, 0.9);
+}
+.sidebar .active .menu-icon {
+  color: rgba(255, 255, 255, 0.9);
+}
+.sidebar .active .submenu-item,
+.sidebar .active .menu-text {
+  color: rgba(255, 255, 255, 1);
+  font-weight: 400;
+}
+
+
+.submenu {
+  padding-left: 20px;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 2em;
+}
+
+.toggle-btn {
+  display: none;
+  position: absolute;
+  top: 10px;
+}
+
+
+/* Chevron rotation */
+.chevron {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease-in-out;
+}
+
+.chevron.rotate {
+  transform: rotate(-180deg);
+}
+
+/* Active menu item */
+.sidebar .active {
+  background: rgba(0, 0, 0, .5) !important;
+  color: #fff;
+}
+
+
+/* Simplified Menu (Hidden when expanded) */
+.collapsed-menu {
+  display: none;
+  flex-direction: column;
+}
+
+.full-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.collapsed .full-menu {
+  display: none;
+}
+
+.sidebar.collapsed .collapsed-menu {
+  display: flex;
+}
+
+.ec-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: .5em;
+  column-gap: 1em;
+  /* gap: 1em / .5em; */
+}
+
+
+/* For mobile */
+
+@media (max-width: 768px) {
+  body, .body {
+    overflow-x: hidden;
+  }
+
+  .sidebar {
+    position: fixed;
+    right: -250px;
+    left: auto;
+    top: 0;
+    height: 100vh;
+    z-index: 1045;
+    transition: right 0.3s ease-in-out;
+  }
+
+  .sidebar.show {
+    right: 0;
+  }
+
+  .toggle-btn {
+    display: block;
+    right: 20px;
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1044;
+  }
+
+  .overlay.show {
+    display: block;
+  }
+
+  #sidebar-menu-toggle {
+    display: none;
+  }
+
+  .top-page-buttons {
+    margin-right: 3.5em;
+  }
+
+  .ec-grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 0.5em;
+    padding-top: .8em;
+  }
+
+  .main-section {
+    overflow-x: hidden;
+    height: 100%;
+  }
+
+  #dashboard {
+    padding-top: 3em;
+  }
+}
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-gap: 10px;
+}

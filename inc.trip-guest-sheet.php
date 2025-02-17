@@ -29,7 +29,7 @@ $pdf->ln(30);
 $pdf->SetFont('Helvetica', 'B', 14);
 $pdf->Cell($pageWidth, 30, 'Group / Guest', 1, 1, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
-$pdf->MultiCell($pageWidth, 18, $trip->guests.' / '.$trip->guest->getName(), 1, 'L');
+$pdf->MultiCell($pageWidth, 18, $trip->guests.' / '.(($trip->guest) ? $trip->guest->getName() : ''), 1, 'L');
 $pdf->ln();
 
 
@@ -43,7 +43,7 @@ if ($trip->driver->username) {
 }
 $pdf->SetX($pdf->GetX() + 110);
 $pdf->SetFont('Helvetica', 'B', 12);
-$pdf->MultiCell($pageWidth - 110, 20, $trip->driver->getName(), 0, 'L', false);
+$pdf->MultiCell($pageWidth - 110, 20, $trip->driver ? $trip->driver->getName() : '', 0, 'L', false);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->SetX($pdf->GetX() + 110);
 $pdf->MultiCell($pageWidth - 110, 20, $trip->driver->phoneNumber, 0, 'L', false);

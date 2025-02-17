@@ -96,7 +96,7 @@ class DriverNote extends Base
   public static function getAll(): array
   {
     $db = Database::getInstance();
-    $query = "SELECT * FROM driver_notes";
+    $query = "SELECT * FROM driver_notes WHERE archived IS NULL ORDER BY title";
     return $db->get_rows($query);
   }
 

@@ -15,7 +15,7 @@ class InputHandler
   public static function getString($type, $key)
   {
     $value = filter_input($type, $key, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-    return $value !== false ? trim($value) : null;
+    return is_string($value) ? trim($value) : null;
   }
 
   public static function getBool($type, $key)

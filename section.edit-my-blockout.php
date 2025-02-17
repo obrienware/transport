@@ -2,7 +2,6 @@
 require_once 'autoload.php';
 
 use Transport\Blockout;
-use Transport\User;
 use Generic\Utils;
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
@@ -14,8 +13,6 @@ if (!is_null($id) && !$blockoutId)
 {
   exit(Utils::showResourceNotFound());
 }
-
-$drivers = User::getDrivers();
 ?>
 
 <!-- Back button -->
@@ -39,18 +36,6 @@ $drivers = User::getDrivers();
 
 
   <div class="row">
-    <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
-      <div class="mb-3">
-        <label for="blockout-user" class="form-label">User</label>
-        <select class="form-select" id="blockout-user">
-          <option value="">Select driver</option>
-          <?php foreach ($drivers as $driver): ?>
-            <option value="<?= $driver->id ?>" <?= $blockout->userId == $driver->id ? 'selected' : '' ?>><?= $driver->first_name.' '.$driver->last_name ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-    </div>
-
     <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
       <div class="mb-3">
         <label for="blockout-from-datetime" class="form-label">Starting</label>
@@ -97,10 +82,9 @@ $drivers = User::getDrivers();
       $(document).on('buttonSave:blockout', async (e, id) => {
         const blockoutId = id;
         if (!$('#blockout-from-datetime').val() || !$('#blockout-to-datetime').val()) return ui.toastr.error('Please select both start and end dates.', 'Error');
-        if (!$('#blockout-user').val()) return ui.toastr.error('Please select a user.', 'Error');
         const resp = await net.post('/api/post.save-blockout.php', {
           id: $('#blockout-id').val(),
-          userId: $('#blockout-user').val(),
+          userId: `<?= $_SESSION['user']->id ?>`,
           fromDateTime: $('#blockout-from-datetime').val() ? moment($('#blockout-from-datetime').val()).format('YYYY-MM-DD HH:mm:ss') : null,
           toDateTime: $('#blockout-to-datetime').val() ? moment($('#blockout-to-datetime').val()).format('YYYY-MM-DD HH:mm:ss') : null,
           note: $('#blockout-note').cleanVal()
@@ -119,8 +103,8 @@ $drivers = User::getDrivers();
       });
     }
 
-    if (!documentEventExists('buttonDelete:blockout')) {
-      $(document).on('buttonDelete:blockout', async (e, id) => {
+    if (!documentEventExists('buttonSaveAndConfirm:blockout')) {
+      $(document).on('buttonSaveAndConfirm:blockout', async (e, id) => {
         const blockoutId = id;
         if (await ui.ask('Are you sure you want to delete these blockout dates?')) {
           const resp = await net.get('/api/get.delete-blockout.php', { id: blockoutId });

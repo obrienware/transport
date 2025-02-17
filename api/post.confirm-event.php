@@ -15,7 +15,7 @@ $me = new User($_SESSION['user']->id);
 $config = Config::get('organization');
 
 $result = true;
-$event = new Event($input->getInt('eventId'));
+$event = new Event($input->getInt('id'));
 
 if (!$event->isConfirmed())
 {
@@ -55,7 +55,7 @@ if (!$event->isConfirmed())
 
 
   // Email the drivers
-  if (!$event->drivers) return;
+  if (!$event->drivers) exit(json_encode(['result' => $result]));
   $template = new Template(EmailTemplates::get('Email Driver New Event'));
   foreach ($event->drivers as $driverId)
   {

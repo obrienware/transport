@@ -18,6 +18,7 @@ class Guest extends	Base
 	public ?string $lastName = null;
 	public ?string $emailAddress = null;
 	public ?string $phoneNumber = null;
+	public ?string $type = null;
 
 	public function load(int $id): bool
 	{
@@ -42,6 +43,7 @@ class Guest extends	Base
 		$this->lastName = $row->last_name;
 		$this->emailAddress = $row->email_address;
 		$this->phoneNumber = $row->phone_number;
+		$this->type = $row->type;
 
 		if (!empty($row->archived)) {
 			$this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
@@ -63,6 +65,7 @@ class Guest extends	Base
 			'last_name' => $this->lastName,
 			'email_address' => $this->emailAddress,
 			'phone_number' => $this->phoneNumber ? Utils::formattedPhoneNumber($this->phoneNumber) : null,
+			'type' => $this->type,
 			'user' => $userResponsibleForOperation
 		];
 
@@ -75,6 +78,7 @@ class Guest extends	Base
 					last_name = :last_name,
 					email_address = :email_address,
 					phone_number = :phone_number,
+					`type` = :type,
 					modified = NOW(),
 					modified_by = :user
 				WHERE id = :id
@@ -87,6 +91,7 @@ class Guest extends	Base
 					last_name = :last_name,
 					email_address = :email_address,
 					phone_number = :phone_number,
+					`type` = :type,
 					created = NOW(),
 					created_by = :user
 			";
@@ -124,6 +129,7 @@ class Guest extends	Base
 		$this->lastName = null;
 		$this->emailAddress = null;
 		$this->phoneNumber = null;
+		$this->type = null;
 	}
 
 	public function getGuestByPhoneNumber(string $phoneNumber): bool
@@ -140,7 +146,8 @@ class Guest extends	Base
 
 	public function getName(): string
 	{
-		return "{$this->firstName} {$this->lastName}";
+		$lastName = html_entity_decode($this->lastName, ENT_QUOTES, 'UTF-8'); // In many cases, a last name may have an apostrophe
+		return "{$this->firstName} {$lastName}";
 	}
 
 }

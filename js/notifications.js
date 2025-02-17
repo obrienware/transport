@@ -1,3 +1,4 @@
+import Swal from 'https://cdn.jsdelivr.net/npm/sweetalert2@11.16.0/+esm'
 
 const defaultToastrOptions = {
 	toast: true,
@@ -19,6 +20,7 @@ const toastr = {
 }
 
 const Notice = Swal.mixin({
+	target: document.body,
 	buttonsStyling: false,
 	customClass: {
 		confirmButton: 'btn btn-primary px-4 mx-2',

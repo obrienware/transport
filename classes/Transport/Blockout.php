@@ -149,7 +149,9 @@ class Blockout extends Base
 			FROM user_blockouts b
 			LEFT OUTER JOIN users u ON u.id = b.user_id
 			WHERE 
-				to_datetime > NOW() ORDER BY from_datetime
+				to_datetime > NOW() 
+				AND b.archived IS NULL
+			ORDER BY from_datetime
 		";
 		return $db->get_rows($query);
 	}

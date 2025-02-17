@@ -29,7 +29,7 @@
 } */
 .ec {
   --ec-today-bg-color: lightyellow;
-  --ec-border-color: rgba(0, 0, 0, 0.8);
+  /* --ec-border-color: rgba(0, 0, 0, 0.8); */
 }
 .ec-header, .ec-list .ec-day-head {
   background-color: rgba(255, 255, 255, 0.5);
@@ -39,4 +39,17 @@
   /* background-color: red;
   color: white; */
   font-weight: bold;
+}
+
+
+.ec-title .month {
+  font-weight: 800;
+}
+
+.ec-title .year {
+  font-weight: 100;
+}
+
+.ec h4 {
+  font-size: 1rem;
 }

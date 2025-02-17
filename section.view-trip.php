@@ -8,7 +8,15 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
 $trip = new Trip($id);
 $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 ?>
-<div class="container-fluid mt-3">
+<div class="container-fluid">
+
+  <div class="d-flex justify-content-between mb-2 top-page-buttons">
+    <button class="btn btn-sm btn-outline-primary px-2" onclick="$(document).trigger('loadMainSection', { sectionId: 'trips', url: 'section.list-trips.php', forceReload: true });">
+      <i class="fa-solid fa-chevron-left"></i>
+      Back
+    </button> 
+  </div>
+
   <div class="d-flex">
     <h3><?=$trip->summary?></h3>
     <div id="trip-action-buttons" class="dropdown ms-auto">
@@ -39,42 +47,51 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
     </div>
   </div>
 
-  <div class="row row-cols-2">
-    <div class="col mb-3">
-      <div class="card h-100">
-        <div class="card-header d-flex justify-content-between">
-          <h5 class="my-0"><i class="fa-solid fa-up"></i> Pick Up</h5>
-          <span class="badge bg-primary align-self-center"><?=is_null($trip->startDate) ? '' : Date('g:ia', strtotime($trip->startDate))?></span>
-        </div>
-        <div class="card-body">
-          <div><?=is_null($trip->pickupDate) ? '' : Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
-          <div class="fs-3 fw-bold">
-            <?=$trip->guests?> 
-            <?php if ($trip->passengers): ?>
-              (<?=$trip->passengers?> pax)
-            <?php endif; ?>
-          </div>
-          <div><?=$trip->puLocation->name?></div>
-          <?php if ($trip->guest): ?>
-            <div>Contact: <?=$trip->guest->getName()?> <?=$trip->guest->phoneNumber?></div>
+  <style>
+    #grid-trip-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 768px) {
+      #grid-trip-details {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <div id="grid-trip-details" class="mb-3">
+
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="my-0"><i class="fa-solid fa-up"></i> Pick Up</h5>
+        <span class="badge bg-primary align-self-center"><?=is_null($trip->startDate) ? '' : Date('g:ia', strtotime($trip->startDate))?></span>
+      </div>
+      <div class="card-body">
+        <div><?=is_null($trip->pickupDate) ? '' : Date('D M j @ g:ia', strtotime($trip->pickupDate))?></div>
+        <div class="fs-3 fw-bold">
+          <?=$trip->guests?> 
+          <?php if ($trip->passengers): ?>
+            (<?=$trip->passengers?> pax)
           <?php endif; ?>
         </div>
+        <div><?=$trip->puLocation->name?></div>
+        <?php if ($trip->guest): ?>
+          <div>Contact: <?=$trip->guest->getName()?> <?=$trip->guest->phoneNumber?></div>
+        <?php endif; ?>
       </div>
     </div>
 
-    <div class="col mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          <h5 class="my-0"><i class="fa-solid fa-down"></i> Drop Off</h5>
-        </div>
-        <div class="card-body">
-          <div><?=$trip->doLocation->name?></div>
-        </div>
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="my-0"><i class="fa-solid fa-down"></i> Drop Off</h5>
+      </div>
+      <div class="card-body">
+        <div><?=$trip->doLocation->name?></div>
       </div>
     </div>
 
-    <div class="col mb-3">
-      <div class="card h-100">
+    <div class="card h-100">
         <div class="card-header">
           <h5 class="my-0"><i class="fa-duotone fa-solid fa-bus"></i> Vehicle and Driver</h5>
         </div>
@@ -91,42 +108,40 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
             <div class="w-25">
               <div class="position-relative">
                 <img src="/images/drivers/<?=$trip->driver->username?>.jpg" class="img-fluid">
-                <div class="text-center fw-light" style="position:absolute; left:0; right: 0; bottom: 0; background-color: rgba(0,0,0,.5); color:white"><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
+                <div class="text-center fw-light d-none d-sm-block" style="position:absolute; left:0; right: 0; bottom: 0; background-color: rgba(0,0,0,.5); color:white"><?=$trip->driverId ? $trip->driver->getName() : '' ?></div>
               </div>
             </div>
           <?php endif;?>
         </div>
       </div>
-    </div>
 
-    <?php if ($trip->flightNumber): ?>
-    <div class="col mb-3">
-      <div class="card h-100">
-        <div class="card-header">
-          <h5 class="my-0"><i class="fa-duotone fa-solid fa-plane-tail"></i> Flight Info</h5>
-        </div>
-        <div class="card-body d-flex">
-          <div class="w-25 me-3">
-            <?php if ($trip->airline->imageFilename): ?>
-              <img src="/images/airlines/<?=$trip->airline->imageFilename?>" class="img-fluid" alt="<?=$trip->airline->name?>">
-            <?php endif; ?>
+      <?php if ($trip->flightNumber): ?>
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="my-0"><i class="fa-duotone fa-solid fa-plane-tail"></i> Flight Info</h5>
           </div>
-          <div>
-            <div><?=$trip->airline->flightNumberPrefix?> <?=$trip->flightNumber?></div>
-            <div>
-              <?php if ($trip->ETA): ?>
-                ETA: <?=is_null($trip->ETA) ? '' : Date('g:i a', strtotime($trip->ETA))?>
-              <?php else: ?>
-                ETD:  <?=is_null($trip->ETD) ? '' : Date('g:i a', strtotime($trip->ETD))?>
+          <div class="card-body d-flex">
+            <div class="w-25 me-3">
+              <?php if ($trip->airline->imageFilename): ?>
+                <img src="/images/airlines/<?=$trip->airline->imageFilename?>" class="img-fluid" alt="<?=$trip->airline->name?>">
               <?php endif; ?>
+            </div>
+            <div>
+              <div><?=$trip->airline->flightNumberPrefix?> <?=$trip->flightNumber?></div>
+              <div>
+                <?php if ($trip->ETA): ?>
+                  ETA: <?=is_null($trip->ETA) ? '' : Date('g:i a', strtotime($trip->ETA))?>
+                <?php else: ?>
+                  ETD:  <?=is_null($trip->ETD) ? '' : Date('g:i a', strtotime($trip->ETD))?>
+                <?php endif; ?>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <?php endif; ?>
-    
+      <?php endif; ?>
+
   </div>
+
 
   <div class="d-flex justify-content-between">
     <table class="table table-sm table-bordered w-auto border-dark-subtle">
@@ -262,15 +277,31 @@ $sectionId = 'a7218ac8-065f-481e-a05f-1b8d0b145912';
 
 
     $(`#${sectionId}-btn-edit`).off('click').on('click', async e => {
-      app.closeOpenTab();
-      app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${tripId}`);
+      if (window.app !== undefined && window.app.openTab !== undefined) {
+        app.closeOpenTab();
+        app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${tripId}`);
+        return;
+      }
+      $(document).trigger('loadMainSection', {
+        sectionId: '<?=$_GET["loadedToId"]?>',
+        url: `section.edit-trip.php?id=${tripId}`,
+        forceReload: true
+      });
     });
 
     $(`#${sectionId}-btn-duplicate`).off('click').on('click', async e => {
       const resp = await net.get('/api/get.duplicate-trip.php', {id: tripId});
       const newId = resp.result;
-      app.closeOpenTab();
-      app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
+      if (window.app !== undefined && window.app.openTab !== undefined) {
+        app.closeOpenTab();
+        app.openTab('edit-trip', 'Trip (edit)', `section.edit-trip.php?id=${newId}`);
+        return;
+      }
+      $(document).trigger('loadMainSection', {
+        sectionId: '<?=$_GET["loadedToId"]?>',
+        url: `section.edit-trip.php?id=${newId}`,
+        forceReload: true
+      });
     });
 
     $(`#${sectionId}-btn-confirm`).off('click').on('click', async e => {

@@ -21,8 +21,8 @@ WHERE
 	AND v.id NOT IN (
 		SELECT vehicle_id FROM trips
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date
-			OR end_date BETWEEN :from_date AND :to_date)
+			(:from_date BETWEEN start_date AND end_date
+			OR :to_date BETWEEN start_date AND end_date)
 			AND archived IS NULL
 			AND id <> :trip_id
 			AND vehicle_id IS NOT NULL
@@ -32,8 +32,8 @@ WHERE
 	AND NOT FIND_IN_SET(v.id, (
 		SELECT CASE WHEN GROUP_CONCAT(vehicle_ids) IS NULL THEN 0 ELSE GROUP_CONCAT(vehicle_ids) END FROM events  
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date 
-			OR end_date BETWEEN :from_date AND :to_date) 
+			(:from_date BETWEEN start_date AND end_date
+			OR :to_date BETWEEN start_date AND end_date)
 			AND archived IS NULL 
 			AND id <> :event_id
 	))
@@ -42,8 +42,8 @@ WHERE
 	AND v.id NOT IN (
 		SELECT vehicle_id FROM vehicle_reservations
 		WHERE 
-			(start_datetime BETWEEN :from_date AND :to_date
-			OR end_datetime BETWEEN :from_date AND :to_date)
+			(:from_date BETWEEN start_datetime AND end_datetime
+			OR :to_date BETWEEN start_datetime AND end_datetime)
 			AND archived IS NULL
 			AND id <> :reservation_id
 			AND vehicle_id IS NOT NULL
@@ -53,18 +53,18 @@ WHERE
 	AND v.id NOT IN (
 		SELECT vehicle_id FROM vehicle_maintenance
 		WHERE 
-			(start_datetime BETWEEN :from_date AND :to_date
-			OR end_datetime BETWEEN :from_date AND :to_date)
+			(:from_date BETWEEN start_datetime AND end_datetime
+			OR :to_date BETWEEN start_datetime AND end_datetime)
 			AND archived IS NULL
 			AND id <> :maintenance_id
 			AND vehicle_id IS NOT NULL
 	)	
 ";
 
-$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId');
-$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId');
-$current_reservationId = InputHandler::getInt(INPUT_GET, 'reservationId');
-$current_maintenanceId = InputHandler::getInt(INPUT_GET, 'maintenanceId');
+$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId') ?? 0;
+$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId') ?? 0;
+$current_reservationId = InputHandler::getInt(INPUT_GET, 'reservationId') ?? 0;
+$current_maintenanceId = InputHandler::getInt(INPUT_GET, 'maintenanceId') ?? 0;
 
 $startDate = InputHandler::getString(INPUT_GET, 'startDate');
 $endDate = InputHandler::getString(INPUT_GET, 'endDate');

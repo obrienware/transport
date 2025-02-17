@@ -6,18 +6,18 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        
+
         <div class="container-fluid">
 
           <div class="row">
             <div class="col">
               <div class="mb-3">
                 <label for="current-location" class="form-label">Location</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="current-location" 
-                  placeholder=""/>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="current-location"
+                  placeholder="" />
               </div>
             </div>
           </div>
@@ -26,7 +26,7 @@
             <div class="col">
               <div class="mb-3">
                 <label for="current-mileage" class="form-label">Mileage</label>
-                <input type="number" class="form-control" id="current-mileage" placeholder="Mileage" value="<?=$vehicle->mileage?>">
+                <input type="number" class="form-control" id="current-mileage" placeholder="Mileage" value="<?= $vehicle->mileage ?>">
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-          
+
 
           <div class="row">
             <div class="col">
@@ -74,7 +74,6 @@
 </div>
 
 <script>
-
   if (typeof VehicleUpdateClass === 'undefined') {
 
     window.VehicleUpdateClass = class {
@@ -82,24 +81,15 @@
       static modal;
       static onUpdate;
 
-      constructor (modalId, options) {
+      constructor(modalId, options) {
         this.modalId = modalId;
         this.modal = new bootstrap.Modal(modalId);
         if (options?.onUpdate) this.onUpdate = options.onUpdate;
-        new Autocomplete(document.getElementById('current-location'), {
-          fullWidth: true,
-          highlightTyped: true,
-          liveServer: true,
-          server: '/api/get.autocomplete-locations.php',
+        
+        buildAutoComplete({
+          selector: 'current-location',
+          apiUrl: '/api/get.autocomplete-locations.php',
           searchFields: ['label', 'short_name'],
-          onSelectItem: (data) => {
-            $('#current-location')
-              .data('id', data.value)
-              .data('type', data.type)
-              .data('value', data.label)
-              .removeClass('is-invalid');
-          },
-          fixed: true,
         });
 
         $(modalId).on('show.bs.modal', e => {
@@ -114,13 +104,13 @@
         });
       }
 
-      reset () {
+      reset() {
         $(`${this.modalId}.modal input[type="checkbox"]`).prop('indeterminate', true).prop('checked', false);
         $(`${this.modalId}.modal input`).val('');
         $(`${this.modalId}.modal input[type="range"]`).val('0');
       }
-      
-      getValues () {
+
+      getValues() {
         const data = {};
         if ($('#current-location').val()) data.locationId = $('#current-location').data('id');
         if ($('#current-mileage').val()) data.mileage = $('#current-mileage').val();
@@ -140,12 +130,11 @@
         return data;
       }
 
-      show () {
+      show() {
         this.modal.show();
       }
 
     }
 
   }
-
 </script>

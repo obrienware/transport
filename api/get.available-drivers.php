@@ -22,8 +22,8 @@ WHERE
 	AND u.id NOT IN (
 		SELECT driver_id FROM trips
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date
-			OR end_date BETWEEN :from_date AND :to_date)
+			(:from_date BETWEEN start_date AND end_date
+			OR :to_date BETWEEN start_date AND end_date)
 			AND archived IS NULL
 			AND id <> :trip_id
 			AND driver_id IS NOT NULL
@@ -33,8 +33,8 @@ WHERE
 	AND NOT FIND_IN_SET(u.id, (
 		SELECT CASE WHEN GROUP_CONCAT(driver_ids) IS NULL THEN 0 ELSE GROUP_CONCAT(driver_ids) END FROM events  
 		WHERE 
-			(start_date BETWEEN :from_date AND :to_date 
-			OR end_date BETWEEN :from_date AND :to_date) 
+			(:from_date BETWEEN start_date AND end_date
+			OR :to_date BETWEEN start_date AND end_date)
 			AND archived IS NULL 
 			AND id <> :event_id
 	))
@@ -43,14 +43,14 @@ WHERE
 	AND u.id NOT IN (
 		SELECT user_id FROM user_blockouts
 		WHERE 
-			(from_datetime BETWEEN :from_date AND :to_date
-			OR to_datetime BETWEEN :from_date AND :to_date)
+			(:from_date BETWEEN from_datetime AND to_datetime
+			OR :to_date BETWEEN from_datetime AND to_datetime)
 			AND archived IS NULL
 	)
 ";
 
-$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId');
-$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId');
+$current_tripId = InputHandler::getInt(INPUT_GET, 'tripId') ?? 0;
+$current_eventId = InputHandler::getInt(INPUT_GET, 'eventId') ?? 0;
 
 $params = [
 	'from_date' => filter_input(INPUT_GET, 'startDate', FILTER_SANITIZE_FULL_SPECIAL_CHARS),

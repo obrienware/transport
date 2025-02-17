@@ -12,10 +12,20 @@ use Generic\InputHandler;
 $start = InputHandler::getString(INPUT_GET, 'start');
 $end = InputHandler::getString(INPUT_GET, 'end');
 $requestorId = InputHandler::getInt(INPUT_GET, 'requestorId');
+$history = InputHandler::getBool(INPUT_GET, 'history');
+$onlyMe = InputHandler::getBool(INPUT_GET, 'onlyMe');
 
 if ($requestorId)
 {
-  $criteria = "AND e.requestor_id = {$requestorId}";
+  $criteria = " AND e.requestor_id = {$requestorId}";
+}
+if (!$history)
+{
+  $criteria .= " AND e.end_date >= CURDATE()";
+}
+if ($onlyMe)
+{
+  $criteria .= " AND FIND_IN_SET({$_SESSION['user']->id}, e.driver_ids) > 0";
 }
 
 // I want to create a trip class, but in the mean time we'll just pull the data from the database

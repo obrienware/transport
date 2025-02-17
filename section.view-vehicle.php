@@ -5,45 +5,71 @@ use Generic\InputHandler;
 use Transport\Vehicle;
 
 $id = InputHandler::getInt(INPUT_GET, 'id');
-$vehicle = new Vehicle($vehicleId);
+$vehicle = new Vehicle($id);
 ?>
-<div class="container">
+<!-- Back button -->
+<div class="d-flex justify-content-between top-page-buttons mb-2">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('loadMainSection', { sectionId: 'vehicles', url: 'section.list-vehicles.php', forceReload: true });">
+    <i class="fa-solid fa-chevron-left"></i>
+    List
+  </button>
+</div>
+
+
+
 
   <div class="d-flex justify-content-between">
     <h3>
-      <i class="bi bi-square-fill" style="color:<?=$vehicle->color?>"></i>
+      <i class="fa-solid fa-square fa-lg" style="color:<?=$vehicle->color?>"></i>
       <?=$vehicle->name?>
     </h3>
-    <button onclick="app.openTab('edit-vehicle', 'Vehicle (edit)', `section.edit-vehicle.php?id=<?=$vehicleId?>`);" class="btn btn-outline-primary btn-sm align-self-center">Edit</button>
+    <button onclick="$(document).trigger('loadMainSection', { sectionId: 'vehicles', url: 'section.edit-vehicle.php?id=<?=$vehicleId?>', forceReload: true });" class="btn btn-outline-primary btn-sm align-self-center">Edit</button>
   </div>
 
-  <table class="table table-bordered table-sm">
-    <tr>
-      <th class="fit px-2 bg-body-secondary">Description</th>
-      <td><?=$vehicle->description?></td>
-      <th class="fit px-2 bg-body-secondary">License Plate</th>
-      <td class="fit px-2"><?=$vehicle->licensePlate?></td>
-    </tr>
-    <tr>
-      <th class="fit px-2 bg-body-secondary">Passengers</th>
-      <td colspan="3"><?=$vehicle->passengers?></td>
-    </tr>
-    <tr>
-      <th class="fit px-2 bg-body-secondary">Requires a CDL driver</th>
-      <td colspan="3"><?=$vehicle->requireCDL ? 'Yes' : 'No' ?></td>
-    </tr>
-    <tr>
-      <th class="fit px-2 bg-body-secondary">Staging Location</th>
-      <td colspan="3"><?=$vehicle->stagingLocation->name?></td>
-    </tr>
-    <tr>
-      <th class="fit px-2 bg-body-secondary">Next Trip/Event</th>
-      <td colspan="3" id="nextTripEventDetail"></td>
-    </tr>
-  </table>
+  <div class="row mb-3">
+    <div class="col-12 col-lg-8 col-xl-6 col-xxl-4 mb-1">
+      <div class="input-group">
+        <span class="input-group-text">Description</span>
+        <input type="text" class="form-control" value="<?=$vehicle->description?>" readonly>
+      </div>
+    </div>
+    <div class="col-12 col-sm-8 col-lg-6 col-xl-4 col-xxl-3 mb-1">
+      <div class="input-group">
+        <span class="input-group-text">License Plate</span>
+        <input type="text" class="form-control" value="<?=$vehicle->licensePlate?>" readonly>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 col-xxl-2 mb-1">
+      <div class="input-group">
+        <span class="input-group-text">Capacity</span>
+        <input type="text" class="form-control" value="<?=$vehicle->passengers?>" readonly>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-1">
+      <div class="input-group">
+        <span class="input-group-text">CDL Required</span>
+        <input type="text" class="form-control" value="<?=$vehicle->requireCDL ? 'Yes' : 'No' ?>" readonly>
+      </div>
+    </div>
+    <div class="col-12 col-lg-8 col-xl-6 col-xxl-4 mb-1">
+      <div class="input-group">
+        <span class="input-group-text">Staging Location</span>
+        <input type="text" class="form-control" value="<?=$vehicle->stagingLocation->name?>" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex">
+    <div class="alert alert-info px-4 py-2" role="alert">
+      <div class="fw-bold fs-4 mb-3">
+        Next Trip/Event
+      </div>
+      <div id="nextTripEventDetail"></div>
+    </div>
+  </div>
 
 
-  <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+  <ul class="nav nav-tabs" id="pills-tab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="pills-status-tab" data-bs-toggle="pill" data-bs-target="#pills-status" type="button" role="tab" aria-controls="pills-status" aria-selected="true">
         State
@@ -64,49 +90,37 @@ $vehicle = new Vehicle($vehicleId);
         <span id="document-count" class="d-none position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
       </button>
     </li>
-    <!--
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="pills-disabled-tab" data-bs-toggle="pill" data-bs-target="#pills-disabled" type="button" role="tab" aria-controls="pills-disabled" aria-selected="false" disabled>Disabled</button>
-    </li>
-    -->
   </ul>
 
-  <div class="tab-content" id="pills-tabContent">
+  <div class="tab-content bg-body" id="pills-tabContent">
 
-    <div class="tab-pane fade show active" id="pills-status" role="tabpanel" aria-labelledby="pills-status-tab" tabindex="0"></div>
+    <div class="tab-pane p-2 border border-top-0 show active" id="pills-status" role="tabpanel" aria-labelledby="pills-status-tab" tabindex="0"></div>
 
-    <div class="tab-pane fade" id="pills-snags" role="tabpanel" aria-labelledby="pills-snags-tab" tabindex="0"></div>
+    <div class="tab-pane p-2 border border-top-0" id="pills-snags" role="tabpanel" aria-labelledby="pills-snags-tab" tabindex="0"></div>
 
-    <div class="tab-pane fade" id="pills-maintenance" role="tabpanel" aria-labelledby="pills-maintenance-tab" tabindex="0">...</div>
+    <div class="tab-pane p-2 border border-top-0" id="pills-maintenance" role="tabpanel" aria-labelledby="pills-maintenance-tab" tabindex="0">...</div>
 
-    <div class="tab-pane fade" id="pills-document" role="tabpanel" aria-labelledby="pills-document-tab" tabindex="0">...</div>
-
-    <!-- <div class="tab-pane fade" id="pills-disabled" role="tabpanel" aria-labelledby="pills-disabled-tab" tabindex="0">...</div> -->
+    <div class="tab-pane p-2 border border-top-0" id="pills-document" role="tabpanel" aria-labelledby="pills-document-tab" tabindex="0">...</div>
   </div>  
 
-</div>
 
 
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
-  import { reFormat } from '/js/main.js';
+<script>
 
-  $(async ƒ => {
+$(async ƒ => {
 
-    const vehicleId = <?=$vehicleId?>;
+    const vehicleId = <?=$id?>;
 
     $('#pills-status').load('section.vehicle-status.php?vehicleId='+vehicleId);
     $('#pills-document').load('section.vehicle-documents.php?vehicleId='+vehicleId);
     $('#pills-snags').load('section.vehicle-snags.php?vehicleId='+vehicleId);
 
-    reFormat();
+    // reFormat();
 
     // nextTripEventDetail
     const nextTrip = await net.get('/api/get.next-trip.php', {id: vehicleId});
-    if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled');
+    if (nextTrip.starts === null) return $('#nextTripEventDetail').html('Nothing scheduled at this time.');
     const starts = moment(nextTrip.starts, 'YYYY-MM-DD H:mm:ss');
     $('#nextTripEventDetail').html(
       `<div style="font-size: small" class="text-black-50">` +

@@ -9,176 +9,172 @@ $id = $id === false ? null : $id;
 $event = new Event($id);
 $eventId = $event->getId();
 
-if (!is_null($id) && !$eventId) {
+if (!is_null($id) && !$eventId)
+{
   exit(Utils::showResourceNotFound());
 }
 ?>
 
-<div class="container mt-2">
-  <div class="d-flex justify-content-between">
-    <?php if ($eventId): ?>
-      <h2>Edit Event</h2>
-    <?php else: ?>
-      <h2>New Event</h2>
-    <?php endif; ?>
-    <button id="btn-duplicate-event" class="btn btn-secondary d-none"><i class="fa-duotone fa-solid fa-copy"></i> Duplicate</button>
-  </div>
+<!-- Back button -->
+<div class="d-flex justify-content-between top-page-buttons mb-2">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('loadMainSection', { sectionId: 'events', url: 'section.list-events.php', forceReload: true });">
+    <i class="fa-solid fa-chevron-left"></i>
+    List
+  </button>
+</div>
 
-  <div class="row">
-    <div class="col-3">
-      <div class="mb-3">
-        <label for="event-start-date" class="form-label">Starts</label>
-        <input type="datetime-local" class="form-control" id="event-start-date" value="<?=$event->startDate?>" min="<?=date('Y-m-d\TH:i')?>">
-      </div>
-    </div>
+<?php if ($eventId): ?>
+  <h2>Edit Event</h2>
+<?php else: ?>
+  <h2>Add Event</h2>
+<?php endif; ?>
+<input type="hidden" id="event-id" value="<?= $eventId ?>">
 
-    <div class="col-3">
-      <div class="mb-3">
-        <label for="event-end-date" class="form-label">Ends</label>
-        <input type="datetime-local" class="form-control" id="event-end-date" value="<?=$event->endDate?>" min="<?=date('Y-m-d\TH:i')?>">
-      </div>
-    </div>
 
-    <div class="col">
-      <div class="mb-3">
-        <label for="event-name" class="form-label">Description</label>
-        <input type="text" class="form-control" id="event-name" placeholder="Event Description" value="<?=$event->name?>">
-      </div>
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
+    <div class="mb-3">
+      <label for="event-start-date" class="form-label">Starts</label>
+      <input type="datetime-local" class="form-control" id="event-start-date" value="<?= $event->startDate ?>" min="<?= date('Y-m-d\TH:i') ?>">
     </div>
   </div>
 
-  <div class="row">
-    <div class="col">
-      <div class="mb-3">
-        <label for="event-location" class="form-label">Location</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="event-location" 
-          placeholder="Where is this event"
-          value="<?=$event->location->name?>" 
-          data-value="<?=$event->location->name?>" 
-          data-id="<?=$event->locationId?>">
-        <div class="invalid-feedback">Please make a valid selection</div>
-      </div>
-    </div>
-
-    <div class="col-4">
-      <div class="mb-3">
-        <label for="event-requestor" class="form-label">Requestor</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="event-requestor" 
-          placeholder="Requestor" 
-          value="<?=($event->requestor) ? $event->requestor->getName() : ''?>" 
-          data-value="<?=($event->requestor) ? $event->requestor->getName() : ''?>" 
-          data-id="<?=$event->requestorId?>">
-        <div class="invalid-feedback">Please make a valid selection</div>
-      </div>
+  <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
+    <div class="mb-3">
+      <label for="event-end-date" class="form-label">Ends</label>
+      <input type="datetime-local" class="form-control" id="event-end-date" value="<?= $event->endDate ?>" min="<?= date('Y-m-d\TH:i') ?>">
     </div>
   </div>
 
-
-  <div class="row">
-    <div class="col">
-      <div class="mb-3">
-        <label for="event-drivers" class="form-label">Drivers</label>
-        <div>
-          <select id="event-drivers" class="form-control" multiple show-tick>
-          </select>
-        </div>
-      </div>
+  <div class="col-12 col-xl-8">
+    <div class="mb-3">
+      <label for="event-name" class="form-label">Description</label>
+      <input type="text" class="form-control" id="event-name" placeholder="Event Description" value="<?= $event->name ?>">
     </div>
+  </div>
 
-    <div class="col">
-      <div class="mb-3">
-        <label for="event-vehicles" class="form-label">Vehicles</label>
-        <div>
-          <select id="event-vehicles" class="form-control" multiple show-tick>
-          </select>
-        </div>
+  <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4">
+    <div class="mb-3">
+      <label for="event-location" class="form-label">Location</label>
+      <input
+        type="text"
+        class="form-control"
+        id="event-location"
+        placeholder="Where is this event"
+        value="<?= $event->location->name ?>"
+        data-value="<?= $event->location->name ?>"
+        data-id="<?= $event->locationId ?>">
+      <div class="invalid-feedback">Please make a valid selection</div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-4">
+    <div class="mb-3">
+      <label for="event-drivers" class="form-label">Drivers</label>
+      <div>
+        <select id="event-drivers" class="form-control" multiple show-tick>
+        </select>
       </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col">
-      <div class="mb-3">
-        <label for="event-notes" class="form-label">Notes</label>
-        <textarea class="form-control" id="event-notes" rows="7"><?=$event->notes?></textarea>
+  <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-4">
+    <div class="mb-3">
+      <label for="event-vehicles" class="form-label">Vehicles</label>
+      <div>
+        <select id="event-vehicles" class="form-control" multiple show-tick>
+        </select>
       </div>
     </div>
   </div>
 
-  <div class="row my-4">
-    <div class="col d-flex justify-content-between">
-      <?php if ($eventId): ?>
-        <button class="btn btn-outline-danger px-4" id="btn-delete-event">Delete</button>
-      <?php endif; ?>
-      <div class="ms-auto">
-        <?php if (!$event->confirmed): ?>
-          <button class="btn btn-outline-primary px-4 me-2" id="btn-save-confirm-event">Save & Confirm</button>
-        <?php endif; ?>
-        <button class="btn btn-primary px-4" id="btn-save-event">Save</button>
-      </div>
+  <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-4">
+    <div class="mb-3">
+      <label for="event-requestor" class="form-label">Requestor</label>
+      <input
+        type="text"
+        class="form-control"
+        id="event-requestor"
+        placeholder="Requestor"
+        value="<?= ($event->requestor) ? $event->requestor->getName() : '' ?>"
+        data-value="<?= ($event->requestor) ? $event->requestor->getName() : '' ?>"
+        data-id="<?= $event->requestorId ?>">
+      <div class="invalid-feedback">Please make a valid selection</div>
     </div>
   </div>
-
 
 </div>
 
+<div class="row">
+  <div class="col-12 col-xxl-8">
+    <div class="mb-3">
+      <label for="event-notes" class="form-label">Notes</label>
+      <textarea class="form-control font-handwriting" id="event-notes" rows="7" style="border: 1px solid khaki;background: #ffffbb;font-size:large"><?= $event->notes ?></textarea>
+    </div>
+  </div>
+</div>
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<div class="d-flex justify-content-between mt-3">
+  <?php if ($event->getId()): ?>
+    <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:event', <?= $event->getId() ?>)">Delete</button>
+  <?php endif; ?>
 
+  <?php if (!$event->isConfirmed()): ?>
+    <button class="btn btn-primary ms-auto me-2" onclick="$(document).trigger('buttonSaveAndConfirm:event', '<?= $event->getId() ?>')">Save & Confirm</button>
+  <?php endif; ?>
+  <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:event', '<?= $event->getId() ?>')">Save</button>
+</div>
+
+
+<script>
   $(async ƒ => {
 
-    let drivers;
-    let vehicles;
-    let startDate;
-    let endDate
-
-    const eventId = <?=$eventId ?? 'null'?>;
-    $('select').selectpicker();
-
-    $('#event-requestor').off('blur').on('blur', function () {
-      if (cleanVal('#event-requestor') == '') $('#event-requestor').removeData('id');
-    });
-
-    $('#event-location').off('blur').on('blur', function () {
-      if (cleanVal('#event-location') == '') $('#event-location').removeData('id');
-    });
-
-    if (eventId) {
-      startDate = moment('<?=$event->startDate?>', 'YYYY-MM-DD H:mm:ss');
-      endDate = moment('<?=$event->endDate?>', 'YYYY-MM-DD H:mm:ss');
-      await loadResources();
-      $('#event-drivers').selectpicker('val', ['<?=implode("','", $event->drivers)?>']);
-      $('#event-vehicles').selectpicker('val', ['<?=implode("','", $event->vehicles)?>']);
+    function backToList() {
+      $(document).trigger('loadMainSection', {
+        sectionId: 'events',
+        url: 'section.list-events.php',
+        forceReload: true
+      });
     }
 
-    async function loadResources ()
-    {
-      if (startDate && endDate) {
-        // Load the resources!
-        drivers = await net.get('/api/get.available-drivers.php', {
-          startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
-          endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
-          eventId
-        });
-        vehicles = await net.get('/api/get.available-vehicles.php', {
-          startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
-          endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
-          eventId
-        });
-      }
+    $('#events select').selectpicker({ container: false });
+
+    $('#event-requestor').off('blur').on('blur', function() {
+      if ($('#event-requestor').cleanVal() == '') $('#event-requestor').removeData('id');
+    });
+
+    $('#event-location').off('blur').on('blur', function() {
+      if ($('#event-location').cleanVal() == '') $('#event-location').removeData('id');
+    });
+
+    if ($('#event-id').val()) {
+      await loadResources();
+      $('#event-drivers').selectpicker('val', ['<?= implode("','", $event->drivers) ?>']);
+      $('#event-vehicles').selectpicker('val', ['<?= implode("','", $event->vehicles) ?>']);
+    }
+
+    async function loadResources() {
+      const eventId = $('#event-id').val();
+      const startDate = moment($('#event-start-date').val());
+      const endDate = moment($('#event-end-date').val());
+      
+      if (!startDate.isValid() || !endDate.isValid()) return;
+
+      // Load the resources!
+      const drivers = await net.get('/api/get.available-drivers.php', {
+        startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
+        endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
+        eventId
+      });
+      const vehicles = await net.get('/api/get.available-vehicles.php', {
+        startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
+        endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
+        eventId
+      });
 
       $('#event-drivers').selectpicker('destroy');
       $('#event-drivers option').remove();
-      $.each(drivers, function (i, item) {
+      $.each(drivers, function(i, item) {
         const optionProps = {
           value: item.id,
           text: item.driver,
@@ -190,11 +186,11 @@ if (!is_null($id) && !$eventId) {
         }
         $('#event-drivers').append($('<option>', optionProps));
       });
-      $('#event-drivers').selectpicker()
+      $('#event-drivers').selectpicker({ container: false });
 
       $('#event-vehicles').selectpicker('destroy');
       $('#event-vehicles option').remove();
-      $.each(vehicles, function (i, item) {
+      $.each(vehicles, function(i, item) {
         const optionProps = {
           value: item.id,
           text: item.name,
@@ -208,126 +204,111 @@ if (!is_null($id) && !$eventId) {
       $('#event-vehicles').selectpicker()
     }
 
-    $('#event-start-date').on('change', function () {
-      startDate = moment($('#event-start-date').val());
-      loadResources();
-    });
-    $('#event-end-date').on('change', function () {
-      endDate = moment($('#event-end-date').val());
-      loadResources();
-    });
+    $('#event-start-date').on('change', loadResources);
+    $('#event-end-date').on('change', loadResources);
 
-    new Autocomplete(document.getElementById('event-location'), {
-      fullWidth: true,
-      highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-locations.php',
+    buildAutoComplete({
+      selector: 'event-location',
+      apiUrl: '/api/get.autocomplete-locations.php',
       searchFields: ['label', 'short_name'],
-      onSelectItem: (data) => {
-        $('#event-location')
-          .data('id', data.value)
-          .data('type', data.type)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
     });
-
-    new Autocomplete(document.getElementById('event-requestor'), {
-      fullWidth: true,
-      highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-requestors.php',
-      onSelectItem: (data) => {
-        $('#event-requestor')
-          .data('id', data.value)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
+    buildAutoComplete({
+      selector: 'event-requestor',
+      apiUrl: '/api/get.autocomplete-requestors.php'
     });
 
 
-    function getData () {
-      const data = {
-        eventId
-      }
+    function getData() {
+      const eventId = $('#event-id').val();
+      const data = { eventId, id: eventId };
+      const startDate = moment($('#event-start-date').val());
+      const endDate = moment($('#event-end-date').val());
+
       data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
       data.endDate = endDate.format('YYYY-MM-DD HH:mm:ss');
-      data.name = input.cleanVal('#event-name');
-      data.drivers = input.val('#event-drivers');
-      data.vehicles = input.val('#event-vehicles');
-      data.notes = input.cleanVal('#event-notes');
+      data.name = $('#event-name').cleanVal();
+      data.drivers = $('#event-drivers').val();
+      data.vehicles = $('#event-vehicles').val();
+      data.notes = $('#event-notes').cleanVal();
       if ($('#event-location').val()) data.locationId = $('#event-location').data('id');
       if ($('#event-requestor').val()) data.requestorId = $('#event-requestor').data('id');
       return data;
     }
 
-    $('#btn-save-event').off('click').on('click', async function () {
-      if (!startDate || !endDate) return ui.toastr.error('Please select a start and end date.', 'Error');
-      if (startDate.isAfter(endDate)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+    if (!documentEventExists('buttonSave:event')) {
+      $(document).on('buttonSave:event', async (e, id) => {
+        const startDate = moment($('#event-start-date').val());
+        const endDate = moment($('#event-end-date').val());
 
-      const buttonSavedText = $('#btn-save-event').text();
-      $('#btn-save-event').prop('disabled', true).text('Saving...');
+        if (!startDate.isValid() || !endDate.isValid()) return ui.toastr.error('Please select a valid start and end date.', 'Error');
+        if (startDate.isAfter(endDate)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
 
-      const data = getData();
-      const resp = await net.post('/api/post.save-event.php', data);
-      if (resp?.result) {
-        $(document).trigger('eventChange', {eventId});
-        app.closeOpenTab();
-        if (eventId) return ui.toastr.success('Event saved.', 'Success');
-        $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
-        return ui.toastr.success('Event added.', 'Success')
-      }
-      ui.toastr.error(resp . result . errors[2], 'Error');
-      console.log(resp);
-      $('#btn-save-event').prop('disabled', false).text(buttonSavedText);
-    });
+        const data = getData();
 
-    $('#btn-save-confirm-event').off('click').on('click', async function () {
-      const buttonSavedText = $('#btn-save-confirm-event').text();
-      $('#btn-save-confirm-event').prop('disabled', true).text('Saving...');
+        if (data.eventId != id) {
+          console.trace('Event ID mismatch.', data.eventId, id);
+          return ui.toastr.error('Event ID mismatch.', 'Error');
+        }
 
-      const data = await getData();
-      if (data) {
         const resp = await net.post('/api/post.save-event.php', data);
         if (resp?.result) {
-          const id = eventId || resp?.result;
-          const newResp = await net.post('/api/post.confirm-event.php', {id});
-          if (newResp?.result) {
-            $(document).trigger('eventChange');
-            app.closeOpenTab();
-            $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
-            return ui.toastr.success('Event added.', 'Success');
+          $(document).trigger('eventChange', { id });
+          if (data.eventId) {
+            ui.toastr.success('Event saved.', 'Success');
+            return backToList();
           }
-          $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
-          return ui.toastr.error('Seems to be a problem confirming this event!', 'Error');
         }
         ui.toastr.error(resp.result.errors[2], 'Error');
-        console.error(resp);
-        $('#btn-save-confirm-event').prop('disabled', false).text(buttonSavedText);
-      }
-    });
-
-    $('#btn-delete-event').on('click', async ƒ => {
-      if (await ui.ask('Are you sure you want to delete this event?')) {
-        const buttonSavedText = $('#btn-delete-event').text();
-        $('#btn-delete-event').prop('disabled', true).text('Deleting...');
-
-        const resp = await net.get('/api/get.delete-event.php', {
-          id: '<?=$eventId?>'
-        });
-        if (resp?.result) {
-          $(document).trigger('eventChange', {eventId});
-          $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
-          app.closeOpenTab();
-          return ui.toastr.success('Event deleted.', 'Success')
-        }
         console.log(resp);
-        ui.toastr.error('There seems to be a problem deleting event.', 'Error');
-        $('#btn-delete-event').prop('disabled', false).text(buttonSavedText);
-      }
-    });
-  });
+      });
+    }
 
+    if (!documentEventExists('buttonSaveAndConfirm:event')) {
+      $(document).on('buttonSaveAndConfirm:event', async (e, id) => {
+        const startDate = moment($('#event-start-date').val());
+        const endDate = moment($('#event-end-date').val());
+
+        if (!startDate.isValid() || !endDate.isValid()) return ui.toastr.error('Please select a valid start and end date.', 'Error');
+        if (startDate.isAfter(endDate)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+
+        const data = getData();
+
+        if (data.eventId != id) {
+          console.trace('Event ID mismatch.', data.eventId, id);
+          return ui.toastr.error('Event ID mismatch.', 'Error');
+        }
+
+        const resp = await net.post('/api/post.save-event.php', data);
+        if (resp?.result) {
+          // Confirm the event
+          const newResp = await net.post('/api/post.confirm-event.php', { id });
+          if (newResp?.result) {
+            ui.toastr.success('Event Saved and Confirmed.', 'Success');
+            $(document).trigger('eventChange');
+            return backToList();
+          }
+        }
+        ui.toastr.error(resp.result.errors[2], 'Error');
+        console.log(resp);
+      });
+    }
+
+    if (!documentEventExists('buttonDelete:event')) {
+      $(document).on('buttonDelete:event', async (e, id) => {
+        if (await ui.ask('Are you sure you want to delete this event?')) {
+          const resp = await net.get('/api/get.delete-event.php', {
+            id
+          });
+          if (resp?.result) {
+            $(document).trigger('eventChange', { id });
+            ui.toastr.success('Event deleted.', 'Success');
+            return backToList();
+          }
+          console.log(resp);
+          ui.toastr.error('There seems to be a problem deleting this event.', 'Error');
+        }
+      });
+    }
+
+  });
 </script>

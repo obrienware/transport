@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 header('Content-Type: application/json');
+date_default_timezone_set($_SESSION['userTimezone'] ?? $_ENV['TZ']);
 
 require_once '../autoload.php';
 

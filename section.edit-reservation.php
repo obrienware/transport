@@ -9,125 +9,143 @@ $id = $id === false ? null : $id;
 $reservation = new VehicleReservation($id);
 $reservationId = $reservation->getId();
 
-if (!is_null($id) && !$reservation->getId()) {
+if (!is_null($id) && !$reservation->getId())
+{
   exit(Utils::showResourceNotFound());
 }
 ?>
 
-<div id="reservation-form" class="container mt-2">
+<!-- Back button -->
+<div class="d-flex justify-content-between top-page-buttons mb-2">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('loadMainSection', { sectionId: 'reservations', url: 'section.list-reservations.php', forceReload: true });">
+    <i class="fa-solid fa-chevron-left"></i>
+    List
+  </button>
+</div>
+
+<div id="reservation-form" style="display: contents;">
   <?php if ($reservationId): ?>
     <h2>Edit Reservation</h2>
   <?php else: ?>
     <h2>Add Reservation</h2>
   <?php endif; ?>
+  <input type="hidden" id="reservation-id" value="<?= $reservationId ?>">
 
   <div class="row">
-    <div class="col-3">
+    <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
       <div class="mb-3">
         <label for="reservation-start-date" class="form-label">Starts</label>
-        <input type="datetime-local" class="form-control" id="reservation-start-date" value="<?=$reservation->startDateTime?>">
+        <input type="datetime-local" class="form-control" id="reservation-start-date" value="<?= $reservation->startDateTime ?>">
       </div>
     </div>
 
-    <div class="col-3">
+    <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
       <div class="mb-3">
         <label for="reservation-end-date" class="form-label">Ends</label>
-        <input type="datetime-local" class="form-control" id="reservation-end-date" value="<?=$reservation->endDateTime?>">
+        <input type="datetime-local" class="form-control" id="reservation-end-date" value="<?= $reservation->endDateTime ?>">
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-3">
+    <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
       <div class="mb-3">
         <label for="reservation-guest" class="form-label">Guest</label>
-        <input 
-          type="text" 
-          class="form-control" 
-          id="reservation-guest" 
-          placeholder="Contact" 
-          value="<?=$reservation->guestId ? $reservation->guest->getName() : ''?>" 
-          data-value="<?=$reservation->guestId ? $reservation->guest->getName() : ''?>" 
-          data-id="<?=$reservation->guestId?>">
+        <input
+          type="text"
+          class="form-control"
+          id="reservation-guest"
+          placeholder="Contact"
+          value="<?= $reservation->guestId ? $reservation->guest->getName() : '' ?>"
+          data-value="<?= $reservation->guestId ? $reservation->guest->getName() : '' ?>"
+          data-id="<?= $reservation->guestId ?>">
         <div class="invalid-feedback">Please make a valid selection</div>
       </div>
     </div>
 
-    <div class="col-3">
+    <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
       <div class="mb-3">
         <label for="reservation-vehicle-id" class="form-label">Vehicle</label>
         <div><select id="reservation-vehicle-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
       </div>
     </div>
 
-    <div class="col">
+    <div class="col-12 col-xl-8 col-xxl-6">
       <div class="mb-3">
         <label for="reservation-reason" class="form-label">Reason / Purpose</label>
-        <input type="text" class="form-control" id="reservation-reason" value="<?=$reservation->reason?>">
+        <input type="text" class="form-control" id="reservation-reason" value="<?= $reservation->reason ?>">
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-3">
+    <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
       <label for="reservation-requestor" class="form-label">Requestor</label>
-      <input 
-        type="text" 
-        class="form-control" 
-        id="reservation-requestor" 
-        placeholder="Requestor" 
-        value="<?=($reservation->requestor) ? $reservation->requestor->getName() : ''?>" 
-        data-value="<?=($reservation->requestor) ? $reservation->requestor->getName() : ''?>" 
-        data-id="<?=$reservation->requestorId?>">
+      <input
+        type="text"
+        class="form-control"
+        id="reservation-requestor"
+        placeholder="Requestor"
+        value="<?= ($reservation->requestor) ? $reservation->requestor->getName() : '' ?>"
+        data-value="<?= ($reservation->requestor) ? $reservation->requestor->getName() : '' ?>"
+        data-id="<?= $reservation->requestorId ?>">
       <div class="invalid-feedback">Please make a valid selection</div>
     </div>
   </div>
 
-  <div class="row my-4">
-    <div class="col d-flex justify-content-between">
-      <?php if ($reservationId): ?>
-        <button class="btn btn-outline-danger px-4" id="btn-delete-reservation">Delete</button>
-      <?php endif; ?>
-      <div class="ms-auto">
-        <?php if (!$reservation->isConfirmed()): ?>
-          <button class="btn btn-outline-primary px-4 me-2" id="btn-save-confirm-reservation">Save & Confirm</button>
-        <?php endif; ?>
-        <button class="btn btn-primary px-4" id="btn-save-reservation">Save</button>
-      </div>
-    </div>
+  <div class="d-flex justify-content-between mt-3">
+    <?php if ($reservation->getId()): ?>
+      <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:reservation', <?= $reservation->getId() ?>)">Delete</button>
+    <?php endif; ?>
+
+    <?php if (!$reservation->isConfirmed()): ?>
+      <button class="btn btn-primary ms-auto me-2" onclick="$(document).trigger('buttonSaveAndConfirm:reservation', '<?= $reservation->getId() ?>')">Save & Confirm</button>
+    <?php endif; ?>
+    <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:reservation', '<?= $reservation->getId() ?>')">Save</button>
   </div>
 
 </div>
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
 
+
+<script>
   $(async ƒ => {
 
-    // --- DECLARATIONS ---
+    // --- FUNCTIONS ---
 
-    const reservationId = <?=$reservationId ?: 'null'?>;
-    let vehicles;
-    let startDateTime;
-    let endDateTime;
+    function backToList() {
+      $(document).trigger('loadMainSection', {
+        sectionId: 'reservations',
+        url: 'section.list-reservations.php',
+        forceReload: true
+      });
+    }
 
-    function getData () {
-      const data = { reservationId };
+    function getData() {
+      const reservationId = $('#reservation-id').val() || null;
+      const startDateTime = moment($('#reservation-start-date').val());
+      const endDateTime = moment($('#reservation-end-date').val());
+      const data = {
+        reservationId,
+        id: reservationId
+      };
+
       let control;
 
       data.startDateTime = startDateTime.format('YYYY-MM-DD HH:mm:ss');
       data.endDateTime = endDateTime.format('YYYY-MM-DD HH:mm:ss');
       if ($('#reservation-guest').val()) data.guestId = $('#reservation-guest').data('id');
-      data.vehicleId = input.val('#reservation-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
+      data.vehicleId = input.val('#reservation-vehicle-id');
+      data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
       data.reason = input.cleanVal('#reservation-reason');
       if ($('#reservation-requestor').val()) data.requestorId = $('#reservation-requestor').data('id');
       return data;
     }
 
-    async function loadResources () {
-      vehicles = await net.get('/api/get.available-vehicles.php', {
+    async function loadResources() {
+      const reservationId = $('#reservation-id').val();
+      const startDateTime = moment($('#reservation-start-date').val());
+      const endDateTime = moment($('#reservation-end-date').val());
+
+      if (!startDateTime.isValid() || !endDateTime.isValid()) return;
+
+      const vehicles = await net.get('/api/get.available-vehicles.php', {
         startDate: startDateTime.format('YYYY-MM-DD HH:mm:00'),
         endDate: endDateTime.format('YYYY-MM-DD HH:mm:59'),
         reservationId
@@ -135,7 +153,7 @@ if (!is_null($id) && !$reservation->getId()) {
       $('#reservation-vehicle-id').selectpicker('destroy');
       $('#reservation-vehicle-id option').remove();
       $('#reservation-vehicle-id').append($('<option>'));
-      $.each(vehicles, function (i, item) {
+      $.each(vehicles, function(i, item) {
         const optionProps = {
           value: item.id,
           text: item.name,
@@ -147,145 +165,125 @@ if (!is_null($id) && !$reservation->getId()) {
         }
         $('#reservation-vehicle-id').append($('<option>', optionProps));
       });
-      $('#reservation-vehicle-id').selectpicker();
+      $('#reservation-vehicle-id').selectpicker({
+        container: false
+      });
     }
 
 
     // --- INITIALIZATIONS ---
-
-    new Autocomplete(document.getElementById('reservation-guest'), {
-      fullWidth: true,
-      // highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-guests.php',
-      onSelectItem: (data) => {
-        $('#reservation-guest')
-          .data('id', data.value)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
+    buildAutoComplete({
+      selector: 'reservation-guest',
+      apiUrl: '/api/get.autocomplete-guests.php'
+    });
+    
+    buildAutoComplete({
+      selector: 'reservation-requestor',
+      apiUrl: '/api/get.autocomplete-requestors.php'
     });
 
-    new Autocomplete(document.getElementById('reservation-requestor'), {
-      fullWidth: true,
-      highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-requestors.php',
-      onSelectItem: (data) => {
-        $('#reservation-requestor')
-          .data('id', data.value)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
+    $('#reservation-form select').selectpicker({
+      container: false
     });
-
-    $('#reservation-form select').selectpicker();
 
 
     // --- EVENTS ---
 
     // Update the vehicle list when either of the dates change
-    $('#reservation-start-date').on('change', function () {
-      startDateTime = moment($('#reservation-start-date').val());
-      loadResources();
-    });
-    $('#reservation-end-date').on('change', function () {
-      endDateTime = moment($('#reservation-end-date').val());
-      loadResources();
-    });
+    $('#reservation-start-date, #reservation-end-date').on('change', loadResources);
 
-    
-    $('#btn-save-reservation').off('click').on('click', async function () {
-      const data = getData();
+    if (!documentEventExists('buttonSave:reservation')) {
+      $(document).on('buttonSave:reservation', async (e, id) => {
+        const startDateTime = moment($('#reservation-start-date').val());
+        const endDateTime = moment($('#reservation-end-date').val());
 
-      // Validation
-      if (!startDateTime || !endDateTime) return ui.toastr.error('Please select a start and end date.', 'Error');
-      if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
-      if (endDateTime.isBefore(moment())) return ui.toastr.error('End date cannot be in the past.', 'Error');
-      if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
-      if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
-      if (data?.reason?.length <= 0) return ui.toastr.error('Please enter a reason/purpose.', 'Error');
+        const data = getData();
 
-      const buttonSavedText = $('#btn-save-reservation').text();
-      $('#btn-save-reservation').prop('disabled', true).text('Saving...');
-
-      const resp = await net.post('/api/post.save-reservation.php', data);
-      if (resp?.result) {
-        app.closeOpenTab();
-        $(document).trigger('reservationChange', {reservationId});
-        if (reservationId) return ui.toastr.success('Vehicle reservation saved.', 'Success');
-        $('#btn-save-reservation').prop('disabled', false).text(buttonSavedText);
-        return ui.toastr.success('Reservation added.', 'Success')
-      }
-      ui.toastr.error(resp.error, 'Error');
-      console.log(resp);
-      $('#btn-save-reservation').prop('disabled', false).text(buttonSavedText);
-    });
-
-
-    $('#btn-save-confirm-reservation').off('click').on('click', async function () {
-      const data = getData();
-
-      // Validation
-      if (!startDateTime || !endDateTime) return ui.toastr.error('Please select a start and end date.', 'Error');
-      if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
-      if (endDateTime.isBefore(moment())) return ui.toastr.error('End date cannot be in the past.', 'Error');
-      if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
-      if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
-      if (data?.reason?.length <= 0) return ui.toastr.error('Please enter a reason/purpose.', 'Error');
-
-      const buttonSavedText = $('#btn-save-confirm-reservation').text();
-      $('#btn-save-confirm-reservation').prop('disabled', true).text('Saving...');
-
-      const resp = await net.post('/api/post.save-reservation.php', data);
-      if (resp?.result) {
-        // If we have successfully saved the reservation, we can now go ahead and confirm it
-        const id = reservationId || resp?.result;
-        const newResp = await net.post('/api/post.confirm-reservation.php', {id});
-        if (newResp?.result) {
-          $(document).trigger('reservationChange');
-          app.closeOpenTab();
-          return ui.toastr.success('Reservation updated and confirmed.', 'Success');
+        if (data.reservationId && data.reservationId != id) {
+          console.trace('ID mismatch', data.reservationId, id);
+          return ui.toastr.error('Reservation ID mismatch.', 'Error');
         }
-        $('#btn-save-confirm-reservation').prop('disabled', false).text(buttonSavedText);
-        return ui.toastr.error('Seems to be a problem confirming this reservation!', 'Error');
-      }
-      ui.toastr.error(resp.error, 'Error');
-      console.error(resp);
-      $('#btn-save-confirm-reservation').prop('disabled', false).text(buttonSavedText);
-    });
 
+        // Validation
+        if (!startDateTime.isValid() || !endDateTime.isValid()) return ui.toastr.error('Please select a start and end date.', 'Error');
+        if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+        if (endDateTime.isBefore(moment())) return ui.toastr.error('End date cannot be in the past.', 'Error');
+        if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
+        if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
 
-    $('#btn-delete-reservation').on('click', async ƒ => {
-      if (await ui.ask('Are you sure you want to delete this reservation?')) {
-        const buttonSavedText = $('#btn-delete-reservation').text();
-        $('#btn-delete-reservation').prop('disabled', true).text('Deleting...');
-
-        const resp = await net.get('/api/get.delete-reservation.php', { id: reservationId });
+        const resp = await net.post('/api/post.save-reservation.php', data);
         if (resp?.result) {
-          $(document).trigger('reservationChange', {reservationId});
-          $('#btn-delete-reservation').prop('disabled', false).text(buttonSavedText);
-          app.closeOpenTab();
-          return ui.toastr.success('Reservation deleted.', 'Success')
+          $(document).trigger('reservationChange', { id });
+          if (data.reservationId) return ui.toastr.success('Vehicle reservation saved.', 'Success');
+          ui.toastr.success('Reservation added.', 'Success');
+          return backToList();
         }
+        ui.toastr.error(resp.error, 'Error');
         console.log(resp);
-        ui.toastr.error('There seems to be a problem deleting this reservation.', 'Error');
-        $('#btn-delete-reservation').prop('disabled', false).text(buttonSavedText);
-      }
-    });
+      });
+    }
+
+    if (!documentEventExists('buttonSaveAndConfirm:reservation')) {
+      $(document).on('buttonSaveAndConfirm:reservation', async (e, id) => {
+        const startDateTime = moment($('#reservation-start-date').val());
+        const endDateTime = moment($('#reservation-end-date').val());
+        const data = getData();
+
+        if (data.reservationId != id) {
+          console.trace('ID mismatch', data.reservationId, id);
+          return ui.toastr.error('Reservation ID mismatch.', 'Error');
+        }
+
+        // Validation
+        if (!startDateTime.isValid() || !endDateTime.isValid()) return ui.toastr.error('Please select a start and end date.', 'Error');
+        if (startDateTime.isAfter(endDateTime)) return ui.toastr.error('Start date cannot be after end date.', 'Error');
+        if (endDateTime.isBefore(moment())) return ui.toastr.error('End date cannot be in the past.', 'Error');
+        if (!data.guestId) return ui.toastr.error('Please select a guest.', 'Error');
+        if (!data.vehicleId) return ui.toastr.error('Please select a vehicle.', 'Error');
+
+        const resp = await net.post('/api/post.save-reservation.php', data);
+        if (resp?.result) {
+          // Confirm the reservation
+          const newResp = await net.post('/api/post.confirm-reservation.php', {
+            id
+          });
+          if (newResp?.result) {
+            ui.toastr.success('Reservation Saved and Confirmed.', 'Success');
+            $(document).trigger('reservationChange');
+            return backToList();
+          }
+        }
+        ui.toastr.error(resp.error, 'Error');
+        console.log(resp);
+      });
+    }
+
+    if (!documentEventExists('buttonDelete:reservation')) {
+      $(document).on('buttonDelete:reservation', async (e, id) => {
+        if (await ui.ask('Are you sure you want to delete this reservation?')) {
+          const resp = await net.get('/api/get.delete-reservation.php', {
+            id
+          });
+          if (resp?.result) {
+            $(document).trigger('reservationChange', {
+              id
+            });
+            ui.toastr.success('Reservation deleted.', 'Success');
+            return backToList();
+          }
+          console.log(resp);
+          ui.toastr.error('There seems to be a problem deleting this reservation.', 'Error');
+        }
+      });
+    }
 
 
     // --- ACTIONS ---
 
-    if (reservationId) {
-      startDateTime = moment('<?=$reservation->startDateTime?>', 'YYYY-MM-DD H:mm:ss');
-      endDateTime = moment('<?=$reservation->endDateTime?>', 'YYYY-MM-DD H:mm:ss');
+    if ($('#reservation-id').val()) {
       await loadResources();
-      $('#reservation-vehicle-id').selectpicker('val', '<?=$reservation->vehicleId?>');
+      $('#reservation-vehicle-id').selectpicker('val', '<?= $reservation->vehicleId ?>');
     }
-    
-  });
 
+  });
 </script>

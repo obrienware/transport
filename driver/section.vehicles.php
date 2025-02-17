@@ -177,19 +177,10 @@ use Transport\Vehicle;
 
     let vehicleId;
 
-    new Autocomplete(document.getElementById('veh-location'), {
-      fullWidth: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-locations.php',
+    buildAutoComplete({
+      selector: 'veh-location',
+      apiUrl: '/api/get.autocomplete-locations.php',
       searchFields: ['label', 'short_name'],
-      onSelectItem: (data) => {
-        $('#veh-location')
-          .data('id', data.value)
-          .data('type', data.type)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      // fixed: true,
     });
 
     function resetForm()

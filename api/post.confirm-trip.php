@@ -52,7 +52,7 @@ if (!$trip->isConfirmed()) {
   }
 
   // Email the driver
-  if (!$trip->driver) return;
+  if (!$trip->driver) exit(json_encode(['result' => $result]));
 
   // Generate the driver sheet
   include '../inc.trip-driver-sheet.php';

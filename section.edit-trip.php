@@ -9,377 +9,377 @@ $id = $id === false ? null : $id;
 $trip = new Trip($id);
 if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
 
-if (!is_null($id) && !$trip->getId()) {
+if (!is_null($id) && !$trip->getId())
+{
   exit(Utils::showResourceNotFound());
 }
 ?>
-
-<div id="vehicle-edit-container" class="container mt-2">
-  <input type="hidden" id="trip-end-date" value="<?=$trip->endDate?>" />
-
-  <div class="d-flex justify-content-between">
-    <?php if ($trip->isEditable()): ?>
-      <?php if ($trip->getId()): ?>
-
-        <h2>Edit Trip</h2>
-
-        <?php else: ?>
-        <h2>Add Trip</h2>
-      <?php endif; ?>
-    <?php endif;?>
-    
-    
-  </div>
-
-  <div class="mb-5">
-    <input type="hidden" id="tripId" name="tripId" value="<?=$trip->getId()?>" />
-
-    <div class="row">
-      <div class="col">
-        <div class="mb-3">
-          <label for="trip-summary" class="form-label">Summary</label>
-          <input type="text" class="form-control" id="trip-summary" placeholder="Summary" value="<?=$trip->summary?>">
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-4">
-      <h4>Pick up</h4>
-    </div>
-
-    <div class="row">
-      <div class="col-2">
-        <div class="mb-3">
-          <label for="trip-lead-time" class="form-label" data-bs-toggle="tooltip" data-bs-title="When the actual trip starts">Lead Time</label>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" id="trip-lead-time" value="<?=round(abs((strtotime($trip->startDate) - strtotime($trip->pickupDate))/60/60),2)?>" placeholder="e.g. 1.5"/>
-            <span class="input-group-text">hour(s)</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-3">
-        <div class="mb-3">
-          <label for="trip-pickup-date" class="form-label" data-bs-toggle="tooltip" data-bs-title="The point at which you'd meet the guest/group">Date / Time</label>
-          <input type="datetime-local" class="form-control" id="trip-pickup-date" value="<?=$trip->pickupDate?>" min="<?=date('Y-m-d\TH:i')?>">
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="mb-3">
-          <label for="trip-duration" class="form-label" data-bs-toggle="tooltip" data-bs-title="From start to end">Total Trip Duration</label>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" id="trip-duration" value="<?=$trip->endDate ? round(abs((strtotime($trip->endDate) - strtotime($trip->startDate))/60/60),2) : ''?>" placeholder="e.g. 1.5"/>
-            <span class="input-group-text">hour(s)</span>
-          </div>
-
-          <input type="hidden" id="trip-end-date" value="<?=$trip->endDate?>" />
-        </div>
-      </div>
-
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <div class="mb-3">
-          <label for="trip-pu-location" class="form-label">Location</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="trip-pu-location" 
-            placeholder="Pick Up Location" 
-            value="<?=$trip->puLocation->name?>" 
-            data-id="<?=$trip->puLocationId?>"
-            data-value="<?=$trip->puLocation->name?>"
-            data-type="<?=$trip->puLocation? $trip->puLocation->type : ''?>">
-            <div class="invalid-feedback">Please make a valid selection</div>
-            <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->airport?></pre></td>
-                </tr>
-              </table>
-            <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
-                </tr>
-              </table>
-            <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
-                </tr>
-              </table>
-            <?php endif;?>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <div class="mb-3">
-          <label for="trip-guests" class="form-label">Guest(s) / Group</label>
-          <input type="text" class="form-control" id="trip-guests" placeholder="" value="<?=$trip->guests?>">
-        </div>
-      </div>
-      
-      <div class="col-3">
-        <div class="mb-3">
-          <label for="trip-guest" class="form-label">Contact Person</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="trip-guest" 
-            placeholder="Contact" 
-            value="<?=$trip->guestId ? $trip->guest->getName() : ''?>" 
-            data-value="<?=$trip->guestId ? $trip->guest->getName() : ''?>" 
-            data-id="<?=$trip->guestId?>">
-          <div class="invalid-feedback">Please make a valid selection</div>
-        </div>
-      </div>
-
-      <div class="col-2">
-        <div class="mb-3">
-          <label for="trip-passengers" class="form-label">Total Passengers</label>
-          <input type="number" class="form-control" id="trip-passengers" placeholder="# Passengers" value="<?=$trip->passengers?>">
-        </div>
-      </div>
-      
-    </div>
-
-    <div class="row mt-4">
-      <h4>Drop off</h4>
-    </div>
-    <div class="row">
-      <div class="col">
-        <div class="mb-3">
-          <label for="trip-do-location" class="form-label">Location</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="trip-do-location" 
-            placeholder="Drop Off Location" 
-            value="<?=$trip->doLocation->name?>" 
-            data-value="<?=$trip->doLocation->name?>" 
-            data-id="<?=$trip->doLocationId?>" 
-            data-type="<?=$trip->doLocation? $trip->doLocation->type : ''?>">
-            <div class="invalid-feedback">Please make a valid selection</div>
-            <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->airport?></pre></td>
-                </tr>
-              </table>
-            <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->location?></pre></td>
-                </tr>
-              </table>
-            <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
-              <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-                <tr>
-                  <th class="bg-dark-subtle px-3">Requestor:</th>
-                  <td class="px-3"><pre class="mb-0"><?=$orginalRequest->destination?></pre></td>
-                </tr>
-              </table>
-            <?php endif;?>
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-4">
-      <div class="col-6">
-        <div class="row">
-          <h4><i class="fa-duotone fa-solid fa-steering-wheel"></i> Driver</h4>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="mb-3">
-              <label for="trip-vehicle-id" class="form-label">Vehicle</label>
-              <div><select id="trip-vehicle-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="mb-3">
-              <label for="trip-driver-id" class="form-label">Driver</label>
-              <div><select id="trip-driver-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col">
-            <div class="mb-3">
-              <label for="trip-vehicle-pu-options" class="form-label">Pick up options</label>
-              <div>
-                <select id="trip-vehicle-pu-options" class="form-control" data-container="#vehicle-edit-container">
-                  <option></option>
-                  <option value="pick up from staging" <?=$trip->vehiclePUOptions == 'pick up from staging' ? 'selected' : ''?> >Pick up from staging</option>
-                  <option value="guest will have vehicle" <?=$trip->vehiclePUOptions == 'guest will have vehicle' ? 'selected' : ''?> >Guest will have vehicle</option>
-                  <option value="commence from current location" <?=$trip->vehiclePUOptions == 'commence from current location' ? 'selected' : ''?> >Commence from current location</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="mb-3">
-              <label for="trip-vehicle-do-options" class="form-label">Drop off options</label>
-              <div>
-                <select id="trip-vehicle-do-options" class="form-control" data-container="#vehicle-edit-container">
-                  <option></option>
-                  <option value="return to staging" <?=$trip->vehicleDOOptions == 'return to staging' ? 'selected' : ''?> >Return to staging</option>
-                  <option value="leave vehicle with guest" <?=$trip->vehicleDOOptions == 'leave vehicle with guest' ? 'selected' : ''?> >Leave vehicle with guest(s)</option>
-                  <option value="remain at destination" <?=$trip->vehicleDOOptions == 'remain at destination' ? 'selected' : ''?> >Remain at destination</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="col-6">
-        <section id="flight-info" class="d-none">
-          <div class="row">
-            <h4><i class="fa-duotone fa-solid fa-plane-tail"></i> Flight</h4>
-          </div>
-          <div class="row">
-          <div class="col">
-            <div class="mb-3">
-              <label for="trip-airline-id" class="form-label">Airline</label>
-              <div>
-                <select id="trip-airline-id" data-live-search="true" show-tick class="form-control" data-size="5" data-container="#vehicle-edit-container"></select>
-              </div>
-            </div>
-            </div>
-            <div class="col">
-              <div class="mb-3">
-                <label for="trip-flight-number" class="form-label">Flight Number</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="flight-number-prefix"><?=$trip->airline ? $trip->airline->flightNumberPrefix : '&nbsp;&nbsp;'?></span>
-                  <input type="text" class="form-control" id="trip-flight-number" placeholder="Flight number without the prefix" value="<?=$trip->flightNumber?>">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div id="airline-image" class="col-6">
-              <?php if ($trip->airline->imageFilename): ?>
-                <img src="/images/airlines/<?=$trip->airline->imageFilename?>" class="img-fluid">
-              <?php endif; ?>
-            </div>
-            <div class="col-6 d-none" id="eta-section">
-              <div class="mb-3">
-                <label for="trip-eta" class="form-label">ETA</label>
-                <input type="datetime-local" class="form-control" id="trip-eta" value="<?=$trip->ETA?>" min="<?=date('Y-m-d\TH:i')?>">
-              </div>
-            </div>
-
-            <div class="col-6 d-none" id="etd-section">
-              <div class="mb-3">
-                <label for="trip-etd" class="form-label">ETD</label>
-                <input type="datetime-local" class="form-control" id="trip-etd" value="<?=$trip->ETD?>" min="<?=date('Y-m-d\TH:i')?>">
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-
-    <div class="row mt-4">
-      <h4>General</h4>
-    </div>
-    <div class="row">
-      <div class="col-4">
-        <div class="mb-3">
-          <label for="trip-requestor" class="form-label">Requestor</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            id="trip-requestor" 
-            placeholder="Requestor" 
-            value="<?=$trip->requestorId ? $trip->requestor->getName() : ''?>" 
-            data-value="<?=$trip->requestorId ? $trip->requestor->getName() : ''?>" 
-            data-id="<?=$trip->requestorId?>"/>
-          <div class="invalid-feedback">Please make a valid selection</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-4">
-        <div class="mb-3">
-          <label for="trip-guest-notes" class="form-label">Guest Notes</label>
-          <textarea class="form-control" id="trip-guest-notes" rows="5"><?=$trip->guestNotes?></textarea>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="mb-3">
-          <label for="trip-driver-notes" class="form-label">Driver Notes</label>
-          <textarea class="form-control" id="trip-driver-notes" rows="5"><?=$trip->driverNotes?></textarea>
-        </div>
-      </div>
-      <div class="col-4">
-        <div class="mb-3">
-          <label for="trip-general-notes" class="form-label">General Notes</label>
-          <textarea class="form-control" id="trip-general-notes" rows="5"><?=$trip->generalNotes?></textarea>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="row">
-      <div class="col d-flex justify-content-between">
-        <?php if ($trip->getId()): ?>
-          <button id="btn-delete-trip" class="btn btn-outline-danger">Delete</button>
-        <?php endif; ?>
-
-        <?php if ($trip->isEditable()): ?>
-          <button id="btn-save-trip" class="btn btn-outline-primary">Save</button>
-        <?php endif;?>
-      </div>
-    </div>
-
-  </div>
+<!-- Back button -->
+<div class="d-flex justify-content-between top-page-buttons mb-2">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('loadMainSection', { sectionId: 'trips', url: 'section.list-trips.php', forceReload: true });">
+    <i class="fa-solid fa-chevron-left"></i>
+    List
+  </button>
 </div>
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<h2>Edit Trip (#<?= $trip->getId() ?>)</h2>
+<input type="hidden" id="trip-end-date" value="<?= $trip->endDate ?>" />
+<input type="hidden" id="tripId" name="tripId" value="<?= $trip->getId() ?>" />
 
+<div class="grid-container">
+
+  <!-- Trip Summary Card -->
+  <card class="card text-bg-secondary" style="grid-column: 1 / -1;">
+    <div class="card-header d-flex justify-content-between">
+      <div>Trip Summary</div>
+      <div>
+        <?php if ($trip->isConfirmed()): ?>
+          <span class="badge bg-success" style="font-size:medium; font-weight:200">Confirmed</span>
+        <?php else: ?>
+          <span class="badge bg-danger" style="font-size:medium; font-weight:200">Unconfirmed</span>
+        <?php endif; ?>
+      </div>
+    </div>
+    <div class="card-body text-bg-light container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12 col-lg-7 col-xxl-5">
+          <label for="trip-summary" class="form-label">Summary</label>
+          <input type="text" class="form-control" id="trip-summary" placeholder="Summary" value="<?= $trip->summary ?>">
+        </div>
+        <div class="col-12 col-sm-6 col-md-8 col-lg-5 col-xl-4 col-xxl-3">
+          <label for="trip-pickup-date" class="form-label" data-bs-toggle="tooltip" data-bs-title="The point at which you'd meet the guest/group">Date / Time</label>
+          <input type="datetime-local" class="form-control" id="trip-pickup-date" value="<?= $trip->pickupDate ?>" min="<?= date('Y-m-d\TH:i') ?>">
+        </div>
+        <div class="w-100 d-none d-sm-block d-md-none"></div>
+        <div class="col-sm-6 col-lg-4 col-xl-3 col-xxl-2">
+          <label for="trip-lead-time" class="form-label" data-bs-toggle="tooltip" data-bs-title="When the actual trip starts">Lead Time</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="trip-lead-time" value="<?= round(abs((strtotime($trip->startDate) - strtotime($trip->pickupDate)) / 60 / 60), 2) ?>" placeholder="e.g. 1.5" />
+            <span class="input-group-text">hour(s)</span>
+          </div>
+        </div>
+        <div class="col-sm-6 col-lg-4 col-xl-3 col-xxl-2">
+          <label for="trip-duration" class="form-label" data-bs-toggle="tooltip" data-bs-title="From start to end">Total Trip Duration</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="trip-duration" value="<?= $trip->endDate ? round(abs((strtotime($trip->endDate) - strtotime($trip->startDate)) / 60 / 60), 2) : '' ?>" placeholder="e.g. 1.5" />
+            <span class="input-group-text">hour(s)</span>
+          </div>
+          <input type="hidden" id="trip-end-date" value="<?= $trip->endDate ?>" />
+        </div>
+      </div>
+    </div>
+  </card>
+
+
+  <!-- Pick Up Card -->
+  <card class="card bg-dark-subtle">
+    <div class="card-header">
+      <i class="fa-solid fa-up"></i>
+      Pick Up
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-guests" class="form-label">Guest(s) / Group (Name)</label>
+          <input type="text" class="form-control" id="trip-guests" placeholder="" value="<?= $trip->guests ?>">
+        </div>
+        <div class="col-12 col-lg-9">
+          <label for="trip-guest" class="form-label">Contact Person</label>
+          <input
+            type="text"
+            class="form-control"
+            id="trip-guest"
+            placeholder="Contact"
+            value="<?= $trip->guestId ? $trip->guest->getName() : '' ?>"
+            data-value="<?= $trip->guestId ? $trip->guest->getName() : '' ?>"
+            data-id="<?= $trip->guestId ?>">
+          <div class="invalid-feedback">Please make a valid selection</div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <label for="trip-passengers" class="form-label">Passengers</label>
+          <input type="number" class="form-control" id="trip-passengers" placeholder="# Passengers" value="<?= $trip->passengers ?>">
+        </div>
+        <div class="col-12">
+          <label for="trip-pu-location" class="form-label">Location</label>
+          <input
+            type="text"
+            class="form-control"
+            id="trip-pu-location"
+            placeholder="Pick Up Location"
+            value="<?= $trip->puLocation->name ?>"
+            data-id="<?= $trip->puLocationId ?>"
+            data-value="<?= $trip->puLocation->name ?>"
+            data-type="<?= $trip->puLocation ? $trip->puLocation->type : '' ?>">
+          <div class="invalid-feedback">Please make a valid selection</div>
+          <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->airport ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php endif; ?>
+
+        </div>
+      </div>
+    </div>
+  </card>
+
+
+  <!-- Drop Off Card -->
+  <card class="card bg-dark-subtle">
+    <div class="card-header">
+      <i class="fa-solid fa-down"></i>
+      Drop Off
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-do-location" class="form-label">Location</label>
+          <input
+            type="text"
+            class="form-control"
+            id="trip-do-location"
+            placeholder="Drop Off Location"
+            value="<?= $trip->doLocation->name ?>"
+            data-value="<?= $trip->doLocation->name ?>"
+            data-id="<?= $trip->doLocationId ?>"
+            data-type="<?= $trip->doLocation ? $trip->doLocation->type : '' ?>">
+          <div class="invalid-feedback">Please make a valid selection</div>
+          <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->airport ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
+            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
+              <tr>
+                <th class="bg-dark-subtle px-3">Requestor:</th>
+                <td class="px-3">
+                  <pre class="mb-0"><?= $orginalRequest->destination ?></pre>
+                </td>
+              </tr>
+            </table>
+          <?php endif; ?>
+
+        </div>
+      </div>
+    </div>
+  </card>
+
+  <!-- Flight Details Card -->
+  <card id="flight-info" class="card bg-dark-subtle d-none">
+    <div class="card-header">
+      <i class="fa-duotone fa-solid fa-plane-tail"></i>
+      Flight Details
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-airline-id" class="form-label">Airline</label>
+          <div>
+            <select id="trip-airline-id" data-live-search="true" show-tick class="form-control" data-size="5" data-container="#vehicle-edit-container"></select>
+          </div>
+        </div>
+        <div id="airline-image" class="col-6 pt-4">
+          <?php if ($trip->airline->imageFilename): ?>
+            <img src="/images/airlines/<?= $trip->airline->imageFilename ?>" class="img-fluid">
+          <?php endif; ?>
+        </div>
+        <div class="col-6">
+          <label for="trip-flight-number" class="form-label">Flight Number</label>
+          <div class="input-group">
+            <span class="input-group-text" id="flight-number-prefix"><?= $trip->airline ? $trip->airline->flightNumberPrefix : '&nbsp;&nbsp;' ?></span>
+            <input type="text" class="form-control" id="trip-flight-number" placeholder="Flight number without the prefix" value="<?= $trip->flightNumber ?>">
+          </div>
+        </div>
+        <div class="offset-1 col-10 d-none" id="eta-section">
+          <div class="input-group mt-3">
+            <span class="input-group-text">ETA</span>
+            <input type="datetime-local" class="form-control" id="trip-eta" value="<?= $trip->ETA ?>" min="<?= date('Y-m-d\TH:i') ?>">
+          </div>
+        </div>
+
+        <div class="offset-1 col-10 d-none" id="etd-section">
+          <div class="input-group mt-3">
+            <span class="input-group-text">ETD</span>
+            <input type="datetime-local" class="form-control" id="trip-etd" value="<?= $trip->ETD ?>" min="<?= date('Y-m-d\TH:i') ?>">
+          </div>
+        </div>
+      </div>
+    </div>
+  </card>
+
+
+  <!-- Driver / Vehicle Card -->
+  <card class="card bg-dark-subtle">
+    <div class="card-header">
+      Driver / Vehicle
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-driver-id" class="form-label">Driver</label>
+          <div><select id="trip-driver-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
+        </div>
+        <div class="col-12">
+          <label for="trip-vehicle-id" class="form-label">Vehicle</label>
+          <div><select id="trip-vehicle-id" class="form-control" data-container="#vehicle-edit-container"></select></div>
+        </div>
+        <div class="col-12">
+          <label for="trip-vehicle-pu-options" class="form-label">Where to pick vehicle up from</label>
+          <div>
+            <select id="trip-vehicle-pu-options" class="form-control" data-container="#vehicle-edit-container">
+              <option></option>
+              <option value="pick up from staging" <?= $trip->vehiclePUOptions == 'pick up from staging' ? 'selected' : '' ?>>Pick up from staging</option>
+              <option value="guest will have vehicle" <?= $trip->vehiclePUOptions == 'guest will have vehicle' ? 'selected' : '' ?>>Guest will have vehicle</option>
+              <option value="commence from current location" <?= $trip->vehiclePUOptions == 'commence from current location' ? 'selected' : '' ?>>Commence from current location</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="trip-vehicle-do-options" class="form-label">Where to leave vehicle</label>
+          <div>
+            <select id="trip-vehicle-do-options" class="form-control" data-container="#vehicle-edit-container">
+              <option></option>
+              <option value="return to staging" <?= $trip->vehicleDOOptions == 'return to staging' ? 'selected' : '' ?>>Return to staging</option>
+              <option value="leave vehicle with guest" <?= $trip->vehicleDOOptions == 'leave vehicle with guest' ? 'selected' : '' ?>>Leave vehicle with guest(s)</option>
+              <option value="remain at destination" <?= $trip->vehicleDOOptions == 'remain at destination' ? 'selected' : '' ?>>Remain at destination</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="trip-driver-notes" class="form-label">Notes for the driver</label>
+          <textarea class="form-control font-handwriting" id="trip-driver-notes" rows="5" style="border: 1px solid khaki;background: #ffffbb;font-size:large"><?= $trip->driverNotes ?></textarea>
+        </div>
+      </div>
+    </div>
+  </card>
+
+
+  <!-- Requestor Card -->
+  <card class="card bg-dark-subtle">
+    <div class="card-header">
+      Requestor
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-requestor" class="form-label">Requestor</label>
+          <input
+            type="text"
+            class="form-control"
+            id="trip-requestor"
+            placeholder="Requestor"
+            value="<?= $trip->requestorId ? $trip->requestor->getName() : '' ?>"
+            data-value="<?= $trip->requestorId ? $trip->requestor->getName() : '' ?>"
+            data-id="<?= $trip->requestorId ?>" />
+          <div class="invalid-feedback">Please make a valid selection</div>
+        </div>
+        <div class="col-12">
+          <label for="trip-guest-notes" class="form-label">Notes for the guest</label>
+          <textarea class="form-control font-handwriting" id="trip-guest-notes" rows="5" style="border: 1px solid khaki;background: #ffffbb;font-size:large"><?= $trip->guestNotes ?></textarea>
+        </div>
+      </div>
+    </div>
+  </card>
+
+
+  <!-- General Card -->
+  <card class="card bg-dark-subtle">
+    <div class="card-header">
+      General
+    </div>
+    <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
+      <div class="row">
+        <div class="col-12">
+          <label for="trip-general-notes" class="form-label">General Notes</label>
+          <textarea class="form-control font-handwriting" id="trip-general-notes" rows="5" style="border: 1px solid khaki;background: #ffffbb;font-size:large"><?= $trip->generalNotes ?></textarea>
+        </div>
+      </div>
+    </div>
+  </card>
+
+</div>
+
+
+
+
+<div class="d-flex justify-content-between mt-3">
+  <?php if ($trip->getId()): ?>
+    <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:trip', <?= $trip->getId() ?>)">Delete</button>
+  <?php endif; ?>
+
+  <?php if (!$trip->isConfirmed()): ?>
+    <button class="btn btn-primary ms-auto me-2" onclick="$(document).trigger('buttonSaveAndConfirm:trip', '<?= $trip->getId() ?>')">Save & Confirm</button>
+  <?php endif; ?>
+  <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:trip', '<?= $trip->getId() ?>')">Save</button>
+</div>
+
+
+
+
+
+<script>
   $(async ƒ => {
 
-    let formDirty = false;
-    const tripId = <?=$trip->getId() ?: 'null'?>;
-    let drivers;
-    let vehicles;
-    let startDate;
-    let pickupDate;
-    let endDate;
+    function backToList() {
+      $(document).trigger('trip:reloadList');;
+    }
 
     const airlines = await net.get('/api/get.resource-airlines.php');
 
     $('#trip-airline-id').append($('<option>'));
-    $.each(airlines, function (i, item) {
+    $.each(airlines, function(i, item) {
       $('#trip-airline-id').append($('<option>', {
         value: item.id,
         text: item.name
       }));
     });
 
-    $('select').selectpicker();
+    $('#trips select').selectpicker({ container: false });
 
-    async function loadResources () {
-      drivers = await net.get('/api/get.available-drivers.php', {
+    async function loadResources() {
+      const tripId = $('#tripId').val();
+      const leadTime = isNaN(parseFloat($('#trip-lead-time').cleanNumberVal())) ? 0 : parseInt($('#trip-lead-time').cleanNumberVal() * 60);
+      const pickupDate = moment($('#trip-pickup-date').val());
+      const startDate = moment(pickupDate).subtract(leadTime, 'm');
+      const endDate = moment(startDate).add(input.cleanNumberVal('#trip-duration'), 'h');
+
+      const drivers = await net.get('/api/get.available-drivers.php', {
         startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
         endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
         tripId
@@ -387,7 +387,7 @@ if (!is_null($id) && !$trip->getId()) {
       $('#trip-driver-id').selectpicker('destroy');
       $('#trip-driver-id option').remove();
       $('#trip-driver-id').append($('<option>'));
-      $.each(drivers, function (i, item) {
+      $.each(drivers, function(i, item) {
         const optionProps = {
           value: item.id,
           text: item.driver,
@@ -399,9 +399,11 @@ if (!is_null($id) && !$trip->getId()) {
         }
         $('#trip-driver-id').append($('<option>', optionProps));
       });
-      $('#trip-driver-id').selectpicker()
+      $('#trip-driver-id').selectpicker({
+        container: false
+      })
 
-      vehicles = await net.get('/api/get.available-vehicles.php', {
+      const vehicles = await net.get('/api/get.available-vehicles.php', {
         startDate: startDate.format('YYYY-MM-DD HH:mm:00'),
         endDate: endDate.format('YYYY-MM-DD HH:mm:59'),
         tripId
@@ -409,7 +411,7 @@ if (!is_null($id) && !$trip->getId()) {
       $('#trip-vehicle-id').selectpicker('destroy');
       $('#trip-vehicle-id option').remove();
       $('#trip-vehicle-id').append($('<option>'));
-      $.each(vehicles, function (i, item) {
+      $.each(vehicles, function(i, item) {
         const optionProps = {
           value: item.id,
           text: item.name,
@@ -421,27 +423,25 @@ if (!is_null($id) && !$trip->getId()) {
         }
         $('#trip-vehicle-id').append($('<option>', optionProps));
       });
-      $('#trip-vehicle-id').selectpicker();
-
+      $('#trip-vehicle-id').selectpicker({
+        container: false
+      });
     }
 
-    $('input').off('change').on('change', e => {
-      formDirty = true;
-      $('#trip-action-buttons button').addClass('disabled');
-    })
+    // $('input').off('change').on('change', e => {
+    //   formDirty = true;
+    //   $('#trip-action-buttons button').addClass('disabled');
+    // })
 
-    if (tripId) {
-      startDate = moment('<?=$trip->startDate?>', 'YYYY-MM-DD H:mm:ss');
-      pickupDate = moment('<?=$trip->pickupDate?>', 'YYYY-MM-DD H:mm:ss');
-      endDate = moment('<?=$trip->endDate?>', 'YYYY-MM-DD H:mm:ss');
+    if ($('#tripId').val()) {
       await loadResources();
-      $('#trip-airline-id').selectpicker('val', '<?=$trip->airlineId?>');
-      $('#trip-driver-id').selectpicker('val', '<?=$trip->driverId?>');
-      $('#trip-vehicle-id').selectpicker('val', '<?=$trip->vehicleId?>');
+      $('#trip-airline-id').selectpicker('val', '<?= $trip->airlineId ?>');
+      $('#trip-driver-id').selectpicker('val', '<?= $trip->driverId ?>');
+      $('#trip-vehicle-id').selectpicker('val', '<?= $trip->vehicleId ?>');
     }
 
     $('#trip-airline-id').append($('<option>'));
-    $.each(airlines, function (i, item) {
+    $.each(airlines, function(i, item) {
       $('#trip-airline-id').append($('<option>', {
         value: item.id,
         text: item.name
@@ -450,11 +450,6 @@ if (!is_null($id) && !$trip->getId()) {
 
 
     $('#trip-pickup-date, #trip-duration, #trip-lead-time').on('change', async ƒ => {
-      const leadTime = isNaN(parseFloat(input.cleanNumberVal('#trip-lead-time'))) ? 0 : parseInt(input.cleanNumberVal('#trip-lead-time') * 60);
-      pickupDate = moment($('#trip-pickup-date').val());
-      startDate = moment(pickupDate).subtract(leadTime, 'm');
-      endDate = moment(startDate).add(input.cleanNumberVal('#trip-duration'), 'h');
-
       // The vehicle and/or driver may not be available in the new period, but if they are they will remain "selected".
       const saveDriverId = input.val('#trip-driver-id');
       const saveVehicleId = input.val('#trip-vehicle-id');
@@ -463,57 +458,26 @@ if (!is_null($id) && !$trip->getId()) {
       $('#trip-vehicle-id').selectpicker('val', saveVehicleId);
     });
 
-
-    new Autocomplete(document.getElementById('trip-pu-location'), {
-      fullWidth: true,
-      // highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-locations.php',
+    buildAutoComplete({
+      selector: 'trip-pu-location',
+      apiUrl: '/api/get.autocomplete-locations.php',
       searchFields: ['label', 'short_name'],
-      onSelectItem: (data) => {
-        $('#trip-pu-location')
-          .data('id', data.value)
-          .data('type', data.type)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-        checkForFlight();
-      },
-      fixed: true,
+    });
+    $('#trip-pu-location').on('change', checkForFlight);
+
+    buildAutoComplete({
+      selector: 'trip-guest',
+      apiUrl: '/api/get.autocomplete-guests.php'
     });
 
-    new Autocomplete(document.getElementById('trip-guest'), {
-      fullWidth: true,
-      // highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-guests.php',
-      onSelectItem: (data) => {
-        $('#trip-guest')
-          .data('id', data.value)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
+    buildAutoComplete({
+      selector: 'trip-do-location',
+      apiUrl: '/api/get.autocomplete-locations.php',
+      searchFields: ['label', 'short_name']
     });
+    $('#trip-do-location').on('change', checkForFlight);
 
-    new Autocomplete(document.getElementById('trip-do-location'), {
-      fullWidth: true,
-      // highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-locations.php',
-      searchFields: ['label', 'short_name'],
-      onSelectItem: (data) => {
-        $('#trip-do-location')
-          .data('id', data.value)
-          .data('type', data.type)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-        checkForFlight();
-      },
-      fixed: true,
-    });
-
-
-    $('#trip-airline-id').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+    $('#trip-airline-id').on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
       const airlineId = $('#trip-airline-id').val();
       const item = airlines.filter(airline => airline.id == airlineId);
       const airline = item[0];
@@ -523,22 +487,13 @@ if (!is_null($id) && !$trip->getId()) {
       }
     });
 
-    new Autocomplete(document.getElementById('trip-requestor'), {
-      fullWidth: true,
-      // highlightTyped: true,
-      liveServer: true,
-      server: '/api/get.autocomplete-requestors.php',
-      onSelectItem: (data) => {
-        $('#trip-requestor')
-          .data('id', data.value)
-          .data('value', data.label)
-          .removeClass('is-invalid');
-      },
-      fixed: true,
+    buildAutoComplete({
+      selector: 'trip-requestor',
+      apiUrl: '/api/get.autocomplete-requestors.php'
     });
 
-
     function checkForFlight() {
+      console.debug('Checking for flight');
       if ($('#trip-pu-location').data('type') === 'airport' || $('#trip-do-location').data('type') === 'airport') {
         $('#flight-info').removeClass('d-none');
         if ($('#trip-pu-location').data('type') === 'airport') {
@@ -557,60 +512,82 @@ if (!is_null($id) && !$trip->getId()) {
     }
     checkForFlight();
 
-    $('#btn-save-trip').off('click').on('click', async ƒ => {
-      const buttonSavedText = $('#btn-save-trip').text();
-      $('#btn-save-trip').prop('disabled', true).text('Saving...');
-
-      const data = await getData();
-      if (data) {
-        const resp = await net.post('/api/post.save-trip.php', data);
-        if (resp?.result) {
-          $(document).trigger('tripChange', {tripId});
-          app.closeOpenTab();
-          if (tripId) {
-            app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${tripId}`);
-            $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
-            return ui.toastr.success('Trip saved.', 'Success');
+    if (!documentEventExists('buttonSave:trip')) {
+      $(document).on('buttonSave:trip', async (e, tripId) => {
+        const data = await getData();
+        if (data) {
+          const resp = await net.post('/api/post.save-trip.php', data);
+          if (resp?.result) {
+            $(document).trigger('tripChange', {
+              tripId
+            });
+            if (tripId) {
+              ui.toastr.success('Trip saved.', 'Success');
+              return backToList();
+            }
+            ui.toastr.success('Trip added.', 'Success');
+            return backToList();
           }
-          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${resp?.result}`);
-          $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
-          return ui.toastr.success('Trip added.', 'Success');
+          ui.toastr.error(resp.result.errors[2], 'Error');
+          console.error(resp);
+        }
+      });
+    }
+
+    if (!documentEventExists('buttonSaveAndConfirm:trip')) {
+      $(document).on('buttonSaveAndConfirm:trip', async (e, tripId) => {
+        const data = await getData();
+        if (data) {
+          const resp = await net.post('/api/post.save-trip.php', data);
+          if (resp?.result) {
+            // Confirm the trip
+            const newResp = await net.post('/api/post.confirm-trip.php', { id: tripId });
+            if (newResp?.result) {
+              $(document).trigger('tripChange');
+              ui.toastr.success('Trip Saved and Confirmed.', 'Success');
+              return backToList();
+            }
+          }
         }
         ui.toastr.error(resp.result.errors[2], 'Error');
         console.error(resp);
-        $('#btn-save-trip').prop('disabled', false).text(buttonSavedText);
-      }
-    });
+      });
+    }
 
-    $('#btn-delete-trip').off('click').on('click', async ƒ => {
-      if (await ui.ask('Are you sure you want to delete this trip?')) {
-        const buttonSavedText = $('#btn-delete-trip').text();
-        $('#btn-delete-trip').prop('disabled', true).text('Deleting...');
-
-        const resp = await net.get('/api/get.delete-trip.php', {
-          id: tripId
-        });
-        if (resp?.result) {
-          $(document).trigger('tripChange', {tripId});
-          app.closeOpenTab();
-          return ui.toastr.success('Trip deleted.', 'Success')
+    if (!documentEventExists('buttonDelete:trip')) {
+      $(document).on('buttonDelete:trip', async (e, id) => {
+        if (await ui.ask('Are you sure you want to delete this trip?')) {
+          const resp = await net.get('/api/get.delete-trip.php', {
+            id
+          });
+          if (resp?.result) {
+            $(document).trigger('tripChange', {
+              id
+            });
+            ui.toastr.success('Trip deleted.', 'Success');
+            return backToList();
+          }
+          console.error(resp);
+          ui.toastr.error('There seems to be a problem deleting this trip.', 'Error');
         }
-        console.error(resp);
-        ui.toastr.error('There seems to be a problem deleting this trip.', 'Error');
-        $('#btn-delete-trip').prop('disabled', false).text(buttonSavedText);
-      }
-    });
+      });
+    }
+
 
     $('input, textarea').on('change', getData);
 
 
-
-
     async function getData() {
-      const data = {};
-      let control;
+      const tripId = $('#tripId').val();
+      const leadTime = isNaN(parseFloat($('#trip-lead-time').cleanNumberVal())) ? 0 : parseInt($('#trip-lead-time').cleanNumberVal() * 60);
+      const pickupDate = moment($('#trip-pickup-date').val());
+      const startDate = moment(pickupDate).subtract(leadTime, 'm');
+      const endDate = moment(startDate).add(input.cleanNumberVal('#trip-duration'), 'h');
 
-      data.id = tripId;
+      const data = { tripId, id: tripId };
+      let control;
+      let controlDataValue;
+
       data.summary = input.cleanVal('#trip-summary');
       data.startDate = startDate.format('YYYY-MM-DD HH:mm:ss');
       data.pickupDate = pickupDate.format('YYYY-MM-DD HH:mm:ss');
@@ -620,46 +597,62 @@ if (!is_null($id) && !$trip->getId()) {
       if (control.data('value') != control.val()) {
         control.addClass('is-invalid');
         if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
-          app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
+          $(document).trigger('loadMainSection', {
+            sectionId: 'locations',
+            url: 'section.edit-location.php'
+          });
         }
         return false;
       }
-      data.puLocationId = control.data('id'); data.puLocationId = (data.puLocationId == '') ? null : parseInt(data.puLocationId);
+      data.puLocationId = control.data('id');
+      data.puLocationId = (data.puLocationId == '') ? null : parseInt(data.puLocationId);
 
       control = $('#trip-guest');
-      if ($('#trip-guest').data('value') != $('#trip-guest').val()) {
-        $('#trip-guest').addClass('is-invalid');
-        if (await ui.ask(`"${$('#trip-guest').val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
-          app.openTab('edit-guest', 'Guests/Groups (add)', `section.edit-guest.php`);
+      controlDataValue = $(`<tag>${control.data('value')}</tag>`).text(); // We need this so that values like "Richard O&#039;Brien" can be seen as "Richard O'Brien"
+      if (controlDataValue != control.val() && control.val() != '') {
+        control.addClass('is-invalid');
+        if (await ui.ask(`"${control.val()}" is not a recognized guest or group. Would you like to add a new one?`)) {
+          $(document).trigger('loadMainSection', {
+            sectionId: 'guests',
+            url: 'section.edit-guest.php'
+          });
         }
         return false
       }
-      data.guestId = control.data('id'); data.guestId = (data.guestId == '') ? null : parseInt(data.guestId);
-      data.guests = input.cleanVal('#trip-guests');
-      data.passengers = input.cleanNumberVal('#trip-passengers');
+      data.guestId = control.data('id');
+      data.guestId = (data.guestId == '') ? null : parseInt(data.guestId);
+      data.guests = $('#trip-guests').cleanVal();
+      data.passengers = $('#trip-passengers').cleanNumberVal();
 
       control = $('#trip-do-location');
       if (control.data('value') != control.val()) {
         control.addClass('is-invalid');
         if (await ui.ask(`"${control.val()}" is not a recognized location. Would you like to add a new location?`)) {
-          app.openTab('edit-location', 'Location (add)', `section.edit-location.php`);
+          $(document).trigger('loadMainSection', {
+            sectionId: 'locations',
+            url: 'section.edit-location.php'
+          });
         }
         return false;
       }
-      data.doLocationId = control.data('id'); data.doLocationId = (data.doLocationId == '') ? null : parseInt(data.doLocationId);
+      data.doLocationId = control.data('id');
+      data.doLocationId = (data.doLocationId == '') ? null : parseInt(data.doLocationId);
 
-      data.vehicleId = input.val('#trip-vehicle-id'); data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
-      data.driverId = input.val('#trip-driver-id'); data.driverId = (data.driverId == '') ? null : parseInt(data.driverId);
-      data.airlineId = input.val('#trip-airline-id'); data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
+      data.vehicleId = $('#trip-vehicle-id').val();
+      data.vehicleId = (data.vehicleId == '') ? null : parseInt(data.vehicleId);
+      data.driverId = $('#trip-driver-id').val();
+      data.driverId = (data.driverId == '') ? null : parseInt(data.driverId);
+      data.airlineId = $('#trip-airline-id').val();
+      data.airlineId = (data.airlineId == '') ? null : parseInt(data.airlineId);
 
-      data.flightNumber = input.cleanUpperVal('#trip-flight-number');
+      data.flightNumber = $('#trip-flight-number').intVal();
 
       // We cannot have an ETA AND an ETD. This has previously precipitated errors
       if ($('#trip-pu-location').data('type') === 'airport') {
-        data.ETA = input.val('#trip-eta') ? moment(input.val('#trip-eta')).format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETA = $('#trip-eta').val() ? moment($('#trip-eta').val()).format('YYYY-MM-DD HH:mm:ss') : null;
         data.ETD = null;
       } else {
-        data.ETD = input.val('#trip-etd') ? moment(input.val('#trip-etd')).format('YYYY-MM-DD HH:mm:ss') : null;
+        data.ETD = $('#trip-etd').val() ? moment($('#trip-etd').val()).format('YYYY-MM-DD HH:mm:ss') : null;
         data.ETA = null;
       }
 
@@ -670,25 +663,27 @@ if (!is_null($id) && !$trip->getId()) {
       if (control.data('value') != control.val()) {
         control.addClass('is-invalid');
         if (await ui.ask(`"${control.val()}" is not a recognized user. Would you like to add a new user?`)) {
-          app.openTab('edit-user', 'User (add)', `section.edit-user.php`);
+          $(document).trigger('loadMainSection', {
+            sectionId: 'users',
+            url: 'section.edit-user.php'
+          });
         }
         return false;
       }
-      data.requestorId = control.data('id'); data.requestorId = (data.requestorId == '') ? null : parseInt(data.requestorId);
+      data.requestorId = control.data('id');
+      data.requestorId = (data.requestorId == '') ? null : parseInt(data.requestorId);
 
-      data.guestNotes = input.cleanVal('#trip-guest-notes');
-      data.driverNotes = input.cleanVal('#trip-driver-notes');
-      data.generalNotes = input.cleanVal('#trip-general-notes');
+      data.guestNotes = $('#trip-guest-notes').cleanVal();
+      data.driverNotes = $('#trip-driver-notes').cleanVal();
+      data.generalNotes = $('#trip-general-notes').cleanVal();
       return data;
     }
-
   });
 
   <?php if (!$trip->isEditable()): ?>
-    $('.tab-pane.active input').prop('disabled', true);
-    $('.tab-pane.active textarea').prop('disabled', true);
-    $('.tab-pane.active select').prop('disabled', true);
-    $('.tab-pane.active select').selectpicker('destroy')
-  <?php endif;?>
-
+    // $('.tab-pane.active input').prop('disabled', true);
+    // $('.tab-pane.active textarea').prop('disabled', true);
+    // $('.tab-pane.active select').prop('disabled', true);
+    // $('.tab-pane.active select').selectpicker('destroy')
+  <?php endif; ?>
 </script>

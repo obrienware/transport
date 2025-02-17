@@ -243,7 +243,7 @@ class VehicleReservation extends Base
         r.*, 
         CONCAT(g.first_name,' ',g.last_name) AS guest,
         CONCAT(u.first_name,' ',u.last_name) AS requestor, 
-        v.name AS vehicle
+        v.name AS vehicle, v.description, v.color AS vehicle_color
       FROM vehicle_reservations r
       LEFT OUTER JOIN guests g ON g.id = r.guest_id
       LEFT OUTER JOIN vehicles v ON v.id = r.vehicle_id

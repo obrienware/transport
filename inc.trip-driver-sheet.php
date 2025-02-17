@@ -29,7 +29,7 @@ $pdf->Cell($pageWidth, 30, $trip->summary, 1, 30, 'L', true);
 $pdf->SetFont('Helvetica', '', 11);
 $pdf->SetAligns(['L', 'L']);
 $pdf->SetWidths([150, $pageWidth - 150]);
-$pdf->Row(['Driver', $trip->driver->getName()]);
+$pdf->Row(['Driver', $trip->driver ? $trip->driver->getName() : '']);
 $pdf->Row(['Vehicle', $trip->vehicle->name."\n".$trip->vehiclePUOptions.' - '.$trip->vehicleDOOptions]);
 $pdf->Row(['Trip start', Date('D M j @ g:ia', strtotime($trip->startDate))]);
 $pdf->ln();

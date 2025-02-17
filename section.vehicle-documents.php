@@ -27,9 +27,9 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
                   <?php else: ?>
                     <i class="fa-solid fa-file me-2 fa-xl"></i>
                   <?php endif; ?>
-                  <a class="text-reset text-decoration-none text-capitalize" href="/documents/<?=$row->filename?>" target="_blank"><?=$row->name?></a>
+                  <a class="text-reset text-decoration-none text-capitalize" href="/documents/<?= $row->filename ?>" target="_blank"><?= $row->name ?></a>
                 </div>
-                <div><?=Date('m/d/Y', strtotime($row->created))?></div>
+                <div><?= Date('m/d/Y', strtotime($row->created)) ?></div>
               </div>
             </td>
           </tr>
@@ -38,8 +38,11 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
 
     <?php else: ?>
 
-      <div class="alert alert-info">
-        There are no documents for this vehicle at this time.
+      <div class="d-flex my-3">
+        <div class="alert alert-info mx-auto" role="alert">
+          <i class="fa-solid fa-info-circle"></i>
+          There are no documents for this vehicle at this time.
+        </div>
       </div>
 
     <?php endif; ?>
@@ -48,18 +51,18 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
 </section>
 
 <section id="section-vehicle-document-upload">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col">
-          <div id="vehicle-document-dropzone" class="mb-3 dropzone">
-            <div class="dz-message">
-              <div>Drop files here, or click to upload</div>
-              <div>(Valid file types are PDFs and Images)</div>
-            </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <div id="vehicle-document-dropzone" class="mb-3 dropzone">
+          <div class="dz-message">
+            <div>Drop files here, or click to upload</div>
+            <div>(Valid file types are PDFs and Images)</div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </section>
 
 <script type="module">
@@ -69,11 +72,11 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
 
   $(async ƒ => {
 
-    const vehicleId = '<?=$_GET['vehicleId']?>';
+    const vehicleId = '<?= $_GET['vehicleId'] ?>';
     let documentName = '';
     <?php $count = count($rows); ?>
     <?php if ($count > 0): ?>
-      $('#document-count').html('<?=$count?>').removeClass('d-none');
+      $('#document-count').html('<?= $count ?>').removeClass('d-none');
     <?php endif; ?>
 
     const myDropzone = new Dropzone('#vehicle-document-dropzone', {
@@ -85,8 +88,8 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
       maxFilesize: (10 * 1024 * 1024), // in bytes, so 10MB
     });
 
-    function reloadSection () {
-      $('#section-vehicle-documents-list').parent('.tab-pane.active').load(`<?=$_SERVER['REQUEST_URI']?>`); // Refresh this page
+    function reloadSection() {
+      $('#section-vehicle-documents-list').parent('.tab-pane.active').load(`<?= $_SERVER['REQUEST_URI'] ?>`); // Refresh this page
     }
 
     myDropzone.on("sending", function(file, xhr, formData) {
@@ -107,10 +110,9 @@ $params = ['vehicle_id' => $_GET['vehicleId']];
       reloadSection();
     });
 
-    myDropzone.on('error', async function (file, message) {
+    myDropzone.on('error', async function(file, message) {
       myDropzone.removeAllFiles(true);
       await ui.alertError(message, 'Error');
     });
   });
-
 </script>

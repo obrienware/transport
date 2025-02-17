@@ -11,9 +11,17 @@ use Generic\InputHandler;
 $start = InputHandler::getString(INPUT_GET, 'start');
 $end = InputHandler::getString(INPUT_GET, 'end');
 $requestorId = InputHandler::getInt(INPUT_GET, 'requestorId');
+$history = InputHandler::getBool(INPUT_GET, 'history');
+$onlyMe = InputHandler::getBool(INPUT_GET, 'onlyMe');
 
 if ($requestorId) {
-  $criteria = "AND e.requestor_id = {$requestorId}";
+  $criteria = " AND e.requestor_id = {$requestorId}";
+}
+if (!$history) {
+  $criteria .= " AND end_date >= CURDATE()";
+}
+if ($onlyMe) {
+  $criteria .= " AND t.driver_id = {$_SESSION['user']->id}";
 }
 
 $db = Database::getInstance();
@@ -40,7 +48,6 @@ $query = "
     {$criteria}
 ";
 $params = ['start' => $start, 'end' => $end];
-
 
 $result = [];
 if ($rows = $db->get_rows($query, $params)) {

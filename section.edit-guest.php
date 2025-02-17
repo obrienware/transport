@@ -8,95 +8,133 @@ $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)
 $id = $id === false ? null : $id;
 $guest = new Guest($id);
 
-if (!is_null($id) && !$guest->getId()) {
+if (!is_null($id) && !$guest->getId())
+{
   exit(Utils::showResourceNotFound());
 }
+$guestId = $guest->getId();
 ?>
 
-<div class="container mt-2">
-  <?php if ($guest->getId()): ?>
-    <h2>Edit Contact</h2>
-  <?php else: ?>
-    <h2>Add Contact</h2>
-  <?php endif; ?>
-  <div>
-    <div class="row">
-      <div class="col-md-6">
+<!-- Back button -->
+<div class="d-flex justify-content-between top-page-buttons mb-2">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('guests:reloadList');">
+    <i class="fa-solid fa-chevron-left"></i>
+    List
+  </button>
+</div>
 
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="guest-first-name" placeholder="First Name" value="<?=$guest->firstName?>">
-          <label for="guest-first-name">First Name</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="guest-last-name" placeholder="Last Name" value="<?=$guest->lastName?>">
-          <label for="guest-last-name">Last Name</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="guest-phone-number" placeholder="Phone Number" value="<?=$guest->phoneNumber?>">
-          <label for="guest-phone-number">Phone Number</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="guest-email-address" placeholder="Email Address" value="<?=$guest->emailAddress?>">
-          <label for="guest-email-address">Email Address</label>
-        </div>
+<?php if ($guest->getId()): ?>
+  <h2>Edit Contact</h2>
+  <input type="hidden" id="guest-id" value="<?= $guest->getId() ?>">
+<?php else: ?>
+  <h2>Add Contact</h2>
+  <input type="hidden" id="guest-id" value="">
+<?php endif; ?>
 
-      </div>
+
+<div class="row">˝
+  <div class="col-12 col-lg-4 col-xxl-3">
+    <div class="mb-3">
+      <label class="form-label" for="guest-first-name">First Name</label>
+      <input type="text" class="form-control" id="guest-first-name" placeholder="First Name" value="<?= $guest->firstName ?>">
     </div>
+  </div>
 
-    <div class="row my-4">
-      <div class="col d-flex justify-content-between">
-        <?php if ($guest->getId()): ?>
-          <button class="btn btn-outline-danger px-4" id="btn-delete-guest">Delete</button>
-        <?php endif; ?>
-        <button class="btn btn-primary px-4" id="btn-save-guest">Save</button>
-      </div>
+  <div class="col-12 col-lg-4 col-xxl-3">
+    <div class="mb-3">
+      <label class="form-label" for="guest-last-name">Last Name</label>
+      <input type="text" class="form-control" id="guest-last-name" placeholder="Last Name" value="<?= $guest->lastName ?>">
     </div>
+  </div>
 
+  <div class="col-12 col-lg-4 col-xxl-3">
+    <div class="mb-3">
+      <label for="guest-type" class="form-label">Type</label>
+      <select class="form-select" id="guest-type">
+        <option value="">Select Type</option>
+        <option value="Guest" <?= $guest->type === 'Guest' ? 'selected' : '' ?>>Guest / VIP</option>
+        <option value="Student" <?= $guest->type === 'Student' ? 'selected' : '' ?>>Student / Intern</option>
+        <option value="Staff" <?= $guest->type === 'Staff' ? 'selected' : '' ?>>Staff</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4 col-xxl-3">
+    <div class="mb-3">
+      <label class="form-label" for="guest-phone-number">Phone Number</label>
+      <input type="tel" class="form-control" id="guest-phone-number" placeholder="Phone Number" value="<?= $guest->phoneNumber ?>">
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4 col-xxl-3">
+    <div class="mb-3">
+      <label class="form-label" for="guest-email-address">Email Address</label>
+      <input type="email" class="form-control" id="guest-email-address" placeholder="Email Address" value="<?= $guest->emailAddress ?>">
+    </div>
   </div>
 </div>
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<div class="d-flex justify-content-between mt-3">
+  <?php if ($guestId): ?>
+    <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:guest', <?= $guestId ?>)">Delete</button>
+  <?php endif; ?>
+  <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:guest', '<?= $guestId ?>')">Save</button>
+</div>
 
+
+<script>
   $(async ƒ => {
 
-    const guestId = <?=$guest->getId() ?: 'null'?>;
-    $('#btn-save-guest').off('click').on('click', async ƒ => {
-      const resp = await net.post('/api/post.save-guest.php', {
-        id: guestId,
-        firstName: input.cleanVal('#guest-first-name'),
-        lastName: input.cleanVal('#guest-last-name'),
-        emailAddress: input.cleanVal('#guest-email-address'),
-        phoneNumber: input.cleanVal('#guest-phone-number'),
+    function backToList() {
+      $(document).trigger('loadMainSection', {
+        sectionId: 'guests',
+        url: 'section.list-guests.php',
+        forceReload: true
       });
-      if (resp?.result) {
-        // setTimeout(ƒ => {location.href = 'page.guests.list.php'}, 3000);
-        $(document).trigger('guestChange', {guestId});
-        app.closeOpenTab();
-        if (guestId) return ui.toastr.success('Guest saved.', 'Success');
-        return ui.toastr.success('Guest added.', 'Success')
-      }
-      ui.toastr.error(resp . result . errors[2], 'Error');
-      console.log(resp);
-    });
+    }
 
-    $('#btn-delete-guest').on('click', async ƒ => {
-      if (await ui.ask('Are you sure you want to delete this guest?')) {
-        const resp = await net.get('/api/get.delete-guest.php', {
-          id: '<?=$guest->getId()?>'
+    if (!documentEventExists('buttonSave:guest')) {
+      $(document).on('buttonSave:guest', async (e, id) => {
+        const guestId = id;
+        const resp = await net.post('/api/post.save-guest.php', {
+          id: guestId,
+          firstName: $('#guest-first-name').cleanProperVal(),
+          lastName: $('#guest-last-name').cleanProperVal(),
+          emailAddress: $('#guest-email-address').cleanVal(),
+          phoneNumber: $('#guest-phone-number').cleanVal(),
+          type: $('#guest-type').val()
         });
         if (resp?.result) {
-          $(document).trigger('guestChange', {guestId});
-          app.closeOpenTab();
-          return ui.toastr.success('Guest deleted.', 'Success')
+          $(document).trigger('guestChange');
+          if (guestId) {
+            ui.toastr.success('Contact/Guest saved.', 'Success');
+            return backToList();
+          }
+          ui.toastr.success('Contact/Guest added.', 'Success');
+          return backToList();
         }
+        ui.toastr.error(resp.result.errors[2], 'Error');
         console.log(resp);
-        ui.toastr.error('There seems to be a problem deleting guest.', 'Error');
-      }
-    });
+      });
+    }
+
+    if (!documentEventExists('buttonDelete:guest')) {
+      $(document).on('buttonDelete:guest', async (e, id) => {
+        const guestId = id;
+        if (await ui.ask('Are you sure you want to delete this contact/guest?')) {
+          const resp = await net.get('/api/get.delete-guest.php', {
+            id: guestId
+          });
+          if (resp?.result) {
+            $(document).trigger('guestChange');
+            ui.toastr.success('Contact/Guest deleted.', 'Success');
+            return backToList();
+          }
+          console.error(resp);
+          ui.toastr.error('There seems to be a problem deleting contact/guest.', 'Error');
+        }
+      });
+    }
 
   });
-
 </script>

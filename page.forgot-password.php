@@ -1,5 +1,5 @@
-<?php 
-session_destroy(); 
+<?php
+session_destroy();
 $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 ?>
 <!DOCTYPE html>
@@ -40,64 +40,66 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 	<!-- All our customized javascript -->
-	<script type="text/javascript" src="js/common.js?<?=filemtime('js/common.js')?>"></script>
+	<script type="text/javascript" src="js/common.js?<?= filemtime('js/common.js') ?>"></script>
 
 	<!-- Stylesheets -->
 	<!-- Our main (custom) Bootstrap theme -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 	<!-- And of course our own styling -->
-	<link rel="stylesheet" type="text/css" href="css/style.css?<?=filemtime('css/style.css')?>">
+	<link rel="stylesheet" type="text/css" href="css/style.css?<?= filemtime('css/style.css') ?>">
 
 </head>
 
 <body>
-  <div class="container-login100">
-    <div class="row w-100">
-      <div class="bg-white rounded d-flex flex-column text-center shadow-lg p-4 mx-auto" style="max-width:375px">
-        <h1 class="my-4 fw-bold text-primary-emphasis">
-					<img src="/images/logo.svg" style="height:2em"/>
+	<div class="container-login100">
+		<div class="row w-100">
+			<div class="bg-white rounded d-flex flex-column text-center shadow-lg p-4 mx-auto" style="max-width:375px">
+				<h1 class="my-4 fw-bold text-primary-emphasis">
+					<img src="/images/logo.svg" style="height:2em" />
 					Transport
 				</h1>
-        <h2 class="mb-5 fw-light">Forgot Password</h2>
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="username" placeholder="Username">
-          <label for="username">Username</label>
-        </div>
-        <div class="mt-4 d-flex justify-content-between">
-          <a href="page.authenticate.php" class="px-5 btn btn-outline-primary btn-lg">Log In</a>
-          <button id="btn-reset-password" class="px-5 btn btn-primary btn-lg">Reset</button>
-        </div>
-      </div>
-    </div>
-  </div>
+				<h2 class="mb-5 fw-light">Forgot Password</h2>
+				<div class="form-floating mb-3">
+					<input type="text" class="form-control" id="username" placeholder="Username">
+					<label for="username">Username</label>
+				</div>
+				<div class="mt-3 d-flex justify-content-around">
+					<button id="btn-reset-password" class="px-5 btn btn-primary btn-lg">Reset</button>
+				</div>
+				<a href="page.authenticate.php" class="mt-2 px-5 mx-auto"><small>Return to Log In</small></a>
+			</div>
+		</div>
+	</div>
 
-  
-  <script type="module">
-    import * as input from '/js/formatters.js';
-    import * as ui from '/js/notifications.js';
-    import * as net from '/js/network.js';
 
-    $(async ƒ => {
+	<script type="module">
+		import * as input from '/js/formatters.js';
+		import * as ui from '/js/notifications.js';
+		import * as net from '/js/network.js';
+
+		$(async ƒ => {
 
 			$('#username').on('keyup', async ƒ => {
 				if (ƒ.keyCode === 13) return $('#btn-reset-password').click();
 			});
 
 			$('#btn-reset-password').on('click', async ƒ => {
-        const username = input.cleanVal('#username');
-        const resp = await net.post('/api/post.forgot-password.php', {username});
-        if (resp.result) {
-          await alertSuccess('A reset link has been sent. Please check your email.');
-          return location.href = 'page.authenticate.php';
-        }
-        await alertError('Could not verify that username.', 'Sorry...');
-        return console.log(resp);
-      });
+				const username = input.cleanVal('#username');
+				const resp = await net.post('/api/post.forgot-password.php', {
+					username
+				});
+				if (resp.result) {
+					await ui.alertSuccess('A reset link has been sent. Please check your email.');
+					return location.href = 'page.authenticate.php';
+				}
+				await ui.alertError('Could not verify that username.', 'Sorry...');
+				return console.log(resp);
+			});
 
 
-    });
-
-  </script>
+		});
+	</script>
 </body>
+
 </html>

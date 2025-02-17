@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css?family=Kalam&display=swap');
+
+/* :root {
+  --bs-font-sans-serif: "Host Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-btn-active-bg: white;
+} */
+:root {
+  --bs-blue: #428bca;
+  --bs-primary: #428bca;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.hidden-content {
+  visibility: hidden;
+}
+
+td:hover .hidden-content {
+  visibility: visible;
+}
+
+#request-type-section .btn-check:checked+.btn {
+  box-shadow: var(--bs-box-shadow-lg) !important;
+}
+
+.font-handwriting {
+  font-family: 'Kalam', cursive;
+}
+
+
+.container-login100 {
+  width: 100%;
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: #0250c5;
+  background: -webkit-linear-gradient(bottom, #0250c5, #d43f8d);
+  background: -o-linear-gradient(bottom, #0250c5, #d43f8d);
+  background: -moz-linear-gradient(bottom, #0250c5, #d43f8d);
+  background: linear-gradient(bottom, #0250c5, #d43f8d);
+  position: relative;
+  z-index: 1;
+}
+
+.container-login100::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-image: url('../images/img-01.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+
+.form-label {
+  margin-bottom: .1rem;
+  font-size: smaller;
+}
+
+
+/* h4.ec-event-title, .ec-event-time {
+  font-size: small;
+}
+h4.ec-event-title {
+  padding-top: 2px;
+} */
+
+.table td.fit,
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 2em;
+  right: 1em;
+  text-decoration: none;
+  color: var(--primary);
+  /* background-color: rgba(var(--color-primary), 0.80); */
+  font-size: 12px;
+  padding: 1em;
+  display: none;
+  z-index: 1;
+}
+
+.back-to-top:hover {
+  text-decoration: none;
+}
+
+.dropzone {
+  border: 5px dashed #ccc;
+  border-radius: 1em;
+  background-color: #eee;
+}
+
+.postit {
+	font-family: 'Kalam';
+  border: 1px solid khaki;
+  border-radius: 0;
+  letter-spacing:-1px;
+
+	line-height: 1;
+	width: 275px;
+	min-height:250px;
+	max-height:250px;
+	padding:30px;
+	position:relative;
+	font-size:22px;
+	border-bottom-right-radius: 60px 5px;
+	display:inline-block;
+	background: #ffffbb; /* Old browsers */
+	background: -moz-linear-gradient(-45deg, #ffffbb 81%, #ffffbb 82%, #ffffbb 82%, #ffffc6 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right bottom, color-stop(81%,#ffffbb), color-stop(82%,#ffffbb), color-stop(82%,#ffffbb), color-stop(100%,#ffffc6)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(-45deg, #ffffbb 81%,#ffffbb 82%,#ffffbb 82%,#ffffc6 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(-45deg, #ffffbb 81%,#ffffbb 82%,#ffffbb 82%,#ffffc6 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(-45deg, #ffffbb 81%,#ffffbb 82%,#ffffbb 82%,#ffffc6 100%); /* IE10+ */
+	background: linear-gradient(135deg, #ffffbb 81%,#ffffbb 82%,#ffffbb 82%,#ffffc6 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffbb', endColorstr='#ffffc6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+}
+.postit:after {
+	content: "";
+	position:absolute;
+	z-index:-1;
+	right:-0px; bottom:20px;
+	width:200px;
+	height: 25px;
+	background: rgba(0, 0, 0, 0.2);
+	box-shadow:2px 15px 5px rgba(0, 0, 0, 0.40);
+	-moz-transform: matrix(-1, -0.1, 0, 1, 0, 0);
+	-webkit-transform: matrix(-1, -0.1, 0, 1, 0, 0);
+	-o-transform: matrix(-1, -0.1, 0, 1, 0, 0);
+	-ms-transform: matrix(-1, -0.1, 0, 1, 0, 0);
+	transform: matrix(-1, -0.1, 0, 1, 0, 0);
+}
+
+
+.tag {
+  display: inline-block;
+  font-weight: 400;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  /* user-select: none; */
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: .375rem .5rem;
+  font-size: .9rem;
+  line-height: 1.0;
+  border-radius: .25rem;
+}
+.tag.tag-primary {
+  color: rgb(var(--bs-primary-rgb));
+  border: 1px solid rgba(var(--bs-primary-rgb), .5);
+  background-color: rgba(var(--bs-primary-rgb), .1) !important;
+}
+.tag.tag-success {
+  color: rgb(var(--bs-success-rgb));
+  border: 1px solid rgba(var(--bs-success-rgb), .5);
+  background-color: rgba(var(--bs-success-rgb), .1) !important;
+}
+.tag.tag-info {
+  color: rgb(var(--bs-info-rgb));
+  border: 1px solid rgba(var(--bs-info-rgb), .5);
+  background-color: rgba(var(--bs-info-rgb), .1) !important;
+}
+.tag.tag-warning {
+  color: rgb(var(--bs-warning-rgb));
+  border: 1px solid rgba(var(--bs-warning-rgb), .5);
+  background-color: rgba(var(--bs-warning-rgb), .1) !important;
+}
+.tag.tag-danger {
+  color: rgb(var(--bs-danger-rgb));
+  border: 1px solid rgba(var(--bs-danger-rgb), .5);
+  background-color: rgba(var(--bs-danger-rgb), .1) !important;
+}
+.tag.tag-muted {
+  color: #aaa;
+  border: 1px solid #bbb;
+  background-color: #eee !important;
+}
+.tag.tag-monospace {
+  font-family: 'Roboto Mono', monospace;
+}
+
+
+
+/* Our Custom Cube Loader */
+.loader {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  position: relative;
+  border: 4px solid #DDDDDD;
+  top: 50%;
+  animation: loader 4s infinite ease;
+}
+.loader-inner {
+  vertical-align: top;
+  display: inline-block;
+  width: 100%;
+  background-color: #DDDDDD;
+  animation: loader-inner 4s infinite ease-in;
+}
+@keyframes loader {
+  0% {transform: rotate(0deg);}
+  25% {transform: rotate(180deg);}
+  50% {transform: rotate(180deg);}
+  75% {transform: rotate(360deg);}
+  100% {transform: rotate(360deg);}
+}
+@keyframes loader-inner {
+  0% {height: 0%;}
+  25% {height: 0%;}
+  50% {height: 100%;}
+  75% {height: 100%;}
+  100% {height: 0%;}
+}
+
+/**
+ * Loading Animation Snippet
+ */
+
+ .loading {
+	color: transparent;
+	background: linear-gradient(100deg, #eceff1 30%, #f6f7f8 50%, #eceff1 70%);
+	background-size: 400%;
+	animation: loading 1.2s ease-in-out infinite;
+}
+
+@keyframes loading {
+	0% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0 50%;
+	}
+}
+
+@media (max-width: 768px) {
+  .hidden-content {
+    visibility: visible;
+  }
+}
+
+
+.bootstrap-select>.dropdown-toggle {
+  background-color: white;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+}
+
+.datetime {
+  border-left: 1px solid lightslategray;
+  border-right: 1px solid lightslategray;
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: #aaa !important;
+  font-family: 'Kalam', cursive;
+}
