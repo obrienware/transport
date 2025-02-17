@@ -17,7 +17,7 @@ if (!is_null($id) && !$blockoutId)
 
 <!-- Back button -->
 <div class="d-flex justify-content-between top-page-buttons mb-2">
-  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('blockout:reloadList');">
+  <button class="btn btn-sm btn-outline-primary px-2 me-auto" onclick="$(document).trigger('myblockout:reloadList');">
     <i class="fa-solid fa-chevron-left"></i>
     List
   </button>
@@ -60,9 +60,9 @@ if (!is_null($id) && !$blockoutId)
 
   <div class="d-flex justify-content-between mt-3">
     <?php if ($blockoutId): ?>
-      <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:blockout', <?= $blockoutId ?>)">Delete</button>
+      <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:myblockout', <?= $blockoutId ?>)">Delete</button>
     <?php endif; ?>
-    <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:blockout', '<?= $blockoutId ?>')">Save</button>
+    <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:myblockout', '<?= $blockoutId ?>')">Save</button>
   </div>
 
 </div>
@@ -72,14 +72,14 @@ if (!is_null($id) && !$blockoutId)
 
     function backToList() {
       $(document).trigger('loadMainSection', {
-        sectionId: 'blockouts',
-        url: 'section.list-blockout-dates.php',
+        sectionId: 'myBlockouts',
+        url: 'section.list-my-blockout-dates.php',
         forceReload: true
       });
     }
 
-    if (!documentEventExists('buttonSave:blockout')) {
-      $(document).on('buttonSave:blockout', async (e, id) => {
+    if (!documentEventExists('buttonSave:myblockout')) {
+      $(document).on('buttonSave:myblockout', async (e, id) => {
         const blockoutId = id;
         if (!$('#blockout-from-datetime').val() || !$('#blockout-to-datetime').val()) return ui.toastr.error('Please select both start and end dates.', 'Error');
         const resp = await net.post('/api/post.save-blockout.php', {
@@ -90,7 +90,7 @@ if (!is_null($id) && !$blockoutId)
           note: $('#blockout-note').cleanVal()
         });
         if (resp?.result) {
-          $(document).trigger('blockoutChange');
+          $(document).trigger('myblockoutChange');
           if (blockoutId) {
             ui.toastr.success('Blockout dates saved.', 'Success');
             return backToList();
@@ -103,13 +103,13 @@ if (!is_null($id) && !$blockoutId)
       });
     }
 
-    if (!documentEventExists('buttonSaveAndConfirm:blockout')) {
-      $(document).on('buttonSaveAndConfirm:blockout', async (e, id) => {
+    if (!documentEventExists('buttonSaveAndConfirm:myblockout')) {
+      $(document).on('buttonSaveAndConfirm:myblockout', async (e, id) => {
         const blockoutId = id;
         if (await ui.ask('Are you sure you want to delete these blockout dates?')) {
           const resp = await net.get('/api/get.delete-blockout.php', { id: blockoutId });
           if (resp?.result) {
-            $(document).trigger('blockoutChange', );
+            $(document).trigger('myblockoutChange', );
             ui.toastr.success('Blockout dates deleted.', 'Success');
             return backToList();
           }
