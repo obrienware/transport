@@ -131,6 +131,7 @@
         </button>
 
         <!-- Reports -->
+        <?php if (allowedRoles(['developer', 'manager'])) : ?>
         <a href="#submenu1" class="menu-item" data-bs-toggle="collapse">
           <div class="d-flex align-items-center">
             <i class="fa-duotone fa-solid fa-file-lines menu-icon"></i>
@@ -142,6 +143,7 @@
           <button class="submenu-item" data-rel="auditTrail" onclick="$(document).trigger('menuSelect', 'auditTrail')">Audit Trail</button>
           <button class="submenu-item" data-rel="authenticationLog" onclick="$(document).trigger('menuSelect', 'authenticationLog')">Authentication Log</button>
         </div>
+        <?php endif; ?>
 
         <!-- Settings -->
         <a href="#submenu2" class="menu-item" data-bs-toggle="collapse">
@@ -153,16 +155,18 @@
         </a>
         <div class="collapse submenu" id="submenu2">
           <button class="submenu-item" data-rel="driverNotes" onclick="$(document).trigger('menuSelect', 'driverNotes')">- Driver Notes</button>
+          <button class="submenu-item" data-rel="guests" onclick="$(document).trigger('menuSelect', 'guests')">- Contact/Guest List</button>
+          <button class="submenu-item" data-rel="locations" onclick="$(document).trigger('menuSelect', 'locations')">- Locations</button>
           <button class="submenu-item" data-rel="users" onclick="$(document).trigger('menuSelect', 'users')">- Users</button>
+          <?php if (allowedRoles(['developer', 'manager'])) : ?>
           <button class="submenu-item" data-rel="blockouts" onclick="$(document).trigger('menuSelect', 'blockouts')">- Driver Block Out Dates</button>
           <button class="submenu-item" data-rel="departments" onclick="$(document).trigger('menuSelect', 'departments')">- Departments</button>
-          <button class="submenu-item" data-rel="guests" onclick="$(document).trigger('menuSelect', 'guests')">- Contact List</button>
-          <button class="submenu-item" data-rel="locations" onclick="$(document).trigger('menuSelect', 'locations')">- Locations</button>
           <button class="submenu-item" data-rel="airlines" onclick="$(document).trigger('menuSelect', 'airlines')">- Airlines</button>
           <button class="submenu-item" data-rel="airports" onclick="$(document).trigger('menuSelect', 'airports')">- Airports</button>
           <button class="submenu-item" data-rel="airportLocations" onclick="$(document).trigger('menuSelect', 'airportLocations')">- Airport Locations</button>
           <button class="submenu-item" data-rel="emailTemplates" onclick="$(document).trigger('menuSelect', 'emailTemplates')">- Email Templates</button>
           <button class="submenu-item" data-rel="config" onclick="$(document).trigger('menuSelect', 'config')">- Config</button>
+          <?php endif; ?>
         </div>
 
         <a href="#submenu3" class="menu-item" data-bs-toggle="collapse">
