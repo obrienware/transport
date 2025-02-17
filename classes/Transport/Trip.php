@@ -428,6 +428,8 @@ class Trip extends Base
 				AND t.archived IS NULL
 				-- AND t.start_date < DATE_ADD(CURDATE(), INTERVAL 7 DAY)
 				AND completed IS NULL
+				AND t.start_date IS NOT NULL
+				AND t.end_date IS NOT NULL
 			ORDER BY t.start_date
 			LIMIT {$limit}
 		";
