@@ -243,6 +243,11 @@ button.menu-item, button.submenu-item {
   #dashboard {
     padding-top: 3em;
   }
+  
+  .main-section {
+    padding-bottom: 4em
+  }
+  
 }
 
 

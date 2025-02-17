@@ -230,7 +230,7 @@
 
 
     <!-- Main Content -->
-    <section id="main-content" class="content" style="display: block; overflow-y: auto; padding-bottom: 5rem">
+    <section id="main-content" class="content" style="display: block; overflow-y: auto;">
 
       <div id="dashboard" class="main-section">
         <div>
