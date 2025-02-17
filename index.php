@@ -244,10 +244,10 @@
 
         <div>
 
-          <h2 style="font-weight:200">Hello <span style="font-weight:800; color:goldenrod"><?= $user->firstName?></span>!</h2>
+          <h2 style="font-weight:200">Hello <span style="font-weight:800; color:goldenrod"><?= $user->firstName ?></span>!</h2>
           <div class="alert alert-warning" style="max-width: 600px;">
             <p class="lead">
-              Please be aware that this web app is a work-in-progress and is currently under active development. 
+              Please be aware that this web app is a work-in-progress and is currently under active development.
               With this in mind, paying careful attention to aspects that may not be functioning as expected is greatly appreciated.
               Please report any issues to <a href="mailto:richard@obrienware.com">richard@obrienware.com</a>.
             </p>
@@ -285,8 +285,13 @@
     import * as input from '/js/formatters.js';
     import * as ui from '/js/notifications.js';
     import * as net from '/js/network.js';
-    import { initListPage } from '/js/listpage-helper.js';
-    import { hexToRgba, luminanceColor } from '/js/helpers.js';
+    import {
+      initListPage
+    } from '/js/listpage-helper.js';
+    import {
+      hexToRgba,
+      luminanceColor
+    } from '/js/helpers.js';
 
     window.input = input;
     window.ui = ui;
@@ -457,7 +462,11 @@
 
 
     function buildAutoComplete(data) {
-      const { selector, apiUrl, searchFields } = data;
+      const {
+        selector,
+        apiUrl,
+        searchFields
+      } = data;
       const options = {
         fullWidth: false,
         liveServer: true,
@@ -479,14 +488,20 @@
 
     $(document).ajaxStop(() => {
       $('.datetime:not(.short):not(.formatted)').toArray().forEach(item => {
-		    const value = moment($(item).html(), 'YYYY-MM-DD HH:mm:ss');
-		    if (value.isValid()) {
-			    // $(item).addClass('formatted').html(value.format('llll'));
-			    $(item).addClass('formatted').html(`<div>${value.format('ddd MMM D')}</div><div class="fw-light" style="font-size:smaller">${value.format('h:mma')}</div>`);
-		    }
-	    });
+        const value = moment($(item).html(), 'YYYY-MM-DD HH:mm:ss');
+        if (value.isValid()) {
+          // $(item).addClass('formatted').html(value.format('llll'));
+          $(item).addClass('formatted').html(`<div>${value.format('ddd MMM D')}</div><div class="fw-light" style="font-size:smaller">${value.format('h:mma')}</div>`);
+        }
+      });
     });
 
+    function isMobile() {
+      if (navigator.userAgentData) {
+        return navigator.userAgentData.mobile;
+      }
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
   </script>
 
 </body>

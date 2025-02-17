@@ -48,7 +48,7 @@ if (!is_null($id) && !$reservation->getId())
 
     <div class="col-12 col-sm-6 col-md-12 col-lg-6 col-xl-4 col-xxl-3">
       <div class="mb-3">
-        <label for="reservation-guest" class="form-label">Guest</label>
+        <label for="reservation-guest" class="form-label">Guest / Driver</label>
         <input
           type="text"
           class="form-control"
