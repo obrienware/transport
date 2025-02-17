@@ -55,6 +55,7 @@ $guestId = $guest->getId();
         <option value="Guest" <?= $guest->type === 'Guest' ? 'selected' : '' ?>>Guest / VIP</option>
         <option value="Student" <?= $guest->type === 'Student' ? 'selected' : '' ?>>Student / Intern</option>
         <option value="Staff" <?= $guest->type === 'Staff' ? 'selected' : '' ?>>Staff</option>
+        <option value="Remote Staff" <?= $guest->type === 'Remote Staff' ? 'selected' : '' ?>>Staff (Remote)</option>
       </select>
     </div>
   </div>
