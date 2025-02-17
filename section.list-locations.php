@@ -23,6 +23,7 @@ use Transport\Location;
     <tr class="table-dark">
       <th>Name</th>
       <th data-priority="2">Short Name</th>
+      <th>Type</th>
       <th>Map Address</th>
       <th class="fit no-sort" data-priority="1">&nbsp;</th>
     </tr>
@@ -33,6 +34,7 @@ use Transport\Location;
         <tr data-id="<?= $row->id ?>">
           <td><?= $row->name ?></td>
           <td><?= $row->short_name ?></td>
+          <td><?= $row->type ?></td>
           <td data-order="<?= $row->map_address ?>">
             <?php if ($row->place_id): ?>
               <i class="fa-solid fa-location-check fa-xl text-primary me-2"></i>
