@@ -628,5 +628,9 @@
       return data;
     }
 
+    $('#trip-pu-location, #trip-do-location').on('change', function(e) {
+      checkForFlight();
+    });
+
   });
 </script>
