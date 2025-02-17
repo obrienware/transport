@@ -143,7 +143,8 @@ use Transport\Location;
 
     const tableId = 'table-locations';
     const dataTableOptions = {
-      responsive: true
+      responsive: true,
+      paging: true,
     };
     const reloadOnEventName = 'locationChange';
     const parentSectionId = `#<?= $_GET["loadedToId"] ?>`;
