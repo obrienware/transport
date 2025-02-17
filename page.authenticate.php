@@ -108,7 +108,7 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
 					if (resp?.changePassword) return location.href = 'page.new-password.php?return=<?=base64_encode($return)?>';
 					return location.href=`<?=$return?>`;
 				}
-        await alertError('Could not verify that username/password combination.', 'Sorry...');
+        await ui.alertError('Could not verify that username/password combination.', 'Sorry...');
 				$('#username').select().focus();
       });
 
