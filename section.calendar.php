@@ -133,7 +133,7 @@ $requestorId = $_SESSION['user']->id;
           title = 'Unconfirmed: ' + title;
         }
         $(el).attr('data-confirmed', `${info.event?.extendedProps?.confirmed}`);
-        if ($.fn.tooltip) $(el).attr('data-bs-title', title).tooltip();
+        if ($.fn.tooltip && !isMobile()) $(el).attr('data-bs-title', title).tooltip();
       },
       loading: isLoading => {
         if (isLoading) return;
@@ -147,7 +147,7 @@ $requestorId = $_SESSION['user']->id;
           $(el).find('h4.ec-event-title').prepend('<i class="fa-solid fa-pencil align-content-center me-1"></i>');
         });
         $('.ec-event').tooltip('dispose');
-        $('.ec-event').tooltip();
+        if (!isMobile()) $('.ec-event').tooltip();
       },
       viewDidMount: ƒ => {
         formatCalendarHeader();

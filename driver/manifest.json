@@ -1,0 +1,25 @@
+{
+  "name": "Driver App (Transportation)",
+  "short_name": "Driver",
+  "start_url": "/driver/index.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#007aff",
+  "icons": [
+    {
+      "src": "/images/logo-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo-167.png",
+      "sizes": "167x167",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo-152.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

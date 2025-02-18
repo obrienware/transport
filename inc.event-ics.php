@@ -4,7 +4,7 @@ require_once 'autoload.php';
 $ics = new ICS([
   'dtstart' => $event->startDate,
   'dtend' => $event->endDate,
-  'description' => $event->notes,
+  'description' => str_replace("\n", "\\n", $event->notes),
   'summary' => $event->name,
 ]);
 if ($event->location && $event->location->mapAddress) 

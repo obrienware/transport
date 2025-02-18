@@ -301,6 +301,19 @@
   <script>
     debug = true;
 
+    if (debug) {
+      console.log(navigator.userAgentData);
+      console.log(navigator.userAgent);
+      console.log(/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
+    }
+
+    function isMobile() {
+      if (navigator.userAgentData) {
+        return navigator.userAgentData.mobile;
+      }
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    }
+
     function documentEventExists(eventName) {
       const events = $._data(document, 'events');
       if (debug) console.log(events);
@@ -501,12 +514,6 @@
       });
     });
 
-    function isMobile() {
-      if (navigator.userAgentData) {
-        return navigator.userAgentData.mobile;
-      }
-      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
   </script>
 
 </body>

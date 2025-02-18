@@ -22,10 +22,6 @@ if (!$event->isConfirmed())
 
   $results[] = $event->confirm(userResponsibleForOperation: $me->getUsername());
 
-  // Generate ics file
-  include '../inc.event-ics.php';
-
-
   // Email to the requestor
   if ($event->requestor)
   {
@@ -57,6 +53,15 @@ if (!$event->isConfirmed())
   // Email the drivers
   if (!$event->drivers) exit(json_encode(['result' => $result]));
   $template = new Template(EmailTemplates::get('Email Driver New Event'));
+
+  // Generate ics file
+  include '../inc.event-ics.php';
+
+  // Generate the driver sheet
+  include '../inc.event-driver-sheet.php';
+  $filename1 = sys_get_temp_dir().'/'.$event->getId().'-event-driver-sheet.pdf';
+  $pdf->output('F', $filename1);
+
   foreach ($event->drivers as $driverId)
   {
     $driver = new User($driverId);
@@ -73,10 +78,12 @@ if (!$event->isConfirmed())
     $email->addReplyTo($me->emailAddress, $me->getName());
     $email->setSubject('An event has been assigned to you: ' . $event->name);
     $email->setContent($template->render($templateData));
+    $email->addAttachment($filename1);
     $ical = $ics->to_string();
     $email->AddStringAttachment("$ical", "calendar-item.ics", "base64", "text/calendar; charset=utf-8; method=REQUEST");
     $email->sendText();
   }
+  unlink($filename1);
 }
 
 echo json_encode(['result' => $result]);
