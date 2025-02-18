@@ -271,35 +271,6 @@
         <div>
 
           <h2 style="font-weight:200">Hello <span style="font-weight:800; color:goldenrod"><?= $user->firstName ?></span>!</h2>
-          <div class="alert alert-warning" style="max-width: 600px;">
-            <p class="lead">
-              Please be aware that this web app is a work-in-progress and is currently under active development.
-              With this in mind, paying careful attention to aspects that may not be functioning as expected is greatly appreciated.
-              Please report any issues to <a href="mailto:richard@obrienware.com">richard@obrienware.com</a>.
-            </p>
-            <p class="lead">I hope you love using this system as much as I have enjoyed creating it! - Richard</p>
-            <p>In other news!... we should have a few tuturials coming out soon as well!</p>
-          </div>
-
-          <h3 class="mt-5" style="font-weight:100">Things that <span style="font-weight:800">should</span> be working:</h3>
-          <ul>
-            <li>This should now be fully functional on a mobile device!</li>
-          </ul>
-
-          <h3 class="mt-5" style="font-weight:100">Things that <span style="font-weight:800">aren't</span> working just yet:</h3>
-          <ul>
-            <li><strong>Vehicle Snags</strong> - being able to document issues with a vehicle incl optional photo attachments</li>
-            <li><strong>Vehicle Maintenance</strong> - being able to log maintenance on a vehicle</li>
-            <li><strong>Vehicle Documents</strong> - was working, but gone back into development; basically being able to attach any kind of document to a vehicle - e.g. registration, insurance, etc. which would be accessible by the driver in their app at all times.</li>
-            <li><strong>Access Control</strong> - will be re-implemented in due course.</li>
-            <li><strong>Department Requests</strong> - currently not working, but will also be re-implmented soon.</li>
-          </ul>
-
-          <h3 class="mt-5" style="font-weight:100">Things that are <span style="font-weight:800">sort of</span> working, but still being worked on:</h3>
-          <ul>
-            <li><strong>Flight Status</strong> - the information on this page is accurate, however I'm working on a better look with additional information.</li>
-          </ul>
-        </div>
 
       </div>
 

@@ -123,6 +123,11 @@ $rows = $db->get_rows($query)
         additionalItems += `
           <button class="dropdown-item" onclick="$(document).trigger('event:confirm', ${id})"><i class="fa-duotone fa-regular fa-file-check"></i> Confirm</button>
         `;
+      } else {
+        additionalItems += `
+          <a href="print.event-driver-sheet.php?id=${id}" target="_blank" class="dropdown-item"><i class="fa-duotone fa-regular fa-file-pdf"></i> Print Driver Sheet</a>
+          <a href="download.event-ics.php?id=${id}" target="_blank" class="dropdown-item"><i class="fa-duotone fa-regular fa-calendar-circle-plus"></i> Calendar Item</a>
+        `;
       }
 
       // Create the dropdown menu

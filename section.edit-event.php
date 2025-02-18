@@ -287,7 +287,8 @@ if (!is_null($id) && !$eventId)
         const resp = await net.post('/api/post.save-event.php', data);
         if (resp?.result) {
           // Confirm the event
-          const newResp = await net.post('/api/post.confirm-event.php', { id });
+          const eventId = resp.result
+          const newResp = await net.post('/api/post.confirm-event.php', { id: eventId });
           if (newResp?.result) {
             ui.toastr.success('Event Saved and Confirmed.', 'Success');
             $(document).trigger('eventChange');
