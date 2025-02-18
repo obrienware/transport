@@ -67,7 +67,7 @@ if ($rows = $db->get_rows($query, $params)) {
       'textColor' => ($row->confirmed) ? $textColor : 'gray'
     ];
     // Format for the requestor's view
-    if (isset($_GET['requestorId'])) {
+    if ($requestorId) {
       if ($row->confirmed) {
         $event->backgroundColor = '#03fc30'; // green
         $event->textColor = '#000000';

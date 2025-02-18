@@ -27,6 +27,7 @@ class VehicleReservation extends Base
   private ?DateTime $endDateTime = null;
 	public ?string $reason = null;
   private ?DateTime $confirmed = null;
+  public ?string $originalRequest = null;  
 
 	public ?string $created = null;
 	public ?string $createdBy = null;
@@ -187,6 +188,7 @@ class VehicleReservation extends Base
 		try {
 			$result = $db->query($query, $params);
 			$id = ($this->action === 'create') ? $result : $this->id;
+      if ($this->originalRequest) $db->query('UPDATE vehicle_reservations SET original_request = :original_request WHERE id = :id', ['original_request' => $this->originalRequest, 'id' => $id]);
 			$this->load($id);
 			$audit->after = json_encode($this->row);
 			$audit->commit();
@@ -216,6 +218,7 @@ class VehicleReservation extends Base
     $this->endDateTime = null;
     $this->reason = null;
 		$this->confirmed = null;
+    $this->originalRequest = null;
   }
 
   public function isConfirmed(): bool

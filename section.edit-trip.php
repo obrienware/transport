@@ -7,7 +7,7 @@ use Generic\Utils;
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 $id = $id === false ? null : $id;
 $trip = new Trip($id);
-if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $orginalRequest = json_decode($trip->originalRequest);
+if ($trip->getId() && !$trip->confirmed && $trip->originalRequest) $originalRequest = json_decode($trip->originalRequest);
 
 if (!is_null($id) && !$trip->getId())
 {
@@ -111,33 +111,12 @@ if (!is_null($id) && !$trip->getId())
             data-value="<?= $trip->puLocation->name ?>"
             data-type="<?= $trip->puLocation ? $trip->puLocation->type : '' ?>">
           <div class="invalid-feedback">Please make a valid selection</div>
-          <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->airport ?></pre>
-                </td>
-              </tr>
-            </table>
-          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
-                </td>
-              </tr>
-            </table>
-          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
-                </td>
-              </tr>
-            </table>
+          <?php if (isset($originalRequest->type) && $originalRequest->type == 'airport-pickup'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->airport ?></div>
+          <?php elseif (isset($originalRequest->type) && $originalRequest->type == 'airport-dropoff'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->location ?></div>
+          <?php elseif (isset($originalRequest->type) && $originalRequest->type == 'point-to-point'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->location ?></div>
           <?php endif; ?>
 
         </div>
@@ -166,33 +145,12 @@ if (!is_null($id) && !$trip->getId())
             data-id="<?= $trip->doLocationId ?>"
             data-type="<?= $trip->doLocation ? $trip->doLocation->type : '' ?>">
           <div class="invalid-feedback">Please make a valid selection</div>
-          <?php if (isset($orginalRequest->type) && $orginalRequest->type == 'airport-dropoff'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->airport ?></pre>
-                </td>
-              </tr>
-            </table>
-          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'airport-pickup'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->location ?></pre>
-                </td>
-              </tr>
-            </table>
-          <?php elseif (isset($orginalRequest->type) && $orginalRequest->type == 'point-to-point'): ?>
-            <table class="table table-sm table-bordered w-auto border-dark-subtle mt-1">
-              <tr>
-                <th class="bg-dark-subtle px-3">Requestor:</th>
-                <td class="px-3">
-                  <pre class="mb-0"><?= $orginalRequest->destination ?></pre>
-                </td>
-              </tr>
-            </table>
+          <?php if (isset($originalRequest->type) && $originalRequest->type == 'airport-dropoff'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->airport ?></div>
+          <?php elseif (isset($originalRequest->type) && $originalRequest->type == 'airport-pickup'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->location ?></div>
+          <?php elseif (isset($originalRequest->type) && $originalRequest->type == 'point-to-point'): ?>
+            <div class="form-text text-primary"><b>Requestor:</b> <?= $originalRequest->destination ?></div>
           <?php endif; ?>
 
         </div>

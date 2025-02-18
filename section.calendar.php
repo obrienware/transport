@@ -1,3 +1,10 @@
+<?php 
+require 'inc.user.php';
+$requestorOnly = (allowedRoles(['requestor']) && !allowedRoles(['developer', 'manager', 'admin', 'driver']));
+$requestorId = $_SESSION['user']->id;
+?>
+
+<?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])) : ?>
 <div class="ec-grid-container">
   <div class="pt-2">
 
@@ -50,6 +57,7 @@
     </div>
   </div>
 </div>
+<?php endif; ?>
 
 <div id="ec" class="col py-2 mt-4"></div>
 
@@ -59,6 +67,9 @@
     let extraParams = {
       history: $('#show-calendar-history').is(':checked'),
       onlyMe: $('#show-calendar-only-me').is(':checked'),
+      <?php if ($requestorOnly): ?>
+      requestorId: <?= $requestorId ?>,
+      <?php endif; ?>
     };
 
     function updateExtraParams() {
@@ -66,6 +77,9 @@
         history: $('#show-calendar-history').is(':checked'),
         onlyMe: $('#show-calendar-only-me').is(':checked'),
       };
+      <?php if ($requestorOnly) : ?>
+      extraParams['requestorId'] = <?= $requestorId ?>;
+      <?php endif;?>
     }
 
     const eventSources = [
@@ -138,6 +152,7 @@
       viewDidMount: ƒ => {
         formatCalendarHeader();
       },
+      <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])) : ?>
       eventClick: data => {
         const start = moment(data.event.start).format('ddd Do h:mma');
         const startDate = moment(data.event.start).format('ddd Do');
@@ -172,6 +187,7 @@
           $(`[data-rel="reservations"]`).addClass('active');
         }
       },
+      <?php endif; ?>
     });
 
     function refreshEvents() {
@@ -182,6 +198,11 @@
     $(document).on('tripChange', refreshEvents);
     $(document).on('eventChange', refreshEvents);
     $(document).on('reservationChange', refreshEvents);
+    $(document).on('menuSelect', function(event, menuId) {
+      if (menuId == 'calendar') {
+        refreshEvents();
+      }
+    });
 
     $(document).on('refreshCalendar', ƒ => {
       refreshEvents();

@@ -70,8 +70,8 @@ $return = ($_GET['return']) ? base64_decode($_GET['return']) : './';
           <label for="password">Password</label>
         </div>
 				<div class="d-flex justify-content-between">
-					<a href="/request" data-bs-toggle="tooltip" data-bs-title="Looking to request a trip or vehicle?"><small>Request</small></a>
-					<a href="page.forgot-password.php"><small>Forgot Password</small></a>
+					<a href="/request" data-bs-toggle="tooltip" data-bs-title="Looking to request a trip or vehicle?"><small>Transportation Request</small></a>
+					<a href="page.forgot-password.php"><small>Forgot/Need Password</small></a>
 				</div>
         <div class="mt-4">
           <button id="btnLogin" class="px-5 btn btn-primary btn-lg">Log In</button>

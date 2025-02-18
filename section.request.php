@@ -5,35 +5,17 @@ use Transport\{ Airline, Airport, User };
 
 $user = new User($_SESSION['user']->id);
 ?>
-<div class="container-fluid">
 
-  <section id="calendar-section">
-    <h5 class="fs-3 fw-semibold">Hello, <?=$user->firstName?>!</h5>
-    <p class="lead">Here is a calendar view and list of approved and scheduled trips and/or events you've requested</p>
-    <hr/>
-    <div class="row">
-      <div class="d-flex justify-content-between mb-2">
-        <div>
-          Views:
-          <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-            <input type="radio" class="btn-check" name="btnradio" id="view-calendar" autocomplete="off" checked>
-            <label class="btn btn-outline-primary" for="view-calendar">Calendar</label>
+<style>
 
-            <input type="radio" class="btn-check" name="btnradio" id="opt-list-events" autocomplete="off">
-            <label class="btn btn-outline-primary" for="opt-list-events">List</label>
-          </div>
-        </div>
-        <div>
-          <button id="btn-refresh-calendar" class="btn btn-outline-primary"><i class="fa-solid fa-rotate"></i></button>
-          <button id="btn-request" class="btn btn-outline-primary" onclick="showNext()">New Request</button>
-        </div>
-      </div>
-      <div id="ec" class="col py-2"></div>
-      <div id="trip-text"></div>
-    </div>
-  </section>
-</div>
+  #request strong {
+    color: var(--bs-primary);
+    font-weight: 800;
+  }
 
+</style>
+
+<input type="hidden" id="user-requestor-id" value="<?=$user->getId()?>">
 <div class="container">
 
   <section id="request-type-section" class="section d-none">
@@ -43,32 +25,32 @@ $user = new User($_SESSION['user']->id);
 
     <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off" value="airport-dropoff">
     <label class="btn text-start w-100 mb-3" for="option1">
-      <div class="fw-bold fs-5">Airport Drop Off</div>
-      <div class="text-black-50">Pick up a person, persons or group and take them to the airport.</div>
+      <div class="fs-5" style="font-weight:900">Airport Drop Off</div>
+      <div class="text-black-50" style="font-weight:200">Pick up a person, persons or group and take them to the airport.</div>
     </label>
 
     <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off" value="airport-pickup">
     <label class="btn text-start w-100 mb-3" for="option2">
-      <div class="fw-bold fs-5">Airport Pick Up</div>
-      <div class="text-black-50">Pick up a person, persons or group from the airport.</div>
+      <div class="fs-5" style="font-weight:900">Airport Pick Up</div>
+      <div class="text-black-50" style="font-weight:200">Pick up a person, persons or group from the airport.</div>
     </label>
 
     <input type="radio" class="btn-check" name="options-base" id="option3" autocomplete="off" value="point-to-point">
     <label class="btn text-start w-100 mb-3" for="option3">
-      <div class="fw-bold fs-5">Transport Point to Point</div>
-      <div class="text-black-50">Transport a person, persons or group from one location to another.</div>
+      <div class="fs-5" style="font-weight:900">Transport Point to Point</div>
+      <div class="text-black-50" style="font-weight:200">Transport a person, persons or group from one location to another.</div>
     </label>
 
     <input type="radio" class="btn-check" name="options-base" id="option4" autocomplete="off" value="vehicle">
     <label class="btn text-start w-100 mb-3" for="option4">
-      <div class="fw-bold fs-5">Vehicle Request</div>
-      <div class="text-black-50">Request the use of a ministry vehicle (without a driver).</div>
+      <div class="fs-5" style="font-weight:900">Vehicle Request</div>
+      <div class="text-black-50" style="font-weight:200">Request the use of a ministry vehicle (without a driver).</div>
     </label>
 
     <input type="radio" class="btn-check" name="options-base" id="option5" autocomplete="off" value="event">
     <label class="btn text-start w-100 mb-3" for="option5">
-      <div class="fw-bold fs-5">Event Request</div>
-      <div class="text-black-50">Request the use of ministry vehicle(s) and driver(s) for a period of time.</div>
+      <div class="fs-5" style="font-weight:900">Event Request</div>
+      <div class="text-black-50" style="font-weight:200">Request the use of ministry vehicle(s) and driver(s) for a period of time.</div>
     </label>
 
     <div class="text-end">
@@ -268,10 +250,7 @@ $user = new User($_SESSION['user']->id);
 </div>
 
 
-<script type="module">
-  import * as input from '/js/formatters.js';
-  import * as ui from '/js/notifications.js';
-  import * as net from '/js/network.js';
+<script>
 
   let request = {
     requestorId: <?=$user->getId()?>,
@@ -303,11 +282,11 @@ $user = new User($_SESSION['user']->id);
     $('#till-datetime').val('');
     $('#notes').val('');
     $('#event-detail').val('');
-    setTimeout(refreshEvents, 1000);
 
     request = {
       requestorId: <?=$user->getId()?>,
     }; // Reset the request object
+    showNext();
   }
 
   function showNext()
@@ -325,12 +304,12 @@ $user = new User($_SESSION['user']->id);
           return;
         }
         if (!request.airport || !request.flight) {
-          $('#flight-time-label').html('Estimated Time of Departure');
+          $('#flight-time-label').html('Estimated Time of <strong>Departure</strong>');
           $('#request-airport-section').removeClass('d-none');
           return;
         }
         if (!request.location) {
-          $('#location-description').html('Please provide the location where the person, persons or group will be picked up from.');
+          $('#location-description').html('Please provide the location where the person, persons or group will be <strong>picked up</strong> from.');
           $('#request-location-section').removeClass('d-none');
           return;
         }
@@ -359,12 +338,12 @@ $user = new User($_SESSION['user']->id);
           return;
         }
         if (!request.airport || !request.flight) {
-          $('#flight-time-label').html('Estimated Time of Arrival');
+          $('#flight-time-label').html('Estimated Time of <strong>Arrival</strong>');
           $('#request-airport-section').removeClass('d-none');
           return;
         }
         if (!request.location) {
-          $('#location-description').html('Please provide the location where the person, persons or group will be dropped off.');
+          $('#location-description').html('Please provide the location where the person, persons or group will be <strong>dropped off</strong>.');
           $('#request-location-section').removeClass('d-none');
           return;
         }
@@ -383,7 +362,7 @@ $user = new User($_SESSION['user']->id);
           return;
         }
         if (!request.location) {
-          $('#location-description').html('Please provide the location where the person, persons or group will be picked up.');
+          $('#location-description').html('Please provide the location where the person, persons or group will be <strong>picked up</strong>.');
           $('#request-location-section').removeClass('d-none');
           return;
         }
@@ -456,7 +435,7 @@ $user = new User($_SESSION['user']->id);
     if (stage == 'whom') {
       const whom = {
         name: input.cleanProperVal('#whom-name'),
-        pax: $('#whom-pax').val(),
+        pax: $('#whom-pax').intVal(),
         contactPerson: input.cleanProperVal('#whom-contact-person'),
         contactPhoneNumber: $('#whom-contact-phone').val(),
       };
@@ -470,9 +449,9 @@ $user = new User($_SESSION['user']->id);
 
     if (stage == 'flight') {
       const airport = $('#airport').val();
-      const airlineId = $('#flight-airline').val();
+      const airlineId = $('#flight-airline').intVal();
       const airline = $('#flight-airline option:selected').text();
-      const flightNumber = $('#flight-number').val();
+      const flightNumber = $('#flight-number').intVal().toString();
       const flightNumberPrefix = $('#flight-number-prefix').text();
       const flightTime = $('#flight-time').val();
       const leadTime = $('#airport option:selected').data('lead-time');
@@ -559,14 +538,16 @@ $user = new User($_SESSION['user']->id);
 
   async function submitRequest()
   {
+    $('#request').html('<h2>Submitting request <img src="/images/ellipsis.svg" height="40" alt="..."></h2>');
     console.log('submitting request:', request);
     const result = await net.post('/api/post.save-request.php', request);
     if (result?.result) {
       ui.toastr.success('Request submitted successfully', 'Success');
       cancelWizard();
-    } else {
-      ui.toastr.error('There was an error submitting the request', 'Error');
+      return $(document).trigger('menuSelect', 'calendar');
     }
+    $('#request').html('<h2>Request failed.</h2>');
+    ui.toastr.error('There was an error submitting the request', 'Error');
   }
 
   $(async ƒ => {
@@ -665,78 +646,9 @@ $user = new User($_SESSION['user']->id);
 
 
 
-    const ec = new EventCalendar(document.getElementById('ec'), {
-      view: 'dayGridMonth',
-      editable: false,
-      eventStartEditable: false,
-      eventDurationEditable: false,
-      eventSources: [
-        {
-          url: '/api/get.trips.php?requestorId=' + requestorId,
-          method: 'GET',
-        }, 
-        {
-          url: '/api/get.events.php?requestorId=' + requestorId,
-          method: 'GET'
-        },
-      ],
-      eventClick: data => {
-        const start = moment(data.event.start).format('ddd Do h:mma');
-        const startDate = moment(data.event.start).format('ddd Do');
-        
-        if (data?.event?.extendedProps?.type == 'trip') {
-          app.openTab('view-trip', 'Trip (view)', `section.view-trip.php?id=${data.event.id}`);
-        }
 
-        if (data?.event?.extendedProps?.type == 'event') {
-          app.openTab('edit-event', 'Event (view)', `section.view-event.php?id=${data.event.id}`);
-        }
-      },
-      loading: isLoading => {
-        // console.log('isLoading:', isLoading);
-      },
-      eventDidMount: info => {
-        const el = info.el;
-        const title = info.event.title || 'untitled';
-        $(el).attr('data-bs-title', title).tooltip();
-      }
-    });
-
-    function refreshEvents() {
-      $('.ec-event').tooltip('dispose');
-      ec.refetchEvents();
-    }
-
-    $('#view-calendar').on('click', () => {
-      $('#trip-text').html('');
-      ec.setOption('view', 'dayGridMonth');
-    });
-
-    $('#opt-list-events').on('click', () => {
-      $('#trip-text').html('');
-      ec.setOption('view', 'listMonth');
-    });
-
-    $('#ec').on('click', async e => {
-      if (e.target.className == 'ec-bg-events') {
-        const date = $(e.target).prev().attr('datetime');
-        if (date) {
-          // check if the date is in the future
-          if (moment().isSameOrBefore(moment(date, 'YYYY-MM-DD'), 'day')) {
-            // if (await ui.ask('Do you want to create a new trip?')) {
-            //   const formatted_date = encodeURIComponent(moment(date).format('YYYY-MM-DD HH:mm'));
-            //   app.openTab('new-trip', 'New Trip', `section.new-trip.php?dateHint=${formatted_date}`);
-            // }
-          }
-        }
-      }
-    });
-
-    $('#btn-refresh-calendar').on('click', refreshEvents);
-    $(document).on('tripChange', refreshEvents);
-    $(document).on('eventChange', refreshEvents);
-
-
+    // To kick us off:
+    showNext();
   });
 
 </script>

@@ -16,7 +16,8 @@ use Transport\{
   Guest, 
   Template, 
   Trip, 
-  User 
+  User,
+  VehicleReservation
 };
 use Generic\Utils;
 
@@ -195,20 +196,36 @@ function addPointToPoint($json)
 function addVehicleReservation($json)
 {
   global $user;
-  $name = 'Vehicle Reservation - ' . $json->whom->name;
-  $event = new Event();
-  $event->name = $name;
-  $event->requestorId = $json->requestorId;
-  $event->startDate = Date('Y-m-d H:i:s', strtotime($json->startDate));
-  $event->endDate = Date('Y-m-d H:i:s', strtotime($json->endDate));
-  $event->notes = $json->notes;
-  $event->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
-  $event->save(userResponsibleForOperation: $user->getUsername());
 
-  notifyManagers('event', 'New Event Request: ' . $event->name, [
-    'summary' => $event->name,
-    'startDate' => Date('m/d/Y', strtotime($event->startDate)),
-    'endDate' => Date('m/d/Y', strtotime($event->endDate)),
+  $reservation = new VehicleReservation();
+
+  $guest = new Guest();
+  if ($guest->getGuestByPhoneNumber(Utils::formattedPhoneNumber($json->whom->contactPhoneNumber)))
+  {
+    $reservation->guestId = $guest->getId();
+  }
+  else
+  {
+    $parts = explode(' ', $json->whom->name);
+    $guest = new Guest(null);
+    $guest->lastName = array_pop($parts);
+    $guest->firstName = implode(' ', $parts);
+    $guest->phoneNumber = Utils::formattedPhoneNumber($json->whom->contactPhoneNumber);
+    $guest->save(userResponsibleForOperation: $user->getUsername());
+    $reservation->guestId = $guest->getId();
+  }
+
+  $reservation->requestorId = $json->requestorId;
+  $reservation->startDateTime = Date('Y-m-d H:i:s', strtotime($json->startDate));
+  $reservation->endDateTime = Date('Y-m-d H:i:s', strtotime($json->endDate));
+  $reservation->reason = $json->notes;
+  $reservation->originalRequest = json_encode($json, JSON_PRETTY_PRINT);
+  $reservation->save(userResponsibleForOperation: $user->getUsername());
+
+  notifyManagers('event', 'New Vehicle Reservation Request', [
+    'summary' => 'Vehicle Reservation - ' . $json->whom->name,
+    'startDate' => Date('m/d/Y', strtotime($reservation->startDateTime)),
+    'endDate' => Date('m/d/Y', strtotime($reservation->endDateTime)),
     'notes' => $json->notes,
     'requestorEmail' => $user->emailAddress,
   ]);

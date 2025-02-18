@@ -99,6 +99,17 @@
             <span class="menu-text">Calendar</span>
           </div>
         </button>
+
+        <?php if (allowedRoles(['requestor'])) : ?>
+          <button class="menu-item no-submenu" data-rel="request" onclick="$(document).trigger('menuSelect', 'request')">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-hand-point-up menu-icon"></i>
+            <span class="menu-text">NEW Request</span>
+          </div>
+        </button>
+        <?php endif; ?>
+
+      <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])) : ?>
         <button class="menu-item no-submenu" data-rel="trips" onclick="$(document).trigger('menuSelect', 'trips')">
           <div class="d-flex align-items-center">
             <i class="fa-duotone fa-solid fa-road-circle-check menu-icon"></i>
@@ -189,6 +200,15 @@
             <i class="fa-solid fa-arrow-left"></i>
           </button>
         </div>
+      <?php endif; ?>
+      <?php if (allowedRoles(['requestor']) && !allowedRoles(['developer', 'manager', 'admin', 'driver'])) : ?>
+        <button class="menu-item no-submenu" onclick="location.href='logout.php'">
+          <div class="d-flex align-items-center">
+            <i class="fa-solid fa-left-from-bracket menu-icon"></i>
+            <span class="menu-text">Log Out</span>
+          </div>
+        </button>
+      <?php endif;?>
       </div>
 
       <!-- Simplified Menu (Shown when collapsed) -->
@@ -200,6 +220,7 @@
         <button class="menu-item no-submenu" data-rel="calendar" onclick="$(document).trigger('menuSelect', 'calendar')">
           <i class="fa-duotone fa-solid fa-calendar menu-icon"></i>
         </button>
+        <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])) : ?>
         <button class="menu-item no-submenu" data-rel="trips" onclick="$(document).trigger('menuSelect', 'trips')">
           <i class="fa-duotone fa-solid fa-road-circle-check menu-icon"></i>
         </button>
@@ -215,6 +236,7 @@
         <button class="menu-item no-submenu" data-rel="blockouts" onclick="$(document).trigger('menuSelect', 'blockouts')">
           <i class="fa-duotone fa-solid fa-user-clock menu-icon"></i>
         </button>
+        <?php endif; ?>
 
 
         <div class="flex-fill"></div>
@@ -444,6 +466,14 @@
           $(document).trigger('loadMainSection', {
             sectionId: 'authenticationLog',
             url: 'report.auth-log.php',
+            forceReload: true
+          });
+          break;
+
+        case 'request':
+          $(document).trigger('loadMainSection', {
+            sectionId: 'request',
+            url: 'section.request.php',
             forceReload: true
           });
           break;

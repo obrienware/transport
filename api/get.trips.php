@@ -15,7 +15,7 @@ $history = InputHandler::getBool(INPUT_GET, 'history');
 $onlyMe = InputHandler::getBool(INPUT_GET, 'onlyMe');
 
 if ($requestorId) {
-  $criteria = " AND e.requestor_id = {$requestorId}";
+  $criteria = " AND t.requestor_id = {$requestorId}";
 }
 if (!$history) {
   $criteria .= " AND end_date >= CURDATE()";

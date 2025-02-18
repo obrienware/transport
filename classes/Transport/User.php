@@ -27,7 +27,8 @@ class User extends Base
 
 	public function getName(): string
 	{
-		$lastName = html_entity_decode($this->lastName, ENT_QUOTES, 'UTF-8'); // In many cases, a last name may have an apostrophe
+		if ($this->lastName == '' && $this->firstName == '' && $this->hasRole(['requestor'])) return $this->emailAddress;
+		$lastName = $this->lastName ? html_entity_decode($this->lastName, ENT_QUOTES, 'UTF-8') : ''; // In many cases, a last name may have an apostrophe
 		if ($this->id) return "{$this->firstName} {$lastName}";
 		return '';
 	}
