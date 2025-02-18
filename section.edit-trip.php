@@ -337,7 +337,7 @@ if (!is_null($id) && !$trip->getId())
     $('#trips select').selectpicker({ container: false });
 
     async function loadResources() {
-      const tripId = $('#tripId').val();
+      const tripId = $('#tripId').val() ? $('#tripId').intVal() : null;
       const leadTime = isNaN(parseFloat($('#trip-lead-time').cleanNumberVal())) ? 0 : parseInt($('#trip-lead-time').cleanNumberVal() * 60);
       const pickupDate = moment($('#trip-pickup-date').val());
       const startDate = moment(pickupDate).subtract(leadTime, 'm');
@@ -492,7 +492,7 @@ if (!is_null($id) && !$trip->getId())
             ui.toastr.success('Trip added.', 'Success');
             return backToList();
           }
-          ui.toastr.error(resp.result.errors[2], 'Error');
+          ui.toastr.error(resp.error, 'Error');
           console.error(resp);
         }
       });
@@ -513,7 +513,7 @@ if (!is_null($id) && !$trip->getId())
             }
           }
         }
-        ui.toastr.error(resp.result.errors[2], 'Error');
+        ui.toastr.error(resp.error, 'Error');
         console.error(resp);
       });
     }
@@ -542,7 +542,7 @@ if (!is_null($id) && !$trip->getId())
 
 
     async function getData() {
-      const tripId = $('#tripId').val();
+      const tripId = $('#tripId').val() ? $('#tripId').intVal() : null;
       const leadTime = isNaN(parseFloat($('#trip-lead-time').cleanNumberVal())) ? 0 : parseInt($('#trip-lead-time').cleanNumberVal() * 60);
       const pickupDate = moment($('#trip-pickup-date').val());
       const startDate = moment(pickupDate).subtract(leadTime, 'm');
