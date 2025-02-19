@@ -31,20 +31,20 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
         <?php foreach ($rows as $row): ?>
           <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>">
             <td class="datetime nowrap text-center align-middle"><?= $row->logged ?></td>
-            <td class="text-center align-middle">
+            <td class="text-left align-middle">
               <div><?= $row->description ?></div>
               <div>
                 <div class="badge bg-dark-subtle"><?= ucwords($row->created_by) ?></div>
               </div>
             </td>
-            <td class="text-center align-middle fit">
+            <td class="text-left align-middle fit">
               <?php if ($row->acknowledged): ?>
                 <div>
                   <div class="tag tag-success"><?= ucwords($row->acknowledged_by) ?></div>
                 </div>
               <?php endif; ?>
             </td>
-            <td class="text-center align-middle fit">
+            <td class="text-left align-middle fit">
               <?php if ($row->resolved): ?>
                 <div><?= $row->resolution ?></div>
                 <div>
