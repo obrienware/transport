@@ -12,52 +12,54 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
   <button class="btn btn-sm btn-primary mb-2" onclick="$(document).trigger('snag:add', <?= $vehicleId ?>)"><i class="fa-solid fa-plus-large"></i></button>
 </div>
 <?php if ($rows = Snag::getSnags($vehicleId)): ?>
-  <table class="table table-bordered table-sm mb-0">
-    <thead>
-    <tr class="table-dark">
-        <th class="fit">Date</th>
-        <th>Description</th>
-        <th class="fit">Acknowledged</th>
-        <th class="fit">Resolved</th>
-        <th>Comments</th>
-        <th class="fit">&nbsp;</th>
-        <th>&nbsp;</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach ($rows as $row): ?>
-        <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>">
-          <td class="datetime nowrap"><?=$row->logged?></td>
-          <td>
-            <div><?=$row->description?></div>
-            <div><div class="badge bg-dark-subtle"><?=ucwords($row->created_by)?></div></div>
-          </td>
-          <td class="text-center align-middle fit">
-            <?php if ($row->acknowledged): ?>
-              <div><div class="tag tag-success"><?=ucwords($row->acknowledged_by)?></div></div>
-            <?php endif; ?>
-          </td>
-          <td class="text-center align-middle fit">
-            <?php if ($row->resolved): ?>
-              <div><?=$row->resolution?></div>
-              <div><div class="badge bg-dark-subtle"><?=ucwords($row->resolved_by)?></div></div>
-            <?php endif; ?>
-          </td>
-          <td>
-            <div><?=is_null($row->comments) ? '' : str_replace("\n\n", '<hr class="my-1">', $row->comments)?></div>
-          </td>
-          <td class="text-center align-middle fit">
-            <?php if ($row->image_filenames): ?>
-              <div><i class="fa-duotone fa-paperclip-vertical fa-lg pointer" onclick="$(document).trigger('showSnagImages', this)"></i></div>
-            <?php endif; ?>
-          </td>
-          <td class="text-center align-middle">
-            <i class="fa-solid fa-ellipsis fa-xl text-body-tertiary action-icon pointer hidden-content" onclick="$(document).trigger('listActionItem:snag', this)"></i>
-          </td>
+  <div class="table-responsive">
+    <table class="table table-bordered table-sm mb-0">
+      <thead>
+      <tr class="table-dark">
+          <th class="fit">Date</th>
+          <th>Description</th>
+          <th class="fit">Acknowledged</th>
+          <th class="fit">Resolved</th>
+          <th>Comments</th>
+          <th class="fit">&nbsp;</th>
+          <th>&nbsp;</th>
         </tr>
-      <?php endforeach; ?>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <?php foreach ($rows as $row): ?>
+          <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>">
+            <td class="datetime nowrap"><?=$row->logged?></td>
+            <td>
+              <div><?=$row->description?></div>
+              <div><div class="badge bg-dark-subtle"><?=ucwords($row->created_by)?></div></div>
+            </td>
+            <td class="text-center align-middle fit">
+              <?php if ($row->acknowledged): ?>
+                <div><div class="tag tag-success"><?=ucwords($row->acknowledged_by)?></div></div>
+              <?php endif; ?>
+            </td>
+            <td class="text-center align-middle fit">
+              <?php if ($row->resolved): ?>
+                <div><?=$row->resolution?></div>
+                <div><div class="badge bg-dark-subtle"><?=ucwords($row->resolved_by)?></div></div>
+              <?php endif; ?>
+            </td>
+            <td>
+              <div><?=is_null($row->comments) ? '' : str_replace("\n\n", '<hr class="my-1">', $row->comments)?></div>
+            </td>
+            <td class="text-center align-middle fit">
+              <?php if ($row->image_filenames): ?>
+                <div><i class="fa-duotone fa-paperclip-vertical fa-lg pointer" onclick="$(document).trigger('showSnagImages', this)"></i></div>
+              <?php endif; ?>
+            </td>
+            <td class="text-center align-middle">
+              <i class="fa-solid fa-ellipsis fa-xl text-body-tertiary action-icon pointer hidden-content" onclick="$(document).trigger('listActionItem:snag', this)"></i>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
 <?php else: ?>
   <div class="card-body text-center">
     There are no snags logged yet for this vehicle
@@ -215,44 +217,30 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
     });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  if (typeof window.acknowledgeSnag !== 'function') {
-    window.acknowledgeSnag = async function(snagId) {
-      const resp = await net.get('/api/get.snag-acknowledge.php', {snagId});
-      $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
-    };
+  if (!documentEventExists('snag:delete')) {
+    $(document).on('snag:delete', async (e, id) => {
+      if (await ui.ask('Are you sure you want to delete this snag?')) {
+        const vehicleId = $('#vehicleId').val();
+        const resp = await net.get('/api/get.delete-snag.php', {id});
+        if (resp?.result) {
+          ui.toastr.success('Snag deleted', 'Success');
+          $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
+          return;
+        }
+        ui.toastr.error('Failed to delete snag', 'ERROR');
+      }
+    });
   }
 
-  if (typeof window.commentSnag !== 'function') {
-    window.commentSnag = async function(snagId) {
-      const text = await ui.getText('Snag Comment:');
-      if (text == undefined) return;
-      console.log('Comment:', text);
-      const resp = await net.get('/api/get.snag-comment.php', {snagId, text});
-      $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
-      // console.log('Action B', snagId);
-    };
-  }
 
-  if (typeof window.addPhotoSnag !== 'function') {
-    window.addPhotoSnag = async function(snagId) {
-      const file = await ui.getFile('Upload Photo:');
-      console.log('File:', file);
-      // const resp = await net.get('/api/get.snag-photo.php', {snagId});
-      // $('#pills-snags').load('section.vehicle-snags.php?vehicleId=<?=$_GET['vehicleId']?>');
-    };
-  }
+
+
+
+
+
+
+
+
 
   $(async ƒ => {
 

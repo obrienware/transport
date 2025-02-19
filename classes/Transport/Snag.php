@@ -212,6 +212,7 @@ class Snag extends Base
       LEFT JOIN image_library il ON si.image_id = il.id
       WHERE 
         s.vehicle_id = :vehicle_id
+        AND s.archived IS NULL
       GROUP BY s.id
       ORDER BY s.logged DESC
       ";
