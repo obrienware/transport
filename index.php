@@ -89,7 +89,6 @@
 
   <script type="text/javascript" src="js/type-extensions.js"></script>
 
-  <script type="text/javascript" src="js/upload-modal.js" defer></script>
 </head>
 
 <body>

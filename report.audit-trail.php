@@ -48,19 +48,26 @@ $db = Database::getInstance();
 			</div>
 		</div>
 		<div class="col-auto">
-			<button id="btn-report" class="btn btn-primary px-4 mt-4">Report</button>
+			<button class="btn btn-primary px-4 mt-4" onclick="$(document).trigger('report:audit-trail')">Report</button>
 		</div>
 	</div>
 
 	<div class="mt-4" id="output"></div>
 </div>
-<div class="container d-none" id="detail"></div>
+<div class="container" id="audit-trail-detail"></div>
 
-<script type="module">
-	import * as input from '/js/formatters.js';
-	import * as ui from '/js/notifications.js';
-	import * as net from '/js/network.js';
-	import { report_loader } from '/js/main.js';
+<script>
+
+	if (!documentEventExists('report:audit-trail')) {
+		$(document).on('report:audit-trail', ƒ => {
+			$('#audit-trail-detail').html(`<img src="/images/ellipsis.svg" height="40" alt="...">`).load(`report-data.audit-trail.php` + net.queryParams({
+				from_date: $('#from_date').val(),
+				to_date: $('#to_date').val(),
+				table: $('#table').val(),
+				user: $('#user').val()
+			}));
+		});
+	}
 
 	$(async ƒ => {
 

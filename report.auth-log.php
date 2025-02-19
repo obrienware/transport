@@ -15,19 +15,24 @@
 			</div>
 		</div>
 		<div class="col-auto">
-			<button id="btn-report" class="btn btn-primary px-4 mt-4">Report</button>
+			<button class="btn btn-primary px-4 mt-4" onclick="$(document).trigger('report:auth-log')">Report</button>
 		</div>
 	</div>
 
 	<div class="mt-4" id="output"></div>
 </div>
-<div class="container d-none" id="detail"></div>
+<div class="container" id="auth-log-detail"></div>
 
-<script type="module">
-	import * as input from '/js/formatters.js';
-	import * as ui from '/js/notifications.js';
-	import * as net from '/js/network.js';
-	import { report_loader } from '/js/main.js';
+<script>
+
+	if (!documentEventExists('report:auth-log')) {
+		$(document).on('report:auth-log', ƒ => {
+			$('#auth-log-detail').html(`<img src="/images/ellipsis.svg" height="40" alt="...">`).load(`report-data.auth-log.php` + net.queryParams({
+				from_date: $('#from_date').val(),
+				to_date: $('#to_date').val()
+			}));
+		});
+	}
 
 	$(async ƒ => {
 
