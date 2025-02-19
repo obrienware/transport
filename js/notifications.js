@@ -71,8 +71,8 @@ const getFile = async title => {
 		inputLabel: title,
 		input: "file",
 		inputAttributes: {
-			"accept": "image/*",
-			"aria-label": "Upload picture"
+			"accept": "image/*,application/pdf",
+			// "aria-label": "Upload picture"
 		},
 		showCancelButton: true,
 		confirmButtonText: 'Upload',

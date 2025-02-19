@@ -1,21 +1,23 @@
 <?php
 require_once 'autoload.php';
 
-use Transport\{ Snag };
+use Transport\{Snag};
 use Generic\InputHandler;
 
 $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 ?>
-<input type="hidden" id="vehicleId" value="<?=$vehicleId?>">
-<!-- SNAGLIST -->
+<input type="hidden" id="vehicleId" value="<?= $vehicleId ?>">
+
 <div class="text-end">
   <button class="btn btn-sm btn-primary mb-2" onclick="$(document).trigger('snag:add', <?= $vehicleId ?>)"><i class="fa-solid fa-plus-large"></i></button>
 </div>
+
 <?php if ($rows = Snag::getSnags($vehicleId)): ?>
+  <!-- SNAGLIST -->
   <div class="table-responsive">
     <table class="table table-bordered table-sm mb-0">
       <thead>
-      <tr class="table-dark">
+        <tr class="table-dark">
           <th class="fit">Date</th>
           <th>Description</th>
           <th class="fit">Acknowledged</th>
@@ -28,24 +30,30 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       <tbody>
         <?php foreach ($rows as $row): ?>
           <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>">
-            <td class="datetime nowrap"><?=$row->logged?></td>
-            <td>
-              <div><?=$row->description?></div>
-              <div><div class="badge bg-dark-subtle"><?=ucwords($row->created_by)?></div></div>
+            <td class="datetime nowrap text-center align-middle"><?= $row->logged ?></td>
+            <td class="text-center align-middle">
+              <div><?= $row->description ?></div>
+              <div>
+                <div class="badge bg-dark-subtle"><?= ucwords($row->created_by) ?></div>
+              </div>
             </td>
             <td class="text-center align-middle fit">
               <?php if ($row->acknowledged): ?>
-                <div><div class="tag tag-success"><?=ucwords($row->acknowledged_by)?></div></div>
+                <div>
+                  <div class="tag tag-success"><?= ucwords($row->acknowledged_by) ?></div>
+                </div>
               <?php endif; ?>
             </td>
             <td class="text-center align-middle fit">
               <?php if ($row->resolved): ?>
-                <div><?=$row->resolution?></div>
-                <div><div class="badge bg-dark-subtle"><?=ucwords($row->resolved_by)?></div></div>
+                <div><?= $row->resolution ?></div>
+                <div>
+                  <div class="badge bg-dark-subtle"><?= ucwords($row->resolved_by) ?></div>
+                </div>
               <?php endif; ?>
             </td>
             <td>
-              <div><?=is_null($row->comments) ? '' : str_replace("\n\n", '<hr class="my-1">', $row->comments)?></div>
+              <div><?= is_null($row->comments) ? '' : str_replace("\n\n", '<hr class="my-1">', $row->comments) ?></div>
             </td>
             <td class="text-center align-middle fit">
               <?php if ($row->image_filenames): ?>
@@ -61,14 +69,18 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
     </table>
   </div>
 <?php else: ?>
-  <div class="card-body text-center">
-    There are no snags logged yet for this vehicle
+
+  <div class="d-flex my-3">
+    <div class="alert alert-info mx-auto" role="alert">
+      <i class="fa-solid fa-info-circle"></i>
+      There are no snags for this vehicle at this time.
+    </div>
   </div>
+
 <?php endif; ?>
 
 
 <script>
-
   if (!documentEventExists('showSnagImages')) {
     $(document).on('showSnagImages', async (e, el) => {
       console.log('showSnagImages');
@@ -82,7 +94,7 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       const modalBody = $("#modalBody");
       modalBody.empty(); // Clear previous content
 
-      images.forEach(function (image) {
+      images.forEach(function(image) {
         const imgElement = `<a href="/images/library/${image}" data-lightbox="gallery">
           <img src="/images/library/${image}" class="img-thumbnail m-2" style="width: 150px; height: 100px;">
           </a>`;
@@ -97,7 +109,10 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
     $(document).on('snag:add', async (e, vehicleId) => {
       const description = await ui.getText('Enter a description of the snag:');
       if (description == undefined) return;
-      const resp = await net.post('/api/post.snag.php', {vehicleId, description});
+      const resp = await net.post('/api/post.snag.php', {
+        vehicleId,
+        description
+      });
       $('#pills-snags').load('section.vehicle-snags.php?vehicleId=' + vehicleId);
     });
   }
@@ -157,7 +172,9 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
   if (!documentEventExists('snag:acknowledge')) {
     $(document).on('snag:acknowledge', async (e, id) => {
       const vehicleId = $('#vehicleId').val();
-      const resp = await net.post('/api/post.snag-acknowledge.php', {id});
+      const resp = await net.post('/api/post.snag-acknowledge.php', {
+        id
+      });
       if (resp?.result) {
         ui.toastr.success('Snag acknowledged', 'Success');
         $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
@@ -172,7 +189,10 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       const text = await ui.getText('Enter your comment:');
       if (text == undefined) return;
       const vehicleId = $('#vehicleId').val();
-      const resp = await net.post('/api/post.snag-comment.php', {id, text});
+      const resp = await net.post('/api/post.snag-comment.php', {
+        id,
+        text
+      });
       if (resp?.result) {
         ui.toastr.success('Comment added', 'Success');
         $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
@@ -187,7 +207,10 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       const text = await ui.getText('Enter resolution:');
       if (text == undefined) return;
       const vehicleId = $('#vehicleId').val();
-      const resp = await net.post('/api/post.snag-resolve.php', {id, text});
+      const resp = await net.post('/api/post.snag-resolve.php', {
+        id,
+        text
+      });
       if (resp?.result) {
         ui.toastr.success('Snag resolved', 'Success');
         $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
@@ -199,14 +222,17 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 
   if (!documentEventExists('snag:attach-photo')) {
     $(document).on('snag:attach-photo', async (e, id) => {
-      $(document).trigger('uploadPhoto', async function (resp) {
+      $(document).trigger('uploadPhoto', async function(resp) {
         if (resp.result === false) {
           ui.toastr.error('Failed to attach photo', 'ERROR');
           return;
         }
         const photoId = resp.result;
         const vehicleId = $('#vehicleId').val();
-        resp2 = await net.post('/api/post.snag-photo.php', {id, photoId});
+        resp2 = await net.post('/api/post.snag-photo.php', {
+          id,
+          photoId
+        });
         if (resp2?.result) {
           ui.toastr.success('Photo attached', 'Success');
           $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
@@ -221,7 +247,9 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
     $(document).on('snag:delete', async (e, id) => {
       if (await ui.ask('Are you sure you want to delete this snag?')) {
         const vehicleId = $('#vehicleId').val();
-        const resp = await net.get('/api/get.delete-snag.php', {id});
+        const resp = await net.get('/api/get.delete-snag.php', {
+          id
+        });
         if (resp?.result) {
           ui.toastr.success('Snag deleted', 'Success');
           $('#pills-snags').load(`section.vehicle-snags.php?vehicleId=${vehicleId}`);
@@ -232,23 +260,16 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
     });
   }
 
+  // if (!documentEventExists('badgeCount:snags')) {
+  //   $(document).on('badgeCount:snags', async (e, count) => {
+  //     $('#snag-count').html('<?= $count ?>').removeClass('d-none');
+  //   }
+  // }
 
-
-
-
-
-
-
-
-
-
-  $(async ƒ => {
-
-    <?php $count = count($rows); ?>
-    <?php if ($count > 0): ?>
-      $('#snag-count').html('<?=$count?>').removeClass('d-none');
-    <?php endif; ?>
-
-  });
-
+  <?php $count = count($rows); ?>
+  <?php if ($count > 0): ?>
+    $('#snag-count').html('<?= $count ?>').removeClass('d-none');
+  <?php else: ?>
+    $('#snag-count').html('').addClass('d-none');
+  <?php endif; ?>
 </script>
