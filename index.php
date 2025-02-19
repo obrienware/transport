@@ -78,14 +78,24 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/3.0.3/pretty-checkbox.min.css" integrity="sha512-kz4Ae66pquz4nVE5ytJyKfPDkQyHSggaDtT1v8oLfOd8bB+ZgZXNLaxex99MNu4fdCsWmi58mhLtfGk5RgfcOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+  <!-- Lightbox2 CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+  <!-- Lightbox2 JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
   <script src="/js/layout.js" defer></script>
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/style-alt.css">
 
   <script type="text/javascript" src="js/type-extensions.js"></script>
+
+  <script type="text/javascript" src="js/upload-modal.js" defer></script>
 </head>
 
 <body>
+
+  <?php include 'inc.upload-modal.html'; ?>
+  <?php include 'inc.image-modal.html'; ?>
 
   <!-- Overlay for mobile menu -->
   <div class="overlay" id="overlay"></div>

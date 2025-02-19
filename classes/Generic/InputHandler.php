@@ -72,7 +72,7 @@ class InputHandler
    * @param string $destination The target directory.
    * @return string|null The new file path if moved successfully, or NULL on failure.
    */
-  public static function saveFile(string $key, string $destination): ?string
+  public static function saveFile(string $key, string $destination, ?string $ext = null): ?string
   {
     $file = self::getFile($key);
     if (!$file) return null;
@@ -92,6 +92,8 @@ class InputHandler
     {
       return null; // Prevent saving files without a valid extension
     }
+
+    if (!is_null($ext)) $extension = $ext;
 
     // Generate a unique filename with the correct extension
     $newFileName = uniqid() . '.' . $extension;

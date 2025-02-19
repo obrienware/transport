@@ -18,11 +18,11 @@ class Snag extends Base
   public ?string $summary = null;
   public ?string $description = null;
   private ?DateTime $acknowledged = null;
-  public ?string $acknowledgedBy;
+  public ?string $acknowledgedBy = null;
   private ?DateTime $resolved = null; // Date/time the issue was resolved
-  public ?string $resolution; // What was done to resolve the issue
-  public ?string $resolvedBy; // Person who resolved the issue
-  public ?string $comments; // In case you need to monitor the situation for example.
+  public ?string $resolution = null; // What was done to resolve the issue
+  public ?string $resolvedBy = null; // Person who resolved the issue
+  public ?string $comments = null; // In case you need to monitor the situation for example.
 
 
   public function getName(): string
@@ -203,7 +203,18 @@ class Snag extends Base
   {
     $db = Database::getInstance();
     if ($vehicleId) {
-      $query = "SELECT * FROM snags WHERE vehicle_id = :vehicle_id ORDER BY logged";
+      $query = "
+      SELECT 
+        s.*,
+        GROUP_CONCAT(il.filename ORDER BY il.filename SEPARATOR ', ') AS image_filenames
+      FROM snags s
+      LEFT JOIN snag_images si ON (s.id = si.snag_id AND si.archived IS NULL)
+      LEFT JOIN image_library il ON si.image_id = il.id
+      WHERE 
+        s.vehicle_id = :vehicle_id
+      GROUP BY s.id
+      ORDER BY s.logged DESC
+      ";
       $params = ['vehicle_id' => $vehicleId];
     } else {
       $query = "
@@ -212,9 +223,41 @@ class Snag extends Base
         LEFT OUTER JOIN vehicles v ON v.id = s.vehicle_id
         WHERE 
           s.archived IS NULL 
-        ORDER BY v.name, s.logged
+        ORDER BY v.name, s.logged DESC
       ";
     }
     return $db->get_rows($query, $params);
   }
+
+  public function attachImage(int $imageId): bool
+  {
+    $db = Database::getInstance();
+		$this->lastError = null;
+		$audit = new Audit();
+		$audit->username = $_SESSION['user']->username;
+		$audit->action = 'attach';
+		$audit->tableName = 'snag_images';
+    $audit->description = 'Image attached to snag: '.$this->id;
+
+    $query = "
+      INSERT INTO snag_images SET 
+        snag_id = :snag_id, 
+        image_id = :image_id,
+        created = NOW(),
+        created_by = :user
+    ";
+    $params = [
+      'snag_id' => $this->id, 
+      'image_id' => $imageId,
+      'user' => $_SESSION['user']->username
+    ];
+    try {
+			$db->query($query, $params);
+      $audit->commit();
+			return true;
+		} catch (\Exception $e) {
+			$this->lastError = $e->getMessage();
+			return false;
+		}
+ }
 }
