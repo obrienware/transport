@@ -16,7 +16,7 @@ if (!$uploadedFile)
   exit(json_encode(['result' => false, 'error' => 'No file uploaded']));
 }
 
-$savedFile = InputHandler::saveFile('file', '../images/library/', 'jpg'); // Uploaded this way, the image will have been converted and uploaded as a jpg image even if the original extension was something else (like an .svg).
+$savedFile = InputHandler::saveFile('file', __DIR__.'/../images/library/', 'jpg'); // Uploaded this way, the image will have been converted and uploaded as a jpg image even if the original extension was something else (like an .svg).
 if (!$savedFile)
 {
   exit(json_encode(['result' => false, 'error' => 'Failed to save uploaded file.']));
