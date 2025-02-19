@@ -61,8 +61,8 @@ $query .= " ORDER BY datetimestamp DESC";
       const self = ƒ.currentTarget;
       const id = $(self).data('id');
       // location.href = `page.audit-detail.php?id=${encodeURIComponent(id)}`;
-      $('#master').addClass('d-none');
-      $('#detail').removeClass('d-none').load(`section.audit-trail-detail.php?id=${encodeURIComponent(id)}`);
+      $('#audit-trail > .master').addClass('d-none');
+      $('#audit-trail > .detail').removeClass('d-none').load(`section.audit-trail-detail.php?id=${encodeURIComponent(id)}`);
     });
 
   });

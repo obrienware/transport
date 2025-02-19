@@ -73,17 +73,17 @@ if ($row->before && $row->after) {
 </div>
 
 <div class="text-right">
-  <button id="btn-close" class="btn btn-primary px-4">Close</button>
+  <button class="btn btn-primary px-4" onclick="$(document).trigger('close:audit-trail-detail')">Close</button>
 </div>
 
 <script type="text/javascript">
-	$(async ƒ => {
 
-    $('#btn-close').off('click').on('click', ƒ => {
-      $('#detail').addClass('d-none');
-      $('#master').removeClass('d-none');
-      $('#detail').html('');
+if (!documentEventExists('close:audit-trail-detail')) {
+    $(document).on('close:audit-trail-detail', ƒ => {
+      $('#audit-trail > .detail').addClass('d-none').html('');
+      $('#audit-trail > .master').removeClass('d-none');
+      console.log('close');
     });
+  }
 
-  });
 </script>
