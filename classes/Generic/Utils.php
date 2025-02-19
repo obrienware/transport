@@ -11,6 +11,14 @@ require_once __DIR__ . '/../../autoload.php';
 class Utils
 {
 
+  public static function serverLog($data): void
+  {
+    $out = fopen('php://stdout', 'w');
+    $output = json_encode($data, JSON_PRETTY_PRINT);
+    fputs($out, "{$output}\n");
+    fclose($out);
+  }
+
   public static function GUID()
   {
     return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));

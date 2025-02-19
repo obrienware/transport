@@ -75,7 +75,10 @@ class InputHandler
   public static function saveFile(string $key, string $destination, ?string $ext = null): ?string
   {
     $file = self::getFile($key);
-    if (!$file) return null;
+    if (!$file) {
+      Utils::serverLog('No file uploaded');
+      return null;
+    }
 
     // Ensure the destination directory exists
     if (!is_dir($destination))
@@ -90,6 +93,12 @@ class InputHandler
     // Validate extension (ensure it's not empty or unexpected)
     if ($extension === '' || !preg_match('/^[a-z0-9]+$/', $extension))
     {
+      Utils::serverLog([
+        'error' => 'Invalid file extension',
+        'fileInfo' => $fileInfo,
+        'extension' => $extension,
+        'file' => $file
+      ]);
       return null; // Prevent saving files without a valid extension
     }
 
@@ -104,7 +113,7 @@ class InputHandler
     {
       return $newFileName;
     }
-
+    Utils::serverLog('Failed to move uploaded file from ' . $file['tmp_name'] . ' to ' . $filePath);
     return null;
   }
 }
