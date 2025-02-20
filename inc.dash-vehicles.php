@@ -95,7 +95,10 @@ $query = "
 
             <?php if ($row->snags > 0): ?>
               <li class="list-group-item">
-                <i class="fa-xl fa-solid fa-exclamation-triangle fa-fw" style="color: darkorange"></i> <?=$row->snags?> Unacknowledged Snag(s)
+                <div class="d-flex">
+                  <div><i class="fa-xl fa-solid fa-exclamation-triangle fa-fw me-2 align-self-center" style="color: darkorange"></i></div>
+                  <div><?=$row->snags?> Unacknowledged Snag(s)</div>
+                </div>
               </li>
             <?php endif; ?>
 
