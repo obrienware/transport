@@ -145,8 +145,12 @@ if ($trip->do_lat && $trip->do_lon) {
             </div>
 
             <div class="d-flex justify-content-between align-items-center">
-              <div style="font-size: small" class="nowrap">Originally scheduled: <?=Date('g:ia', strtotime($trip->pickup_date))?></div>
-              <div id="status_time" style="font-size: small" class="nowrap"></div>
+              <?php if ($trip->ETA): ?>
+                <div style="font-size: small" class="nowrap">Original ETA: <?=Date('g:ia', strtotime($trip->ETA))?></div>
+              <?php elseif ($trip->ETD): ?>
+                <div style="font-size: small" class="nowrap">Original ETD: <?=Date('g:ia', strtotime($trip->ETD))?></div>
+              <?php endif; ?>
+              <div id="status_time" style="font-size: small" class="ms-auto nowrap"></div>
             </div>
           </li>
           <li class="list-group-item bg-body-secondary d-flex justify-content-between align-items-center py-1">
