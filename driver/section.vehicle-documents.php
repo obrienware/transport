@@ -13,19 +13,23 @@ $id = InputHandler::getInt(INPUT_GET, 'id');
       <a href="/documents/<?=$document->filename?>" class="list-group-item" target="_blank"><?=$document->name?></a>
     <?php endforeach; ?>
   </ul>
+<?php else: ?>
+  <div class="alert alert-info">No documents for this vehicle at this time</div>
 <?php endif; ?>
 
-<div class="mb-3">
-  <label for="photoFile" class="form-label">Optional image upload</label>
-  <input type="file" id="photoFile" name="photoFile" class="form-control" accept="image/*">
-</div>
-<div class="mb-3">
-  <label for="documentName" class="form-label">Document name</label>
-  <input type="text" id="documentName" name="documentName" class="form-control">
-</div>
-<div class="text-end mb-4">
-  <button class="btn btn-outline-primary" onclick="uploadPhoto()">Upload</button>
-</div>
+<section class="d-none">
+  <div class="mb-3">
+    <label for="photoFile" class="form-label">Optional image upload</label>
+    <input type="file" id="photoFile" name="photoFile" class="form-control" accept="image/*">
+  </div>
+  <div class="mb-3">
+    <label for="documentName" class="form-label">Document name</label>
+    <input type="text" id="documentName" name="documentName" class="form-control">
+  </div>
+  <div class="text-end mb-4">
+    <button class="btn btn-outline-primary" onclick="uploadPhoto()">Upload</button>
+  </div>
+</section>
 
 <script type="text/javascript">
   function uploadPhoto() {

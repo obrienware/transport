@@ -8,8 +8,15 @@ use Transport\Vehicle;
   <ul class="list-group mx-2" id="vehicle-list">
     <?php foreach ($rows as $row): ?>
       <li class="list-group-item list-group-item-action vehicle-item" data-id="<?=$row->id?>">
-        <i class="fa-solid fa-square fa-fw" style="color: <?=$row->color?>"></i>
-        <?=$row->name?>
+        <div class="d-flex justify-content-between">
+          <div>
+            <i class="fa-solid fa-square fa-fw" style="color: <?=$row->color?>"></i>
+            <?=$row->name?>
+          </div>
+          <?php if ($row->license_plate): ?>
+            <span class="badge text-bg-primary px-2 ms-auto align-self-center"><?= $row->license_plate ?></span>
+          <?php endif; ?>
+        </div>
       </li>
     <?php endforeach; ?>
   </ul>
@@ -70,7 +77,7 @@ use Transport\Vehicle;
     </div>
   </div>
 
-  <div id="vehicle-update-form" class="d-none p-3">
+  <div id="vehicle-update-form" class="d-none p-3 bg-body">
     <h4 class="vehicle-name mb-3"></h4>
 
     <div class="mb-3">
@@ -93,10 +100,10 @@ use Transport\Vehicle;
       <input type="range" class="form-range" min="0" max="100" step="10" id="fuel-level" value="0">
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Engine Light On</label>
+    <div class="mb-3 text-center">
+      <label class="form-label">Engine Light Is On</label>
       <div>
-        <div class="btn-group btn-group-sm" role="group">
+        <div class="btn-group ~btn-group-sm" role="group">
           <input type="radio" class="btn-check" name="opt-check-engine" id="btnradio10" value="0" autocomplete="off">
           <label class="btn btn-outline-success" for="btnradio10">No</label>
 
@@ -109,10 +116,10 @@ use Transport\Vehicle;
       </div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Stocked</label>
+    <div class="mb-3 text-center">
+      <label class="form-label">Is Stocked</label>
       <div>
-        <div class="btn-group btn-group-sm" role="group">
+        <div class="btn-group ~btn-group-sm" role="group">
           <input type="radio" class="btn-check" name="opt-restock" id="btnradio1" value="1" autocomplete="off">
           <label class="btn btn-outline-danger" for="btnradio1">No</label>
 
@@ -125,10 +132,10 @@ use Transport\Vehicle;
       </div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Clean Inside</label>
+    <div class="mb-3 text-center">
+      <label class="form-label">Is Clean Inside</label>
       <div>
-        <div class="btn-group btn-group-sm" role="group">
+        <div class="btn-group ~btn-group-sm" role="group">
           <input type="radio" class="btn-check" name="opt-clean-interior" id="btnradio4" value="0" autocomplete="off">
           <label class="btn btn-outline-danger" for="btnradio4">No</label>
 
@@ -141,10 +148,10 @@ use Transport\Vehicle;
       </div>
     </div>
 
-    <div class="mb-3">
-      <label class="form-label">Clean Outside</label>
+    <div class="mb-3 text-center">
+      <label class="form-label">Is Clean Outside</label>
       <div>
-        <div class="btn-group btn-group-sm" role="group">
+        <div class="btn-group ~btn-group-sm" role="group">
           <input type="radio" class="btn-check" name="opt-clean-exterior" id="btnradio7" value="0" autocomplete="off">
           <label class="btn btn-outline-danger" for="btnradio7">No</label>
 
@@ -279,8 +286,12 @@ use Transport\Vehicle;
       vehicleId = id;
       const vehicle = await get('/api/get.vehicle.php', {id});
       // console.log(vehicle);
+      const backgroundColor = vehicle.color;
+      const textColor = luminanceColor(backgroundColor);;
+      const vehicleName = `<span class="py-1 px-3 rounded" style="background-color:${backgroundColor};color:${textColor}">${vehicle.name}</span>`;
       $('.vehicle-name,#vehicle-location,#vehicle-mileage').html('');
-      $('.vehicle-name').html(vehicle.name);
+      $('.vehicle-name').html(vehicleName);
+
       $('#vehicle-location').html(vehicle.currentLocation?.name);
       $('#vehicle-mileage').html(vehicle?.mileage?.toLocaleString());
 

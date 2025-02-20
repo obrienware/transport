@@ -146,7 +146,18 @@
         <button id="btn-login" class="btn btn-outline-primary px-5">Log In</button>
       </div>
     </div>
-  </div>  
+  </div>
+
+  <script type="module">
+    import {
+      hexToRgba,
+      luminanceColor
+    } from '/js/helpers.js';
+
+    window.hexToRgba = hexToRgba;
+    window.luminanceColor = luminanceColor;
+  </script>
+
 
   <script>
 
