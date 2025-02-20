@@ -51,7 +51,7 @@ $query = "
 
         <div class="card">
           <div class="card-header" style="background-color:<?=$row->color?>">
-            <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="$(document).trigger('loadMainSection', {sectionId: 'vehicles', url: 'section.view-vehicle.php?id=<?=$row->id?>'})">
+            <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="$(document).trigger('loadMainSection', {sectionId: 'vehicles', url: 'section.view-vehicle.php?id=<?=$row->id?>', forceReload: true})">
             <?=$row->name?>
             </button>
           </div>
