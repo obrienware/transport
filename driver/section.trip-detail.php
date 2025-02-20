@@ -145,10 +145,10 @@ if ($trip->do_lat && $trip->do_lon) {
             </div>
 
             <div class="d-flex justify-content-between align-items-center">
-              <?php if ($trip->ETA): ?>
-                <div style="font-size: small" class="nowrap">Original ETA: <?=Date('g:ia', strtotime($trip->ETA))?></div>
-              <?php elseif ($trip->ETD): ?>
-                <div style="font-size: small" class="nowrap">Original ETD: <?=Date('g:ia', strtotime($trip->ETD))?></div>
+              <?php if ($trip->eta): ?>
+                <div style="font-size: small" class="nowrap">Original ETA: <?=Date('g:ia', strtotime($trip->eta))?></div>
+              <?php elseif ($trip->etd): ?>
+                <div style="font-size: small" class="nowrap">Original ETD: <?=Date('g:ia', strtotime($trip->etd))?></div>
               <?php endif; ?>
               <div id="status_time" style="font-size: small" class="ms-auto nowrap"></div>
             </div>
