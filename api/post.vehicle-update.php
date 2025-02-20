@@ -23,6 +23,9 @@ switch ($input->getString('name'))
   case 'mileage':
     $vehicle->mileage = $input->getInt('value');
     break;
+  case 'location':
+    $vehicle->locationId = $input->getInt('value');
+    break;
   default:
     echo json_encode(['result' => false, 'error' => 'Invalid name']);
     exit;

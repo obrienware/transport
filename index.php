@@ -95,6 +95,7 @@
 
   <?php include 'inc.upload-modal.html'; ?>
   <?php include 'inc.image-modal.html'; ?>
+  <?php include 'inc.form-vehicle-location-update.php'; ?>
 
   <!-- Overlay for mobile menu -->
   <div class="overlay" id="overlay"></div>

@@ -10,7 +10,7 @@ $vehicle = new Vehicle($vehicleId);
 $timeZone = new DateTimeZone($_SESSION['userTimezone'] ?: 'America/Denver');
 $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTimezone($timeZone)->format('D M jS g:ia') : 'Never';
 ?>
-<?php include 'inc.form-vehicle-update.php'; ?>
+<input type="hidden" id="status-vehicleId" value="<?= $vehicleId ?>">
 
 <div class="d-flex my-3">
   <div class="alert alert-info mx-auto" role="alert">
@@ -31,7 +31,8 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, minmax(100px, 13%));
   }
-  .guage-container > * {
+
+  .guage-container>* {
     justify-self: center;
   }
 </style>
@@ -63,9 +64,9 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
     <div id="vehicle-check-engine"></div>
   </div>
 
-  <div class="p-2 d-inline-block text-center" style="width:100px">
+  <div id="vehicle-location-icon" class="p-2 d-inline-block text-center pointer" style="width:100px">
     <i class="fa-duotone fa-solid fa-location-dot fa-3x"></i>
-    <div>
+    <div id="vehicle-location">
       <?php if ($vehicle->locationId === null): ?>
         <span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>
       <?php elseif ($vehicle->locationId !== $vehicle->stagingLocationId) : ?>
@@ -89,30 +90,13 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
 </div> -->
 
 <script>
-
   $(async ƒ => {
 
-    const vehicleId = <?= $vehicleId ?>;
-    const vehicleUpdateForm = new VehicleUpdateClass('#vehicleUpdateModal');
+
+    const vehicleId = $('#status-vehicleId').val();
     const vehicle = await net.get('/api/get.vehicle.php', {
       id: vehicleId
     });
-
-    vehicleUpdateForm.onUpdate = async function(e, formData) {
-      formData.vehicleId = vehicleId;
-      const resp = await net.post('/api/post.update-vehicle.php', formData);
-      if (resp?.result) {
-        $(document).trigger('vehicleChange');
-        $('#pills-status').load(`<?= $_SERVER['REQUEST_URI'] ?>`); // Refresh this page
-        return;
-      }
-      ui.toastr.error(resp.message);
-    }
-
-    $('#btn-update-vehicle-status').off('click').on('click', e => {
-      vehicleUpdateForm.show();
-    });
-
 
     function fuelLevelAsFractions(fuelLevel) {
       if (fuelLevel <= 10) return 'Empty';
@@ -210,6 +194,17 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
           content = `<span class="fw-light badge bg-primary w-100">${state ? input.decimal(state, 0) : 'unknown'}</span>`;
           $('#vehicle-mileage').html(content);
           break;
+
+        case 'location':
+          if (state === null) {
+            content = `<span class="fw-light badge bg-body-secondary text-secondary w-100">unknown</span>`;
+          } else if (state === true) {
+            content = `<span class="fw-light badge bg-success w-100">Good</span>`;
+          } else {
+            content = `<span class="fw-light badge bg-danger w-100">Relocate</span>`;
+          }
+          $('#vehicle-location').html(content);
+          break;
       }
     }
 
@@ -231,6 +226,14 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
     renderVehicleItem('hasCheckEngine', vehicle.hasCheckEngine);
     renderVehicleItem('fuelLevel', vehicle.fuelLevel);
     renderVehicleItem('mileage', vehicle.mileage);
+
+    if (vehicle.locationId == vehicle.stagingLocationId) {
+      renderVehicleItem('location', true);
+    } else if (vehicle.locationId === null) {
+      renderVehicleItem('location', null);
+    } else {
+      renderVehicleItem('location', false);
+    }
 
 
 
@@ -288,6 +291,26 @@ $lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTi
       const res = await net.post('api/post.vehicle-update.php', data);
       console.log(res);
       renderVehicleItem('mileage', mileage);
+    });
+
+    $('#vehicle-location-icon').off('click').on('click', async e => {
+      console.log('Location clicked');
+      const vehicleId = $('#status-vehicleId').intVal();
+      $(document).trigger('getVehicleLocation', async function(locationId) {
+        const data = {
+          vehicleId,
+          name: 'location',
+          value: locationId
+        };
+        const res = await net.post('api/post.vehicle-update.php', data);
+        if (locationId == vehicle.stagingLocationId) {
+          renderVehicleItem('location', true);
+        } else if (locationId === null) {
+          renderVehicleItem('location', null);
+        } else {
+          renderVehicleItem('location', false);
+        }
+      });
     });
 
   });
