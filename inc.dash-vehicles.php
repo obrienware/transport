@@ -97,7 +97,7 @@ $query = "
               <li class="list-group-item">
                 <div class="d-flex">
                   <div><i class="fa-xl fa-solid fa-exclamation-triangle fa-fw me-2 align-self-center" style="color: darkorange"></i></div>
-                  <div><?=$row->snags?> Unacknowledged Snag(s)</div>
+                  <div><?=$row->snags?>x New snag(s)</div>
                 </div>
               </li>
             <?php endif; ?>
