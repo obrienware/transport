@@ -206,7 +206,8 @@ class Snag extends Base
       $query = "
       SELECT 
         s.*,
-        GROUP_CONCAT(il.filename ORDER BY il.filename SEPARATOR ', ') AS image_filenames
+        GROUP_CONCAT(il.filename ORDER BY il.id SEPARATOR '|') AS image_filenames,
+        GROUP_CONCAT(il.title ORDER BY il.id SEPARATOR '|') AS image_titles
       FROM snags s
       LEFT JOIN snag_images si ON (s.id = si.snag_id AND si.archived IS NULL)
       LEFT JOIN image_library il ON si.image_id = il.id

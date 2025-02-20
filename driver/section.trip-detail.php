@@ -253,7 +253,7 @@ if ($trip->do_lat && $trip->do_lon) {
         return $('#status_time').html(`Now scheduled: ${scheduled_arrival}`);
       }
       if (res.real_departure) return $('#status_time').html(`Actual: ${real_departure}`);
-      if (res.estimated_departure) return $('#status_time').html(` Current ETD: ${estimated_departure}`);
+      if (res.estimated_departure) return $('#status_time').html(`Current ETD: ${estimated_departure}`);
       return $('#status_time').html(`Now scheduled: ${scheduled_departure}`);
     }
 

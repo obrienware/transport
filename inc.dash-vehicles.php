@@ -6,9 +6,11 @@ use Transport\Database;
 $db = Database::getInstance();
 $query = "
   SELECT v.*, 
-    CASE WHEN v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL THEN l.name ELSE NULL END AS location
+    CASE WHEN v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL THEN l.name ELSE NULL END AS location,
+    COUNT(s.id) AS snags
   FROM vehicles v
   LEFT OUTER JOIN locations l ON l.id = v.location_id
+  LEFT JOIN snags s ON s.vehicle_id = v.id AND s.acknowledged IS NULL AND s.archived IS NULL
   WHERE 
     v.archived IS NULL 
     AND (
@@ -18,9 +20,18 @@ $query = "
       OR v.clean_interior = 0
       OR v.clean_exterior = 0
       OR v.restock = 1
+      OR s.id IS NOT NULL
     )
-  ORDER BY v.name
-";
+  GROUP BY v.id
+  HAVING COUNT(s.id) > 0 OR (
+    v.check_engine = 1
+    OR (v.default_staging_location_id <> v.location_id AND v.location_id IS NOT NULL)
+    OR v.fuel_level <= 25
+    OR v.clean_interior = 0
+    OR v.clean_exterior = 0
+    OR v.restock = 1
+  )
+  ORDER BY v.name";
 ?>
 
 <style>
@@ -79,6 +90,12 @@ $query = "
             <?php if ($row->location): ?>
               <li class="list-group-item">
                 <i class="fa-xl fa-solid fa-location-xmark fa-fw" style="color: darkorange"></i> <?=$row->location?>
+              </li>
+            <?php endif; ?>
+
+            <?php if ($row->snags > 0): ?>
+              <li class="list-group-item">
+                <i class="fa-xl fa-solid fa-exclamation-triangle fa-fw" style="color: darkorange"></i> <?=$row->snags?> Unacknowledged Snag(s)
               </li>
             <?php endif; ?>
 

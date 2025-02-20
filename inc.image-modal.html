@@ -1,14 +1,35 @@
 <!-- Modal -->
 <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg ~modal-fullscreen">
     <div class="modal-content">
-      <div class="modal-header">
+      <!-- <div class="modal-header">
         <h5 class="modal-title" id="imageModalLabel">Images</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center" id="modalBody">
+      </div> -->
+      <div class="modal-body bg-black rounded" id="modalBody">
         <!-- Images will be loaded here dynamically -->
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  #modalBody {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 200px)); 
+    gap: 10px;
+    padding: 10px;
+  }
+  #modalBody .thumbnail {
+    width: 100%;
+    aspect-ratio: 1; /* Forces a square container */
+    overflow: hidden;
+    border-radius: 8px; /* Optional: for rounded corners */
+  }
+  #modalBody .thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Keeps aspect ratio and fills container */
+    display: block;
+  }
+</style>

@@ -29,13 +29,15 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       </thead>
       <tbody>
         <?php foreach ($rows as $row): ?>
-          <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>">
+          <tr data-id="<?= $row->id ?>" data-images="<?= $row->image_filenames ?>" data-titles="<?= str_replace("\"", "\\\"", $row->image_titles) ?>">
             <td class="datetime nowrap text-center align-middle"><?= $row->logged ?></td>
             <td class="text-left align-middle">
               <div><?= $row->description ?></div>
-              <div>
-                <div class="badge bg-dark-subtle"><?= ucwords($row->created_by) ?></div>
-              </div>
+              <?php if ($row->created_by): ?>
+                <div>
+                  <div class="badge bg-dark-subtle"><?= ucwords($row->created_by) ?></div>
+                </div>
+              <?php endif; ?>
             </td>
             <td class="text-left align-middle fit">
               <?php if ($row->acknowledged): ?>
@@ -87,17 +89,21 @@ $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
       e.stopPropagation();
       e.stopImmediatePropagation();
 
-      const images = $(el).closest('tr').data('images').split(', ');
+      const images = $(el).closest('tr').data('images').split('|');
+      const titles = $(el).closest('tr').data('titles').split('|');
       console.log('images:', images);
       if (images.length === 0) return;
 
       const modalBody = $("#modalBody");
       modalBody.empty(); // Clear previous content
 
-      images.forEach(function(image) {
-        const imgElement = `<a href="/images/library/${image}" data-lightbox="gallery">
-          <img src="/images/library/${image}" class="img-thumbnail m-2" style="width: 150px; height: 100px;">
-          </a>`;
+      images.forEach(function(image, index) {
+        const imgElement = `
+          <a href="/images/library/${image}" data-lightbox="gallery" data-title="${titles[index]}" class="text-decoration-none thumbnail position-relative">
+            <img src="/images/library/${image}">
+            <div class="position-absolute start-0 bottom-0 end-0 bg-dark bg-opacity-50 text-white p-1" style="font-size:x-small">${titles[index]}</div>
+          </a>
+        `;
         modalBody.append(imgElement);
       });
 

@@ -6,6 +6,9 @@ use Transport\Vehicle;
 
 $vehicleId = InputHandler::getInt(INPUT_GET, 'vehicleId');
 $vehicle = new Vehicle($vehicleId);
+
+$timeZone = new DateTimeZone($_SESSION['userTimezone'] ?: 'America/Denver');
+$lastUpdate = $vehicle->lastUpdate ? (new DateTime($vehicle->lastUpdate))->setTimezone($timeZone)->format('D M jS g:ia') : 'Never';
 ?>
 <?php include 'inc.form-vehicle-update.php'; ?>
 
@@ -14,8 +17,8 @@ $vehicle = new Vehicle($vehicleId);
     <i class="fa-solid fa-info-circle"></i>
     Last updated:
     <?php if ($vehicle->lastUpdate): ?>
-      <?= Date('m/d h:ia', strtotime($vehicle->lastUpdate)) ?>
-      (<?= Utils::timeAgo($vehicle->lastUpdate) ?>)
+      <?= $lastUpdate ?>
+      (<?= Utils::timeAgo($lastUpdate) ?>)
     <?php else: ?>
       Never
     <?php endif; ?>
