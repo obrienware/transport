@@ -49,7 +49,7 @@ $query = "
     <h2 style="grid-column: 1 / -1; font-weight:100" class="mb-0">The following vehicles need your attention:</h2>
     <?php foreach ($rows as $row): ?>
 
-        <div class="card">
+        <div class="card border-0">
           <div class="card-header" style="background-color:<?=$row->color?>">
             <button style="color: #<?=readableColor($row->color)?> !important" class="btn p-0" onclick="$(document).trigger('loadMainSection', {sectionId: 'vehicles', url: 'section.view-vehicle.php?id=<?=$row->id?>', forceReload: true})">
             <?=$row->name?>
