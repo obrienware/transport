@@ -297,7 +297,17 @@
 
           <h2 style="font-weight:200">Hello <span style="font-weight:800; color:goldenrod"><?= $user->firstName ?></span>!</h2>
 
-      </div>
+          <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
+
+            <section id="unconfirmed-items-container"></section>
+            <section id="vehicle-alerts-container"></section>
+
+          <?php elseif (allowedRoles(['requestor'])): ?>
+            <p>To make a request, please select NEW Request from the menu.</p>
+          <?php else: ?>
+          <?php endif; ?>
+
+        </div>
 
     </section>
 
@@ -538,6 +548,15 @@
         }
       });
     });
+
+    <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
+      $('#unconfirmed-items-container').load('inc.dash-confirm.php');
+      $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
+      setInterval(() => {
+        $('#unconfirmed-items-container').load('inc.dash-confirm.php');
+        $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
+      }, 30 * 1000);
+    <?php endif; ?>
 
   </script>
 

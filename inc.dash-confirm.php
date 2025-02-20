@@ -4,7 +4,7 @@ require_once 'autoload.php';
 use Transport\{ Config, Database };
 
 $config = Config::get('organization');
-if ($config->alertUnconfirmedTrips === false) exit();
+// if ($config->alertUnconfirmedTrips === false) exit();
 
 $db = Database::getInstance();
 
@@ -49,7 +49,7 @@ $reservationRows = $db->get_rows($query);
 ?>
 
 <style>
-  #unconfirmed-items-container {
+  .unconfirmed-items-container {
     display: grid;
     /* grid-template-columns: repeat(3, 1fr); */
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -60,15 +60,7 @@ $reservationRows = $db->get_rows($query);
 
 <?php if ($tripRows || $eventRows || $reservationRows): ?>
 
-  <div id="unconfirmed-items-container" class="mb-3 bg-warning rounded">
-
-    <!-- <div class="card text-bg-danger overflow-hidden">
-      <h5 class="card-header"><i class="fa-solid fa-circle-exclamation"></i> Unconfirmed Items</h5>
-      <div class="card-body text-bg-warning">
-        <p>There are upcoming items that have not yet been confirmed. Please review and confirm these items as soon as possible.</p>
-        <p class="mb-0">Only once trips, events, or vehicle reservations are confirmed do all relavent parties start receiving notifications.</p>
-      </div>
-    </div> -->
+  <div class="mb-3 bg-warning rounded unconfirmed-items-container">
 
     <?php if ($tripRows): ?>
       <div class="card">
@@ -77,7 +69,7 @@ $reservationRows = $db->get_rows($query);
             <?php foreach ($tripRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0 text-start" onclick="app.openTab('edit-trip', 'Trip (edit)', 'section.edit-trip.php?id=<?=$row->id?>');"><?=$row->summary?></button>
+                  <button class="btn p-0 text-start" onclick="$(document).trigger('loadMainSection', {sectionId: 'trips', url: 'section.edit-trip.php?id=<?=$row->id?>'})"><?=$row->summary?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_date))?></div>
               </li>
@@ -93,7 +85,7 @@ $reservationRows = $db->get_rows($query);
             <?php foreach ($eventRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0 text-start" onclick="app.openTab('edit-event', 'Event (edit)', 'section.edit-event.php?id=<?=$row->id?>');"><?=$row->name?></button>
+                  <button class="btn p-0 text-start" onclick="$(document).trigger('loadMainSection', {sectionId: 'events', url: 'section.edit-event.php?id=<?=$row->id?>'})"><?=$row->name?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_date))?></div>
               </li>
@@ -109,7 +101,7 @@ $reservationRows = $db->get_rows($query);
             <?php foreach ($reservationRows as $row): ?>
               <li class="list-group-item d-flex justify-content-between">
                 <div>
-                  <button class="btn p-0 text-start" onclick="app.openTab('edit-reservation', 'Reservation (edit)', 'section.edit-reservation.php?id=<?=$row->id?>');"><?=$row->guest?></button>
+                  <button class="btn p-0 text-start" onclick="$(document).trigger('loadMainSection', {sectionId: 'reservations', url: 'section.edit-reservation.php?id=<?=$row->id?>'})"><?=$row->guest?></button>
                 </div>
                 <div class="ms-2 badge bg-primary datetime align-self-center"><?=Date('D', strtotime($row->start_datetime))?></div>
               </li>
