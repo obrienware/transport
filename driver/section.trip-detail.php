@@ -134,16 +134,19 @@ if ($trip->do_lat && $trip->do_lon) {
         <!-- Flight Information -->
         <?php if ($trip->flight_number): ?>
           <li class="list-group-item">
-            <div class=" d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-between align-items-center">
               <div class="me-4">
                 <img src="/images/airlines/<?=$trip->image_filename?>" alt="<?=$trip->airline?>" class="img-fluid" />
               </div>
               <div class="text-end">
                 <span style="font-size: large;color: gold;" class="badge bg-black"><?=$trip->flight_number_prefix.' '.$trip->flight_number?></span>
                 <div id="status_text" class="badge w-100 nowrap"></div>
-                <div id="status_time" style="font-size: small" class="nowrap"></div>
-                <div style="font-size: small" class="nowrap">Scheduled: <?=Date('g:ia', strtotime($trip->pickup_date))?></div>
               </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div style="font-size: small" class="nowrap">Originally scheduled: <?=Date('g:ia', strtotime($trip->pickup_date))?></div>
+              <div id="status_time" style="font-size: small" class="nowrap"></div>
             </div>
           </li>
           <li class="list-group-item bg-body-secondary d-flex justify-content-between align-items-center py-1">
@@ -234,20 +237,20 @@ if ($trip->do_lat && $trip->do_lon) {
 
       const real_arrival = res.real_arrival ? moment(res.real_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_arrival = res.estimated_arrival ? moment(res.estimated_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma *') : eta;
+      const scheduled_arrival = res.scheduled_arrival ? moment(res.scheduled_arrival, 'YYYY-MM-DD HH:mm:ss').format('h:mma*') : eta;
 
       const real_departure = res.real_departure ? moment(res.real_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
       const estimated_departure = res.estimated_departure ? moment(res.estimated_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma') : 'unknown';
-      const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma *') : etd;
+      const scheduled_departure = res.scheduled_departure ? moment(res.scheduled_departure, 'YYYY-MM-DD HH:mm:ss').format('h:mma*') : etd;
 
       if (type === 'arrival') {
         if (res.real_arrival) return $('#status_time').html(`Actual: ${real_arrival}`);
-        if (res.estimated_arrival) return $('#status_time').html(`Estimated: ${estimated_arrival}`);
-        return $('#status_time').html(`Scheduled: ${scheduled_arrival}`);
+        if (res.estimated_arrival) return $('#status_time').html(`Current ETA: ${estimated_arrival}`);
+        return $('#status_time').html(`Now scheduled: ${scheduled_arrival}`);
       }
       if (res.real_departure) return $('#status_time').html(`Actual: ${real_departure}`);
-      if (res.estimated_departure) return $('#status_time').html(`Estimated: ${estimated_departure}`);
-      return $('#status_time').html(`Scheduled: ${scheduled_departure}`);
+      if (res.estimated_departure) return $('#status_time').html(` Current ETD: ${estimated_departure}`);
+      return $('#status_time').html(`Now scheduled: ${scheduled_departure}`);
     }
 
     clearTimeout(window.flightCheckTimer);
