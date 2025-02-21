@@ -117,7 +117,7 @@ if ($trip->flightNumber) {
   $pdf->SetX($pdf->lm + 150);
   if ($trip->ETA) {
     $pdf->Row(['ETA', Date('g:i a', strtotime($trip->ETA)).' - '.$trip->airport->name]);
-  } else {
+  } elseif ($trip->ETD) {
     $pdf->Row(['ETD', Date('g:i a', strtotime($trip->ETD)).' - '.$trip->airport->name]);
   }
   $pdf->ln();
