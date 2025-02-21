@@ -23,6 +23,14 @@ class Weather
     if ($latitude AND $longitude) $this->getForecast();
   }
 
+  public function getAlerts()
+  {
+    $data = Utils::callApi(method: 'GET', url: 'https://api.weather.gov/alerts/active', data: [
+      'point' => $this->latitude.','.$this->longitude,
+    ], headers: ['User-Agent: (obrienware.com, richard@obrienware.com)']);
+    return json_decode($data);
+  }
+
   public function getForecast()
   {
     $data = Utils::callApi('GET', 'https://api.open-meteo.com/v1/forecast', [

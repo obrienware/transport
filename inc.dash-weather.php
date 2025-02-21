@@ -18,6 +18,26 @@ if (!$config->weatherLocations) exit();
     gap: 0.5rem;
   }
 </style>
+
+<?php foreach ($config->weatherLocations as $item): ?>
+  <?php
+    $weather = new Weather($item->lat, $item->lon);
+    $alerts = $weather->getAlerts();
+  ?>
+  <?php if (count($alerts->features) > 0): ?>
+    <div class="alert alert-danger mb-3">
+      <h5>Weather Alerts</h5>
+      <?php foreach ($alerts->features as $alert): ?>
+        <div class="alert alert-warning">
+          <h6><?= $alert->properties->headline ?></h6>
+          <p><?= $alert->properties->description ?></p>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+<?php endforeach; ?>
+
+
 <div class="weather-grid mb-3">
   <?php foreach ($config->weatherLocations as $item): ?>
     <?php
@@ -49,6 +69,7 @@ if (!$config->weatherLocations) exit();
     </div>
 
     <!--    
+    <pre><?php print_r($alerts); ?></pre>
     <pre><?php print_r($data); ?></pre>
     <pre><?php print_r($forecast); ?></pre>
 -->
