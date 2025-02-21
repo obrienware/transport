@@ -160,6 +160,7 @@ $trip->ETD = $input->getString('ETD');
 $trip->guestNotes = $input->getString('guestNotes');
 $trip->driverNotes = $input->getString('driverNotes');
 $trip->generalNotes = $input->getString('generalNotes');
+$trip->requireMoreInfo = $input->getBool('requireMoreInfo') ? 1 : 0;
 
 $pickupLocation = new Location($trip->puLocationId);
 $dropoffLocation = new Location($trip->doLocationId);

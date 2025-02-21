@@ -9,7 +9,7 @@ $query = "
   SELECT 
   	t.id, t.driver_id, t. vehicle_id, t.airline_id,
   	t.summary, t.start_date, t.end_date, t.eta, t.etd, t.iata, t.flight_number, t.confirmed,
-    t.started, t.completed, t.cancellation_requested,
+    t.started, t.completed, t.cancellation_requested, t.require_more_information,
   	a.name AS airline, a.flight_number_prefix,
     d.username AS driver_username,
   	CONCAT(d.first_name, ' ', SUBSTRING(d.last_name,1,1), '.') AS driver, d.phone_number,
@@ -78,6 +78,10 @@ $rows = $db->get_rows($query)
         // Trip is in progress
         $tdClass = 'table-success';
       }
+      if ($row->require_more_information)
+      {
+        $tdClass = 'table-danger';
+      }
       ?>
       <tr data-id="<?= $row->id ?>" data-confirmed="<?= $row->confirmed ?>" class="<?= $tdClass ?>">
         <!-- Confirmed -->
@@ -101,7 +105,12 @@ $rows = $db->get_rows($query)
             <?php if ($row->cancellation_requested): ?>
               <span class="badge bg-danger align-self-center me-2" style="font-size:medium; font-weight:200">Cancelled</span>
             <?php endif; ?>
-            <div><?= $row->summary ?></div>
+            <div>
+              <?php if ($row->require_more_information): ?>
+                <i class="fa-solid fa-asterisk fa-xl text-danger"></i>
+              <?php endif;?>
+              <?= $row->summary ?>
+            </div>
           </div>
         </td>
         <!-- Pick Up -->

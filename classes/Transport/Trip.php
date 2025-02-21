@@ -47,6 +47,7 @@ class Trip extends Base
 	private ?DateTime $completed = null;
 	public ?string $originalRequest = null;
 	private ?DateTime $cancelled = null;
+	public ?int $requireMoreInfo = null;
 
 	public ?string $created = null;
 	public ?string $createdBy = null;
@@ -148,6 +149,7 @@ class Trip extends Base
 		$this->createdBy = $row->created_by;
 		$this->modified = $row->modified;
 		$this->modifiedBy = $row->modified_by;
+		$this->requireMoreInfo = $row->require_more_information;
 	}
 
   public function __set($name, $value)
@@ -226,6 +228,7 @@ class Trip extends Base
 			'guest_notes' => $this->guestNotes,
 			'driver_notes' => $this->driverNotes,
 			'general_notes' => $this->generalNotes,
+			'require_more_information' => $this->requireMoreInfo,
 			'user' => $userResponsibleForOperation
 		];
 
@@ -256,6 +259,7 @@ class Trip extends Base
 					guest_notes = :guest_notes,
 					driver_notes = :driver_notes,
 					general_notes = :general_notes,
+					require_more_information = :require_more_information,
 					modified = NOW(),
 					modified_by = :user
 				WHERE id = :id
@@ -286,6 +290,7 @@ class Trip extends Base
 					guest_notes = :guest_notes,
 					driver_notes = :driver_notes,
 					general_notes = :general_notes,
+					require_more_information = :require_more_information,
 					created = NOW(),
 					created_by = :user
 			";
@@ -341,6 +346,7 @@ class Trip extends Base
 		$this->completed = null;
 		$this->cancelled = null;
 		$this->originalRequest = null;
+		$this->requireMoreInfo = null;
 	}
 
 	public function cancel(string $userResponsibleForOperation = null): bool
