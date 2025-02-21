@@ -3,109 +3,93 @@ require_once '../autoload.php';
 
 use Transport\{ Airport, Flight };
 
-function showFlightsFor($iata, $type)
-{
-  $count = 0;
-  if ($rows = Flight::upcomingFlights()) {
-    foreach ($rows as $row) {
-      if ($row->type !== $type) continue;
-      if ($row->iata !== $iata) continue;
-      if (!$row->flight_number) continue;
-      $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata, Date('Y-m-d', strtotime($row->target_datetime)));
-      if (!$flight->flight_number) continue; // exclude flights we didn't track.
-      $count++;
-      echo '<tr class="border-0 border-5 border-top">';
-
-      echo '<td class="fit text-center align-middle border-bottom" rowspan="2">';
-      echo '<div class="badge bg-danger">'.Date('M', strtotime($row->pickup_date)).'</div>';
-      echo '<div>'.Date('D', strtotime($row->pickup_date)).'</div>';
-      echo '<div class="fs-4 fw-bold font-monospace">'.Date('d', strtotime($row->pickup_date)).'</div>';
-      echo '</td>';
-
-      echo '<td class="border-bottom">';
-      echo '<div>';
-      echo '<img src="/images/airlines/'.$row->image_filename.'" class="img-fluid" style="max-height:30px">';
-      echo '</div>';
-
-      echo '<div>';
-      echo $flight->flight_number.' ';
-
-      echo $flight->airport_origin_iata.' <i class="fa-solid fa-circle-arrow-right"></i> '.$flight->airport_destination_iata;
-      echo '</div>';
-      echo '</td>';
-
-      $colorClass = '';
-      if ($flight->status_icon === 'green') $colorClass = 'border-success';
-      if ($flight->status_icon === 'yellow') $colorClass = 'border-warning';
-      if ($flight->status_icon === 'red') $colorClass = 'border-danger';
-      echo '<td rowspan="2" class="text-center align-middle border-0 border-5 border-start '.$colorClass.'">';
-      if ($type === 'arrival') {
-        if ($flight->real_arrival) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->real_arrival)).'</div><div>Actual</div>';
-        elseif ($flight->estimated_arrival) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->estimated_arrival)).'</div><div>Estimated</div>';
-        elseif ($flight->scheduled_arrival) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->scheduled_arrival)).'</div><div>Scheduled</div>';
-      }
-      if ($type === 'departure') {
-        if ($flight->real_departure) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->real_departure)).'</div><div>Actual</div>';
-        elseif ($flight->estimated_departure) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->estimated_departure)).'</div><div>Estimated</div>';
-        elseif ($flight->scheduled_departure) echo '<div class="fw-bold">'.Date('g:ia', strtotime($flight->scheduled_departure)).'</div><div>Scheduled</div>';        
-      }
-      echo '</td>';
-
-      echo '</tr>';
-
-      echo '<tr>';
-      echo '<td>';
-      // echo '<div class="d-flex justify-content-between">';
-      echo '<div class="d-flex justify-content-between">';
-      echo '<div>'.$row->guests.'</div>';
-      echo '<div class="text-end text-muted align-self-center" style="white-space:nowrap">| '.$row->driver.'</div>';
-      echo '</div>';
-
-      echo '</td>';
-      echo '</tr>';
-    }
-  }
-  if ($count === 0) {
-    echo '<tr>';
-    echo '<td class="text-center">';
-    echo 'No up-coming flights being tracked at this time';
-    echo '</td>';
-    echo '</tr>';
-  }
-}
-
+$rows = Flight::upcomingFlights();
 ?>
-<div class="container-fluid mt-2">
+<div class="v-stack gap-3 px-2">
+  <?php foreach ($rows as $row): ?>
+    <?php $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata, Date('Y-m-d', strtotime($row->target_datetime))); ?>
+    <card class="card mb-3 text-bg-primary">
+      <div class="card-header d-flex justify-content-between">
+        <div>
+          <?php if ($row->type === 'arrival'): ?>
+            <i class="fa-duotone fa-solid fa-plane-arrival"></i>
+          <?php endif;?>
+          <?php if ($row->type === 'departure'): ?>
+            <i class="fa-duotone fa-solid fa-plane-departure"></i>
+          <?php endif;?>
+          <span class="mx-3" style="font-weight:900"><?= $row->flight_number; ?></span> <?= $flight->airport_origin_iata ?> <i class="fa-duotone fa-solid fa-circle-arrow-right"></i> <?= $flight->airport_destination_iata ?>
+        </div>
+        <div class="badge bg-danger align-self-center"><?= Date('D M j', strtotime($row->pickup_date)); ?></div>
+      </div>
+      <div class="card-body text-bg-light">
 
-  <?php if ($airports = Airport::getAll()): ?>
-    <?php foreach ($airports as $airport): ?>
-      <div class="row mb-4">
-        <div class="col">
-          <div class="card text-bg-primary overflow-hidden">
-            <div class="card-header d-flex justify-content-between">
-              <div><?=$airport->iata?>: <?=$airport->name?></div>
-              <div><i class="fa-duotone fa-solid fa-plane-arrival"></i> ARRIVALS</div>
-            </div>
-            <table class="table mb-0" id="<?=$airport->iata?>-arrival">
-              <?=showFlightsFor($airport->iata, 'arrival'); ?>
-            </table>
+        <div class="d-flex justify-content-between border-bottom mb-1">
+          <div style="font-size:smaller; font-weight:200"><?=$row->guests;?></div>
+          <div style="font-size:smaller; font-weight:200"><?=$row->driver;?></div>
+        </div>
+
+        <div class="d-flex justify-content-between border-bottom pb-1">
+          <div class="align-self-center">
+            <img src="/images/airlines/<?= $row->image_filename; ?>" class="img-fluid" style="max-height:30px">
+          </div>
+          <?php
+          $statusClass = 'text-bg-secondary';
+          if ($flight->status_icon === 'green') $statusClass = 'text-bg-success';
+          if ($flight->status_icon === 'yellow') $statusClass = 'text-bg-warning';
+          if ($flight->status_icon === 'red') $statusClass = 'text-bg-danger';
+          ?>
+          <div class="align-self-center rounded text-center <?= $statusClass; ?> p-2">
+            <?php if ($flight->live): ?>
+              <i class="<?=$statusClass?> fa-duotone fa-solid fa-radar fa-lg"></i>
+            <?php endif;?>
+            <div style="font-size:small"><?=$flight->status_text?></div>
+          </div>
+        </div>
+
+        <div style="font-size:small" class="mt-2">
+          <table class="table table-sm caption-top table-striped-columns">
+            <caption class="text-center bg-body-secondary">Departure: <?=$flight->airport_origin?></caption>
+            <tr>
+              <th class="px-2 py-0">Scheduled</th>
+              <td class="px-2 py-0 text-end"><?= $flight->scheduled_departure ? Date('g:ia', strtotime($flight->scheduled_departure)) : ''; ?></td>
+            </tr>
+            <tr>
+              <th class="px-2 py-0">Estimated</th>
+              <td class="px-2 py-0 text-end"><?= $flight->estimated_departure ? Date('g:ia', strtotime($flight->estimated_departure)) : ''; ?></td>
+            </tr>
+            <tr>
+              <th class="px-2 py-0">Actual</th>
+              <td class="px-2 py-0 text-end"><?= $flight->real_departure ? Date('g:ia', strtotime($flight->real_departure)) : ''; ?></td>
+            </tr>
+          </table>
+        </div>
+
+        <div style="font-size:small" class="mt-2">
+          <table class="table table-sm caption-top table-striped-columns mb-0">
+            <caption class="text-center bg-body-secondary">Arrival: <?=$flight->airport_destination?></caption>
+            <tr>
+              <th class="px-2 py-0">Scheduled</th>
+              <td class="px-2 py-0 text-end"><?= $flight->scheduled_arrival ? Date('g:ia', strtotime($flight->scheduled_arrival)) : ''; ?></td>
+            </tr>
+            <tr>
+              <th class="px-2 py-0">Estimated</th>
+              <td class="px-2 py-0 text-end"><?= $flight->estimated_arrival ? Date('g:ia', strtotime($flight->estimated_arrival)) : ''; ?></td>
+            </tr>
+            <tr>
+              <th class="px-2 py-0">Actual</th>
+              <td class="px-2 py-0 text-end"><?= $flight->real_arrival ? Date('g:ia', strtotime($flight->real_arrival)) : ''; ?></td>
+            </tr>
+          </table>
+        </div>
+
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <div>
+          <div class="" style="font-size:small">
+            Updated: <?=$flight->updated?>
           </div>
         </div>
       </div>
-      <div class="row mb-4">
-        <div class="col">
-          <div class="card text-bg-primary overflow-hidden">
-            <div class="card-header d-flex justify-content-between">
-              <div><?=$airport->iata?>: <?=$airport->name?></div>
-              <div><i class="fa-duotone fa-solid fa-plane-departure"></i> DEPARTURES</div>
-            </div>
-            <table class="table mb-0" id="<?=$airport->iata?>-departure">
-              <?=showFlightsFor($airport->iata, 'departure'); ?>
-            </table>
-          </div>
-        </div>
-      </div>
-    <?php endforeach; ?>
-  <?php endif;?>
-
+    </card>
+  <?php endforeach; ?>
 </div>
