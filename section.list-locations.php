@@ -36,12 +36,16 @@ use Transport\Location;
           <td><?= $row->short_name ?></td>
           <td><?= $row->type ?></td>
           <td data-order="<?= $row->map_address ?>">
-            <?php if ($row->place_id): ?>
-              <i class="fa-solid fa-location-check fa-xl text-primary me-2"></i>
-            <?php else: ?>
-              <i class="fa-solid fa-location-exclamation fa-xl text-warning me-2"></i>
+            <?php if ($row->type === 'virtual'): ?>
+              <i class="fa-solid fa-globe fa-xl me-2" style="color:cornflowerblue"></i> Not applicable
+            <?php else:?>
+              <?php if ($row->place_id): ?>
+                <i class="fa-solid fa-location-check fa-xl text-primary me-2"></i>
+              <?php else: ?>
+                <i class="fa-solid fa-location-exclamation fa-xl text-warning me-2"></i>
+              <?php endif; ?>
+              <?= $row->map_address ?>
             <?php endif; ?>
-            <?= $row->map_address ?>
           </td>
           <td class="text-center align-middle">
             <i class="fa-solid fa-ellipsis fa-xl text-body-tertiary action-icon pointer hidden-content" onclick="$(document).trigger('listActionItem:location', this)"></i>

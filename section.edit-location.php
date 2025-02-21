@@ -53,6 +53,7 @@ if (!is_null($id) && !$locationId)
         <option <?= ($location->type == 'accommodations') ? 'selected' : '' ?> value="accommodations">Accommodations</option>
         <option <?= ($location->type == 'business') ? 'selected' : '' ?> value="business">Busines/Organization</option>
         <option <?= ($location->type == 'home') ? 'selected' : '' ?> value="home">Private Home</option>
+        <option <?= ($location->type == 'virtual') ? 'selected' : '' ?> value="virtual">Virtual Location</option>
       </select>
     </div>
   </div>
@@ -139,8 +140,8 @@ if (!is_null($id) && !$locationId)
         const locationId = id;
         const resp = await net.post('/api/post.save-location.php', {
           id: locationId,
-          name: $('#location-name').cleanProperVal(),
-          shortName: $('#location-short-name').cleanProperVal(),
+          name: $('#location-name').cleanVal(),
+          shortName: $('#location-short-name').cleanVal(),
           type: $('#location-type').val(),
           IATA: $('#location-iata').cleanUpperVal(),
           mapAddress: $('#location-map-address').cleanVal(),
