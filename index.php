@@ -300,8 +300,10 @@
 
           <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
 
+            <?php if ($user->hasRole(['manager'])): ?>
             <section id="unconfirmed-items-container"></section>
             <section id="vehicle-alerts-container"></section>
+            <?php endif; ?>
 
           <?php elseif (allowedRoles(['requestor'])): ?>
             <p>To make a request, please select NEW Request from the menu.</p>
