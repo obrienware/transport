@@ -53,11 +53,14 @@ class Weather
   public function getWeather() {
     $row = $this->_getCodeData($this->data->current->weather_code);
     $icon = NULL;
+    $smallIcon = NULL;
     if ($row->icon_day) {
       if ($this->data->current->is_day == 1) {
         $icon = '<i class="fs-1 wi '.$row->icon_day.'"></i>';
+        $smallIcon = '<i class="wi '.$row->icon_day.'"></i>';
       } else {
         $icon = '<i class="fs-1 wi '.$row->icon_night.'"></i>';
+        $smallIcon = '<i class="wi '.$row->icon_night.'"></i>';
       }
     }
     $result = (object)[
@@ -66,6 +69,7 @@ class Weather
       'min' => $this->data->daily->temperature_2m_min[0].$this->data->current_units->temperature_2m,
       'max' => $this->data->daily->temperature_2m_max[0].$this->data->current_units->temperature_2m,
       'icon' => $icon,
+      'smallIcon' => $smallIcon,
     ];
     return $result;
   }
@@ -81,14 +85,17 @@ class Weather
     if (isset($index)) {
       $row = $this->_getCodeData($this->data->daily->weather_code[$index]);
       $icon = NULL;
+      $smallIcon = NULL;
       if ($row->icon_day) {
         $icon = '<i class="fs-1 wi '.$row->icon_day.'"></i>';
+        $smallIcon = '<i class="wi '.$row->icon_day.'"></i>';
       }
       $result = (object)[
         'description' => $row->description,
         'min' => $this->data->daily->temperature_2m_min[$index].$this->data->current_units->temperature_2m,
         'max' => $this->data->daily->temperature_2m_max[$index].$this->data->current_units->temperature_2m,
         'icon' => $icon,
+        'smallIcon' => $smallIcon,
       ];
       return $result;
     }

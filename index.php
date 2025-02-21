@@ -83,6 +83,8 @@
   <!-- Lightbox2 JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="/css/weather-icons.min.css">
+
   <script src="/js/layout.js" defer></script>
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/style-alt.css">
@@ -300,6 +302,7 @@
 
           <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
 
+            <section id="weather-container"></section>
             <?php if ($user->hasRole(['manager'])): ?>
             <section id="unconfirmed-items-container"></section>
             <section id="vehicle-alerts-container"></section>
@@ -555,9 +558,11 @@
     <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
       $('#unconfirmed-items-container').load('inc.dash-confirm.php');
       $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
+      $('#weather-container').load('inc.dash-weather.php');
       setInterval(() => {
         $('#unconfirmed-items-container').load('inc.dash-confirm.php');
         $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
+        $('#weather-container').load('inc.dash-weather.php');
       }, 30 * 1000);
     <?php endif; ?>
 
