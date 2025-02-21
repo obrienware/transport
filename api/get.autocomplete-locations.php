@@ -17,7 +17,7 @@ $query = "
     `name` AS label,
     short_name,
     type
-  FROM locations WHERE `name` LIKE :query OR short_name LIKE :query
+  FROM locations WHERE (`name` LIKE :query OR short_name LIKE :query) AND archived IS NULL
   ORDER BY `name`
 ";
 $params = ['query' => $q];
