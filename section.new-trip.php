@@ -21,7 +21,7 @@
     </div>
     <div class="card-body text-bg-light container-fluid">
       <div class="row">
-        <div class="col-12 col-lg-7 col-xxl-5">
+        <div class="col-12 col-lg-7 col-xxl-5 d-none">
           <label for="trip-summary" class="form-label">Summary</label>
           <input type="text" class="form-control" id="trip-summary" placeholder="Where What - Who e.g. DEN/COS pick up/drop off - Guest/group name" value="<?= $trip->summary ?>">
         </div>
@@ -80,7 +80,7 @@
             <button id="btn-new-contact" class="btn btn-outline-primary"><i class="fa-solid fa-user-plus"></i></button>
           </div>
           <div class="col-12 col-md-6 col-lg-3">
-            <label for="trip-summary" class="form-label">Passengers</label>
+            <label for="trip-passengers" class="form-label">Passengers</label>
             <input type="number" class="form-control" id="trip-passengers" placeholder="# Passengers" value="1">
           </div>
           <div class="col-12 col-lg-9">
@@ -337,11 +337,11 @@
       const leadTime = isNaN($('#trip-lead-time').floatVal()) ? 0 : parseInt($('#trip-lead-time').floatVal() * 60);
       const pickupDate = moment($('#trip-pickup-date').val());
 
-      if ($('#trip-summary').val() == '') {
-        await ui.alertError('You need a summary before proceeding.', 'Oops!');
-        $('#trip-summary').addClass('is-invalid');
-        return false;
-      }
+      // if ($('#trip-summary').val() == '') {
+      //   await ui.alertError('You need a summary before proceeding.', 'Oops!');
+      //   $('#trip-summary').addClass('is-invalid');
+      //   return false;
+      // }
 
       if (!pickupDate.isValid()) {
         await ui.alertError('You need a specify a valid date before proceeding.', 'Oops!');

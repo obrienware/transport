@@ -22,7 +22,7 @@ if (!is_null($id) && !$trip->getId())
   </button>
 </div>
 
-<h2>Edit Trip (#<?= $trip->getId() ?>)</h2>
+<h2>Edit Trip</h2>
 <input type="hidden" id="trip-end-date" value="<?= $trip->endDate ?>" />
 <input type="hidden" id="tripId" name="tripId" value="<?= $trip->getId() ?>" />
 
@@ -31,7 +31,7 @@ if (!is_null($id) && !$trip->getId())
   <!-- Trip Summary Card -->
   <card class="card text-bg-secondary" style="grid-column: 1 / -1;">
     <div class="card-header d-flex justify-content-between">
-      <div>Trip Summary</div>
+      <div style="font-weight:100" class="fs-4"><?= $trip->getId() ?>: <?=$trip->summary?></div>
       <div>
         <?php if ($trip->isConfirmed()): ?>
           <span class="badge bg-success" style="font-size:medium; font-weight:200">Confirmed</span>
@@ -42,7 +42,7 @@ if (!is_null($id) && !$trip->getId())
     </div>
     <div class="card-body text-bg-light container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
       <div class="row">
-        <div class="col-12 col-lg-7 col-xxl-5">
+        <div class="col-12 col-lg-7 col-xxl-5 d-none">
           <label for="trip-summary" class="form-label">Summary</label>
           <input type="text" class="form-control" id="trip-summary" placeholder="Summary" value="<?= $trip->summary ?>">
         </div>

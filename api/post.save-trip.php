@@ -161,16 +161,26 @@ $trip->guestNotes = $input->getString('guestNotes');
 $trip->driverNotes = $input->getString('driverNotes');
 $trip->generalNotes = $input->getString('generalNotes');
 
+$pickupLocation = new Location($trip->puLocationId);
+$dropoffLocation = new Location($trip->doLocationId);
+
+$summary = '';
 if ($trip->ETA)
 {
-  $location = new Location($trip->puLocationId);
-  $trip->IATA = $location->IATA;
-}
-if ($trip->ETD)
+  $trip->IATA = $pickupLocation->IATA;
+  $summary = $trip->IATA.' pick up - '.$trip->guests.' / '.$trip->passengers;
+} 
+elseif ($trip->ETD)
 {
-  $location = new Location($trip->doLocationId);
-  $trip->IATA = $location->IATA;
+  $trip->IATA = $dropoffLocation->IATA;
+  $summary = $trip->IATA.' drop off - '.$trip->guests.' / '.$trip->passengers;
 }
+else
+{
+  $trip->IATA = null;
+  $summary = $pickupLocation->shortName.' to '.$dropoffLocation->shortName.' - '.$trip->guests.' / '.$trip->passengers;
+}
+$trip->summary = $summary;
 
 
 // Check for and update any linked vehicle reservations
