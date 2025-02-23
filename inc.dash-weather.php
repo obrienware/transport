@@ -31,6 +31,7 @@ if (!$config->weatherLocations) exit();
         <div class="alert alert-warning">
           <h6><?= $alert->properties->headline ?></h6>
           <p><?= $alert->properties->description ?></p>
+          <div class="font-size:small"><?= $alert->properties->areaDesc ?></div>
         </div>
       <?php endforeach; ?>
     </div>

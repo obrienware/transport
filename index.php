@@ -558,12 +558,16 @@
     <?php if (allowedRoles(['developer', 'manager', 'admin', 'driver'])): ?>
       $('#unconfirmed-items-container').load('inc.dash-confirm.php');
       $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
-      $('#weather-container').load('inc.dash-weather.php');
       setInterval(() => {
         $('#unconfirmed-items-container').load('inc.dash-confirm.php');
         $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
         $('#weather-container').load('inc.dash-weather.php');
-      }, 30 * 1000);
+      }, 30 * 1000); // every 30 seconds
+
+      $('#weather-container').load('inc.dash-weather.php');
+      setInterval(() => {
+        $('#weather-container').load('inc.dash-weather.php');
+      }, 60 * 60 * 1000); // every hour
     <?php endif; ?>
 
   </script>
