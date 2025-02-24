@@ -4,6 +4,9 @@ require_once 'autoload.php';
 use Transport\Database;
 use Generic\Utils;
 
+$timeZone = new DateTimeZone($_SESSION['userTimezone'] ?: $_ENV['TZ']);
+date_default_timezone_set($timeZone->getName());
+
 $db = Database::getInstance();
 $query = "
   SELECT 
