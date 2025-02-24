@@ -5,9 +5,9 @@
 # https://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 11.5.2-MariaDB-ubu2404)
+# Host: 127.0.0.1 (MySQL 11.6.2-MariaDB-ubu2404)
 # Database: transport
-# Generation Time: 2025-01-05 22:11:00 +0000
+# Generation Time: 2025-02-24 17:24:51 +0000
 # ************************************************************
 
 
@@ -182,8 +182,28 @@ CREATE TABLE `departments` (
 
 
 
+# Dump of table driver_notes
+# ------------------------------------------------------------
+
+CREATE TABLE `driver_notes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `modified_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
 # Dump of table email_templates
 # ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `email_templates`;
 
 CREATE TABLE `email_templates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -221,7 +241,10 @@ VALUES
 	(14,'Email Driver Trip Deleted','Hello {{name}},\n\nThe following trip has been cancelled/deleted:\n\n{{tripDate}}\n{{tripSummary}}\n\n\nRegards,\nTransportation Team\n','name, tripDate, tripSummary',NULL,NULL,NULL,NULL,NULL,NULL),
 	(15,'Email Requestor Event Deleted','Hello {{name}},\n\nThe following event has been cancelled/deleted:\n\n{{startDate}} - {{endDate}}\n{{eventName}}\n\n\nRegards,\nTransportation Team\n','name, startDate, endDate, eventName',NULL,NULL,NULL,NULL,NULL,NULL),
 	(16,'Email Driver Event Deleted','Hello {{name}},\n\nThe following event has been cancelled/deleted:\n\n{{startDate}} - {{endDate}}\n{{eventName}}\n\n\nRegards,\nTransportation Team\n','name, startDate, endDate, eventName',NULL,NULL,NULL,NULL,NULL,NULL),
-	(17,'Email Basic','Hello {{name}},\n\n{{content}}\n\nRegards,\nTransportation Team\n','name, content',NULL,NULL,NULL,NULL,NULL,NULL);
+	(17,'Email Basic','Hello {{name}},\n\n{{content}}\n\nRegards,\nTransportation Team\n','name, content',NULL,NULL,NULL,NULL,NULL,NULL),
+	(18,'Email Requestor New Reservation','Hello {{name}},\n\nThe following vehicle reservation has been made:\n\n{{startDateTime}} - {{endDateTime}}\nGuest: {{guest}}\nVehicle: {{vehicle}}\n\nRegards,\nTransportation Team','name, guest, reason, startDateTime, endDateTime, vehicle',NULL,NULL,'2025-01-31 15:52:55','richard',NULL,NULL),
+	(19,'Email Requestor Vehicle Reservation Deleted','Hello {{name}},\n\nThe following vehicle reservation for {{guest}} has been cancelled/deleted:\n\n{{startDateTime}} - {{endDateTime}}\n\n\nRegards,\nTransportation Team\n','name, guest, startDateTime, endDateTime',NULL,NULL,'2025-01-31 15:51:21','richard',NULL,NULL),
+	(20,'Email Requestor Vehicle Reservation Change','Hello {{name}},\n\nThe following changes have been made to the vehicle reservation for: {{guest}}\n\n{{startDateTime}} - {{endDateTime}}\n\n{{changes}}\n\n\nRegards,\nTransportation Team\n','name, guest, startDateTime, endDateTime, changes',NULL,NULL,'2025-01-31 15:50:19','richard',NULL,NULL);
 
 /*!40000 ALTER TABLE `email_templates` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -304,6 +327,26 @@ CREATE TABLE `guests` (
   `last_name` varchar(50) DEFAULT NULL,
   `phone_number` varchar(50) DEFAULT NULL,
   `email_address` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `modified_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
+# Dump of table image_library
+# ------------------------------------------------------------
+
+CREATE TABLE `image_library` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) DEFAULT NULL,
+  `filename` varchar(100) DEFAULT NULL,
+  `file_type` varchar(100) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `created_by` varchar(100) DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
@@ -356,13 +399,33 @@ CREATE TABLE `opt_in_text` (
 
 
 
+# Dump of table snag_images
+# ------------------------------------------------------------
+
+CREATE TABLE `snag_images` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `snag_id` int(11) DEFAULT NULL,
+  `image_id` int(11) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `modified_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `snag_id` (`snag_id`),
+  KEY `image_id` (`image_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
 # Dump of table snags
 # ------------------------------------------------------------
 
 CREATE TABLE `snags` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `logged` datetime DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL COMMENT 'Person who logged the snag',
+  `user_id` int(11) DEFAULT NULL,
   `vehicle_id` int(11) DEFAULT NULL,
   `summary` varchar(1024) DEFAULT NULL,
   `description` text DEFAULT NULL,
@@ -477,6 +540,7 @@ CREATE TABLE `trips` (
   `driver_notes` text DEFAULT NULL,
   `general_notes` text DEFAULT NULL,
   `confirmed` datetime DEFAULT NULL,
+  `require_more_information` tinyint(1) DEFAULT NULL,
   `cancellation_requested` datetime DEFAULT NULL,
   `linked_trip_id` int(11) DEFAULT NULL,
   `started` datetime DEFAULT NULL,
@@ -566,6 +630,26 @@ CREATE TABLE `vehicle_documents` (
 
 
 
+# Dump of table vehicle_maintenance
+# ------------------------------------------------------------
+
+CREATE TABLE `vehicle_maintenance` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `vehicle_id` int(11) DEFAULT NULL,
+  `start_datetime` datetime DEFAULT NULL,
+  `end_datetime` datetime DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `modified_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `vehicle_id` (`vehicle_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
 # Dump of table vehicle_maintenance_repair_jobs
 # ------------------------------------------------------------
 
@@ -586,6 +670,36 @@ CREATE TABLE `vehicle_maintenance_schedules` (
 
 
 
+# Dump of table vehicle_reservations
+# ------------------------------------------------------------
+
+CREATE TABLE `vehicle_reservations` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `guest_id` int(11) DEFAULT NULL,
+  `vehicle_id` int(11) DEFAULT NULL,
+  `requestor_id` int(11) DEFAULT NULL,
+  `start_trip_id` int(11) DEFAULT NULL,
+  `end_trip_id` int(11) DEFAULT NULL,
+  `start_datetime` datetime DEFAULT NULL,
+  `end_datetime` datetime DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `confirmed` datetime DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `created_by` varchar(100) DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  `modified_by` varchar(100) DEFAULT NULL,
+  `archived` datetime DEFAULT NULL,
+  `archived_by` varchar(100) DEFAULT NULL,
+  `original_request` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `guest_id` (`guest_id`),
+  KEY `vehicle_id` (`vehicle_id`),
+  KEY `start_trip_id` (`start_trip_id`),
+  KEY `end_trip_id` (`end_trip_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+
+
 # Dump of table vehicles
 # ------------------------------------------------------------
 
@@ -598,7 +712,7 @@ CREATE TABLE `vehicles` (
   `passengers` int(11) DEFAULT NULL,
   `require_cdl` tinyint(1) NOT NULL DEFAULT 0,
   `mileage` int(11) DEFAULT NULL,
-  `check_engine` tinyint(1) NOT NULL DEFAULT 0,
+  `check_engine` tinyint(1) DEFAULT NULL,
   `default_staging_location_id` int(11) DEFAULT NULL,
   `last_update` datetime DEFAULT NULL,
   `last_updated_by` varchar(100) DEFAULT NULL,
@@ -620,6 +734,8 @@ CREATE TABLE `vehicles` (
 
 # Dump of table weather_codes
 # ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `weather_codes`;
 
 CREATE TABLE `weather_codes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
