@@ -74,7 +74,7 @@
 
     $(async ƒ => {
 
-			const acceptedDomains = ['awmi.net','awmcharis.com'];
+			const acceptedDomains = ['awmi.net','awmcharis.com','obrienware.com'];
 
 			$('#email').on('keyup', async ƒ => {
 				if (ƒ.keyCode === 13) {
