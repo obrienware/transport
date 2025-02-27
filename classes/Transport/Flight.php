@@ -22,7 +22,7 @@ class Flight
       return $data;
     }
     // We don't have the flight data in our database, let's try to get it from the API
-    if ($date < Date('Y-m-d', strtotime('+8 days'))) {
+    if ($date < Date('Y-m-d', strtotime('+9 days'))) {
       self::updateFlight($flightNumber);
     } else {
       if (is_null($type)) {
