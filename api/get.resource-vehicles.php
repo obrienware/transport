@@ -6,6 +6,8 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Vehicle;
+use Generic\Logger;
+Logger::logRequest();
 
 $rows = Vehicle::getAll();
 $response = [];

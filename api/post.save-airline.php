@@ -8,6 +8,8 @@ require_once '../autoload.php';
 
 use Transport\{ Airline, User };
 use Generic\InputHandler;
+use Generic\Logger;
+Logger::logRequest();
 
 $user = new User($_SESSION['user']->id);
 

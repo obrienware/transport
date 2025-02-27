@@ -8,6 +8,8 @@ require_once '../autoload.php';
 
 use Transport\{ Config, Email, EmailTemplates, Guest, Template, User, Vehicle, VehicleReservation };
 use Generic\JsonInput;
+use Generic\Logger;
+Logger::logRequest();
 
 $input = new JsonInput();
 

@@ -20,6 +20,8 @@ use Transport\{
   VehicleReservation
 };
 use Generic\Utils;
+use Generic\Logger;
+Logger::logRequest();
 
 $json = json_decode(file_get_contents("php://input"));
 

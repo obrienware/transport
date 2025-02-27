@@ -8,6 +8,8 @@ require_once '../autoload.php';
 
 use Transport\{ Email, EmailTemplates, Event, Template, User };
 use Generic\JsonInput;
+use Generic\Logger;
+Logger::logRequest();
 
 $input = new JsonInput();
 

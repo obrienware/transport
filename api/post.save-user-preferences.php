@@ -8,6 +8,8 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\User;
+use Generic\Logger;
+Logger::logRequest();
 
 // $json = json_decode(file_get_contents("php://input"));
 $json = file_get_contents("php://input");

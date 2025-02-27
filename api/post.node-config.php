@@ -5,6 +5,8 @@ require_once '../autoload.php';
 
 use Transport\Config;
 use Generic\JsonInput;
+use Generic\Logger;
+Logger::logRequest();
 
 $input = new JsonInput();
 

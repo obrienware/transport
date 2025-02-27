@@ -7,6 +7,8 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\Database;
+use Generic\Logger;
+Logger::logRequest();
 
 $db = Database::getInstance();
 

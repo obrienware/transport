@@ -7,6 +7,8 @@ require_once '../autoload.php';
 
 use Transport\{ User, Vehicle };
 use Generic\InputHandler;
+use Generic\Logger;
+Logger::logRequest();
 
 $id = InputHandler::getInt(INPUT_GET, 'id');
 

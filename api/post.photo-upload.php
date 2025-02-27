@@ -7,6 +7,8 @@ require_once '../autoload.php';
 
 use Transport\{ User, ImageLibrary };
 use Generic\InputHandler;
+use Generic\Logger;
+Logger::logRequest();
 
 $user = new User($_SESSION['user']->id);
 

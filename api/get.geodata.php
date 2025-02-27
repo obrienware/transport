@@ -8,6 +8,8 @@ require_once '../autoload.php';
 
 use Transport\Config;
 use Generic\{ InputHandler, Utils };
+use Generic\Logger;
+Logger::logRequest();
 
 $config = Config::get('system');
 $keys = $config->keys;

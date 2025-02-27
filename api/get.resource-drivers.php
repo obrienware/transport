@@ -6,6 +6,8 @@ header('Content-Type: application/json');
 require_once '../autoload.php';
 
 use Transport\User;
+use Generic\Logger;
+Logger::logRequest();
 
 $rows = User::getDrivers();
 $response = [];

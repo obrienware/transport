@@ -7,6 +7,8 @@ require_once '../autoload.php';
 
 use Transport\Database;
 use Generic\InputHandler;
+use Generic\Logger;
+Logger::logRequest();
 
 $node = InputHandler::getString(INPUT_GET, 'node');
 

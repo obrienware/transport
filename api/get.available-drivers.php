@@ -8,6 +8,8 @@ require_once '../autoload.php';
 
 use Transport\Database;
 use Generic\InputHandler;
+use Generic\Logger;
+Logger::logRequest();
 
 $db = Database::getInstance();
 
