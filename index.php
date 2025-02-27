@@ -206,6 +206,9 @@
           <button class="submenu-item" data-rel="emailTemplates" onclick="$(document).trigger('menuSelect', 'emailTemplates')">- Email Templates</button>
           <button class="submenu-item" data-rel="config" onclick="$(document).trigger('menuSelect', 'config')">- Config</button>
           <?php endif; ?>
+          <?php if (allowedRoles(['developer'])) : ?>
+            <button class="submenu-item" data-rel="config-system" onclick="$(document).trigger('menuSelect', 'config-system')">- SysConf</button>
+          <?php endif; ?>
         </div>
 
         <a href="#submenu3" class="menu-item" data-bs-toggle="collapse">
@@ -470,6 +473,13 @@
           $(document).trigger('loadMainSection', {
             sectionId: menuId,
             url: 'section.edit-config.php?node=organization',
+            forceReload: true
+          });
+          break;
+        case 'config-system':
+          $(document).trigger('loadMainSection', {
+            sectionId: menuId,
+            url: 'section.edit-config.php?node=system',
             forceReload: true
           });
           break;
