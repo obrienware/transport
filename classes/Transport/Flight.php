@@ -1,35 +1,70 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Transport;
 
-require_once __DIR__.'/../../autoload.php';
+require_once __DIR__ . '/../../autoload.php';
 
 use DateTime;
 use DateTimeZone;
 use Generic\Utils;
+use Transport\Config;
 
 class Flight
 {
 
-  static function getFlightStatus(string $flightNumber, string $type, string $iata, ?string $date = NULL): object | false
+  static function getFlightStatus(string $flightNumber, ?string $type = null, ?string $iata = null, ?string $date = null): mixed
+  {
+    if (!$date) $date = Date('Y-m-d'); // Default to today
+    if ($data = self::getFlightInfoFromDatabase($flightNumber, $type, $iata, $date))
+    {
+      return $data;
+    }
+    // We don't have the flight data in our database, let's try to get it from the API
+    if ($date < Date('Y-m-d', strtotime('+8 days'))) {
+      self::updateFlight($flightNumber);
+    } else {
+      if (is_null($type)) {
+        self::getFutureFlights('arrival', $iata, $date);
+        self::getFutureFlights('departure', $iata, $date);
+      } else {
+        self::getFutureFlights($type, $iata, $date);
+      }
+    }
+    return self::getFlightInfoFromDatabase($flightNumber, $type, $iata, $date);
+  }
+
+  static function getFlightInfoFromDatabase(string $flightNumber, ?string $type = null, ?string $iata = null, ?string $date = null): mixed
   {
     $db = Database::getInstance();
-    if (!$date) $date = Date('Y-m-d'); // Default to today
-    if ($type == 'arrival') {
+    if ($type == 'arrival')
+    {
       $query = "
         SELECT * FROM flight_data 
         WHERE 
-          DATE(scheduled_arrival) = :date
+          arrival_date = :date
           AND airport_destination_iata = :iata
           AND flight_number = :flight_number
       ";
-    } else { // type == 'departure'
+    }
+    elseif ($type == 'departure')
+    {
       $query = "
         SELECT * FROM flight_data 
         WHERE 
-          DATE(scheduled_departure) = :date
+          departure_date = :date
           AND airport_origin_iata = :iata
+          AND flight_number = :flight_number
+      ";
+    }
+    else
+    {
+      $query = "
+        SELECT * FROM flight_data 
+        WHERE 
+          (departure_date = :date OR arrival_date = :date)
+          AND (airport_origin_iata = :iata OR airport_destination_iata = :iata)
           AND flight_number = :flight_number
       ";
     }
@@ -38,13 +73,95 @@ class Flight
       'iata' => $iata,
       'flight_number' => $flightNumber
     ];
-    return $db->get_row($query, $params);
+    return ($type) ? $db->get_row($query, $params) : $db->get_rows($query, $params);
   }
 
-  
+  static function getFutureFlights(string $type, string $iata, ?string $date)
+  {
+    date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');
+    $db = Database::getInstance();
+    $keys = Config::get('system')->keys;
+    $url = 'https://aviation-edge.com/v2/public/flightsFuture';
+    $resp = Utils::callApi(
+      'GET',
+      $url,
+      [
+        'key' => $keys->AVIATION_EDGE_API_KEY,
+        'iataCode' => $iata,
+        'type' => $type,
+        'date' => $date
+      ]
+    );
+    $data = json_decode($resp);
+
+
+    if (is_array($data)) {
+      foreach ($data as $item) {
+
+        if ($type == 'arrival') {
+          $arrivalDate = $date.' '.$item->arrival->scheduledTime;
+          $departureDate = $date.' '.$item->departure->scheduledTime;
+          if (strtotime($departureDate) > strtotime($arrivalDate)) $departureDate = Date('Y-m-d H:i:s', strtotime($departureDate . ' -1 day')); // This happens when the flight crosses midnight
+        }
+        if ($type == 'departure') {
+          $departureDate = $date.' '.$item->departure->scheduledTime;
+          $arrivalDate = $date.' '.$item->arrival->scheduledTime;
+          if (strtotime($departureDate) > strtotime($arrivalDate)) $arrivalDate = Date('Y-m-d H:i:s', strtotime($arrivalDate . ' +1 day')); // This happens when the flight crosses midnight
+        }
+    
+        // Remove any pre-existing data for this flight
+        $db->query("
+          DELETE FROM flight_data 
+          WHERE 
+            flight_number = :flight_number
+            AND airport_origin_iata = :airport_origin_iata
+            AND airport_destination_iata = :airport_destination_iata
+            AND departure_date = :departure_date
+            AND arrival_date = :arrival_date
+          ",
+          [
+            'flight_number' => strtoupper($item->flight->iataNumber),
+            'airport_origin_iata' => strtoupper($item->departure->iataCode),
+            'airport_destination_iata' => strtoupper($item->arrival->iataCode),
+            'departure_date' => Date('Y-m-d', strtotime($departureDate)),
+            'arrival_date' => Date('Y-m-d', strtotime($arrivalDate))
+          ]  
+        );
+
+        $query = "
+          INSERT INTO flight_data SET
+            source = :source,
+            flight_number = :flight_number,
+            airport_origin_iata = :airport_origin_iata,
+            scheduled_departure = :scheduled_departure,
+            airport_destination_iata = :airport_destination_iata,
+            scheduled_arrival = :scheduled_arrival,
+            updated = :updated
+        ";
+        $params = [
+          'source' => 'aviation-edge',
+          'flight_number' => strtoupper($item->flight->iataNumber),
+          'airport_origin_iata' => strtoupper($item->departure->iataCode),
+          'scheduled_departure' => $departureDate,
+          'airport_destination_iata' => strtoupper($item->arrival->iataCode),
+          'scheduled_arrival' => $arrivalDate,
+          'updated' => Date('Y-m-d H:i:s')
+        ];
+        try {
+          $db->query($query, $params);
+        } catch (\Exception $e) {
+          print_r($query);
+          print_r($params);
+          print_r(($e));
+        }
+      }
+    }
+  }
+
+
   /**
    * This will get the latest data for the specified flight and populate our flight_data table
-   * The remote call returns flight details for multiple days (both past, present and future). 
+   * The remote call returns flight details for multiple days (both past, present and future - 7 days). 
    * We'll aggregate all of it
    */
   static function updateFlight(string $flightNumber): bool
@@ -56,23 +173,40 @@ class Flight
       "REPLACE INTO _flight_check SET flight_number = :flight_number, last_checked = NOW()",
       ['flight_number' => $flightNumber]
     );
-    $url ='https://flight-radar1.p.rapidapi.com/flights/get-more-info';
-    $result = Utils::callApi('GET', $url, 
+    $url = 'https://flight-radar1.p.rapidapi.com/flights/get-more-info';
+    $result = Utils::callApi(
+      'GET',
+      $url,
       [
         'fetchBy' => 'flight',
         'query' => $flightNumber
-      ], null,
+      ],
+      null,
       [
-        'X-Rapidapi-Key: '.$keys->FLIGHT_RADAR_API,
+        'X-Rapidapi-Key: ' . $keys->FLIGHT_RADAR_API,
         'X-Rapidapi-Host: flight-radar1.p.rapidapi.com'
       ]
     );
     $obj = json_decode($result);
-    if ($obj->result->response->data) {
-      $db->query("DELETE FROM flight_data WHERE flight_number = :flight_number", ['flight_number' => $flightNumber]);
-      foreach ($obj->result->response->data as $flight) {
+    if ($obj->result->response->data)
+    {
+      $db->query(
+        "
+          DELETE FROM flight_data 
+          WHERE 
+            flight_number = :flight_number 
+            AND (
+              departure_date <= DATE_ADD(CURDATE(), INTERVAL 9 DAY)
+              OR arrival_date <= DATE_ADD(CURDATE(), INTERVAL 9 DAY)
+            )
+        ", 
+        ['flight_number' => $flightNumber]
+      );
+      foreach ($obj->result->response->data as $flight)
+      {
         $query = "
           INSERT INTO flight_data SET
+            source = :source,
             row = :row,
             flight_number = :flight_number,
             status_live = :status_live,
@@ -91,6 +225,7 @@ class Flight
             updated = :updated
         ";
         $params = [
+          'source' => 'flight-radar',
           'row' => $flight->identification->row,
           'flight_number' => $flight->identification->number->default,
           'status_live' => $flight->status->live ? 1 : 0,
@@ -116,6 +251,7 @@ class Flight
 
   /**
    * Returns the number of minutes since the last check for this flight, or false if never checked
+   * We'll use this to determine if we should make another API call for updated flight data, useful when tracking imminent flights in "real time"
    */
   static function lastChecked(string $flightNumber): float | bool
   {
@@ -131,6 +267,9 @@ class Flight
     return round(abs($time1 - $time2) / 60, 2);
   }
 
+  /**
+   * This shows the upcoming flights (with augmented trip information) associated with trips ocurring within the next 7 days
+   */
   public static function upcomingFlights(): array | false
   {
     date_default_timezone_set($_ENV['TZ'] ?? 'America/Denver');

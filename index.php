@@ -208,6 +208,7 @@
           <?php endif; ?>
           <?php if (allowedRoles(['developer'])) : ?>
             <button class="submenu-item" data-rel="config-system" onclick="$(document).trigger('menuSelect', 'config-system')">- SysConf</button>
+            <button class="submenu-item" data-rel="cli" onclick="$(document).trigger('menuSelect', 'cli')">- CLI</button>
           <?php endif; ?>
         </div>
 
@@ -510,6 +511,14 @@
             sectionId: 'request',
             url: 'section.request.php',
             forceReload: true
+          });
+          break;
+
+        case 'cli':
+          $(document).trigger('loadMainSection', {
+            sectionId: 'cli',
+            url: 'section.cli.php',
+            // forceReload: true
           });
           break;
 

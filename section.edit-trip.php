@@ -160,9 +160,14 @@ if (!is_null($id) && !$trip->getId())
 
   <!-- Flight Details Card -->
   <card id="flight-info" class="card bg-dark-subtle d-none">
-    <div class="card-header">
-      <i class="fa-duotone fa-solid fa-plane-tail"></i>
-      Flight Details
+    <div class="card-header d-flex justify-content-between">
+      <div>
+        <i class="fa-duotone fa-solid fa-plane-tail"></i>
+        Flight Details
+      </div>
+      <div id="flight-verified" class="d-none" title="Verified">
+      <i class="fa-solid fa-certificate fa-xl text-danger"></i>
+      </div>
     </div>
     <div class="card-body bg-body-secondary container-fluid" style="border-radius: 0 0 var(--bs-border-radius) var(--bs-border-radius);">
       <div class="row">
@@ -492,6 +497,29 @@ if (!is_null($id) && !$trip->getId())
     }
     checkForFlight();
 
+    $('#trip-flight-number').on('change', verifyFlight);
+
+    async function verifyFlight() {
+      console.debug('Verifying flight...');
+      const data = await getData();
+      console.log(data);
+      if (!data.flightNumber) return;
+      const flightIata = $('#flight-number-prefix').html() + data.flightNumber;
+      const type = (data.ETA) ? 'arrival' : 'departure';
+      const date = (data.ETA) ? moment(data.ETA, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD') : moment(data.ETD, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD');
+      const locationId = (data.ETA) ? $('#trip-pu-location').data('id') : $('#trip-do-location').data('id');
+      const resp = await net.get('/api/get.verify-flight.php', {
+        flightIata,
+        type,
+        date,
+        locationId
+      });
+      console.log(resp);
+      if (resp) {
+        $('#flight-verified').removeClass('d-none');
+      }
+    }
+
     if (!documentEventExists('buttonSave:trip')) {
       $(document).on('buttonSave:trip', async (e, tripId) => {
         const data = await getData();
@@ -666,6 +694,9 @@ if (!is_null($id) && !$trip->getId())
       
       return data;
     }
+
+    verifyFlight();
+
   });
 
   <?php if (!$trip->isEditable()): ?>
