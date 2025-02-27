@@ -17,6 +17,7 @@ $rows = Flight::upcomingFlights();
 
 <div id="flight-statuses">
   <?php foreach ($rows as $row): ?>
+    <?php if (!$row->flight_number) continue; ?>
     <?php $flight = Flight::getFlightStatus($row->flight_number, $row->type, $row->iata, Date('Y-m-d', strtotime($row->target_datetime))); ?>
     <card class="card mb-3 text-bg-primary">
       <div class="card-header d-flex justify-content-between">
