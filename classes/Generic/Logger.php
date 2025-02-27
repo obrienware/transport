@@ -15,7 +15,7 @@ class Logger
     $endpoint = $_SERVER['REQUEST_URI']; // Get the script path being called
     $postData = file_get_contents('php://input'); // Get the raw POST data
     $sessionData = json_encode($_SESSION); // Store session variables
-    $ipAddress = $_SERVER['REMOTE_ADDR'];
+    $ipAddress = $_SERVER['HTTP_X_REAL_IP'];
     $userAgent = $_SERVER['HTTP_USER_AGENT'];
 
     $query = "
