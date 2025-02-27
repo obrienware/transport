@@ -1,4 +1,6 @@
 <?php
+exit(); // TODO: We need to "fix" the weather API first
+
 require_once 'autoload.php';
 
 use Transport\{Config, Weather};
