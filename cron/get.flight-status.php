@@ -96,12 +96,12 @@ if ($rows = $db->get_rows($query)) {
         continue; // Flight has already departed
       }
       $departure_time = ($flight->estimated_departure) ? strtotime($flight->estimated_departure) : strtotime($flight->scheduled_departure);
-      $departs_in = round(($departure_time - $now) / 60, 2);
+      $departs_in = round(($departure_time - $now) / 60, 2); // minutes
 
-      if ($departs_in > 0) {
-        echo "ETD is in the future, re-checking every 30mins.\n";
+      if ($departs_in > - 90) {
+        echo "Re-checking every 15mins.\n";
         // We havn't passed our ETD yet
-        if ($lastChecked >= 30) {
+        if ($lastChecked >= 15) {
           echo "Checking now...\n";
           Flight::updateFlight($row->flight_number);
         }
