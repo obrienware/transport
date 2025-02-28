@@ -31,6 +31,8 @@ if (!is_null($id) && !$locationId)
   <input type="hidden" id="location-id" value="">
 <?php endif; ?>
 <input id="location-place-id" type="hidden" value="<?= $location->placeId ?>" />
+<input id="location-osm-type" type="hidden" value="<?= $location->osmType ?>" />
+<input id="location-osm-id" type="hidden" value="<?= $location->osmId ?>" />
 
 <div class="row">
 
@@ -81,7 +83,7 @@ if (!is_null($id) && !$locationId)
   </div>
 
   <div class="col-2 mb-3">
-    <?php if ($location->placeId): ?>
+    <?php if ($location->placeId || $location->osmId): ?>
       <button id="btn-location-verify" class="btn btn-success mt-4 nowrap" title="Google verify">
         <i class="fa-duotone fa-solid fa-square-check"></i>
         Verified
@@ -149,6 +151,8 @@ if (!is_null($id) && !$locationId)
           lat: $('#location-lat').cleanNumberVal(),
           lon: $('#location-lon').cleanNumberVal(),
           placeId: $('#location-place-id').val(),
+          osmType: $('#location-osm-type').val(),
+          osmId: $('#location-osm-id').val(),
           meta: $('#location-map-address').data('meta')
         });
         if (resp?.result) {
@@ -185,6 +189,8 @@ if (!is_null($id) && !$locationId)
 
     $('#location-lat, #location-lon').off('change').on('change', () => {
       $('#location-place-id').val('');
+      $('#location-osm-type').val('');
+      $('#location-osm-id').val('');
       mapVerified(false);
     });
 
@@ -193,19 +199,28 @@ if (!is_null($id) && !$locationId)
       let lon = $('#location-lon').cleanNumberVal();
       const address = $('#location-map-address').cleanVal();
       const placeId = $('#location-place-id').val();
+      const osmType = $('#location-osm-type').val();
+      const osmId = $('#location-osm-id').val();
 
-      // If we have a place ID we should use that first.
-      // Failing which if we have co-ordinates we should use that second
+      // If we have an OSM ID we should use that second.
+      // Failing which if we have co-ordinates we should use that third.
       // If we only have an address (lastly) we should use that.
 
-      if (placeId) {
+      if (osmId) {
         const resp = await net.get('/api/get.geodata.php', {
-          placeId
+          osmType,
+          osmId
         });
-        $('#location-lat').val(resp?.location?.latitude);
-        $('#location-lon').val(resp?.location?.longitude);
-        $('#location-place-id').val(resp.id);
-        $('#location-map-address').val(resp?.formattedAddress);
+        console.log(resp);
+        if (resp.result === false) {
+          console.error(resp.error);
+          ui.toastr.error(resp.error, 'Error');
+          return mapVerified(false);
+        }
+        const addr = resp.data.addresstags;
+        $('#location-lat').val(resp.data.geometry.coordinates[1]);
+        $('#location-lon').val(resp.data.geometry.coordinates[0]);
+        $('#location-map-address').val(`${addr.housenumber} ${addr.street}, ${addr.city}, ${addr.state}, ${addr.postcode}`);
         return mapVerified(true);
       }
 
@@ -214,10 +229,17 @@ if (!is_null($id) && !$locationId)
         const resp = await net.get('/api/get.geodata.php', {
           latlng
         });
-        $('#location-lat').val(resp?.results[0]?.geometry?.location?.lat);
-        $('#location-lon').val(resp?.results[0]?.geometry?.location?.lng);
-        $('#location-place-id').val(resp?.results[0]?.place_id);
-        $('#location-map-address').val(resp?.results[0].formatted_address);
+        console.log(resp);
+        if (resp.result === false) {
+          console.error(resp.error);
+          ui.toastr.error(resp.error, 'Error');
+          return mapVerified(false);
+        }
+        $('#location-lat').val(resp.data.lat);
+        $('#location-lon').val(resp.data.lon);
+        $('#location-osm-type').val(resp.data.osm_type);
+        $('#location-osm-id').val(resp.data.osm_id);
+        $('#location-map-address').val(resp.data.display_name);
         return mapVerified(true);
       }
 
@@ -225,10 +247,17 @@ if (!is_null($id) && !$locationId)
         const resp = await net.get('/api/get.geodata.php', {
           address
         });
-        $('#location-lat').val(resp?.results[0]?.geometry?.location?.lat);
-        $('#location-lon').val(resp?.results[0]?.geometry?.location?.lng);
-        $('#location-place-id').val(resp?.results[0]?.place_id);
-        $('#location-map-address').val(resp?.results[0].formatted_address);
+        console.log(resp);
+        if (resp.result === false) {
+          console.error(resp.error);
+          ui.toastr.error(resp.error, 'Error');
+          return mapVerified(false);
+        }
+        $('#location-lat').val(resp.data.lat);
+        $('#location-lon').val(resp.data.lon);
+        $('#location-osm-type').val(resp.data.osm_type);
+        $('#location-osm-id').val(resp.data.osm_id);
+        $('#location-map-address').val(resp.data.display_name);
         return mapVerified(true);
       }
     });

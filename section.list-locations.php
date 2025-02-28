@@ -39,7 +39,7 @@ use Transport\Location;
             <?php if ($row->type === 'virtual'): ?>
               <i class="fa-solid fa-globe fa-xl me-2" style="color:cornflowerblue"></i> Not applicable
             <?php else:?>
-              <?php if ($row->place_id): ?>
+              <?php if ($row->place_id || $row->osm_id): ?>
                 <i class="fa-solid fa-location-check fa-xl text-primary me-2"></i>
               <?php else: ?>
                 <i class="fa-solid fa-location-exclamation fa-xl text-warning me-2"></i>

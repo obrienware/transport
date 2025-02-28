@@ -24,7 +24,9 @@ $location->IATA = $input->getString('IATA');
 $location->mapAddress = $input->getString('mapAddress');
 $location->lat = $input->getFloat('lat');
 $location->lon = $input->getFloat('lon');
-$location->placeId = $input->getString('placeId');
+$location->placeId = $input->getString('placeId'); // For backward compatibility
+$location->osmType = $input->getString('osmType');
+$location->osmId = $input->getString('osmId');
 $location->meta = $input->getRawString('meta');
 
 if ($location->save(userResponsibleForOperation: $user->getUsername()))

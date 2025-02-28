@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Transport;
 
-require_once __DIR__.'/../../autoload.php';
+require_once __DIR__ . '/../../autoload.php';
 
 use DateTime;
 use DateTimeZone;
@@ -18,7 +20,9 @@ class Location extends Base
 	public ?string $description = null;
 	public ?float $lat = null;
 	public ?float $lon = null;
-	public ?string $placeId = null;
+	public ?string $placeId = null; // For backward compatibility
+	public ?string $osmType = null;
+	public ?string $osmId = null;
 	public ?string $type = null;
 	public ?string $IATA = null;
 	public ?string $meta = null;
@@ -33,7 +37,8 @@ class Location extends Base
 		$db = Database::getInstance();
 		$query = "SELECT * FROM {$this->tableName} WHERE id = :id";
 		$params = ['id' => $id];
-		if ($row = $db->get_row($query, $params)) {
+		if ($row = $db->get_row($query, $params))
+		{
 			$this->mapRowToProperties($row);
 			return true;
 		}
@@ -53,19 +58,22 @@ class Location extends Base
 		$this->description = $row->description;
 		$this->lat = is_null($row->lat) ? null : (float) $row->lat;
 		$this->lon = is_null($row->lon) ? null : (float) $row->lon;
-		$this->placeId = $row->place_id;
+		$this->placeId = $row->place_id; // For backward compatibility
+		$this->osmType = $row->osm_type;
+		$this->osmId = $row->osm_id;
 		$this->type = $row->type;
 		$this->IATA = $row->iata;
 		$this->meta = $row->meta;
 
-		if (!empty($row->archived)) {
+		if (!empty($row->archived))
+		{
 			$this->archived = (new DateTime($row->archived, $defaultTimezone))->setTimezone($this->timezone);
 		}
 	}
 
 	public function save(?string $userResponsibleForOperation = null): bool
 	{
-    $db = Database::getInstance();
+		$db = Database::getInstance();
 		$this->lastError = null;
 		$audit = new Audit();
 		$audit->username = $userResponsibleForOperation;
@@ -82,12 +90,15 @@ class Location extends Base
 			'map_address' => $this->mapAddress,
 			'lat' => $this->lat,
 			'lon' => $this->lon,
-			'place_id' => $this->placeId,
+			'place_id' => $this->placeId, // For backward compatibility
+			'osm_type' => $this->osmType,
+			'osm_id' => $this->osmId,
 			'user' => $userResponsibleForOperation,
 		];
 
-		if ($this->action === 'update') {
-			$audit->description = $this->tableDescription.' updated: '.$this->getName();
+		if ($this->action === 'update')
+		{
+			$audit->description = $this->tableDescription . ' updated: ' . $this->getName();
 			$params['id'] = $this->id;
 			$query = "
 				UPDATE {$this->tableName} SET
@@ -100,12 +111,16 @@ class Location extends Base
 					lat = :lat,
 					lon = :lon,
 					place_id = :place_id,
+					osm_type = :osm_type,
+					osm_id = :osm_id,
 					modified = NOW(),
 					modified_by = :user
 				WHERE id = :id
 			";
-		} else {
-			$audit->description = $this->tableDescription.' created: '.$this->getName();
+		}
+		else
+		{
+			$audit->description = $this->tableDescription . ' created: ' . $this->getName();
 			$query = "
 				INSERT INTO {$this->tableName} SET
 					name = :name,
@@ -117,18 +132,23 @@ class Location extends Base
 					lat = :lat,
 					lon = :lon,
 					place_id = :place_id,
+					osm_type = :osm_type,
+					osm_id = :osm_id,
 					created = NOW(),
 					created_by = :user
 			";
 		}
-		try {
+		try
+		{
 			$result = $db->query($query, $params);
 			$id = ($this->action === 'create') ? $result : $this->id;
 			$this->load($id);
 			$audit->after = json_encode($this->row);
 			$audit->commit();
 			return true;
-		} catch (\Exception $e) {
+		}
+		catch (\Exception $e)
+		{
 			$this->lastError = $e->getMessage();
 			return false;
 		}
@@ -151,7 +171,9 @@ class Location extends Base
 		$this->description = null;
 		$this->lat = null;
 		$this->lon = null;
-		$this->placeId = null;
+		$this->placeId = null; // For backward compatibility
+		$this->osmType = null;
+		$this->osmId = null;
 		$this->type = null;
 		$this->IATA = null;
 		$this->meta = null;
