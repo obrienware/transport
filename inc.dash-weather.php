@@ -1,6 +1,5 @@
 <?php
-exit(); // TODO: We need to "fix" the weather API first
-
+// exit();
 require_once 'autoload.php';
 
 use Transport\{Config, Weather};
@@ -26,7 +25,7 @@ if (!$config->weatherLocations) exit();
     $weather = new Weather($item->lat, $item->lon);
     $alerts = $weather->getAlerts();
   ?>
-  <?php if (count($alerts->features) > 0): ?>
+  <?php if (isset($alerts->features) && count($alerts->features) > 0): ?>
     <div class="alert alert-danger mb-3">
       <h5>Weather Alerts</h5>
       <?php foreach ($alerts->features as $alert): ?>
@@ -40,19 +39,20 @@ if (!$config->weatherLocations) exit();
   <?php endif; ?>
 <?php endforeach; ?>
 
-
+<?php $matrix = []; ?>
 <div class="weather-grid mb-3">
   <?php foreach ($config->weatherLocations as $item): ?>
     <?php
     $weather = new Weather($item->lat, $item->lon);
-    $data = $weather->getWeather();
-    $forecast = $weather->getForecastFor(Date('Y-m-d'));
+    $data = $weather->data[0];
+    $matrix[$item->name] = $weather->data;
     ?>
     <div class="d-flex justify-content-between bg-body-secondary rounded border overflow-hidden">
       <div class="align-self-center">
         <?php if ($data->icon): ?>
-          <div class="px-3">
-            <?= $data->icon ?>
+          <div class="px-3 text-center">
+            <span class="fs-1"><?= $data->icon ?></span>
+            <div><?= $weather->getCurrentTemp() ?></div>
           </div>
         <?php endif; ?>
       </div>
@@ -60,32 +60,43 @@ if (!$config->weatherLocations) exit();
         <h4 style="font-weight:900;color:chocolate"><?= $item->name ?></h4>
         <div class="d-flex justify-content-between">
           <div>
-            <?= $data->description ?>
-            <div><?= $data->temp ?></div>
-          </div>
-          <div>
-            <div>Lo: <?= $forecast->min ?></div>
-            <div>Hi: <?= $forecast->max ?></div>
+            <strong><?=$data->name?></strong>
+            <?= $data->detailedForecast ?>
           </div>
         </div>
       </div>
     </div>
-
-    <!--    
-    <pre><?php print_r($alerts); ?></pre>
-    <pre><?php print_r($data); ?></pre>
-    <pre><?php print_r($forecast); ?></pre>
--->
   <?php endforeach; ?>
 </div>
 
+<table class="table table-sm table-striped table-bordered" style="font-size:small">
+  <tr>
+    <th>FORECAST</th>
+    <?php $line = reset($matrix); ?>
+    <?php for ($i = 1; $i < 5; $i++): ?>
+      <th><?= $line[$i]->name ?></th>
+    <?php endfor; ?>
+  </tr>
+  <?php foreach ($matrix as $name => $data): ?>
+    <tr>
+      <th><?= $name ?></th>
+      <?php for ($i = 1; $i < 5; $i++): ?>
+        <td>
+        <?= $data[$i]->icon ?>
+        <?= $data[$i]->shortForecast ?> - <?= $data[$i]->temperature ?>º<?= $data[$i]->temperatureUnit ?>
+        </td>
+      <?php endfor; ?>
+    </tr>
+  <?php endforeach;?>
+</table>
 
+<!--
 <h5>Tomorrow</h5>
 <div class="weather-grid-small mb-3">
   <?php foreach ($config->weatherLocations as $item): ?>
     <?php
-    $weather = new Weather($item->lat, $item->lon);
-    $forecast = $weather->getForecastFor(Date('Y-m-d', strtotime('+1 day')));
+    // $weather = new Weather($item->lat, $item->lon);
+    // $forecast = $weather->getForecastFor(Date('Y-m-d', strtotime('+1 day')));
     ?>
     <div class="d-flex justify-content-between bg-body-secondary rounded border overflow-hidden">
       <div class="align-self-center">
@@ -108,3 +119,4 @@ if (!$config->weatherLocations) exit();
     </div>
   <?php endforeach; ?>
 </div>
+-->
