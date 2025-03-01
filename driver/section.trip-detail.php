@@ -59,7 +59,6 @@ if ($trip->do_lat && $trip->do_lon) {
             <div class="d-flex justify-content-between align-items-center">
               <div><?=$trip->vehicle_pu_options?></div>
               <small><?=Date('g:ia', strtotime($trip->start_date))?></small>
-              <small>Pickup:<?=$trip->pickup_date?></small>
             </div>
           </div>
         </li>
