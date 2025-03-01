@@ -89,7 +89,7 @@ class Weather
         return;
       }
     }
-    log($db->errorInfo); return;
+    // log($db->errorInfo); return;
     return $this->fetchForecast();
   }
 
