@@ -7,8 +7,10 @@ require_once '../autoload.php';
 
 use Transport\{ Event, Trip, Vehicle };
 use Generic\InputHandler;
-use Generic\Logger;
-Logger::logRequest();
+
+// This gets called periodically, and shouldn't be causing any issues so we're going to exclude this from the logs as it's generating a ton of unnecessary entries.
+// use Generic\Logger;
+// Logger::logRequest();
 
 $id = InputHandler::getInt(INPUT_GET, 'id');
 $vehicleId = $id === false ? null : $id;
