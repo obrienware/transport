@@ -62,12 +62,45 @@ class Weather
 
   public function getAlerts()
   {
-    return;
-    $data = $this->fetch_data("https://api.weather.gov/alerts/active?point{$this->latitude},{$this->longitude}", $this->userAgent);
-    // $data = Utils::callApi(method: 'GET', url: 'https://api.weather.gov/alerts/active', data: [
-    //   'point' => $this->latitude . ',' . $this->longitude,
-    // ], headers: ['User-Agent: ' . $this->userAgent]);
-    return json_decode($data);
+    $db = Database::getInstance();
+    $query = "SELECT data, last_checked, NOW() as just_now FROM weather_alerts WHERE latitude = :latitude AND longitude = :longitude";
+    $params = ['latitude' => $this->latitude, 'longitude' => $this->longitude];
+    if ($row = $db->get_row($query, $params))
+    {
+      $lastChecked = strtotime($row->last_checked);
+      $now = strtotime($row->just_now);
+      $diff = $now - $lastChecked;
+      log("Last checked: $lastChecked, Now: $now, Diff: $diff");
+      // Make sure that we're only updating every hour!
+      if ($diff < 3600)
+      {
+        return json_decode($row->data);
+      }
+    }
+    return $this->fetchAlerts();
+  }
+
+  private function fetchAlerts()
+  {
+    $data = $this->fetch_data("https://api.weather.gov/alerts/active?point={$this->latitude},{$this->longitude}", $this->userAgent);
+    $query = "
+      INSERT INTO weather_alerts SET
+        latitude = :latitude,
+        longitude = :longitude,
+        data = :data,
+        last_checked = NOW()
+      ON DUPLICATE KEY UPDATE
+        data = :data,
+        last_checked = NOW()
+    ";
+    $params = [
+      'latitude' => $this->latitude,
+      'longitude' => $this->longitude,
+      'data' => json_encode($data)
+    ];
+    $db = Database::getInstance();
+    $db->query($query, $params);
+    return $data;
   }
 
   public function getForecast()
