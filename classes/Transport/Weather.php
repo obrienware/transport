@@ -8,6 +8,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../autoload.php';
 
+use DateTime;
 use Generic\Utils;
 use Transport\Database;
 
@@ -56,8 +57,8 @@ class Weather
   {
     $pattern = '#icons/[^/]+/[^/]+/([^?]+)#'; // Regex to capture condition from the URL
     preg_match($pattern, $iconUrl, $matches);
-
-    return $matches[1] ?? "Unknown Condition";
+    $condition = $matches[1] ?? "";
+    return explode('/', $condition)[0];
   }
 
   public function getAlerts()
@@ -162,6 +163,7 @@ class Weather
         $icon = $this->_getWeatherIcon($condition, $isNight);
         $periods[$key]->iconClass = $icon;
         $periods[$key]->icon = '<i class="wi ' . $icon . '"></i>';
+        $periods[$key]->condition = $condition;
       }
     }
 
@@ -204,5 +206,27 @@ class Weather
     if (isset($this->data[0]->temperature))
       return $this->data[0]->temperature . 'º' . $this->data[0]->temperatureUnit;
     return 'Unknown';
+  }
+
+  public function getForecastFor($date)
+  {
+    $date = new DateTime($date, $this->timezone);
+    // $date = strtotime($date);
+    foreach ($this->data as $period)
+    {
+      $start = new DateTime($period->startTime, $this->timezone);
+      // $start = strtotime($period->startTime);
+      $end = new DateTime($period->endTime, $this->timezone);
+      // $end = strtotime($period->endTime);
+      if ($date >= $start && $date <= $end)
+      {
+        return $period;
+      }
+      // $dateString = $date->format('Y-m-d H:i:s');
+      // $startString = $start->format('Y-m-d H:i:s');
+      // $endString = $end->format('Y-m-d H:i:s');
+      // echo "Date: $dateString, Start: $startString, End: $endString<br>\n";
+    }
+    return null;
   }
 }

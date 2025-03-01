@@ -39,6 +39,7 @@ if ($trip->do_lat && $trip->do_lon) {
   $mapUrlDropoff = $isIOS ? "https://maps.apple.com/?daddr={$trip->do_lat},{$trip->do_lon}" : "https://www.google.com/maps/dir/?api=1&destination={$trip->do_lat},{$trip->do_lon}";
 }
 ?>
+<input type="hidden" id="trip_pickup_date" value="<?=$trip->pickup_date?>" />
 <div class="row mb-2">
   <div class="col">
     <div class="card shadow">
@@ -58,6 +59,7 @@ if ($trip->do_lat && $trip->do_lon) {
             <div class="d-flex justify-content-between align-items-center">
               <div><?=$trip->vehicle_pu_options?></div>
               <small><?=Date('g:ia', strtotime($trip->start_date))?></small>
+              <small>Pickup:<?=$trip->pickup_date?></small>
             </div>
           </div>
         </li>
@@ -206,9 +208,9 @@ if ($trip->do_lat && $trip->do_lon) {
     if (pickupDateTime.isBetween(moment(), moment().add(7, 'day'), 'day')) {
       // Within the next 7 days (forecast period)
       console.log('Forecast requested');
-      const date = pickupDateTime.format('YYYY-MM-DD');
-      $('#weather-at-pickup-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + date);
-      $('#weather-at-dropoff-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + date);
+      console.log($('#trip_pickup_date').val());
+      $('#weather-at-pickup-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->pu_location?>&date=' + encodeURIComponent($('#trip_pickup_date').val()));
+      $('#weather-at-dropoff-location').html(loadingWeatherTemplate).load('section.header-weather.php?location_id=<?=$trip->do_location?>&date=' + encodeURIComponent($('#trip_pickup_date').val()));
     }
 
     async function checkFlightStatus() {
