@@ -9,6 +9,8 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../autoload.php';
 
 use DateTime;
+use DateTimeZone;
+
 use Generic\Utils;
 use Transport\Database;
 
@@ -22,6 +24,8 @@ function log(mixed $message): void
 
 class Weather
 {
+  public ?DateTimeZone $timezone = null;
+
   public string $latitude;
   public string $longitude;
   public $data;
@@ -29,7 +33,9 @@ class Weather
 
   public function __construct($latitude = NULL, $longitude = NULL)
   {
-    log("Weather::__construct($latitude, $longitude)");
+    $timezoneString = isset($_SESSION['userTimezone']) ? $_SESSION['userTimezone'] : $_ENV['TZ'];
+    $this->timezone = new DateTimeZone($timezoneString);
+
     $this->userAgent = "WeatherApp/1.0 (transport.obrienware.com, weather@obrienware.com)";
 
     $this->latitude = $latitude;
@@ -213,21 +219,14 @@ class Weather
   public function getForecastFor($date)
   {
     $date = new DateTime($date, $this->timezone);
-    // $date = strtotime($date);
     foreach ($this->data as $period)
     {
       $start = new DateTime($period->startTime, $this->timezone);
-      // $start = strtotime($period->startTime);
       $end = new DateTime($period->endTime, $this->timezone);
-      // $end = strtotime($period->endTime);
       if ($date >= $start && $date <= $end)
       {
         return $period;
       }
-      // $dateString = $date->format('Y-m-d H:i:s');
-      // $startString = $start->format('Y-m-d H:i:s');
-      // $endString = $end->format('Y-m-d H:i:s');
-      // echo "Date: $dateString, Start: $startString, End: $endString<br>\n";
     }
     return null;
   }

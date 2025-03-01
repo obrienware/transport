@@ -346,6 +346,11 @@
   <script>
     debug = true;
 
+    window.addEventListener("beforeunload", function (event) {
+      event.preventDefault(); // Some browsers require this to show the dialog
+      event.returnValue = "Are you sure you want to leave? Any unsaved changes will be lost."; // Standard message
+    });
+
     if (debug) {
       console.log(navigator.userAgentData);
       console.log(navigator.userAgent);
