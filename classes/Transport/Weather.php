@@ -11,19 +11,13 @@ require_once __DIR__ . '/../../autoload.php';
 use DateTime;
 use DateTimeZone;
 
-use Generic\Utils;
 use Transport\Database;
-
-function log(mixed $message): void
-  {
-    $out = fopen('php://stdout', 'w'); //output handler
-    $output = json_encode($message, JSON_PRETTY_PRINT);
-    fputs($out, $output.PHP_EOL); //writing output operation
-    fclose($out); //closing handler
-  }
+use Generic\ApiClient;
 
 class Weather
 {
+  use Log;
+
   public ?DateTimeZone $timezone = null;
 
   public string $latitude;
@@ -43,22 +37,6 @@ class Weather
     if ($latitude and $longitude) $this->getForecast();
   }
 
-  private function fetch_data($url, $userAgent) {
-    $options = [
-        "http" => [
-            "header" => "User-Agent: $userAgent\r\n"
-        ]
-    ];
-    $context = stream_context_create($options);
-    $response = file_get_contents($url, false, $context);
-
-    if ($response === FALSE) {
-        return 'null';
-    }
-
-    return json_decode($response);
-}
-
   private function _extract_condition_from_icon($iconUrl)
   {
     $pattern = '#icons/[^/]+/[^/]+/([^?]+)#'; // Regex to capture condition from the URL
@@ -74,15 +52,13 @@ class Weather
     $db = Database::getInstance();
     $query = "SELECT data, last_checked, NOW() as just_now FROM weather_alerts WHERE latitude = :latitude AND longitude = :longitude";
     $params = ['latitude' => $this->latitude, 'longitude' => $this->longitude];
-    if ($row = $db->get_row($query, $params))
-    {
+    if ($row = $db->get_row($query, $params)) {
       $lastChecked = strtotime($row->last_checked);
       $now = strtotime($row->just_now);
       $diff = $now - $lastChecked;
-      log("Last checked: $lastChecked, Now: $now, Diff: $diff");
+      self::log("Last checked: $lastChecked, Now: $now, Diff: $diff");
       // Make sure that we're only updating every hour!
-      if ($diff < 3600)
-      {
+      if ($diff < 3600) {
         return json_decode($row->data);
       }
     }
@@ -91,7 +67,8 @@ class Weather
 
   private function fetchAlerts()
   {
-    $data = $this->fetch_data("https://api.weather.gov/alerts/active?point={$this->latitude},{$this->longitude}", $this->userAgent);
+    $api = new ApiClient("https://api.weather.gov/", ['User-Agent: ' . $this->userAgent]);
+    $data = $api->get('/alerts/active', ['point' => "{$this->latitude},{$this->longitude}"]);
     $query = "
       INSERT INTO weather_alerts SET
         latitude = :latitude,
@@ -117,21 +94,18 @@ class Weather
     $db = Database::getInstance();
     $query = "SELECT data, last_checked, NOW() as just_now FROM forecast_data WHERE latitude = :latitude AND longitude = :longitude";
     $params = ['latitude' => $this->latitude, 'longitude' => $this->longitude];
-    log($params);
-    if ($row = $db->get_row($query, $params))
-    {
+    self::log($params);
+    if ($row = $db->get_row($query, $params)) {
       $lastChecked = strtotime($row->last_checked);
       $now = strtotime($row->just_now);
       $diff = $now - $lastChecked;
-      log("Last checked: $lastChecked, Now: $now, Diff: $diff");
+      self::log("Last checked: $lastChecked, Now: $now, Diff: $diff");
       // Make sure that we're only updating every hour!
-      if ($diff < 3600)
-      {
+      if ($diff < 3600) {
         $this->data = json_decode($row->data);
         return;
       }
     }
-    // log($db->errorInfo); return;
     return $this->fetchForecast();
   }
 
@@ -140,32 +114,28 @@ class Weather
   {
     $lat = $this->latitude;
     $lon = $this->longitude;
-    $userAgent = $this->userAgent;
 
-    $gridpointUrl = "https://api.weather.gov/points/$lat,$lon";
-    $gridpointData = $this->fetch_data($gridpointUrl, $userAgent);
+    $api = new ApiClient("https://api.weather.gov/", ['User-Agent: ' . $this->userAgent]);
+    $gridpointData = json_decode($api->get("/points/$lat,$lon"));
 
-    if (!$gridpointData || !isset($gridpointData->properties->forecast))
-    {
-      log("Error: Unable to retrieve forecast URL.");
+    if (!$gridpointData || !isset($gridpointData->properties->forecast)) {
+      self::log("Error: Unable to retrieve forecast URL.");
       return "Error: Unable to retrieve forecast URL.";
     }
 
     $forecastUrl = $gridpointData->properties->forecast;
-    $forecastData = $this->fetch_data($forecastUrl, $userAgent);
+    $api = new ApiClient($forecastUrl, ['User-Agent: ' . $this->userAgent]);
+    $forecastData = json_decode($api->get(''));
 
-    if (!$forecastData || !isset($forecastData->properties->periods))
-    {
-      log("Error: Unable to retrieve forecast data.");
+    if (!$forecastData || !isset($forecastData->properties->periods)) {
+      self::log("Error: Unable to retrieve forecast data.");
       return "Error: Unable to retrieve forecast data.";
     }
 
     $periods = $forecastData->properties->periods;
-    
-    if (is_array($periods))
-    {
-      foreach ($periods as $key => $period)
-      {
+
+    if (is_array($periods)) {
+      foreach ($periods as $key => $period) {
         $condition = $this->_extract_condition_from_icon($period->icon);
         $isNight = $period->isDaytime ? false : true;
         $icon = $this->_getWeatherIcon($condition, $isNight);
@@ -201,8 +171,7 @@ class Weather
     $db = Database::getInstance();
     $query = "SELECT * FROM weather_codes WHERE nws_condition = :condition";
     $params = ['condition' => $condition];
-    if ($row = $db->get_row($query, $params))
-    {
+    if ($row = $db->get_row($query, $params)) {
       if ($isNight) return $row->icon_night;
       return $row->icon_day;
     }
@@ -213,20 +182,16 @@ class Weather
   {
     if (isset($this->data[0]->temperature))
       return $this->data[0]->temperature . 'º' . $this->data[0]->temperatureUnit;
-    return 'Unknown';
+    return '';
   }
 
   public function getForecastFor($date)
   {
     $date = new DateTime($date, $this->timezone);
-    foreach ($this->data as $period)
-    {
+    foreach ($this->data as $period) {
       $start = new DateTime($period->startTime, $this->timezone);
       $end = new DateTime($period->endTime, $this->timezone);
-      if ($date >= $start && $date <= $end)
-      {
-        return $period;
-      }
+      if ($date >= $start && $date <= $end) return $period;
     }
     return null;
   }
