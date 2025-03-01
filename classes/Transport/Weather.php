@@ -58,7 +58,9 @@ class Weather
     $pattern = '#icons/[^/]+/[^/]+/([^?]+)#'; // Regex to capture condition from the URL
     preg_match($pattern, $iconUrl, $matches);
     $condition = $matches[1] ?? "";
-    return explode('/', $condition)[0];
+    $condition = explode('/', $condition)[0];
+    $condition = explode(',', $condition)[0];
+    return $condition;
   }
 
   public function getAlerts()
