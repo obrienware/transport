@@ -6,9 +6,9 @@
 
 [Bootstrap Select](https://developer.snapappointments.com/bootstrap-select/)
 
-[DataTables](https://datatables.net)
+[DataTables](https://datatables.net) - Another super excellent lib for managing tables!
 
-[Calendar](https://github.com/vkurko/calendar)!!!
+[Calendar](https://github.com/vkurko/calendar) - OMG! Where have you been all my life!!!
 
 [SweetAlert2](https://sweetalert2.github.io)
 
@@ -16,7 +16,7 @@
 
 [~Rating javascript plugin~](http://dreyescat.github.io/bootstrap-rating/)
 
-[Tiny MCE](https://www.tiny.cloud/solutions/wysiwyg-bootstrap-rich-text-editor/)
+[~Tiny MCE~](https://www.tiny.cloud/solutions/wysiwyg-bootstrap-rich-text-editor/) - Was going to (and might still) use this, but so far haven't.
 
 [Weather icons](https://erikflowers.github.io/weather-icons/)
 

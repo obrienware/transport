@@ -2,13 +2,13 @@
 
 So there are a couple of notes in getting this set-up up and running on your own server:
 
-First off I run everything inside Docker containers. I have a home-grown version of an apache/php webserver that I use. (The docker image is called obrienware/apache-webserver). This webserver only exposes port 80 (it's designed to sit behind a proxy. I also use nginx as the proxy as well as certbot to create any necessay server certificates for the app), and relies on redis for storing session information. That way I can spin up multiple instances of the web application without issue.
+First off I run everything inside Docker containers. I have a home-grown version of an apache/php webserver that I use. (The docker image is called obrienware/apache-webserver). This webserver only exposes port 80 (it's designed to sit behind a proxy. I also use nginx as the proxy as well as certbot to create any necessay server certificates for the app), and relies on redis for storing session information. That way I can spin up multiple instances of the web application for load balancing without issue.
 
 One more note on paths: All the classes for the application are in a folder called `/classes` (off the root folder). I have made this folder searchable in my php config such that any folder will find the class files.
 
-I use several 3rd party APIs (for email, text messaging, weather information, geo-coding, etc.). Some are paid for and others are free-to-use. In any case, always check their respective licensing. I've made a note of these in `doc.apis.md`.
+I use several 3rd party APIs (for email, text messaging, weather information, geo-coding, etc.). Some are paid for and others are free-to-use. In any case, always check their respective licensing. I've made a note of these in `doc.apis.md`. I have decided to store my keys in the database (instead of the environment)
 
-In any case, this is what my docker-compose.yaml file looks like:
+This is what _my_ docker-compose.yaml file looks like:
 
 ```
 services:
@@ -60,8 +60,6 @@ services:
       - DB_PASS=YourOwnRootPassword
       - DB_DATABASE=transport
       - DB_HOST=mysql
-      - GOOGLE_API_KEY=YourGoogleAPIKey
-      - SPARKPOST_KEY=YourSparkpostKey
     volumes:
       - ./webs/transport:/var/www/html
     depends_on:

@@ -1,3 +1,7 @@
+# Coding Style
+
+As far as possible, I'm using [per](https://www.php-fig.org/per/coding-style/).
+
 # Naming Convensions
 
 HTML IDs should use Kabeb Case and should start with the shorthand element type followed the name (e.g. `tbl-vehicles` or `btn-my-button`)
