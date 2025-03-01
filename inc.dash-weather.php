@@ -56,7 +56,7 @@ if (!$config->weatherLocations) exit();
           </div>
         <?php endif; ?>
       </div>
-      <div class="flex-fill align-self-center bg-light px-3 py-1">
+      <div class="flex-fill align-self-center bg-light px-3 py-1" style="height:100%">
         <h4 style="font-weight:900;color:chocolate"><?= $item->name ?></h4>
         <div class="d-flex justify-content-between">
           <div>
