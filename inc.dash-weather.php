@@ -23,11 +23,14 @@ if (!$config->weatherLocations) exit();
 <?php foreach ($config->weatherLocations as $item): ?>
   <?php
     $weather = new Weather($item->lat, $item->lon);
-    $alerts = $weather->getAlerts();
+    $alerts = json_decode($weather->getAlerts());
+    // echo "<pre>";
+    // print_r($alerts);
+    // echo "</pre>";
   ?>
   <?php if (isset($alerts->features) && count($alerts->features) > 0): ?>
     <div class="alert alert-danger mb-3">
-      <h5>Weather Alerts</h5>
+      <h5>Weather Alert: <?=$item->name?></h5>
       <?php foreach ($alerts->features as $alert): ?>
         <div class="alert alert-warning">
           <h6><?= $alert->properties->headline ?></h6>
