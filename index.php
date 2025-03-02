@@ -85,6 +85,9 @@
 
   <link rel="stylesheet" type="text/css" href="/css/weather-icons.min.css">
 
+  <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+  <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+
   <script src="/js/layout.js" defer></script>
   <link rel="stylesheet" href="/css/layout.css">
   <link rel="stylesheet" href="/css/style-alt.css">
