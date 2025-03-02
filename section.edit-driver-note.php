@@ -8,8 +8,7 @@ $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)
 $id = $id === false ? null : $id;
 $note = new DriverNote($id);
 
-if (!is_null($id) && !$note->getId())
-{
+if (!is_null($id) && !$note->getId()) {
   exit(Utils::showResourceNotFound());
 }
 ?>
@@ -43,21 +42,31 @@ if (!is_null($id) && !$note->getId())
   <div class="col">
     <div class="mb-3">
       <label for="note-content" class="form-label">Note: (You may use Markdown syntax. <a href="https://www.markdownguide.org/cheat-sheet/" target="_blank">Click here for reference</a>)</label>
-      <textarea class="form-control font-monospace" id="note-content" rows="10" placeholder="Note"><?= $note->note ?></textarea>
+      <textarea class="form-control font-monospace ~d-none" id="note-content" rows="10" placeholder="Note"><?= $note->note ?></textarea>
     </div>
   </div>
 </div>
+<div id="editor"></div>
 
 <div class="d-flex justify-content-between mt-3">
   <?php if ($note->getId()): ?>
-    <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:driverNote', <?= $blockoutId ?>)">Delete</button>
+    <button class="btn btn-outline-danger" onclick="$(document).trigger('buttonDelete:driverNote', <?= $id ?>)">Delete</button>
   <?php endif; ?>
-  <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:driverNote', '<?= $blockoutId ?>')">Save</button>
+  <button class="btn btn-outline-primary" onclick="$(document).trigger('buttonSave:driverNote', '<?= $id ?>')">Save</button>
 </div>
-
 
 <script>
   $(async ƒ => {
+
+    // ✅ Initialize Toast UI Editor
+    // var editor = new toastui.Editor({
+    //   el: document.querySelector('#editor'),
+    //   height: '500px',
+    //   initialEditType: 'wysiwyg', // Directly edit in Markdown
+    //   // previewStyle: 'vertical', // Side-by-side preview
+    //   usageStatistics: false
+    // });
+
 
     function backToList() {
       $(document).trigger('loadMainSection', {
@@ -69,11 +78,17 @@ if (!is_null($id) && !$note->getId())
 
     if (!documentEventExists('buttonSave:driverNote')) {
       $(document).on('buttonSave:driverNote', async (e, id) => {
+
+        // const markdownContent = editor.getMarkdown();
+        // console.log("Markdown Output:\n", markdownContent);
+        // return;
+
         const noteId = id;
         const resp = await net.post('/api/post.save-driver-note.php', {
           id: noteId,
           title: $('#note-title').cleanProperVal(),
           note: $('#note-content').cleanVal(),
+          // note: markdownContent,
         });
         if (resp?.result) {
           $(document).trigger('driverNoteChange');

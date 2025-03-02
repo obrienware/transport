@@ -588,7 +588,6 @@
       setInterval(() => {
         $('#unconfirmed-items-container').load('inc.dash-confirm.php');
         $('#vehicle-alerts-container').load('inc.dash-vehicles.php');
-        $('#weather-container').load('inc.dash-weather.php');
       }, 30 * 1000); // every 30 seconds
 
       $('#weather-container').load('inc.dash-weather.php');

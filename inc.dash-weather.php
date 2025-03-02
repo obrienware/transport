@@ -20,25 +20,26 @@ if (!$config->weatherLocations) exit();
   }
 </style>
 
-<?php foreach ($config->weatherLocations as $item): ?>
+<?php foreach ($config->weatherLocations as $index => $item): ?>
   <?php
     $weather = new Weather($item->lat, $item->lon);
     $alerts = json_decode($weather->getAlerts());
-    // echo "<pre>";
-    // print_r($alerts);
-    // echo "</pre>";
   ?>
   <?php if (isset($alerts->features) && count($alerts->features) > 0): ?>
+
     <div class="alert alert-danger mb-3">
-      <h5>Weather Alert: <?=$item->name?></h5>
+      <h5 data-bs-toggle="collapse" data-bs-target="#weather-alert-<?=$index?>" class="pointer">
+        <i class="fa-solid fa-triangle-exclamation fa-lg"></i> Weather Alert: <?=$item->name?>
+      </h5>
+      <div id="weather-alert-<?=$index?>" class="collapse">
       <?php foreach ($alerts->features as $alert): ?>
-        <div class="alert alert-warning">
-          <h6><?= $alert->properties->headline ?></h6>
+          <h6 class="fw-bold mt-4"><?= $alert->properties->headline ?></h6>
           <p><?= $alert->properties->description ?></p>
           <div class="font-size:small"><?= $alert->properties->areaDesc ?></div>
-        </div>
       <?php endforeach; ?>
+      </div>
     </div>
+
   <?php endif; ?>
 <?php endforeach; ?>
 
