@@ -24,9 +24,9 @@ if (!$config->weatherLocations) exit();
   <?php
     $weather = new Weather($item->lat, $item->lon);
     $alerts = json_decode($weather->getAlerts());
-    // echo "<pre>";
-    // print_r($alerts);
-    // echo "</pre>";
+    echo "<pre>";
+    print_r($alerts);
+    echo "</pre>";
   ?>
   <?php if (isset($alerts->features) && count($alerts->features) > 0): ?>
     <div class="alert alert-danger mb-3">
