@@ -10,7 +10,7 @@ $query = "
     COUNT(s.id) AS snags
   FROM vehicles v
   LEFT OUTER JOIN locations l ON l.id = v.location_id
-  LEFT JOIN snags s ON s.vehicle_id = v.id AND s.acknowledged IS NULL AND s.archived IS NULL
+  LEFT JOIN snags s ON s.vehicle_id = v.id AND s.acknowledged IS NULL AND s.resolved IS NULL AND s.archived IS NULL
   WHERE 
     v.archived IS NULL 
     AND (
